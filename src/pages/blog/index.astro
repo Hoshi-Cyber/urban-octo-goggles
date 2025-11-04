@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "../../components/layout/BaseLayout.astro";
-import BlogHero from "../../components/blog/BlogHero/index.astro";
-import CategoryGrid from "../../components/blog/CategoryGrid/index.astro";
-import PostFeedLatest from "../../components/blog/PostFeedLatest/index.astro";
-import TrendingList from "../../components/blog/TrendingList/index.astro";
-import LeadMagnetStrip from "../../components/blog/LeadMagnetStrip/index.astro";
+import BlogHero from "../../components/blog/compose/BlogHero/index.astro";
+import CategoryGrid from "../../components/blog/compose/CategoryGrid/index.astro";
+import PostFeedLatest from "../../components/blog/compose/PostFeedLatest/index.astro";
+import TrendingList from "../../components/blog/compose/TrendingList/index.astro";
+import LeadMagnetStrip from "../../components/blog/compose/LeadMagnetStrip/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
-import Pagination from "../../components/blog/Pagination/index.astro";
+import Pagination from "../../components/blog/compose/Pagination/index.astro";
 import { getCollection } from "astro:content";
 
 const slugify = (s: string) =>

@@ -8,13 +8,13 @@
  */
 
 import BaseLayout from "../../components/layout/BaseLayout.astro";
-import Breadcrumbs from "../../components/blog/Breadcrumbs/index.astro";
-import CategoryHero from "../../components/blog/CategoryHero/index.astro";
-import Pagination from "../../components/blog/Pagination/index.astro";
-import CollectionSchema from "../../components/blog/CollectionSchema/index.astro";
-import RelatedCategories from "../../components/blog/RelatedCategories/index.astro";
-import LeadMagnetStrip from "../../components/blog/LeadMagnetStrip/index.astro";
-import PostFeedLatest from "../../components/blog/PostFeedLatest/index.astro";
+import Breadcrumbs from "../../components/blog/base/Breadcrumbs/index.astro";
+import CategoryHero from "../../components/blog/compose/CategoryHero/index.astro";
+import Pagination from "../../components/blog/compose/Pagination/index.astro";
+import CollectionSchema from "../../components/blog/compose/CollectionSchema/index.astro";
+import RelatedCategories from "../../components/blog/compose/RelatedCategories/index.astro";
+import LeadMagnetStrip from "../../components/blog/compose/LeadMagnetStrip/index.astro";
+import PostFeedLatest from "../../components/blog/compose/PostFeedLatest/index.astro";
 
 import { getCollection } from "astro:content";
 import {
