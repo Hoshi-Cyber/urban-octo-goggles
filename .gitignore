@@ -28,3 +28,10 @@ LPT[1-9]
 
 # Local Netlify folder
 .netlify
+
+# Dev artifacts
+.lh-chrome/
+.lh-tmp/
+lighthouse-baseline.json
+localhost_*.report.html
+tatus

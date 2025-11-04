@@ -1,0 +1,158 @@
+---
+import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import PostFeedLatest from "../../../components/blog/PostFeedLatest/index.astro";
+import Pagination from "../../../components/blog/Pagination/index.astro";
+import { getCollection } from "astro:content";
+
+/**
+ * Global numbered SSG pagination for blog listing
+ * - Renders /blog/page/2 ... /blog/page/N
+ * - Page 1 remains /blog/ (handled by src/pages/blog/index.astro)
+ * - Reuses PostFeedLatest and blog/Pagination components
+ */
+
+// util: simple slugify (same behavior as blog index)
+const slugify = (s: string) =>
+  String(s || "uncategorized")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+// Keep in sync with /src/pages/blog/index.astro (Fix Plan 149/150)
+const PER_PAGE = 8;
+
+export async function getStaticPaths() {
+  const all = await getCollection("blog", ({ data }) => !data.draft);
+
+  // Normalize, sort desc by date (same as /blog/index.astro)
+  const posts = all
+    .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
+    .map((p) => {
+      const postSlug = p.slug.split("/").pop()!;
+      const categorySlug = slugify(p.data.category ?? "uncategorized");
+      return {
+        title: p.data.title,
+        description: p.data.description,
+        href: `/blog/${categorySlug}/${postSlug}/`,
+        date: new Date(p.data.date),
+        author: p.data.author,
+        tags: p.data.tags ?? [],
+        cover:
+          typeof p.data.cover === "string"
+            ? p.data.cover
+            : (p.data.cover?.src ?? p.data.ogImage ?? null),
+        category: p.data.category,
+        readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
+      };
+    })
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const featured = posts[0] ?? null;
+  const rest = featured ? posts.slice(1) : [];
+  const totalItems = rest.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+
+  // Generate paths for 2..N (page 1 lives at /blog/)
+  const paths =
+    totalPages > 1
+      ? Array.from({ length: totalPages - 1 }, (_, i) => {
+          const page = i + 2; // start at 2
+          return { params: { page: String(page) } };
+        })
+      : [];
+
+  return paths;
+}
+
+const all = await getCollection("blog", ({ data }) => !data.draft);
+
+// Same normalization as in getStaticPaths (avoid drift)
+const normalized = all
+  .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
+  .map((p) => {
+    const postSlug = p.slug.split("/").pop()!;
+    const categorySlug = slugify(p.data.category ?? "uncategorized");
+    return {
+      title: p.data.title,
+      description: p.data.description,
+      href: `/blog/${categorySlug}/${postSlug}/`,
+      date: new Date(p.data.date),
+      author: p.data.author,
+      tags: p.data.tags ?? [],
+      cover:
+        typeof p.data.cover === "string"
+          ? p.data.cover
+          : (p.data.cover?.src ?? p.data.ogImage ?? null),
+      category: p.data.category,
+      readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
+    };
+  })
+  .sort((a, b) => b.date.getTime() - a.date.getTime());
+
+const featured = normalized[0] ?? null;
+const rest = featured ? normalized.slice(1) : [];
+
+const page = Number(Astro.params.page ?? 2);
+const totalItems = rest.length;
+const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+
+// Slice this page’s items from the "rest" list
+const start = (page - 1) * PER_PAGE;
+const end = start + PER_PAGE;
+const pageItems = rest.slice(start, end);
+
+// Adapt shape for PostFeedLatest (url + frontmatter)
+const feedPosts = pageItems.map((p) => ({
+  url: p.href,
+  frontmatter: {
+    title: p.title,
+    description: p.description,
+    date: p.date,
+    readingTime: p.readingTime,
+    category: p.category,
+    cover: p.cover ? { src: p.cover, alt: p.title } : undefined,
+  },
+}));
+
+// SEO links (respect trailingSlash: "always")
+const canonical = `/blog/page/${page}/`;
+const relPrev = page > 2 ? `/blog/page/${page - 1}/` : `/blog/`;
+const relNext = page < totalPages ? `/blog/page/${page + 1}/` : null;
+
+// Minimal JSON-LD (CollectionPage variation)
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "url": canonical,
+  "name": `CV Writing Kenya — Blog (Page ${page})`,
+};
+---
+
+<BaseLayout title={`Blog — Page ${page}`} description={`Articles page ${page}`} {canonical} {relPrev} {relNext}>
+  <script type="application/ld+json">
+    {JSON.stringify(jsonLd)}
+  </script>
+
+  <section class="section container" aria-labelledby="blog-listing">
+    <h1 id="blog-listing" class="sr-only">All articles</h1>
+
+    <PostFeedLatest
+      posts={feedPosts}
+      pageSize={8}
+      eyebrow={`Page ${page} of ${totalPages}`}
+      title="Latest articles"
+      moreHref="/blog/"
+      moreLabel="Back to blog home"
+      moreAriaLabel="Back to blog home"
+      ctaClass="pfl__viewAll"
+      clientLoadMore={false}
+    />
+
+    {totalPages > 1 && (
+      <div style="margin-top: var(--space-8);">
+        <Pagination basePath="/blog" current={page} total={totalPages} />
+      </div>
+    )}
+  </section>
+</BaseLayout>

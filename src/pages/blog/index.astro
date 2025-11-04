@@ -6,6 +6,7 @@ import PostFeedLatest from "../../components/blog/PostFeedLatest/index.astro";
 import TrendingList from "../../components/blog/TrendingList/index.astro";
 import LeadMagnetStrip from "../../components/blog/LeadMagnetStrip/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
+import Pagination from "../../components/blog/Pagination/index.astro";
 import { getCollection } from "astro:content";
 
 const slugify = (s: string) =>
@@ -15,8 +16,10 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+// Load non-draft posts
 const all = await getCollection("blog", ({ data }) => !data.draft);
 
+// Normalize and sort
 const posts = all
   .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
   .map((p) => {
@@ -29,23 +32,38 @@ const posts = all
       date: new Date(p.data.date),
       author: p.data.author,
       tags: p.data.tags ?? [],
-      // Harden cover normalization per Fix Plan 131
       cover:
         typeof p.data.cover === "string"
           ? p.data.cover
           : (p.data.cover?.src ?? p.data.ogImage ?? null),
-      category: p.data.category,
-      readingTime:
-        p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
+      category: p.data.category ?? "Uncategorized",
+      categorySlug,
+      readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
     };
   })
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
+// Build category counts by slug (for grid badges)
+const counts = posts.reduce((acc, p) => {
+  acc.set(p.categorySlug, (acc.get(p.categorySlug) ?? 0) + 1);
+  return acc;
+}, new Map<string, number>());
+
+// Featured + list
 const featured = posts[0] ?? null;
 const rest = featured ? posts.slice(1) : [];
 
-/* PostFeedLatest prop shape */
-const feedPosts = rest.map((p) => ({
+// SSG pagination settings (page 1 only here; /blog/page/[page].astro will render 2..N)
+const PER_PAGE = 8; // Fix Plan 149: cap homepage feed to 8 cards
+const totalItems = rest.length;
+const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+const pagePostsRaw = rest.slice(0, PER_PAGE);
+const relPrev = null;
+const relNext = totalPages > 1 ? "/blog/page/2/" : null;
+const canonical = "/blog/";
+
+// Adapt to PostFeedLatest prop shape
+const feedPosts = pagePostsRaw.map((p) => ({
   url: p.href,
   frontmatter: {
     title: p.title,
@@ -57,48 +75,55 @@ const feedPosts = rest.map((p) => ({
   },
 }));
 
-/* TrendingList items */
-const trendingItems = posts.slice(0, 5).map((p) => ({
+// Trending list (Fix Plan 151)
+const trendingItems = posts.slice(0, 5).map((p, i) => ({
+  rank: i + 1,
   title: p.title,
   href: p.href,
-  meta:
-    (p.category ? `${p.category} · ` : "") +
-    p.date.toLocaleDateString("en-KE", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }),
+  category: p.category,
+  date: p.date.toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" }),
+  readingTime: p.readingTime,
+  cover: p.cover ? { src: p.cover, alt: p.title } : null,
 }));
 
+// Inline SVG icons (consistent, crisp at small sizes)
+const svg = {
+  pen: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+  linkedin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554V14.86c0-1.334-.027-3.049-1.86-3.049-1.863 0-2.148 1.454-2.148 2.957v5.684H9.33V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.603 0 4.267 2.372 4.267 5.457v6.284zM5.337 7.433a2.062 2.062 0 110-4.124 2.062 2.062 0 010 4.124zM7.114 20.452H3.56V9h3.553v11.452z"/></svg>`,
+  briefcase: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12h.01"/></svg>`,
+  chart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="9" width="3" height="7" rx="1"/><rect x="12" y="5" width="3" height="11" rx="1"/><rect x="17" y="12" width="3" height="4" rx="1"/></svg>`
+};
+
+// Category cards using inline SVG strings and attached counts
+const card = (icon: string, title: string, slug: string, blurb: string) => ({
+  icon,
+  title,
+  blurb,
+  href: `/blog/${slug}/`,
+  count: counts.get(slug) ?? 0,
+});
+
 const categoryCards = [
-  {
-    icon: "📝",
-    title: "CV & Cover Letter Tips",
-    blurb: "Actionable guides for better applications.",
-    href: "/blog/cv-tips/",
-  },
-  {
-    icon: "/assets/icons/linkedin.svg",
-    title: "LinkedIn & Branding",
-    blurb: "Be discoverable and credible.",
-    href: "/blog/linkedin/",
-  },
-  {
-    icon: "💼",
-    title: "Interviews & Offers",
-    blurb: "Prep, strategy, and negotiation.",
-    href: "/blog/career-growth/",
-  },
-  {
-    icon: "📊",
-    title: "Kenya Job Market",
-    blurb: "Local trends and salary intel.",
-    href: "/blog/kenya-market/",
-  },
+  card(svg.pen, "CV & Cover Letter Tips", "cv-tips", "Actionable guides for better applications."),
+  card(svg.linkedin, "LinkedIn & Branding", "linkedin", "Be discoverable and credible."),
+  card(svg.briefcase, "Interviews & Offers", "career-growth", "Prep, strategy, and negotiation."),
+  card(svg.chart, "Kenya Job Market", "kenya-market", "Local trends and salary intel."),
 ];
+
+// Minimal JSON-LD for Blog home
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "url": canonical,
+  "name": "CV Writing Kenya — Blog",
+};
 ---
 
-<BaseLayout title="Blog" description="Insights on ATS, CV writing, and career growth in Kenya">
+<BaseLayout title="Blog" description="Insights on ATS, CV writing, and career growth in Kenya" {canonical} {relPrev} {relNext}>
+  <script type="application/ld+json">
+    {JSON.stringify(jsonLd)}
+  </script>
+
   <BlogHero
     title="Career Insights & Guides"
     sub="Actionable posts on CVs, cover letters, LinkedIn, and job search."
@@ -109,25 +134,30 @@ const categoryCards = [
     cover={featured?.cover ? { src: featured.cover, alt: featured.title } : null}
   />
 
-  <CategoryGrid items={categoryCards} />
+  <!-- Explore Categories with counts -->
+  <CategoryGrid eyebrow="Topics" title="Explore Categories" items={categoryCards} />
 
   <PostFeedLatest
     posts={feedPosts}
-    pageSize={6}
+    pageSize={8}                 {/* Fix Plan 149: render up to 8 cards */}
     eyebrow="From the blog"
     title="Latest articles"
-    moreHref="/blog/"
+    moreHref={relNext ?? "/blog/"}  {/* Fix Plan 149: route to archive when available */}
     moreLabel="View all"
     moreAriaLabel="View all blog posts"
     ctaClass="pfl__viewAll"
+    clientLoadMore={false}
   />
 
-  <TrendingList
-    items={trendingItems}
-    eyebrow="Popular this month"
-    title="Trending"
-    limit={5}
-  />
+  {totalPages > 1 && (
+    <section class="section">
+      <div class="container">
+        <Pagination basePath="/blog" current={1} total={totalPages} />
+      </div>
+    </section>
+  )}
+
+  <TrendingList items={trendingItems} eyebrow="Popular this month" title="Trending" limit={5} />
 
   <LeadMagnetStrip
     title="Free PDF: Top 10 CV Mistakes in Kenya"

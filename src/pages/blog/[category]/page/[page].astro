@@ -3,7 +3,7 @@
 /**
  * Paginated category view (pages ≥ 2)
  * IA: Breadcrumbs → Lean hero → Grid → Pagination
- * Spec: Fix Plan 120 / 136.1 / 139 / 141 — centralized slug helpers, safe breadcrumbs, clean JSON-LD, normalized PostCard props
+ * Spec: Fix Plan 120 / 136.1 / 139 / 141 / 146.1 — centralized helpers, clean JSON-LD
  */
 
 import BaseLayout from "../../../../components/layout/BaseLayout.astro";
@@ -126,6 +126,15 @@ const itemListLd = {
   })),
 };
 
+/** JSON-LD: CollectionPage (new, per Fix Plan 146.1) */
+const collectionPageLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  url: absUrl(canonical, Astro.site),
+  name: `${pretty} — Page ${current}`,
+  isPartOf: absUrl(basePath + "/", Astro.site)
+};
+
 /** Visible breadcrumbs via component */
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -147,8 +156,11 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
     <meta property="og:url" content={canonical} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <link rel="preload" as="image" href={ogImage} />}
+
+    <!-- JSON-LD -->
     <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(itemListLd)}</script>
+    <script type="application/ld+json" is:inline>{JSON.stringify(collectionPageLd)}</script>
   </fragment>
 
   <section class="container page-gap-after" data-section="category">

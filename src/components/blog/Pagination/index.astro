@@ -2,15 +2,18 @@
 import "./Pagination.css";
 
 export interface Props {
-  basePath: string;   // e.g., "/blog/category/cv-tips"
+  basePath: string;   // e.g., "/blog" or "/blog/category/cv-tips"
   current: number;    // 1-based
   total: number;      // total pages ≥ 1
 }
 
 const { basePath, current, total } = Astro.props as Props;
 
-// Helper: build URL. Page 1 = basePath. Page N>1 = `${basePath}/page/N`
-const hrefFor = (n: number) => (n === 1 ? basePath : `${basePath}/page/${n}`);
+// Normalize base path to always end with "/" to satisfy trailingSlash: "always".
+// Page 1 = `${base}/`
+// Page N>1 = `${base}page/N/`
+const base = basePath.endsWith("/") ? basePath : `${basePath}/`;
+const hrefFor = (n: number) => (n === 1 ? `${base}` : `${base}page/${n}/`);
 
 // Clamp
 const cur = Math.max(1, Math.min(current, Math.max(1, total)));

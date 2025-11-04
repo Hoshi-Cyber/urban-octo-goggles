@@ -1,6 +1,7 @@
 ---
 // File: src/components/blog/PostFeedLatest/index.astro
-// Implements Fix Plan 141.1: centralized helpers, parent-supplied canonical post URLs.
+// Implements Fix Plan 149: enforce 8-card cap on homepage feed,
+// prefer SSG pagination, optional client "load more".
 
 export interface Cover { src: string; alt?: string; width?: number; height?: number }
 export interface FM {
@@ -21,20 +22,26 @@ export interface Props {
   moreLabel?: string;
   moreAriaLabel?: string;
   ctaClass?: string;
+  /** When true, enable client "Load more". Default false because SSG pagination is preferred. */
+  clientLoadMore?: boolean;
 }
 
 import { categorySlug } from "../../../lib/slug";
 
 const {
   posts = [],
-  pageSize = 6,
+  pageSize = 8, // Fix Plan 149: default cap raised to 8
   eyebrow = "From the blog",
   title = "Latest articles",
   moreHref = "/blog/",
   moreLabel = "View all",
   moreAriaLabel,
   ctaClass = "pfl__viewAll",
+  clientLoadMore = false,
 } = Astro.props as Props;
+
+// Enforce cap at render time unless clientLoadMore is enabled.
+const renderList: Post[] = clientLoadMore ? posts : (posts ?? []).slice(0, pageSize);
 
 const fmt = (d: string | Date) =>
   new Date(d).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" });
@@ -58,16 +65,20 @@ import css from "./PostFeedLatest.css?url";
       {title && <h2 class="pfl__title">{title}</h2>}
     </header>
 
+    {/* Grid: CSS handles 1→2→4 columns. 4-up at wide screens per stylesheet. */}
     <div id="pfl-grid" class="pfl__grid" data-page-size={pageSize}>
-      {posts.map((p, idx) => {
-        const href = p.url; // canonical URL supplied by parent (Fix Plan 141)
+      {renderList.map((p, idx) => {
+        const href = p.url; // canonical URL supplied by parent
         const categoryLink = catHref(p);
         const dt = new Date(p.frontmatter.date);
         const dateIso = isNaN(dt.getTime()) ? undefined : dt.toISOString();
 
+        // If clientLoadMore=false we sliced already; when true, hide beyond pageSize.
+        const hiddenClass = clientLoadMore && idx >= pageSize ? "is-hidden" : "";
+
         return (
           <article
-            class={`pfl__card ${idx >= pageSize ? "is-hidden" : ""}`}
+            class={`pfl__card ${hiddenClass}`}
             data-index={idx}
             data-cat={(p.frontmatter?.category ?? "").trim() || "uncategorized"}
           >
@@ -114,7 +125,7 @@ import css from "./PostFeedLatest.css?url";
     </div>
 
     <div class="pfl__actions">
-      {posts.length > pageSize && (
+      {clientLoadMore && posts.length > pageSize && (
         <button id="pfl-more" class="btn btn-outline" data-cta="blog-load-more">Load more</button>
       )}
       <a
@@ -128,14 +139,14 @@ import css from "./PostFeedLatest.css?url";
     </div>
   </div>
 
-  <script is:inline>
-    (() => {
-      const grid = document.getElementById("pfl-grid");
-      const btn  = document.getElementById("pfl-more");
-      if (!grid) return;
-      const PAGE_SIZE = Number(grid.dataset.pageSize) || 6;
-      let shown = Math.min(PAGE_SIZE, grid.children.length);
-      if (btn) {
+  {clientLoadMore && (
+    <script is:inline>
+      (() => {
+        const grid = document.getElementById("pfl-grid");
+        const btn  = document.getElementById("pfl-more");
+        if (!grid || !btn) return;
+        const PAGE_SIZE = Number(grid.dataset.pageSize) || 8; // align with default
+        let shown = Math.min(PAGE_SIZE, grid.children.length);
         btn.addEventListener("click", () => {
           const hidden = Array.from(grid.querySelectorAll(".pfl__card.is-hidden"));
           const next = hidden.slice(0, PAGE_SIZE);
@@ -146,7 +157,7 @@ import css from "./PostFeedLatest.css?url";
           shown += next.length;
           if (shown >= grid.children.length) btn.remove();
         }, { passive: true });
-      }
-    })();
-  </script>
+      })();
+    </script>
+  )}
 </section>
