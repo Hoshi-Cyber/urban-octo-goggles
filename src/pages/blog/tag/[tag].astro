@@ -46,14 +46,15 @@ const posts = all
     const thumb = p.data.thumbnail ?? p.data.image ?? p.data.cover ?? p.data.ogImage ?? null;
     const thumbSrc = typeof thumb === "string" ? thumb : thumb?.src ?? "/assets/logos/logo-wide-1200.png";
     const thumbAlt = typeof thumb === "object" && thumb?.alt ? thumb.alt : p.data.title ?? "Post thumbnail";
+    const dt = new Date(p.data.date);
     return {
       url: `/blog/${p.slug}/`,
       title: p.data.title,
       description: p.data.description,
       readMin: p.data.readingTimeMinutes ?? p.data.readingTime ?? null,
       stage: p.data.stage ?? null,
-      date: new Date(p.data.date),
-      dateISO: new Date(p.data.date).toISOString(),
+      date: dt,
+      dateISO: isNaN(dt.getTime()) ? undefined : dt.toISOString(),
       thumbnailSrc: thumbSrc,
       thumbnailAlt: thumbAlt,
     };
@@ -88,6 +89,14 @@ const itemList = {
     name: p.title,
   })),
 };
+
+/** NEW per Fix Plan 146.1: CollectionPage JSON-LD mirroring /blog/ */
+const collectionPageLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  url: canonical,
+  name: `Tag: ${displayTag}`
+};
 ---
 
 <BaseLayout title={`Tag: ${displayTag}`} description={`Articles tagged ${displayTag} on CV Writing Kenya`}>
@@ -96,6 +105,7 @@ const itemList = {
     <meta property="og:url" content={canonical} />
     <script type="application/ld+json">{JSON.stringify(breadcrumbList)}</script>
     <script type="application/ld+json">{JSON.stringify(itemList)}</script>
+    <script type="application/ld+json">{JSON.stringify(collectionPageLd)}</script>
   </fragment>
 
   <section class="container" style="padding: var(--space-8) var(--space-4);">

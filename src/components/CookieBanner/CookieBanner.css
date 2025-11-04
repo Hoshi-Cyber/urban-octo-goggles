@@ -1,6 +1,27 @@
-/* CookieBanner — mobile-first, brand-aligned */
+/* CookieBanner — mobile-first, brand-aligned, CLS-safe */
 
-/* Root banner */
+/* ----------------------------------------------------
+   Reserved space to prevent layout shift (CLS)
+   JS updates --cb-height to the exact banner height.
+---------------------------------------------------- */
+:root { --cb-height: 96px; }          /* mobile fallback */
+@media (min-width: 640px){ :root { --cb-height: 112px; } }  /* sm */
+@media (min-width: 1024px){ :root { --cb-height: 128px; } } /* lg */
+
+.cb__reserve {
+  block-size: var(--cb-height);
+  inline-size: 100%;
+}
+
+/* When hidden via [hidden] attribute, collapse immediately */
+.cb[hidden],
+.cb__reserve[hidden] {
+  display: none !important;
+}
+
+/* ----------------------------------------------------
+   Root banner (bottom-fixed)
+---------------------------------------------------- */
 .cb {
   position: fixed;
   inset-inline: 0;
@@ -18,7 +39,9 @@
   padding-block: var(--space-4);
 }
 
-/* Content */
+/* ----------------------------------------------------
+   Content
+---------------------------------------------------- */
 .cb__title {
   margin: 0 0 var(--space-2);
   font-size: var(--fs-lg);
@@ -36,14 +59,18 @@
   text-decoration: underline;
 }
 
-/* Actions */
+/* ----------------------------------------------------
+   Actions
+---------------------------------------------------- */
 .cb__actions {
   display: flex;
   gap: var(--space-3);
   flex-wrap: wrap;
 }
 
-/* Larger screens: split content and actions */
+/* ----------------------------------------------------
+   Larger screens
+---------------------------------------------------- */
 @media (min-width: 640px) { /* sm */
   .cb__inner {
     grid-template-columns: 1fr auto;

@@ -27,12 +27,21 @@ type UrlItem = {
   priority?: number;
 };
 
+const PER_PAGE = 12; // keep in sync with /blog index + /blog/page/[page].astro
+
 export async function GET() {
   // Fetch all non-draft blog posts
   const entries = await getCollection("blog", ({ data }) => !data.draft);
 
+  // Sort newest -> oldest (same as listing code)
+  const sorted = [...entries].sort((a, b) => {
+    const da = new Date((a.data as any).date as string).getTime();
+    const db = new Date((b.data as any).date as string).getTime();
+    return db - da;
+  });
+
   // Post URLs: /blog/<category>/<slug>/
-  const postItems: UrlItem[] = entries.map((p) => {
+  const postItems: UrlItem[] = sorted.map((p) => {
     const postSlug = p.slug.split("/").pop()!;
     const categorySlug = slug(safe((p.data as any).category || "uncategorized"));
     const last =
@@ -50,7 +59,7 @@ export async function GET() {
 
   // Category index URLs: /blog/category/<category>/
   const latestByCategory = new Map<string, Date>();
-  for (const p of entries) {
+  for (const p of sorted) {
     const catSlug = slug(safe((p.data as any).category || "uncategorized"));
     const when = new Date(
       ((p.data as any).updated ??
@@ -71,7 +80,7 @@ export async function GET() {
 
   // Tag index URLs: /blog/tag/<tag>/
   const latestByTag = new Map<string, Date>();
-  for (const p of entries) {
+  for (const p of sorted) {
     const tags: unknown = (p.data as any).tags ?? [];
     const list = Array.isArray(tags) ? tags : [];
     const when = new Date(
@@ -112,10 +121,44 @@ export async function GET() {
     priority: 0.7,
   }));
 
+  // ---- NEW: Global blog pagination URLs (/blog/page/2..N) ----
+  // Listing logic uses "featured = newest; rest = others" and paginates the rest.
+  const totalItems = Math.max(0, sorted.length - 1);
+  const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+
+  const paginationItems: UrlItem[] =
+    totalPages > 1
+      ? Array.from({ length: totalPages - 1 }, (_, i) => {
+          const n = i + 2; // start at page 2
+          // Compute lastmod as the newest post inside this page slice (of the "rest")
+          const start = (n - 1) * PER_PAGE; // page 2 => slice starts at PER_PAGE
+          const end = start + PER_PAGE;
+          const rest = sorted.slice(1); // drop featured
+          const slice = rest.slice(start, end);
+          const newestInSlice = slice[0];
+          const lastmod =
+            newestInSlice
+              ? iso(
+                  (newestInSlice.data as any).updated ??
+                  (newestInSlice.data as any).updatedAt ??
+                  (newestInSlice.data as any).date
+                )
+              : undefined;
+
+          return {
+            loc: joinUrl(site.siteUrl, `/blog/page/${n}/`),
+            lastmod,
+            changefreq: "weekly",
+            priority: 0.6,
+          };
+        })
+      : [];
+
   // Combine and sort by lastmod desc
   const items = [
     ...baseItems,
     ...serviceUrls,
+    ...paginationItems, // include paginated listing URLs
     ...categoryItems,
     ...tagItems,
     ...postItems,

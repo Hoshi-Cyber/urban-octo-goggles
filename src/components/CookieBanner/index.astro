@@ -1,11 +1,20 @@
 ---
-/** File: src/components/CookieBanner/index.astro */
+/** File: src/components/CookieBanner/index.astro
+ * Fix Plan 146 — Bottom-fixed banner with reserved height to prevent CLS.
+ * - Renders a spacer (.cb__reserve) so content never jumps.
+ * - Height is synced to the real banner via JS (ResizeObserver).
+ * - If prior choice exists, hide both banner and spacer immediately.
+ */
 import "./CookieBanner.css";
 
 const storageKey = "consent.analytics.choice"; // 'granted' | 'denied'
 const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
 ---
 
+<!-- Reserve spacer: sits in normal flow so fixed banner doesn’t cause CLS -->
+<div id="cookie-banner-reserve" class="cb__reserve" aria-hidden="true"></div>
+
+<!-- Bottom-fixed banner -->
 <div
   id="cookie-banner"
   class="cb"
@@ -33,12 +42,12 @@ const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
 
 <script is:inline>
   (function () {
-    // Plain JS values. Avoid Astro mustache-in-mustache.
     var KEY = "consent.analytics.choice";
     var COOKIE = "consent_analytics";
 
-    var banner = document.getElementById('cookie-banner');
-    var accept = document.getElementById('cb-accept');
+    var banner  = document.getElementById('cookie-banner');
+    var reserve = document.getElementById('cookie-banner-reserve');
+    var accept  = document.getElementById('cb-accept');
     var decline = document.getElementById('cb-decline');
 
     function getChoice() {
@@ -53,7 +62,7 @@ const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
       } catch (_) {}
     }
     function updateConsent(granted) {
-      // Consent Mode v2
+      // Consent Mode v2 payload
       var payload = granted ? {
         analytics_storage: 'granted',
         ad_storage: 'granted',
@@ -70,25 +79,61 @@ const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
         event: 'consent_choice',
         consent: granted ? 'granted' : 'denied'
       });
+      // Fire site-wide hooks used by BaseLayout
+      window.dispatchEvent(new CustomEvent(granted ? 'cookie:accept' : 'cookie:decline'));
+      if (granted) window.dispatchEvent(new CustomEvent('cmp:accept'));
     }
 
-    function hide() { if (banner) banner.hidden = true; }
-    function show() { if (banner) banner.hidden = false; }
+    function show()  { if (banner)  banner.hidden  = false; if (reserve) reserve.hidden = false; }
+    function hide()  { if (banner)  banner.hidden  = true;  if (reserve) reserve.hidden = true;  }
 
-    // Expose a reopen hook for footer “Manage cookies”
-    window.openCookieBanner = function() { show(); };
+    // Sync spacer height with real banner height (handles responsive copy/buttons)
+    var ro;
+    function observeHeight() {
+      if (!banner) return;
+      if (typeof ResizeObserver === 'function') {
+        ro = new ResizeObserver(function(entries) {
+          var rect = entries[0] && entries[0].contentRect;
+          if (rect && rect.height) {
+            document.documentElement.style.setProperty('--cb-height', rect.height + 'px');
+          }
+        });
+        ro.observe(banner);
+      } else {
+        // Fallback: one-time measure
+        setTimeout(function(){
+          var h = banner.getBoundingClientRect().height;
+          if (h) document.documentElement.style.setProperty('--cb-height', h + 'px');
+        }, 0);
+      }
+    }
 
-    // Initial state: show only if no prior choice
+    // Expose a reopen hook (footer “Manage cookies”)
+    window.openCookieBanner = function() {
+      show(); observeHeight();
+    };
+
+    // Initial state
     var choice = getChoice();
-    if (!choice) { show(); }
+    if (choice === 'granted' || choice === 'denied') {
+      // User has a prior choice → collapse both immediately
+      hide();
+    } else {
+      // No choice yet → reserve space first, then show banner to avoid CLS
+      if (reserve) reserve.hidden = false;
+      show();
+      observeHeight();
+    }
 
     // Wire buttons
     if (accept) accept.addEventListener('click', function () {
       setChoice('granted'); updateConsent(true); hide();
+      if (ro && ro.disconnect) ro.disconnect();
     }, { passive: true });
 
     if (decline) decline.addEventListener('click', function () {
       setChoice('denied'); updateConsent(false); hide();
+      if (ro && ro.disconnect) ro.disconnect();
     }, { passive: true });
   })();
 </script>

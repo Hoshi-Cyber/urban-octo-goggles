@@ -1,8 +1,9 @@
 ---
-// src/components/blog/BlogHero/index.astro
-
 /**
+ * src/components/blog/BlogHero/index.astro
  * BlogHero — mobile-first hero with dual CTAs.
+ * Fix Plan 148.1: remove badge/statline, show image in full (no forced aspect-ratio).
+ *
  * Props:
  *  - title: string
  *  - sub?: string
@@ -34,7 +35,7 @@ const {
   cover = null,
 } = Astro.props as Props;
 
-import css from "./BlogHero.css?url"; // Fix Plan 95
+import css from "./BlogHero.css?url";
 ---
 
 <style is:global>
@@ -49,20 +50,31 @@ import css from "./BlogHero.css?url"; // Fix Plan 95
   <div class="container bloghero__wrap">
     <div class="bloghero__copy">
       <h1 class="bloghero__title h1">{title}</h1>
-      {sub && <p class="bloghero__sub">{sub}</p>}
+      {sub && <p id="bloghero-dek" class="bloghero__sub">{sub}</p>}
 
       <div class="bloghero__ctas">
-        <a href={primaryHref} class="btn btn-primary" data-cta="bloghero-primary">
+        <a
+          href={primaryHref}
+          class="btn btn-primary"
+          data-cta="bloghero-primary"
+          aria-describedby={sub ? "bloghero-dek" : undefined}
+        >
           {primaryLabel}
         </a>
-        <a href={secondaryHref} class="btn btn-accent" data-cta="bloghero-secondary">
+        <a
+          href={secondaryHref}
+          class="btn btn-accent"
+          data-cta="bloghero-secondary"
+          aria-describedby={sub ? "bloghero-dek" : undefined}
+        >
           {secondaryLabel}
         </a>
       </div>
     </div>
 
-    {cover?.src && (
-      <figure class="bloghero__media" aria-hidden="true">
+    {/* Media pane: image if provided, otherwise decorative fallback */}
+    <figure class="bloghero__media" aria-hidden="true">
+      {cover?.src ? (
         <img
           src={cover.src}
           alt={cover.alt ?? ""}
@@ -71,7 +83,12 @@ import css from "./BlogHero.css?url"; // Fix Plan 95
           loading="eager"
           decoding="async"
         />
-      </figure>
-    )}
+      ) : (
+        <div class="bloghero__fallback">
+          <span class="ring ring--lg"></span>
+          <span class="ring ring--sm"></span>
+        </div>
+      )}
+    </figure>
   </div>
 </section>

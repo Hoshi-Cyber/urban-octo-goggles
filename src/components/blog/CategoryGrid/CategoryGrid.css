@@ -1,75 +1,168 @@
 /* src/components/blog/CategoryGrid/CategoryGrid.css */
-/* CategoryGrid — mobile-first, token-driven */
+/* Unified card surface, visible keyline outline, responsive gaps/padding, single-line titles */
 
-.catgrid { padding-block: var(--space-6); }
+/* Section styling */
+.catgrid {
+  padding-block: var(--space-6);
+  background: color-mix(in oklab, var(--color-primary) 3%, #fff);
+  border-block: 1px solid var(--color-border);
+}
 @media (min-width: 768px) { .catgrid { padding-block: var(--space-8); } }
 
-.catgrid__head {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
+/* Header */
+.catgrid__head { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
 .catgrid__eyebrow {
-  margin: 0;
-  font-size: var(--fs-sm);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--color-muted);
+  margin: 0; font-size: var(--fs-sm); text-transform: uppercase;
+  letter-spacing: .08em; color: var(--color-muted);
 }
 .catgrid__title {
-  margin: 0;
-  font-weight: 800;
-  line-height: 1.15;
+  margin: 0; font-weight: 800; line-height: 1.15;
   font-size: clamp(var(--fs-xl), 3.6vw, var(--fs-3xl));
 }
 
-.catgrid__grid {
+/* Grid list */
+.cat-grid {
+  /* Fluid spacing and surfaces */
+  --grid-gap: clamp(var(--space-4), 1.2vw, var(--space-6));
+  --card-surface: color-mix(in oklab, var(--color-primary) 6%, #fff);
+  /* neutral keylines so they contrast the section bg across variants */
+  --card-keyline: color-mix(in oklab, var(--color-text) 12%, #fff);
+  --card-hairline: color-mix(in oklab, var(--color-text) 8%, transparent);
+
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
-}
-@media (min-width: 640px) {
-  .catgrid__grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-@media (min-width: 1024px) {
-  .catgrid__grid { grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-6); }
-}
+  gap: var(--grid-gap);                 /* uniform row/column gap at all sizes */
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-.catgrid__card {
+  /* NEW: ensure items stretch so rows equal the tallest card in the row */
+  align-items: stretch;
+}
+@media (min-width: 640px) { .cat-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (min-width: 1024px) { .cat-grid { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+/* Variants: keep only border + icon tint distinct */
+.cat { --card-br: var(--color-border); height: 100%; } /* NEW: li fills row height */
+.cat--a { --card-br: color-mix(in oklab, var(--color-primary) 35%, var(--color-border)); }
+.cat--b { --card-br: color-mix(in oklab, var(--color-accent)  35%, var(--color-border)); }
+.cat--c { --card-br: color-mix(in oklab, var(--color-info)    35%, var(--color-border)); }
+.cat--d { --card-br: color-mix(in oklab, var(--color-success) 35%, var(--color-border)); }
+
+/* Tile → vertical layout */
+.cat { min-height: 5.75rem; }
+.cat__link{
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-4);
-  align-items: center;
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  text-decoration: none;
+  grid-template-rows: auto 1fr auto;       /* icon / body / chevron */
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: var(--space-3);
+
+  /* Fluid, generous card padding for large screens */
+  --card-pad: clamp(var(--space-4), 1.25vw + .5rem, var(--space-6));
+  padding: var(--card-pad);
+
   color: inherit;
-  transition: transform .15s ease, box-shadow .15s ease;
-  min-height: 5.5rem;
-}
-.catgrid__card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  text-decoration: none;
+  background: linear-gradient(var(--card-surface), #fff);
 
-.catgrid__icon {
-  width: 3rem; height: 3rem;
-  border-radius: var(--radius-full);
+  /* Visible thin outline (inner keyline + outer hairline) */
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 0 0 1px var(--card-keyline),
+    0 0 0 1px var(--card-hairline),
+    var(--shadow-sm);
+
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, color .15s ease;
+  will-change: transform;
+  overflow: hidden;                /* contain gradient and focus ring */
+  background-clip: padding-box;    /* crisp edges */
+
+  /* NEW: card fills li so all tiles equalize in height */
+  height: 100%;
+}
+/* Slightly softer corners on very large screens to avoid tiles touching visually */
+@media (min-width: 1280px){
+  .cat__link{ border-radius: calc(var(--radius-xl) + 2px); }
+}
+
+/* Hover/focus: stronger outline, title + chevron tint, icon intensifies, no underline */
+.cat__link:hover,
+.cat__link:focus-visible{
+  transform: translateY(-2px) scale(0.985);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--card-keyline) 85%, var(--card-keyline)),
+    0 0 0 2px color-mix(in oklab, var(--card-hairline) 65%, transparent),
+    var(--shadow-md);
+  text-decoration: none;
+}
+.cat__link:hover .cat__title,
+.cat__link:focus-visible .cat__title { color: var(--color-primary); text-decoration: none; }
+.cat__link:hover .cat__chev,
+.cat__link:focus-visible .cat__chev { transform: translateX(4px); color: var(--color-primary); }
+
+/* Icon block */
+.cat__icon{
+  width: 3.25rem; height: 3.25rem;
+  border-radius: var(--radius-lg);
   display: grid; place-items: center;
-  background: color-mix(in oklab, var(--color-primary) 12%, #fff);
+  background: color-mix(in oklab, var(--color-primary) 10%, #fff);
   box-shadow: inset 0 0 0 1px rgba(17,24,39,.06);
-  font-size: 1.375rem;
+  font-size: 1.5rem; overflow: hidden;
+  transition: background-color .15s ease;
 }
-.catgrid__icon img { width: 1.5rem; height: 1.5rem; display: block; }
+.cat--b .cat__icon{ background: color-mix(in oklab, var(--color-accent) 10%, #fff); }
+.cat--c .cat__icon{ background: color-mix(in oklab, var(--color-info)   10%, #fff); }
+.cat--d .cat__icon{ background: color-mix(in oklab, var(--color-success)10%, #fff); }
 
-.catgrid__body { display: grid; gap: .25rem; }
-.catgrid__cardTitle { margin: 0; font-weight: 700; font-size: var(--fs-lg); }
-.catgrid__blurb { margin: 0; color: var(--color-muted); font-size: var(--fs-sm); }
+/* Icon intensifies on hover/focus */
+.cat--a .cat__link:hover .cat__icon,
+.cat--a .cat__link:focus-visible .cat__icon{ background: color-mix(in oklab, var(--color-primary) 18%, #fff); }
+.cat--b .cat__link:hover .cat__icon,
+.cat--b .cat__link:focus-visible .cat__icon{ background: color-mix(in oklab, var(--color-accent) 18%, #fff); }
+.cat--c .cat__link:hover .cat__icon,
+.cat--c .cat__link:focus-visible .cat__icon{ background: color-mix(in oklab, var(--color-info)   18%, #fff); }
+.cat--d .cat__link:hover .cat__icon,
+.cat--d .cat__link:focus-visible .cat__icon{ background: color-mix(in oklab, var(--color-success)18%, #fff); }
 
-/* Focus visible */
-.catgrid__card:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 40%, #fff);
+.cat__icon img, .cat__icon svg{ width: 1.6rem; height: 1.6rem; display: block; }
+
+/* Body */
+.cat__body{
+  display: grid;
+  gap: .375rem;
+  min-height: 0;            /* NEW: allow 1fr row to shrink properly */
 }
-@media (prefers-reduced-motion: reduce) {
-  .catgrid__card { transition: none; }
+.cat__title{
+  margin: 0; font-weight: 700; font-size: var(--fs-lg); line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* never wraps */
+  transition: color .15s ease;
 }
+@media (min-width: 1024px) { .cat__title{ font-size: var(--fs-xl); } }
+.cat__desc{ margin: 0; color: var(--color-muted); font-size: var(--fs-sm); }
+
+/* Count — smaller and distinct */
+.cat__count{
+  margin-top: .125rem; display: inline-block;
+  font-size: clamp(10px, 0.75rem, var(--fs-xs));
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted, var(--color-text));
+  opacity: .9;
+}
+
+/* Chevron */
+.cat__chev{
+  font-size: 1.125rem; line-height: 1; justify-self: end;
+  transition: transform .15s ease, color .15s ease;
+  color: var(--color-muted);
+}
+.cat__link:hover .cat__chev,
+.cat__link:focus-visible .cat__chev{ transform: translateX(4px); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){ .cat__link, .cat__chev, .cat__title, .cat__icon{ transition: none; } }

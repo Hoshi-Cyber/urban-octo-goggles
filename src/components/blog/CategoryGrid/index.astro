@@ -1,14 +1,29 @@
 ---
 // src/components/blog/CategoryGrid/index.astro
 /**
- * CategoryGrid — 4 category cards, responsive, a11y-first.
+ * CategoryGrid — vertical cards with variants per Fix Plan 147.2.
+ * Structure: section -> h2 -> ul > li > a (icon, body, chevron)
+ * Single-line titles, inline SVG support, per-card variant classes.
+ *
  * Props:
  *  - eyebrow?: string
  *  - title?: string
- *  - items: Array<{ icon?: string; title: string; blurb: string; href: string }>
+ *  - items: Array<{
+ *      icon?: string;   // emoji, inline <svg> string, or asset path
+ *      title: string;
+ *      blurb: string;
+ *      href: string;
+ *      count?: number;
+ *    }>
  */
 
-export interface Item { icon?: string; title: string; blurb: string; href: string }
+export interface Item {
+  icon?: string;
+  title: string;
+  blurb: string;
+  href: string;
+  count?: number;
+}
 export interface Props {
   eyebrow?: string;
   title?: string;
@@ -16,8 +31,8 @@ export interface Props {
 }
 
 const {
-  eyebrow = "Explore topics",
-  title = "Featured categories",
+  eyebrow = "Topics",
+  title = "Explore Categories",
   items = [],
 } = Astro.props as Props;
 
@@ -32,32 +47,49 @@ import css from "./CategoryGrid.css?url";
 </style>
 <link rel="stylesheet" href={css} />
 
-<section class="catgrid" aria-label="Featured categories">
+<section class="catgrid" aria-labelledby="cat-heading">
   <div class="container">
     <header class="catgrid__head">
       {eyebrow && <p class="catgrid__eyebrow">{eyebrow}</p>}
-      {title && <h2 class="catgrid__title">{title}</h2>}
+      <h2 id="cat-heading" class="catgrid__title">{title}</h2>
     </header>
 
-    <div class="catgrid__grid">
-      {items.slice(0, 4).map((c) => (
-        <a
-          href={c.href}
-          class="catgrid__card"
-          data-cta="category-card"
-          aria-label={`Open ${c.title} category`}
-        >
-          <div class="catgrid__icon" aria-hidden="true">
-            {c.icon?.endsWith?.(".svg") || c.icon?.startsWith?.("/")
-              ? <img src={c.icon} alt="" loading="lazy" decoding="async" fetchpriority="low" />
-              : <span>{c.icon ?? "📚"}</span>}
-          </div>
-          <div class="catgrid__body">
-            <h3 class="catgrid__cardTitle">{c.title}</h3>
-            <p class="catgrid__blurb">{c.blurb}</p>
-          </div>
-        </a>
-      ))}
-    </div>
+    <ul class="cat-grid" role="list">
+      {items.slice(0, 4).map((c, i) => {
+        const variant = (["a","b","c","d"] as const)[i % 4];
+        return (
+          <li class={`cat cat--${variant}`}>
+            <a
+              href={c.href}
+              class="cat__link"
+              aria-label={`Browse ${c.title}`}
+              data-cta="category-card"
+            >
+              <div class="cat__icon" aria-hidden="true">
+                {
+                  // Inline SVG string
+                  c.icon?.includes?.("<svg")
+                    ? <div set:html={c.icon} />
+                    // Asset path
+                    : (c.icon?.endsWith?.(".svg") || c.icon?.startsWith?.("/"))
+                      ? <img src={c.icon} alt="" loading="lazy" decoding="async" fetchpriority="low" />
+                      // Emoji or fallback
+                      : <span>{c.icon ?? "📚"}</span>
+                }
+              </div>
+
+              <div class="cat__body">
+                {/* Single-line with tooltip via title attr */}
+                <h3 class="cat__title" title={c.title}>{c.title}</h3>
+                {c.blurb && <p class="cat__desc">{c.blurb}</p>}
+                {typeof c.count === "number" && <span class="cat__count">{c.count} posts</span>}
+              </div>
+
+              <div class="cat__chev" aria-hidden="true">→</div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
   </div>
 </section>

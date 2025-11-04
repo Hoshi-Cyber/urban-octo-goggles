@@ -1,39 +1,68 @@
 ---
-// File: src/components/layout/BlogPost.astro
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
 import CookieBanner from "../CookieBanner/index.astro";
 import "../../styles/index.css";
 import siteConfig from "@/site.config.json";
 
+export interface SEO {
+  canonical?: string;
+  ogImage?: string;
+  [key: string]: any;
+}
 export interface Props {
   title?: string;
   description?: string;
-  seo?: { canonical?: string; ogImage?: string } | Record<string, unknown>;
+  /** Absolute or path; if omitted we’ll derive from Astro.url */
+  canonical?: string | null;
+  /** Absolute or path; omit when not paginated */
+  relPrev?: string | null;
+  /** Absolute or path; omit when not paginated */
+  relNext?: string | null;
+  /** Optional extra SEO props (ogImage, etc.) */
+  seo?: SEO | Record<string, unknown>;
 }
 
-const { title = "", description = "", seo = {} } = Astro.props as Props;
+const {
+  title = "",
+  description = "",
+  canonical: inCanonical = null,
+  relPrev = null,
+  relNext = null,
+  seo = {},
+} = Astro.props as Props;
+
 const headTitle = String(title).trim() || "CV Writing Kenya";
 
 const isDev = import.meta.env.DEV;
-const base = isDev ? "" : siteConfig.siteUrl;
+const siteUrl = (siteConfig as any).siteUrl?.replace(/\/$/, "") ?? "";
+const base = isDev ? "" : siteUrl;
 
-// Canonical: relative in dev, absolute in prod
-const canonical = (() => {
-  const fromSeo = (seo as any)?.canonical as string | undefined;
-  if (isDev) return fromSeo || Astro.url.pathname;
-  return fromSeo ? new URL(fromSeo, base).toString() : `${base}${Astro.url.pathname}`;
-})();
+// Canonical: relative in dev, absolute in prod; prefer explicit prop, then seo.canonical, then request URL
+const canonicalSrc =
+  (typeof inCanonical === "string" && inCanonical) ||
+  (seo as any)?.canonical ||
+  Astro.url.pathname;
+
+const canonical = canonicalSrc?.startsWith("http")
+  ? canonicalSrc
+  : `${base}${canonicalSrc ?? ""}`;
+
+// prev/next: allow relative or absolute; normalize to absolute in prod, relative in dev
+function absOrRel(href: string | null): string | null {
+  if (!href) return null;
+  if (href.startsWith("http")) return href;
+  return `${base}${href}`;
+}
+const prevHref = absOrRel(relPrev);
+const nextHref = absOrRel(relNext);
 
 // OG image: relative in dev, absolute in prod
-const ogImage = (() => {
-  const fromSeo = (seo as any)?.ogImage as string | undefined;
-  if (isDev) return fromSeo || "/assets/logos/logo-square-512.png";
-  return (fromSeo
-    ? new URL(fromSeo, base)
-    : new URL("/assets/logos/logo-square-512.png", base)
-  ).toString();
-})();
+const ogImageIn = (seo as any)?.ogImage as string | undefined;
+const ogImage = isDev
+  ? (ogImageIn || "/assets/logos/logo-square-512.png")
+  : (ogImageIn ? new URL(ogImageIn, base).toString()
+               : new URL("/assets/logos/logo-square-512.png", base).toString());
 
 const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
 ---
@@ -45,7 +74,10 @@ const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
 
     <title>{headTitle}</title>
     {description && <meta name="description" content={description} />}
+
     <link rel="canonical" href={canonical} />
+    {prevHref && <link rel="prev" href={prevHref} />}
+    {nextHref && <link rel="next" href={nextHref} />}
 
     <!-- Performance: network hints -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
@@ -57,7 +89,7 @@ const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/logos/apple-touch-icon-180.png" />
 
     <meta property="og:site_name" content="CV Writing Kenya" />
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={headTitle} />
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonical} />
