@@ -1,20 +1,43 @@
 ---
 // src/components/blog/TrendingList/index.astro
 /**
- * TrendingList — compact list of trending links.
+ * TrendingList — compact, responsive list with optional thumbnails.
+ * Fix Plan 152:
+ *  - Remove visible numbering.
+ *  - Footer CTA uses the same primary button style as Latest articles (.pfl__viewAll).
+ *
  * Props:
- *  - items: Array<{ title: string; href: string; meta?: string }>
+ *  - items: Array<{
+ *      title: string;
+ *      href: string;
+ *      category?: string;
+ *      date?: string;                 // preformatted, e.g., "29 Oct 2025"
+ *      readingTime?: number;          // minutes
+ *      cover?: { src: string; alt?: string } | null;
+ *    }>
  *  - eyebrow?: string
  *  - title?: string
- *  - limit?: number         // default 5
+ *  - limit?: number                   // default 5
+ *  - viewAllHref?: string             // default "/blog/?sort=popular"
+ *  - viewAllLabel?: string            // default "View all trending"
  */
 
-export interface Item { title: string; href: string; meta?: string }
+export interface Cover { src: string; alt?: string }
+export interface Item {
+  title: string;
+  href: string;
+  category?: string;
+  date?: string;
+  readingTime?: number;
+  cover?: Cover | null;
+}
 export interface Props {
   items: Item[];
   eyebrow?: string;
   title?: string;
   limit?: number;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 }
 
 const {
@@ -22,9 +45,11 @@ const {
   eyebrow = "Popular this month",
   title = "Trending",
   limit = 5,
+  viewAllHref = "/blog/?sort=popular",
+  viewAllLabel = "View all trending",
 } = Astro.props as Props;
 
-const top = items.slice(0, Math.max(0, limit));
+const top = Array.isArray(items) ? items.slice(0, Math.max(0, limit)) : [];
 
 import css from "./TrendingList.css?url";
 ---
@@ -44,22 +69,64 @@ import css from "./TrendingList.css?url";
         {title && <h2 class="trend__title">{title}</h2>}
       </header>
 
-      <ol class="trend__list">
-        {top.map((t, i) => (
-          <li class="trend__item">
-            <a href={t.href} class="trend__link" data-cta="trending-link">
-              <span class="trend__rank" aria-hidden="true">{i + 1}</span>
-              <span class="trend__text">
-                <span class="trend__label clamp-2">{t.title}</span>
-                {t.meta && <span class="trend__meta">{t.meta}</span>}
+      {/* Ordered list kept for a11y semantics; numbers not rendered visually */}
+      <ol class="tl" start="1">
+        {top.map((t) => (
+          <li class="tl__item">
+            <a
+              href={t.href}
+              class="tl__link"
+              data-cta="trending-link"
+              aria-label={`Read ${t.title}`}
+            >
+              {/* optional thumbnail */}
+              {t.cover?.src && (
+                <img
+                  class="tl__thumb"
+                  src={t.cover.src}
+                  alt={t.cover.alt ?? t.title}
+                  width="56"
+                  height="56"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="56px"
+                />
+              )}
+
+              {/* content */}
+              <span class="tl__content">
+                <span class="tl__title clamp-1">{t.title}</span>
+                <span class="tl__meta">
+                  {t.category && <span class="tl__chip">{t.category}</span>}
+                  {t.date && <time>{t.date}</time>}
+                  {typeof t.readingTime === "number" && (
+                    <span aria-hidden="true"> · {t.readingTime} min read</span>
+                  )}
+                </span>
               </span>
-              <svg class="trend__chev" viewBox="0 0 20 20" aria-hidden="true" width="20" height="20">
-                <path d="M7 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+
+              {/* chevron */}
+              <svg class="tl__chev" viewBox="0 0 20 20" aria-hidden="true" width="20" height="20">
+                <path
+                  d="M7 5l5 5-5 5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
             </a>
           </li>
         ))}
       </ol>
+
+      {/* Footer CTA styled like Latest articles */}
+      <p class="tl__footer">
+        <a class="pfl__viewAll" href={viewAllHref} data-cta="trending-view-all">
+          {viewAllLabel}
+        </a>
+      </p>
     </div>
   </section>
 )}

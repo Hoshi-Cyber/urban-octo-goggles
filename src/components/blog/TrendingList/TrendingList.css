@@ -1,8 +1,10 @@
-/* TrendingList — mobile-first, token-driven */
+/* TrendingList — mobile-first, token-driven (Fix Plan 152) */
 
+/* Section rhythm */
 .trend { padding-block: var(--space-6); }
 @media (min-width: 768px) { .trend { padding-block: var(--space-8); } }
 
+/* Head */
 .trend__head {
   display: grid;
   gap: var(--space-2);
@@ -22,62 +24,90 @@
   font-size: clamp(var(--fs-xl), 3.2vw, var(--fs-2xl));
 }
 
-.trend__list {
+/* Ordered list grid */
+.tl {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: var(--space-2);
+  grid-template-columns: 1fr; /* mobile: single column */
+}
+@media (min-width: 1024px) {
+  .tl {
+    grid-template-columns: 1fr 1fr; /* desktop: two columns */
+  }
 }
 
-.trend__item {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,.04));
-}
+.tl__item { list-style: none; }
 
-.trend__link {
+/* Clickable row */
+.tl__link {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto; /* thumb | content | chevron */
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1, var(--color-surface));
   color: inherit;
   text-decoration: none;
   transition: background-color .12s ease, box-shadow .12s ease, transform .12s ease;
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,.04));
 }
-.trend__link:hover {
+.tl__link:hover {
   background: color-mix(in oklab, var(--color-primary) 6%, #fff);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
-.trend__rank {
-  width: 2rem; height: 2rem;
-  display: grid; place-items: center;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  color: var(--color-primary);
-  background: color-mix(in oklab, var(--color-primary) 12%, #fff);
-  box-shadow: inset 0 0 0 1px rgba(17,24,39,.08);
+/* Thumbnail */
+.tl__thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--surface-2, #f6f7f9);
 }
 
-.trend__text { display: grid; gap: .125rem; }
-.trend__label { font-weight: 600; }
-.trend__meta { font-size: var(--fs-xs, .75rem); color: var(--color-muted); }
-
-.trend__chev { color: var(--color-muted); }
-
-.clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Content block */
+.tl__content { display: grid; gap: .125rem; min-width: 0; }
+.tl__title { font-weight: 600; }
+.tl__meta {
+  font-size: var(--fs-xs, .75rem);
+  color: var(--color-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: .5ch;
+  flex-wrap: wrap;
 }
+
+/* Category chip */
+.tl__chip {
+  display: inline-block;
+  padding: .125rem .5rem;
+  border-radius: 999px;
+  background: var(--surface-3, #eef1f6);
+  color: inherit;
+}
+
+/* Chevron */
+.tl__chev { color: var(--color-muted); }
+
+/* Footer CTA: use same spacing as feed actions; button style comes from .pfl__viewAll */
+.tl__footer { margin-top: var(--space-6); }
 
 /* Focus visible */
-.trend__link:focus-visible {
+.tl__link:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 40%, #fff);
   border-radius: var(--radius-lg);
+}
+
+/* Utilities */
+.clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
