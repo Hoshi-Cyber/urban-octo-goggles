@@ -12,10 +12,10 @@ CVWriting.co.ke is built by Kenyan career strategists and HR professionals who u
 
 ### Our Philosophy
 
-* **Results‑driven:** Every CV and cover letter is designed to help you secure interviews.
-* **Monetization‑first:** We view your career as an asset that should generate value over time.
-* **Systemic:** Our processes ensure consistent quality and repeatable success.
-* **Long‑term:** We build documents that grow with your career, not just your next application.
+- **Results‑driven:** Every CV and cover letter is designed to help you secure interviews.
+- **Monetization‑first:** We view your career as an asset that should generate value over time.
+- **Systemic:** Our processes ensure consistent quality and repeatable success.
+- **Long‑term:** We build documents that grow with your career, not just your next application.
 
 We don’t share lengthy founder bios or irrelevant credentials; we focus on what matters—helping you succeed in Kenya’s competitive market.
 

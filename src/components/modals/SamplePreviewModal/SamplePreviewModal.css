@@ -5,84 +5,151 @@
 @import "../../../styles/breakpoints.css";
 
 /* Root and backdrop */
-.spm { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
-.spm__backdrop{
-  position:absolute; inset:0;
-  background: color-mix(in oklab, #000 55%, transparent);
-  opacity:0; transition:opacity .15s ease;
+.spm {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
 }
-@supports not (background: color-mix(in oklab, black 50%, white)){
-  .spm__backdrop{ background: rgba(0,0,0,.55); }
+.spm__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, #000 55%, transparent);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+@supports not (background: color-mix(in oklab, black 50%, white)) {
+  .spm__backdrop {
+    background: rgba(0, 0, 0, 0.55);
+  }
 }
 
 /* Dialog */
-.spm__dialog{
-  position:absolute;
-  inset-inline:0; bottom:0; margin:0 auto;
-  max-width:min(960px,100vw); width:100%;
-  background:var(--color-background,#fff);
-  color:var(--color-text,#111);
-  border-radius:var(--radius-2xl,1rem) var(--radius-2xl,1rem) 0 0;
-  box-shadow:0 -8px 30px rgba(0,0,0,.18);
-  transform:translateY(12%); opacity:0;
-  transition:transform .2s ease, opacity .2s ease;
-  outline:none; display:grid; max-height:92vh;
+.spm__dialog {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  margin: 0 auto;
+  max-width: min(960px, 100vw);
+  width: 100%;
+  background: var(--color-background, #fff);
+  color: var(--color-text, #111);
+  border-radius: var(--radius-2xl, 1rem) var(--radius-2xl, 1rem) 0 0;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
+  transform: translateY(12%);
+  opacity: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  outline: none;
+  display: grid;
+  max-height: 92vh;
   contain: content;
 }
 
 /* Header */
-.spm__header{
-  display:grid; grid-template-columns:1fr auto; align-items:center;
-  gap:.5rem; padding:1rem 1rem .5rem;
-  border-bottom:1px solid rgba(17,24,39,.08);
+.spm__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
 }
-.spm__title{ margin:0; font-weight:600; font-size:clamp(1.125rem,1vw + 1rem,1.5rem); }
-.spm__close{
-  appearance:none; border:0; background:transparent; color:var(--color-text,#111);
-  font-size:1.5rem; line-height:1; width:44px; height:44px; /* a11y target */
-  border-radius:.5rem; cursor:pointer;
+.spm__title {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(1.125rem, 1vw + 1rem, 1.5rem);
 }
-.spm__close:focus-visible{
-  outline:2px solid var(--color-primary,#0B57D0);
-  outline-offset:2px;
+.spm__close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--color-text, #111);
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 44px;
+  height: 44px; /* a11y target */
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.spm__close:focus-visible {
+  outline: 2px solid var(--color-primary, #0b57d0);
+  outline-offset: 2px;
 }
 
 /* Content */
-.spm__content{ overflow:auto; padding:1rem; display:grid; gap:1rem; }
-.spm__media img{ width:100%; height:auto; border-radius:.75rem; display:block; }
-.spm__ba{ display:grid; gap:1rem; }
-.spm__block{
-  background: color-mix(in oklab, var(--color-primary,#0B57D0) 6%, #fff);
-  border:1px solid color-mix(in oklab, var(--color-primary,#0B57D0) 24%, #e5e7eb);
-  border-radius:.75rem; padding:.85rem;
+.spm__content {
+  overflow: auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
 }
-@supports not (background: color-mix(in oklab, white 50%, black)){
-  .spm__block{
-    background:#f8fafc;
-    border:1px solid #e5e7eb;
+.spm__media img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  display: block;
+}
+.spm__ba {
+  display: grid;
+  gap: 1rem;
+}
+.spm__block {
+  background: color-mix(in oklab, var(--color-primary, #0b57d0) 6%, #fff);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary, #0b57d0) 24%, #e5e7eb);
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+}
+@supports not (background: color-mix(in oklab, white 50%, black)) {
+  .spm__block {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
   }
 }
-.spm__eyebrow{
-  margin:0 0 .25rem; font-size:.8rem; letter-spacing:.06em;
-  text-transform:uppercase; color:var(--color-muted,#6b7280);
+.spm__eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted, #6b7280);
 }
-.spm__text{ margin:0; font-size:.95rem; color:var(--color-text,#111); }
+.spm__text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text, #111);
+}
 
 /* Open state */
-.spm.is-open{ pointer-events:auto; }
-.spm.is-open .spm__backdrop{ opacity:1; }
-.spm.is-open .spm__dialog{ transform:translateY(0); opacity:1; }
+.spm.is-open {
+  pointer-events: auto;
+}
+.spm.is-open .spm__backdrop {
+  opacity: 1;
+}
+.spm.is-open .spm__dialog {
+  transform: translateY(0);
+  opacity: 1;
+}
 
 /* Larger screens: center dialog */
-@media (min-width:1024px){
-  .spm__dialog{
-    top:50%; bottom:auto; transform:translateY(10%);
-    border-radius:var(--radius-2xl,1rem);
+@media (min-width: 1024px) {
+  .spm__dialog {
+    top: 50%;
+    bottom: auto;
+    transform: translateY(10%);
+    border-radius: var(--radius-2xl, 1rem);
   }
-  .spm.is-open .spm__dialog{ transform:translateY(-50%); }
+  .spm.is-open .spm__dialog {
+    transform: translateY(-50%);
+  }
 }
 
 /* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .spm__backdrop, .spm__dialog{ transition:none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .spm__backdrop,
+  .spm__dialog {
+    transition: none !important;
+  }
 }

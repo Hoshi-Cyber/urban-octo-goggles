@@ -9,7 +9,10 @@
     "children": [
       { "label": "CV Writing", "href": "/services/cv-writing/" },
       { "label": "Cover Letter", "href": "/services/cover-letter/" },
-      { "label": "LinkedIn Optimization", "href": "/services/linkedin-optimization/" }
+      {
+        "label": "LinkedIn Optimization",
+        "href": "/services/linkedin-optimization/"
+      }
     ]
   },
   {

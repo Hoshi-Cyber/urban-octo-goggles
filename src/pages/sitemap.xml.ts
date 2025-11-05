@@ -43,7 +43,9 @@ export async function GET() {
   // Post URLs: /blog/<category>/<slug>/
   const postItems: UrlItem[] = sorted.map((p) => {
     const postSlug = p.slug.split("/").pop()!;
-    const categorySlug = slug(safe((p.data as any).category || "uncategorized"));
+    const categorySlug = slug(
+      safe((p.data as any).category || "uncategorized"),
+    );
     const last =
       (p.data as any).updated ??
       (p.data as any).updatedAt ??
@@ -64,7 +66,7 @@ export async function GET() {
     const when = new Date(
       ((p.data as any).updated ??
         (p.data as any).updatedAt ??
-        (p.data as any).date) as string
+        (p.data as any).date) as string,
     );
     const prev = latestByCategory.get(catSlug);
     if (!prev || when > prev) latestByCategory.set(catSlug, when);
@@ -75,7 +77,7 @@ export async function GET() {
       lastmod: iso(when),
       changefreq: "weekly",
       priority: 0.5,
-    })
+    }),
   );
 
   // Tag index URLs: /blog/tag/<tag>/
@@ -86,7 +88,7 @@ export async function GET() {
     const when = new Date(
       ((p.data as any).updated ??
         (p.data as any).updatedAt ??
-        (p.data as any).date) as string
+        (p.data as any).date) as string,
     );
     for (const t of list) {
       const tagSlug = slug(safe(t));
@@ -101,13 +103,17 @@ export async function GET() {
       lastmod: iso(when),
       changefreq: "weekly",
       priority: 0.4,
-    })
+    }),
   );
 
   // Top-level essentials
   const baseItems: UrlItem[] = [
     { loc: joinUrl(site.siteUrl, "/"), changefreq: "weekly", priority: 0.8 },
-    { loc: joinUrl(site.siteUrl, "/blog/"), changefreq: "weekly", priority: 0.7 },
+    {
+      loc: joinUrl(site.siteUrl, "/blog/"),
+      changefreq: "weekly",
+      priority: 0.7,
+    },
   ];
 
   // Static service pages moved to .astro
@@ -136,14 +142,13 @@ export async function GET() {
           const rest = sorted.slice(1); // drop featured
           const slice = rest.slice(start, end);
           const newestInSlice = slice[0];
-          const lastmod =
-            newestInSlice
-              ? iso(
-                  (newestInSlice.data as any).updated ??
+          const lastmod = newestInSlice
+            ? iso(
+                (newestInSlice.data as any).updated ??
                   (newestInSlice.data as any).updatedAt ??
-                  (newestInSlice.data as any).date
-                )
-              : undefined;
+                  (newestInSlice.data as any).date,
+              )
+            : undefined;
 
           return {
             loc: joinUrl(site.siteUrl, `/blog/page/${n}/`),
@@ -177,7 +182,9 @@ ${items
       `<loc>${u.loc}</loc>`,
       u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : "",
       u.changefreq ? `<changefreq>${u.changefreq}</changefreq>` : "",
-      typeof u.priority === "number" ? `<priority>${u.priority.toFixed(1)}</priority>` : "",
+      typeof u.priority === "number"
+        ? `<priority>${u.priority.toFixed(1)}</priority>`
+        : "",
     ]
       .filter(Boolean)
       .join("");

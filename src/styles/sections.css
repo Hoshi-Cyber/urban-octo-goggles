@@ -11,28 +11,46 @@
 }
 
 /* Stack utility: apply to a wrapper of sibling sections */
-.stack > * + * { margin-block-start: var(--section-gap); }
+.stack > * + * {
+  margin-block-start: var(--section-gap);
+}
 
 /* Modifiers for special cases */
-.stack--tight > * + * { margin-block-start: clamp(var(--space-4), 2.2vw, var(--space-6)); }
-.stack--loose > * + * { margin-block-start: clamp(var(--space-8), 5vw, var(--space-16)); }
+.stack--tight > * + * {
+  margin-block-start: clamp(var(--space-4), 2.2vw, var(--space-6));
+}
+.stack--loose > * + * {
+  margin-block-start: clamp(var(--space-8), 5vw, var(--space-16));
+}
 /* Use when only the first gap (e.g., after Breadcrumbs) should be tighter */
-.stack--first-tight > :first-child + * { margin-block-start: clamp(var(--space-3), 1.5vw, var(--space-5)); }
+.stack--first-tight > :first-child + * {
+  margin-block-start: clamp(var(--space-3), 1.5vw, var(--space-5));
+}
 
 /* Ensure bottom breathing room before the site footer */
-.page-gap-after { padding-bottom: var(--page-gap); }
+.page-gap-after {
+  padding-bottom: var(--page-gap);
+}
 
 /* Section header pattern (consistent across pages) */
-.section-head { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
+.section-head {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
 .section-title {
   margin: 0;
   font-weight: 800;
   line-height: 1.15;
   font-size: clamp(var(--fs-xl), 3.6vw, var(--fs-3xl));
 }
-.section-sub { margin: 0; }
+.section-sub {
+  margin: 0;
+}
 
 /* Anchor offset if you use a sticky header */
-[id] { scroll-margin-top: clamp(56px, 8vh, 96px); }
+[id] {
+  scroll-margin-top: clamp(56px, 8vh, 96px);
+}
 
 /* Safety: never fight component internals like PostGrid gaps or card paddings */

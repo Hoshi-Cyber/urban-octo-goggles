@@ -26,7 +26,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Projects prove capability quickly. Structure them as short caselets with clear outcomes.
@@ -53,16 +52,16 @@ Include university, freelance, volunteer, or internal improvement work.
 
 ## Table: project caselets
 
-| Project | Outcome |
-|---|---|
+| Project                        | Outcome                                                             |
+| ------------------------------ | ------------------------------------------------------------------- |
 | Inventory dashboard (Power BI) | Cut stock-outs **-28%** across 12 branches; alerts via WhatsApp API |
-| Route optimisation (Python) | Reduced fuel costs **-11%** in Western region pilot |
-| E-commerce revamp (Shopify) | Checkout conversion **+18%** after UX simplification |
+| Route optimisation (Python)    | Reduced fuel costs **-11%** in Western region pilot                 |
+| E-commerce revamp (Shopify)    | Checkout conversion **+18%** after UX simplification                |
 
 ## Checklist (publish-ready)
 
-- [ ] 3–5 outcome-first caselets  
-- [ ] Links to artefacts or code  
+- [ ] 3–5 outcome-first caselets
+- [ ] Links to artefacts or code
 - [ ] Metrics in **KES** or %
 
 ## Proof and pitfalls

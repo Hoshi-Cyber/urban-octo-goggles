@@ -4,17 +4,27 @@
 .bcta {
   padding-block: var(--space-8);
   background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  border-top: 1px solid rgba(17,24,39,.06);
+  border-top: 1px solid rgba(17, 24, 39, 0.06);
   contain: content;
 }
 
 @supports not (background: color-mix(in oklab, white 50%, black)) {
   /* Fallback if color-mix is unsupported */
-  .bcta { background: var(--color-surface, #f8fafc); }
+  .bcta {
+    background: var(--color-surface, #f8fafc);
+  }
 }
 
-@media (min-width: 768px) { .bcta { padding-block: var(--space-10); } }
-@media (min-width: 1024px) { .bcta { padding-block: var(--space-12); } }
+@media (min-width: 768px) {
+  .bcta {
+    padding-block: var(--space-10);
+  }
+}
+@media (min-width: 1024px) {
+  .bcta {
+    padding-block: var(--space-12);
+  }
+}
 
 .bcta__wrap {
   display: grid;
@@ -64,10 +74,17 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .bcta, .bcta__btn { transition: none; }
+  .bcta,
+  .bcta__btn {
+    transition: none;
+  }
 }
 
 /* Print */
 @media print {
-  .bcta { background: #fff; border: 0; padding-block: var(--space-4); }
+  .bcta {
+    background: #fff;
+    border: 0;
+    padding-block: var(--space-4);
+  }
 }

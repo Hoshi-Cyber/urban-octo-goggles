@@ -26,7 +26,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Your CV must satisfy two audiences: ATS parsers and busy recruiters. Use explicit section labels, simple layout, and role-matching tokens to raise match scores without keyword stuffing.
@@ -49,9 +48,9 @@ Extract 6–10 requirements. Build a token list: job title, core tools, methods,
 
 ### Step 2: structure and file rules
 
-- One or two pages.  
-- Font: system sans or serif.  
-- File: **PDF**.  
+- One or two pages.
+- Font: system sans or serif.
+- File: **PDF**.
 - No text in images. No tables. Left-aligned text, single column.
 
 ### Step 3: tokenise bullets
@@ -60,20 +59,20 @@ Use **action + scope + metric + result** and inject 1–2 tokens per bullet. Exa
 
 ## Table: ATS-safe labels and risky variants
 
-| ATS-safe label | Risky variant |
-|---|---|
-| Summary | About me |
-| Experience | What I did |
-| Education | Learning journey |
-| Skills | Tools I love |
-| Certifications | Badges |
+| ATS-safe label | Risky variant    |
+| -------------- | ---------------- |
+| Summary        | About me         |
+| Experience     | What I did       |
+| Education      | Learning journey |
+| Skills         | Tools I love     |
+| Certifications | Badges           |
 
 ## Checklist (publish-ready)
 
-- [ ] Exact job title appears in Summary and Experience  
-- [ ] 10–15 tokens appear naturally, not stuffed  
-- [ ] Bullet formula used with **KES** or % metrics  
-- [ ] Simple PDF, single column, no tables  
+- [ ] Exact job title appears in Summary and Experience
+- [ ] 10–15 tokens appear naturally, not stuffed
+- [ ] Bullet formula used with **KES** or % metrics
+- [ ] Simple PDF, single column, no tables
 - [ ] No graphics that hold text
 
 ## Proof and pitfalls

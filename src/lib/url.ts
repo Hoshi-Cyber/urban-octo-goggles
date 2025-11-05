@@ -9,5 +9,4 @@ export const slugify = (s: string) =>
 export const postPath = (category: string, slug: string) =>
   `/blog/${slugify(category)}/${slug.replace(/^\/|\/$/g, "")}/`;
 
-export const categoryPath = (category: string) =>
-  `/blog/${slugify(category)}/`;
+export const categoryPath = (category: string) => `/blog/${slugify(category)}/`;

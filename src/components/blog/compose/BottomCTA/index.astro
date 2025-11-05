@@ -1,5 +1,6 @@
 ---
-/* src/components/blog/compose/BottomCTA/index.astro */
+// File: src/components/blog/compose/BottomCTA/index.astro
+
 export interface Props {
   title: string;
   sub?: string;
@@ -7,18 +8,16 @@ export interface Props {
   label: string;
 }
 
-const { title, sub = "ATS-optimized CVs, cover letters, and LinkedIn profiles.", href, label } = Astro.props as Props;
+const {
+  title,
+  sub = "ATS-optimized CVs, cover letters, and LinkedIn profiles.",
+  href,
+  label
+} = Astro.props as Props;
 
-// static CSS import
+// Keep only local component stylesheet
 import css from "./BottomCTA.css?url";
 ---
-
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 <section class="bcta" data-section="bottom-cta" aria-label="Get started">

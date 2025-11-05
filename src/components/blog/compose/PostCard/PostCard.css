@@ -3,180 +3,246 @@
    polish focus states, and ensure content is always visible. */
 
 /* Card shell */
-.pcard{
-  background:var(--color-surface);
-  border:1px solid color-mix(in oklab,var(--color-text) 8%,transparent);
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-sm);
-  overflow:hidden;
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
+.pcard {
+  background: var(--color-surface);
+  border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
   /* avoid collapsed placeholders while still rendering immediately */
-  content-visibility:visible;
-  contain-intrinsic-size:auto;
-  inline-size:100%;
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+  inline-size: 100%;
 }
-@media(prefers-reduced-motion:reduce){.pcard{transition:none}}
+@media (prefers-reduced-motion: reduce) {
+  .pcard {
+    transition: none;
+  }
+}
 
 .pcard:hover,
-.pcard:focus-within{
-  transform:translateY(-1px) scale(.998);
-  box-shadow:var(--shadow-md);
-  border-color:color-mix(in oklab,var(--color-primary) 15%, var(--color-light));
+.pcard:focus-within {
+  transform: translateY(-1px) scale(0.998);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 15%,
+    var(--color-light)
+  );
 }
 
 /* Whole-card link as grid: media then content */
-.pcard__link{
-  display:grid;
-  grid-template-rows:auto 1fr;
-  gap:0;
-  color:inherit;
-  text-decoration:none;
-  outline:0;
-  height:100%;
+.pcard__link {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  color: inherit;
+  text-decoration: none;
+  outline: 0;
+  height: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 .pcard__link:hover,
 .pcard__link:focus,
-.pcard__link:focus-visible{ text-decoration:none }
-.pcard__link:focus-visible{
-  box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 22%, #fff);
+.pcard__link:focus-visible {
+  text-decoration: none;
+}
+.pcard__link:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 22%, #fff);
 }
 
 /* Media — enforce a stable 16:9 box to prevent CLS */
-.pcard__media{
-  position:relative;
+.pcard__media {
+  position: relative;
   --pcard-media-ratio: 16 / 9;
   aspect-ratio: var(--pcard-media-ratio);
-  block-size:auto;
-  background:var(--color-light-alt);
-  border-bottom:1px solid color-mix(in oklab,var(--color-text) 6%,transparent);
+  block-size: auto;
+  background: var(--color-light-alt);
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
 }
 
 /* Fallback for browsers without aspect-ratio support */
-@supports not (aspect-ratio: 1){
-  .pcard__media{ block-size:auto }
-  .pcard__media::before{
-    content:"";
-    display:block;
+@supports not (aspect-ratio: 1) {
+  .pcard__media {
+    block-size: auto;
+  }
+  .pcard__media::before {
+    content: "";
+    display: block;
     padding-top: calc(100% * 9 / 16); /* 16:9 placeholder */
   }
-  .pcard__media > img{
-    position:absolute; inset:0;
+  .pcard__media > img {
+    position: absolute;
+    inset: 0;
   }
 }
 
-.pcard__media img{
-  inline-size:100%;
-  block-size:100%;
-  object-fit:cover;
-  display:block;
-  transition:transform .25s ease;
+.pcard__media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
 }
-@media(prefers-reduced-motion:reduce){ .pcard__media img{transition:none} }
-@media(hover:hover){
+@media (prefers-reduced-motion: reduce) {
+  .pcard__media img {
+    transition: none;
+  }
+}
+@media (hover: hover) {
   .pcard__link:hover .pcard__media img,
-  .pcard__link:focus-visible .pcard__media img{ transform:scale(.985) }
+  .pcard__link:focus-visible .pcard__media img {
+    transform: scale(0.985);
+  }
 }
 
 /* Stage badge */
-.pcard__badge{
-  position:absolute; inset:.5rem auto auto .5rem;
-  display:inline-flex; align-items:center;
-  height:28px; padding:0 .6rem;
-  border-radius:999px;
-  background:#fff; color:var(--color-muted);
-  border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);
-  font:600 var(--fs-xs)/1 var(--font-sans);
-  letter-spacing:.06em; text-transform:uppercase;
-  box-shadow:var(--shadow-xs);
+.pcard__badge {
+  position: absolute;
+  inset: 0.5rem auto auto 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 0.6rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-muted);
+  border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+  font: 600 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-xs);
 }
 
 /* Content — always visible, no collapsing */
-.pcard__content{
+.pcard__content {
   --pcard-pad: var(--space-4);
-  display:grid;
-  gap:.6rem;
-  padding:var(--pcard-pad);
-  min-block-size:auto;
-  visibility:visible;
-  opacity:1;
-  grid-template-rows:auto auto 1fr auto; /* cat, title, excerpt grows, meta */
+  display: grid;
+  gap: 0.6rem;
+  padding: var(--pcard-pad);
+  min-block-size: auto;
+  visibility: visible;
+  opacity: 1;
+  grid-template-rows: auto auto 1fr auto; /* cat, title, excerpt grows, meta */
 }
 
 /* Category chip above title */
-.pcard__kicker{ margin-bottom:.1rem }
+.pcard__kicker {
+  margin-bottom: 0.1rem;
+}
 .pcard__category,
-.pfl__cat{
-  display:inline-flex; align-items:center;
-  height:26px; padding:0 .55rem;
-  border-radius:999px;
-  background:color-mix(in oklab,var(--color-primary) 10%, #fff);
-  color:color-mix(in oklab,var(--color-primary) 70%, var(--color-text));
-  border:1px solid color-mix(in oklab,var(--color-primary) 35%, transparent);
-  font:600 var(--fs-xs)/1 var(--font-sans);
-  letter-spacing:.04em; text-transform:uppercase;
-  box-shadow:var(--shadow-xxs,0 1px 0 rgba(0,0,0,.04));
-  text-decoration:none;
+.pfl__cat {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-primary) 10%, #fff);
+  color: color-mix(in oklab, var(--color-primary) 70%, var(--color-text));
+  border: 1px solid color-mix(in oklab, var(--color-primary) 35%, transparent);
+  font: 600 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-xxs, 0 1px 0 rgba(0, 0, 0, 0.04));
+  text-decoration: none;
 }
 .pcard__category:hover,
 .pcard__category:focus-visible,
 .pfl__cat:hover,
-.pfl__cat:focus-visible{
-  background:color-mix(in oklab,var(--color-primary) 16%, #fff);
-  border-color:color-mix(in oklab,var(--color-primary) 45%, transparent);
+.pfl__cat:focus-visible {
+  background: color-mix(in oklab, var(--color-primary) 16%, #fff);
+  border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
   outline: none;
-  box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 25%, #fff);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, #fff);
 }
 
 /* Title */
-.pcard__title{
-  margin:0;
-  font-weight:800;
-  line-height:1.2;
-  color:var(--color-text);
-  font-size:clamp(calc(var(--fs-md) - 1px), 1.9vw, calc(var(--fs-lg) - 1px));
+.pcard__title {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-text);
+  font-size: clamp(calc(var(--fs-md) - 1px), 1.9vw, calc(var(--fs-lg) - 1px));
 }
 .pcard__link:hover .pcard__title,
-.pcard__link:focus-visible .pcard__title{ color:var(--color-primary) }
+.pcard__link:focus-visible .pcard__title {
+  color: var(--color-primary);
+}
 
 /* Excerpt */
-.pcard__excerpt{
-  margin:0;
-  color:var(--color-muted);
-  font-size:var(--fs-sm);
+.pcard__excerpt {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
 }
 .pcard__excerpt.clamp-3,
-.pcard__excerpt.line-clamp-3{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden }
+.pcard__excerpt.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* Meta */
-.pcard__meta{
-  margin:0;
-  display:flex; align-items:center; gap:.5rem;
-  padding:.35rem .5rem;
-  border-radius:999px;
-  background:color-mix(in oklab, var(--color-light) 80%, #fff);
-  border:1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
-  font-size:var(--fs-xs,.8rem);
-  color:var(--color-muted);
-  letter-spacing:.02em;
-  white-space:nowrap; /* avoid multi-line meta chip */
+.pcard__meta {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-light) 80%, #fff);
+  border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+  font-size: var(--fs-xs, 0.8rem);
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap; /* avoid multi-line meta chip */
 }
-.pcard__meta time::after{
-  content:"•";
-  margin-inline:.5rem;
-  color:color-mix(in oklab, var(--color-muted) 70%, #000);
+.pcard__meta time::after {
+  content: "•";
+  margin-inline: 0.5rem;
+  color: color-mix(in oklab, var(--color-muted) 70%, #000);
 }
 
 /* Clamp helpers (kept for non-utility usages) */
-.line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* Breakpoints */
-@media(min-width:640px){
-  .pcard__content{ --pcard-pad: var(--space-5); gap:.65rem }
+@media (min-width: 640px) {
+  .pcard__content {
+    --pcard-pad: var(--space-5);
+    gap: 0.65rem;
+  }
 }
-@media(min-width:1024px){
-  .pcard__content{ --pcard-pad: var(--space-6); gap:.7rem }
-  .pcard__title{ font-size:clamp(var(--fs-md), 1.5vw, var(--fs-lg)) }
+@media (min-width: 1024px) {
+  .pcard__content {
+    --pcard-pad: var(--space-6);
+    gap: 0.7rem;
+  }
+  .pcard__title {
+    font-size: clamp(var(--fs-md), 1.5vw, var(--fs-lg));
+  }
 }

@@ -43,7 +43,10 @@ export function buildCategoryTitle(cat: Category): string {
 }
 
 export function buildCategoryDescription(cat: Category): string {
-  return CATEGORY_INTRO[cat] ?? `Articles in ${prettyCategoryTitle(cat)} on CV Writing Kenya`;
+  return (
+    CATEGORY_INTRO[cat] ??
+    `Articles in ${prettyCategoryTitle(cat)} on CV Writing Kenya`
+  );
 }
 
 /** Related categories (always show all other categories = 3) */

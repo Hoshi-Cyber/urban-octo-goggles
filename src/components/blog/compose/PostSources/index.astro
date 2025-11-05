@@ -1,19 +1,19 @@
 ---
+import css from "./PostSources.css?url";
+
 interface Source { label: string; url: string; }
 interface PostSourcesProps { sources?: Source[]; }
 
 const { sources = [] } = Astro.props as PostSourcesProps;
 const show = sources.length > 0;
-
-// Colocated CSS
-const sheet = new URL("./PostSources.css", import.meta.url).toString();
 ---
+<link rel="stylesheet" href={css} />
+
 {show && (
   <section class="post__sources" aria-label="Sources">
-    <link rel="stylesheet" href={sheet} />
     <h2 class="post__sources-title">Sources</h2>
     <ul class="post__sources-list">
-      {sources.map(s => (
+      {sources.map((s) => (
         <li>
           <a href={s.url} rel="nofollow noopener" target="_blank">{s.label}</a>
         </li>

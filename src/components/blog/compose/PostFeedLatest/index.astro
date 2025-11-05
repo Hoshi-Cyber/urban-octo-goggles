@@ -26,7 +26,7 @@ export interface Props {
   clientLoadMore?: boolean;
 }
 
-import { categorySlug } from "../../../lib/slug";
+import { categorySlug } from "../../../../lib/slug";
 
 const {
   posts = [],
@@ -50,12 +50,6 @@ const catHref = (p: Post) => `/blog/${categorySlug(p.frontmatter?.category || "u
 
 import css from "./PostFeedLatest.css?url";
 ---
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 <section class="pfl" aria-label="Latest articles">

@@ -1,6 +1,7 @@
 ---
 // File: src/components/blog/compose/CollectionSchema/index.astro
-import "./CollectionSchema.css";
+
+import css from "./CollectionSchema.css?url";
 
 /**
  * Emits JSON-LD for a blog category (CollectionPage) and its items (ItemList).
@@ -93,9 +94,9 @@ const itemListLd = {
   itemListElement: listElements,
 };
 ---
-
 <!-- Non-visual block that only injects SEO JSON-LD -->
 <div class="collection-schema" aria-hidden="true">
+  <link rel="stylesheet" href={css} />
   <script type="application/ld+json">
     {JSON.stringify(collectionPageLd)}
   </script>

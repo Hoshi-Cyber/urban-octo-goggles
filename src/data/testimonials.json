@@ -1,12 +1,44 @@
 {
   "items": [
-    { "quote": "I got interviews within a week after the rewrite.", "author": "Kevin M.", "role": "Operations Manager" },
-    { "quote": "ATS issues disappeared. Recruiters started calling.", "author": "Alice K.", "role": "Finance Analyst" },
-    { "quote": "The CV structure finally matched what hiring managers expect.", "author": "Jared O.", "role": "Software Engineer" },
-    { "quote": "Clear achievements and metrics boosted my shortlist rate.", "author": "Rita N.", "role": "Marketing Lead" },
-    { "quote": "The LinkedIn refresh increased profile views immediately.", "author": "Sam W.", "role": "Product Manager" },
-    { "quote": "Cover letter guidance made my story compelling and concise.", "author": "Diana T.", "role": "Project Coordinator" },
-    { "quote": "Recruiters complimented the formatting and keyword alignment.", "author": "Brian K.", "role": "Data Analyst" },
-    { "quote": "Turnaround was fast and revisions were on point.", "author": "Faith A.", "role": "HR Generalist" }
+    {
+      "quote": "I got interviews within a week after the rewrite.",
+      "author": "Kevin M.",
+      "role": "Operations Manager"
+    },
+    {
+      "quote": "ATS issues disappeared. Recruiters started calling.",
+      "author": "Alice K.",
+      "role": "Finance Analyst"
+    },
+    {
+      "quote": "The CV structure finally matched what hiring managers expect.",
+      "author": "Jared O.",
+      "role": "Software Engineer"
+    },
+    {
+      "quote": "Clear achievements and metrics boosted my shortlist rate.",
+      "author": "Rita N.",
+      "role": "Marketing Lead"
+    },
+    {
+      "quote": "The LinkedIn refresh increased profile views immediately.",
+      "author": "Sam W.",
+      "role": "Product Manager"
+    },
+    {
+      "quote": "Cover letter guidance made my story compelling and concise.",
+      "author": "Diana T.",
+      "role": "Project Coordinator"
+    },
+    {
+      "quote": "Recruiters complimented the formatting and keyword alignment.",
+      "author": "Brian K.",
+      "role": "Data Analyst"
+    },
+    {
+      "quote": "Turnaround was fast and revisions were on point.",
+      "author": "Faith A.",
+      "role": "HR Generalist"
+    }
   ]
 }

@@ -4,14 +4,14 @@
 /* Base: 320–639px */
 :root {
   /* Typography base */
-  --fs-base: 1rem;               /* 16px default */
+  --fs-base: 1rem; /* 16px default */
 
   /* Layout container */
-  --container-px: 1rem;          /* side gutters */
+  --container-px: 1rem; /* side gutters */
   --container-max: 100%;
 
   /* Spacing rhythm for components */
-  --gap: 1rem;                   /* default intra-component gap */
+  --gap: 1rem; /* default intra-component gap */
 }
 
 /* Generic container utility for consistent page gutters */
@@ -42,7 +42,7 @@
 /* lg ≥1024px */
 @media (min-width: 1024px) {
   :root {
-    --fs-base: 1.0625rem;        /* subtle readability bump on large screens */
+    --fs-base: 1.0625rem; /* subtle readability bump on large screens */
     --container-max: 1024px;
     --gap: 1.5rem;
   }
@@ -60,12 +60,14 @@
 @media (min-width: 1536px) {
   :root {
     /* cap content for optimal line length on very wide viewports */
-    --container-max: 72rem;      /* 1152px */
+    --container-max: 72rem; /* 1152px */
     --gap: 2rem;
   }
 }
 
 /* Harder gutters for very small devices (≤359px) */
 @media (max-width: 359px) {
-  :root { --container-px: 0.875rem; }
+  :root {
+    --container-px: 0.875rem;
+  }
 }

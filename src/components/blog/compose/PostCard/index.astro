@@ -1,6 +1,7 @@
 ---
 // File: src/components/blog/compose/PostCard/index.astro
-import "./PostCard.css";
+
+import css from "./PostCard.css?url";
 
 /** Safe props (normalized by parents; URLs come pre-built) */
 const props = (Astro.props ?? {}) as Record<string, unknown>;
@@ -14,12 +15,12 @@ const readMin =
   typeof props.readMin === "number" || typeof props.readMin === "string"
     ? String(props.readMin)
     : "";
-const stage   = typeof props.stage === "string" ? props.stage : "";
+const stage    = typeof props.stage === "string" ? props.stage : "";
 const category = typeof props.category === "string" ? props.category : "";
 const categoryHref =
   typeof props.categoryHref === "string" && props.categoryHref ? props.categoryHref : "";
 
-/** Normalize cover input (prefer cover; fallback to thumbnail*) */
+/** Normalize cover input (prefer explicit cover; fallback to thumbnail) */
 const thumbnailSrc =
   typeof props.thumbnailSrc === "string" && props.thumbnailSrc
     ? (props.thumbnailSrc as string)
@@ -29,19 +30,41 @@ const thumbnailAlt =
     ? (props.thumbnailAlt as string)
     : undefined;
 
-const explicitCover = (props.cover ?? null) as null | {
+type Cover = {
   src?: string;
   alt?: string;
   width?: number;
   height?: number;
+  loading?: "eager" | "lazy";
 };
-const cover =
+
+const explicitCover = (props.cover ?? null) as null | Cover;
+
+function toNumber(n: unknown, fallback: number): number {
+  return typeof n === "number" && Number.isFinite(n) ? n : fallback;
+}
+
+const cover: Required<Cover> =
   explicitCover && typeof explicitCover.src === "string"
-    ? { src: explicitCover.src, alt: explicitCover.alt ?? title }
+    ? {
+        src: explicitCover.src!,
+        alt: (explicitCover.alt ?? title) as string,
+        width: toNumber(explicitCover.width, 1200),
+        height: toNumber(explicitCover.height, 675),
+        // Step 4: allow parent to pass loading hint; default to lazy
+        loading: (explicitCover.loading === "eager" ? "eager" : "lazy"),
+      }
     : {
-        src: thumbnailSrc ?? "/assets/logos/logo-wide-1200.png",
-        alt: thumbnailAlt ?? "Post thumbnail",
+        src: (thumbnailSrc ?? "/assets/logos/logo-wide-1200.png") as string,
+        alt: (thumbnailAlt ?? "Post thumbnail") as string,
+        // 16:9 fallback to prevent CLS if dimensions missing
+        width: 1200,
+        height: 675,
+        loading: "lazy",
       };
+
+/** Derive fetchpriority from loading hint (Chrome) */
+const fetchPriority = cover.loading === "eager" ? "high" : "low";
 
 /** Canonical href: use provided url only (no local slug building) */
 const canonicalHref = url;
@@ -59,43 +82,51 @@ if (dateISO) {
   }
 }
 
-const titleId =
-  "pcard-title-" + (slug || Math.random().toString(36).slice(2, 8));
----
+const titleId = "pcard-title-" + (slug || Math.random().toString(36).slice(2, 8));
 
-<article class="pcard" data-section="card">
-  <a class="pcard__link" href={canonicalHref} aria-labelledby={titleId} data-event="card_click">
-    <figure class="pcard__media" aria-hidden="true">
-      {stage && <span class="pcard__badge">{stage}</span>}
+/** Responsive image sizes for grid contexts */
+const sizes =
+  "(min-width:1536px) 20vw, (min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw";
+---
+<article class="pcard" data-section="card" aria-labelledby={titleId}>
+  <link rel="stylesheet" href={css} />
+
+  <figure class="pcard__media" aria-hidden={cover.alt ? "false" : "true"}>
+    {stage && <span class="pcard__badge">{stage}</span>}
+    <a class="pcard__mediaLink" href={canonicalHref} data-event="card_media_click">
       <img
         src={cover.src}
         alt={cover.alt}
-        width="640"
-        height="360"
-        loading="lazy"
+        width={cover.width}
+        height={cover.height}
+        loading={cover.loading}            /* Step 4: eager for first-fold, lazy otherwise */
+        fetchpriority={fetchPriority}      /* high when eager to improve LCP */
         decoding="async"
-        sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-        fetchpriority="low"
+        sizes={sizes}
       />
-    </figure>
+    </a>
+  </figure>
 
-    <div class="pcard__content">
-      {category && (
-        <div class="pcard__kicker">
-          {categoryHref
-            ? <a class="pcard__category" href={categoryHref}>{category}</a>
-            : <span class="pcard__category" aria-current="true">{category}</span>}
-        </div>
-      )}
+  <div class="pcard__content">
+    {category && (
+      <div class="pcard__kicker">
+        {categoryHref
+          ? <a class="pcard__category" href={categoryHref} data-cta="card_category">{category}</a>
+          : <span class="pcard__category" aria-current="true">{category}</span>}
+      </div>
+    )}
 
-      <h3 id={titleId} class="pcard__title line-clamp-2">{title}</h3>
+    <h3 id={titleId} class="pcard__title line-clamp-2">
+      <a class="pcard__link" href={canonicalHref} data-event="card_title_click">
+        {title}
+      </a>
+    </h3>
 
-      {excerpt && <p class="pcard__excerpt line-clamp-3">{excerpt}</p>}
+    {excerpt && <p class="pcard__excerpt line-clamp-3" id={titleId + "-desc"}>{excerpt}</p>}
 
-      <p class="pcard__meta">
-        {dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
-        {readMin && <span aria-hidden="true">{readMin} min read</span>}
-      </p>
-    </div>
-  </a>
+    <p class="pcard__meta">
+      {dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
+      {readMin && <span aria-label={readMin + ' minute read'}>{readMin} min read</span>}
+    </p>
+  </div>
 </article>

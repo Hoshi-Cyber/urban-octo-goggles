@@ -31,8 +31,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.375rem 0.65rem;        /* touch target */
-  min-height: 2rem;                  /* ~32px target */
+  padding: 0.375rem 0.65rem; /* touch target */
+  min-height: 2rem; /* ~32px target */
   border-radius: var(--radius-full);
   background: var(--color-light);
   color: var(--color-text);
@@ -40,7 +40,11 @@
   font-size: var(--fs-sm);
   line-height: 1;
   text-decoration: none;
-  transition: box-shadow 120ms ease, background-color 120ms ease, color 120ms ease, transform 80ms ease;
+  transition:
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease,
+    transform 80ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -50,8 +54,12 @@
   box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.18);
   text-decoration: none;
 }
-.post__tag:active { transform: translateY(0.5px); }
-.post__tag:visited { color: var(--color-text); }
+.post__tag:active {
+  transform: translateY(0.5px);
+}
+.post__tag:visited {
+  color: var(--color-text);
+}
 .post__tag:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
@@ -60,13 +68,19 @@
 
 /* Responsive spacing bump */
 @media (min-width: 1024px) {
-  .post__tags { gap: var(--space-3); }
+  .post__tags {
+    gap: var(--space-3);
+  }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .post__tag { transition: none; }
-  .post__tag:active { transform: none; }
+  .post__tag {
+    transition: none;
+  }
+  .post__tag:active {
+    transform: none;
+  }
 }
 
 /* Forced colors (Windows HC) */

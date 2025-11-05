@@ -3,14 +3,18 @@
 import BaseLayout from "./BaseLayout.astro";
 
 // Blog components
-import PostHeader from "../blog/PostHeader/index.astro";
-import PostMeta from "../blog/PostMeta/index.astro";
-import PostTags from "../blog/PostTags/index.astro";
-import PostCover from "../blog/PostCover/index.astro";
-import PostCTAs from "../blog/PostCTAs/index.astro";
+import PostHeader from "../blog/compose/PostHeader/index.astro";
+import PostMeta from "../blog/compose/PostMeta/index.astro";
+import PostTags from "../blog/compose/PostTags/index.astro";
+import PostCover from "../blog/compose/PostCover/index.astro";
+import PostCTAs from "../blog/compose/PostCTAs/index.astro";
 
 // UI
 import Badge from "../ui/Badge/index.astro";
+
+// Styles as URLs for head-slot injection
+import sheetUrl from "./BlogPost.css?url";
+import proseCssUrl from "../../styles/prose.css?url";
 
 export interface Cover {
   src: string;
@@ -135,13 +139,16 @@ const breadcrumbJsonLd = {
     item: c.href.startsWith("http") ? c.href : `${siteUrl}${c.href}`
   }))
 };
-
-// styles
-const sheet = new URL("./BlogPost.css", import.meta.url).toString();
 ---
-<link rel="stylesheet" href={sheet} />
-
 <BaseLayout title={title} description={description} seo={{ ...seoIn, canonical }}>
+  {/* Inject page-specific assets into <head> via BaseLayout head slot */}
+  <fragment slot="head">
+    <link rel="stylesheet" href={sheetUrl} />
+    <link rel="stylesheet" href={proseCssUrl} />
+    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+    <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+  </fragment>
+
   <article class="post container" itemscope itemtype="https://schema.org/Article">
     {/* Breadcrumbs */}
     <nav class="post__breadcrumbs" aria-label="Breadcrumb">
@@ -202,13 +209,5 @@ const sheet = new URL("./BlogPost.css", import.meta.url).toString();
         <PostTags tags={tagList} variant="footer" />
       </footer>
     )}
-
-    {/* Structured data */}
-    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-    <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
   </article>
 </BaseLayout>
-
-<style is:global>
-  @import "../../styles/prose.css";
-</style>

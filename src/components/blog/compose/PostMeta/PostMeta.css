@@ -6,7 +6,7 @@
 .post .post__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;         /* compact, readable spacing */
+  gap: 0.5rem 0.75rem; /* compact, readable spacing */
   align-items: center;
   margin: 0 0 var(--space-4);
   padding: 0;

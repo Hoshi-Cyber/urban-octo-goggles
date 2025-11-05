@@ -18,9 +18,8 @@
 
   /* Increased vertical padding globally.
      Increased horizontal gutters on mobile first, then normalize on ≥640px. */
-  padding:
-    clamp(var(--space-10), 7vw, var(--space-18))           /* top/bottom */
-    clamp(var(--space-8), 8vw, var(--space-10));           /* left/right (mobile-wider) */
+  padding: clamp(var(--space-10), 7vw, var(--space-18)) /* top/bottom */
+    clamp(var(--space-8), 8vw, var(--space-10)); /* left/right (mobile-wider) */
 }
 
 /* Normalize horizontal gutters from tablet up */
@@ -47,9 +46,9 @@
 /* Eyebrow */
 .category-hero__eyebrow {
   margin: 0;
-  font-size: clamp(.75rem, .22vw + .7rem, .9rem);
+  font-size: clamp(0.75rem, 0.22vw + 0.7rem, 0.9rem);
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 
@@ -76,23 +75,27 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-size: clamp(.75rem, .2vw + .72rem, .875rem);
+  font-size: clamp(0.75rem, 0.2vw + 0.72rem, 0.875rem);
 }
 .category-hero__stat {
   display: inline-flex;
   align-items: center;
-  gap: .45ch;
-  padding: .3rem .6rem;
+  gap: 0.45ch;
+  padding: 0.3rem 0.6rem;
   border-radius: 9999px;
   background: var(--color-light);
   color: var(--color-muted);
   border: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
-.category-hero__stat + .category-hero__stat::before { content: none; }
+.category-hero__stat + .category-hero__stat::before {
+  content: none;
+}
 
 /* On ≥640px, allow pills to breathe a bit more */
 @media (min-width: 640px) {
-  .category-hero__stat { padding: .34rem .65rem; }
+  .category-hero__stat {
+    padding: 0.34rem 0.65rem;
+  }
 }
 
 /* CTAs: stack on mobile, row on ≥640px */
@@ -101,17 +104,23 @@
   grid-template-columns: 1fr;
   gap: var(--space-3);
 }
-.category-hero__ctas .btn { width: 100%; }
+.category-hero__ctas .btn {
+  width: 100%;
+}
 @media (min-width: 640px) {
   .category-hero__ctas {
     grid-auto-flow: column;
     grid-template-columns: unset;
     justify-content: start;
   }
-  .category-hero__ctas .btn { width: auto; }
+  .category-hero__ctas .btn {
+    width: auto;
+  }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .category-hero__ctas { transition: none; }
+  .category-hero__ctas {
+    transition: none;
+  }
 }

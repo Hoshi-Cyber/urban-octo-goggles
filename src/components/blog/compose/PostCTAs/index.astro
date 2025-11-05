@@ -1,19 +1,21 @@
 ---
-interface CTA { label: string; url: string; }
+// File: src/components/blog/compose/PostCTAs/index.astro
+
+interface CTA { label: string; url: string }
 interface PostCTAsProps {
-  primary?: CTA;
-  secondary?: CTA;
+  primary?: CTA
+  secondary?: CTA
 }
 
-const { primary, secondary } = Astro.props as PostCTAsProps;
-const hasAny = Boolean(primary || secondary);
+const { primary, secondary } = Astro.props as PostCTAsProps
+const hasAny = Boolean(primary || secondary)
 
-// Colocated CSS
-const sheet = new URL("./PostCTAs.css", import.meta.url).toString();
+// Local component CSS only (no global imports per Fix Plan 155)
+import css from "./PostCTAs.css?url"
 ---
 {hasAny && (
   <nav class="post__ctas" aria-label="Post calls to action">
-    <link rel="stylesheet" href={sheet} />
+    <link rel="stylesheet" href={css} />
 
     {primary && (
       <a class="post__cta post__cta--primary" href={primary.url}>

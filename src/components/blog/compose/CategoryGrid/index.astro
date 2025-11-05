@@ -1,5 +1,5 @@
 ---
-// src/components/blog/compose/CategoryGrid/index.astro
+// File: src/components/blog/compose/CategoryGrid/index.astro
 /**
  * CategoryGrid — vertical cards with variants per Fix Plan 147.2.
  * Structure: section -> h2 -> ul > li > a (icon, body, chevron)
@@ -38,13 +38,6 @@ const {
 
 import css from "./CategoryGrid.css?url";
 ---
-
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 <section class="catgrid" aria-labelledby="cat-heading">

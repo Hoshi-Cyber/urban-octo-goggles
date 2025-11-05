@@ -1,2 +1,2 @@
-export * from './Breadcrumbs'
-export * from './PostShare'
+export * from "./Breadcrumbs";
+export * from "./PostShare";

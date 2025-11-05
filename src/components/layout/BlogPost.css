@@ -86,13 +86,27 @@
 }
 
 /* Prose rhythm */
-.post__content > * + * { margin-top: var(--space-4); }
-.post__content h2 { margin-top: var(--space-8); font-size: clamp(var(--fs-xl), 2.6vw, var(--fs-3xl)); }
-.post__content h3 { margin-top: var(--space-6); font-size: clamp(var(--fs-lg), 2.2vw, var(--fs-2xl)); }
-.post__content p { line-height: 1.75; }
+.post__content > * + * {
+  margin-top: var(--space-4);
+}
+.post__content h2 {
+  margin-top: var(--space-8);
+  font-size: clamp(var(--fs-xl), 2.6vw, var(--fs-3xl));
+}
+.post__content h3 {
+  margin-top: var(--space-6);
+  font-size: clamp(var(--fs-lg), 2.2vw, var(--fs-2xl));
+}
+.post__content p {
+  line-height: 1.75;
+}
 .post__content ul,
-.post__content ol { padding-left: 1.25rem; }
-.post__content li + li { margin-top: .5rem; }
+.post__content ol {
+  padding-left: 1.25rem;
+}
+.post__content li + li {
+  margin-top: 0.5rem;
+}
 .post__content blockquote {
   margin: var(--space-6) 0;
   padding-left: var(--space-4);
@@ -106,9 +120,11 @@
   block-size: 1rem;
   accent-color: var(--color-primary);
   transform: translateY(2px);
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
-.post__content label { cursor: pointer; }
+.post__content label {
+  cursor: pointer;
+}
 
 /* CTA helpers if present inside content */
 .post__content .cta,
@@ -129,10 +145,14 @@
 
 /* Wider reading width on larger screens */
 @media (min-width: 1024px) {
-  .post__content { max-width: 80ch; }
+  .post__content {
+    max-width: 80ch;
+  }
 }
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .post__cover { transition: none; }
+  .post__cover {
+    transition: none;
+  }
 }

@@ -1,28 +1,20 @@
 ---
+// File: src/components/blog/compose/BlogHero/index.astro
 /**
- * src/components/blog/compose/BlogHero/index.astro
  * BlogHero — mobile-first hero with dual CTAs.
- * Fix Plan 148.1: remove badge/statline, show image in full (no forced aspect-ratio).
- *
- * Props:
- *  - title: string
- *  - sub?: string
- *  - primaryHref?: string
- *  - primaryLabel?: string
- *  - secondaryHref?: string
- *  - secondaryLabel?: string
- *  - cover?: { src: string; alt?: string; width?: number; height?: number } | null
+ * Fix Plan 148.1: remove badge/statline, show image in full.
+ * Fix Plan 155: stop per-component global @imports; BaseLayout links src/styles/index.css once.
  */
 
-export interface Cover { src: string; alt?: string; width?: number; height?: number; }
+export interface Cover { src: string; alt?: string; width?: number; height?: number }
 export interface Props {
-  title: string;
-  sub?: string;
-  primaryHref?: string;
-  primaryLabel?: string;
-  secondaryHref?: string;
-  secondaryLabel?: string;
-  cover?: Cover | null;
+  title: string
+  sub?: string
+  primaryHref?: string
+  primaryLabel?: string
+  secondaryHref?: string
+  secondaryLabel?: string
+  cover?: Cover | null
 }
 
 const {
@@ -33,17 +25,11 @@ const {
   secondaryHref = "/blog/",
   secondaryLabel = "Read Latest",
   cover = null,
-} = Astro.props as Props;
+} = Astro.props as Props
 
-import css from "./BlogHero.css?url";
+// Local component CSS only
+import css from "./BlogHero.css?url"
 ---
-
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 <section class="bloghero" data-section="blog-hero" aria-label="Blog hero">

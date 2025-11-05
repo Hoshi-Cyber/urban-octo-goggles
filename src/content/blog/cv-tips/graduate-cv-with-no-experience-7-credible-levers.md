@@ -27,7 +27,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Lack of experience is not lack of value. Use seven levers to build credibility and win interviews in Kenya’s market.
@@ -54,32 +53,32 @@ Choose roles with measurable outcomes. Log organisation, role, dates, and result
 
 ### Step 3: craft seven levers
 
-1) Target role statement  
-2) Key skills  
-3) Academic projects  
-4) Volunteer experience  
-5) Certifications  
-6) Awards and achievements  
-7) Personal development
+1. Target role statement
+2. Key skills
+3. Academic projects
+4. Volunteer experience
+5. Certifications
+6. Awards and achievements
+7. Personal development
 
 ## Table: graduate levers and examples
 
-| Lever | Example |
-|---|---|
-| Target role statement | “Aspiring supply chain analyst skilled in Excel and logistics planning.” |
-| Academic project | “Built a cost model for a maize co-op. Identified **KES 500,000** annual savings.” |
-| Volunteer experience | “Managed social media for a youth mentorship programme. **200%** follower growth in 3 months.” |
-| Certification | “Google Data Analytics cert with capstone on Kenya inflation trends.” |
-| Award | “Won university hackathon. Rural water tracking app used by **300** households.” |
+| Lever                 | Example                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| Target role statement | “Aspiring supply chain analyst skilled in Excel and logistics planning.”                       |
+| Academic project      | “Built a cost model for a maize co-op. Identified **KES 500,000** annual savings.”             |
+| Volunteer experience  | “Managed social media for a youth mentorship programme. **200%** follower growth in 3 months.” |
+| Certification         | “Google Data Analytics cert with capstone on Kenya inflation trends.”                          |
+| Award                 | “Won university hackathon. Rural water tracking app used by **300** households.”               |
 
 ## Checklist (publish-ready)
 
-- [ ] Clear role statement  
-- [ ] Skills with proof  
-- [ ] Projects quantified in **KES** or percentages  
-- [ ] Quality certifications with artefacts  
-- [ ] Under two pages, clean and consistent  
-- [ ] No irrelevant details or photos  
+- [ ] Clear role statement
+- [ ] Skills with proof
+- [ ] Projects quantified in **KES** or percentages
+- [ ] Quality certifications with artefacts
+- [ ] Under two pages, clean and consistent
+- [ ] No irrelevant details or photos
 
 ## Proof and pitfalls
 
@@ -88,5 +87,3 @@ Proof wins. Pitfalls: overstating group work, listing every certificate, claimin
 ## CTA
 
 Get the **Job Market Toolkit** and use the **CV Bullet Generator** to convert duties into impact.
-
-

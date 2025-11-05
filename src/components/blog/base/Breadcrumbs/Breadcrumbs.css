@@ -58,5 +58,7 @@
 
 /* Slight readability bump on larger screens */
 @media (min-width: 640px) {
-  .breadcrumbs { font-size: var(--fs-base); }
+  .breadcrumbs {
+    font-size: var(--fs-base);
+  }
 }

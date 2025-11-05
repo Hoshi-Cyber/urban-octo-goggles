@@ -3,26 +3,44 @@ layout: "@/components/layout/BlogPost.astro"
 title: "Sanity Test Post"
 date: "2025-10-29"
 author: "System"
-tags: ["test","ui"]
+tags: ["test", "ui"]
 ---
 
-import Badge from '@/components/ui/Badge/index.astro';
-import Callout from '@/components/ui/Callout/index.astro';
-import Checklist from '@/components/ui/Checklist/index.astro';
-import ProseImage from '@/components/ui/ProseImage/index.astro';
-import TableWrap from '@/components/ui/TableWrap/index.astro';
+import Badge from "@/components/ui/Badge/index.astro";
+import Callout from "@/components/ui/Callout/index.astro";
+import Checklist from "@/components/ui/Checklist/index.astro";
+import ProseImage from "@/components/ui/ProseImage/index.astro";
+import TableWrap from "@/components/ui/TableWrap/index.astro";
 
 <Badge>Guide</Badge>
 
-<Callout tone="info" title="Note">This verifies the UI block rendering inside .prose.</Callout>
+<Callout tone="info" title="Note">
+  This verifies the UI block rendering inside .prose.
+</Callout>
 
-<Checklist items={[{label: 'Step 1', checked: true}, {label: 'Step 2'}]} />
+<Checklist items={[{ label: "Step 1", checked: true }, { label: "Step 2" }]} />
 
-<ProseImage src="/images/sample.jpg" alt="Sample" width={1280} height={720} caption="Figure 1" />
+<ProseImage
+  src="/images/sample.jpg"
+  alt="Sample"
+  width={1280}
+  height={720}
+  caption="Figure 1"
+/>
 
 <TableWrap>
   <table>
-    <thead><tr><th>A</th><th>B</th></tr></thead>
-    <tbody><tr><td>1</td><td>2</td></tr></tbody>
+    <thead>
+      <tr>
+        <th>A</th>
+        <th>B</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+    </tbody>
   </table>
 </TableWrap>

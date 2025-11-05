@@ -1,5 +1,5 @@
 ---
-import "./TeaserGrid.css";
+import css from "./TeaserGrid.css?url";
 
 export type TeaserPost = {
   title: string;
@@ -29,6 +29,7 @@ const {
   moreLabel = "View all",
 }: Props = Astro.props;
 ---
+<link rel="stylesheet" href={css} />
 
 <section class="tgrid" aria-labelledby="tgrid-title" data-section="blog-teasers">
   <header class="tgrid__header">
@@ -51,6 +52,7 @@ const {
                 width="640"
                 height="360"
                 class="tcard__img"
+                decoding="async"
               />
             )}
             <div class="tcard__body">

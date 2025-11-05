@@ -14,7 +14,9 @@
   padding-inline: 0; /* constrained by .container */
 }
 @media (max-width: 639px) {
-  .tscroller { padding-inline: var(--space-4, 1rem); }
+  .tscroller {
+    padding-inline: var(--space-4, 1rem);
+  }
 }
 .tscroller__track {
   display: flex;
@@ -23,12 +25,22 @@
   will-change: transform;
   animation: scroll-loop 35s linear infinite;
 }
-.tcard { flex: 0 0 85%; max-inline-size: 36rem; }
-@media (min-width: 640px) { .tcard { flex-basis: 60%; } }
+.tcard {
+  flex: 0 0 85%;
+  max-inline-size: 36rem;
+}
+@media (min-width: 640px) {
+  .tcard {
+    flex-basis: 60%;
+  }
+}
 
 /* DESKTOP: static 3-up grid, show only first 3 to avoid overwhelm */
 @media (min-width: 1024px) {
-  .tscroller { overflow: visible; padding-inline: 0; }
+  .tscroller {
+    overflow: visible;
+    padding-inline: 0;
+  }
   .tscroller__track {
     display: grid;
     grid-auto-flow: initial;
@@ -37,12 +49,19 @@
     padding-block: var(--space-8, 2rem);
     animation: none;
   }
-  .tscroller__track > .tcard:nth-child(n+4) { display: none; }
-  .tcard { flex: initial; max-inline-size: none; }
+  .tscroller__track > .tcard:nth-child(n + 4) {
+    display: none;
+  }
+  .tcard {
+    flex: initial;
+    max-inline-size: none;
+  }
 }
 
 /* Desktop-only “View more” link placement */
-.testimonials__more { display: none; }
+.testimonials__more {
+  display: none;
+}
 @media (min-width: 1024px) {
   .testimonials__more {
     display: grid;
@@ -53,14 +72,22 @@
 
 /* Infinite scroll keyframes (track has two identical sequences) */
 @keyframes scroll-loop {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 /* Pause on interaction; honor reduced motion */
 .tscroller:hover .tscroller__track,
-.tscroller:focus-within .tscroller__track { animation-play-state: paused; }
+.tscroller:focus-within .tscroller__track {
+  animation-play-state: paused;
+}
 @media (prefers-reduced-motion: reduce) {
-  .tscroller__track { animation: none; }
+  .tscroller__track {
+    animation: none;
+  }
 }
 
 /* Card: brand tint, top accent bar, compact spacing */
@@ -68,35 +95,47 @@
   position: relative;
   scroll-snap-align: center;
   display: grid;
-  grid-template-rows: 1fr auto;              /* equal-height cards */
+  grid-template-rows: 1fr auto; /* equal-height cards */
   min-block-size: 100%;
-  gap: var(--space-3, .75rem);
+  gap: var(--space-3, 0.75rem);
   background: color-mix(in oklab, var(--color-primary, #2563eb) 6%, #fff);
-  border: 1px solid color-mix(in oklab, var(--color-primary, #2563eb) 22%, transparent);
-  border-radius: var(--radius-lg, .75rem);
-  box-shadow: var(--shadow-xs, 0 1px 1px rgba(0,0,0,.05));
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary, #2563eb) 22%, transparent);
+  border-radius: var(--radius-lg, 0.75rem);
+  box-shadow: var(--shadow-xs, 0 1px 1px rgba(0, 0, 0, 0.05));
   padding: var(--space-5, 1.25rem);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
-@media (min-width: 1024px) { .tcard { padding: var(--space-4, 1rem); } }
+@media (min-width: 1024px) {
+  .tcard {
+    padding: var(--space-4, 1rem);
+  }
+}
 .tcard::before {
   content: "";
   position: absolute;
   inset-inline: 0;
   top: 0;
   block-size: 4px;
-  border-top-left-radius: var(--radius-lg, .75rem);
-  border-top-right-radius: var(--radius-lg, .75rem);
-  background: linear-gradient(90deg, var(--color-primary, #2563eb), var(--color-accent, #7c3aed));
+  border-top-left-radius: var(--radius-lg, 0.75rem);
+  border-top-right-radius: var(--radius-lg, 0.75rem);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary, #2563eb),
+    var(--color-accent, #7c3aed)
+  );
 }
 .tcard:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,.06));
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
 }
 
 /* Quote + copy (smaller decorative quote, clamp text) */
 .tcard blockquote {
-  margin: 0 0 var(--space-3, .75rem) 0;
+  margin: 0 0 var(--space-3, 0.75rem) 0;
   color: var(--color-text, #111827);
   max-inline-size: 60ch;
   display: -webkit-box;
@@ -108,14 +147,17 @@
   content: "“";
   font-size: 2rem;
   line-height: 1;
-  margin-inline-end: .25rem;
+  margin-inline-end: 0.25rem;
   color: color-mix(in oklab, var(--color-primary, #2563eb) 35%, #fff);
 }
-.tcard__role { color: var(--color-muted, #6b7280); }
+.tcard__role {
+  color: var(--color-muted, #6b7280);
+}
 
 /* Focus ring for keyboard users */
 .tcard:focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
-  border-radius: var(--radius-lg, .75rem);
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
+  border-radius: var(--radius-lg, 0.75rem);
 }

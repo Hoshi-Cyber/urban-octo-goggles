@@ -1,8 +1,10 @@
 ---
+// src/components/blog/compose/PostFooter/index.astro
 /** Wrapper footer region for tags/share/sources composition */
-const sheet = new URL("./PostFooter.css", import.meta.url).toString();
+import css from "./PostFooter.css?url";
 ---
-<link rel="stylesheet" href={sheet} />
+<link rel="stylesheet" href={css} />
+
 <footer class="post__footer">
   <slot />
 </footer>

@@ -16,37 +16,63 @@
 
 /* ≥640px (sm) -> 2 columns */
 @media (min-width: 640px) {
-  .post-grid { grid-template-columns: repeat(2, 1fr); }
+  .post-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* ≥1024px (lg) -> 3 columns */
 @media (min-width: 1024px) {
-  .post-grid { grid-template-columns: repeat(3, 1fr); }
+  .post-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ≥1280px (xl) -> 4 columns */
 @media (min-width: 1280px) {
-  .post-grid { grid-template-columns: repeat(4, 1fr); }
+  .post-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* Modifiers: tighter or roomier gutters (opt-in per section) */
-.post-grid--tight   { --post-grid-gap: clamp(var(--space-4), 2vw, var(--space-6)); }
-.post-grid--roomy   { --post-grid-gap: clamp(var(--space-7), 3vw, var(--space-10)); }
+.post-grid--tight {
+  --post-grid-gap: clamp(var(--space-4), 2vw, var(--space-6));
+}
+.post-grid--roomy {
+  --post-grid-gap: clamp(var(--space-7), 3vw, var(--space-10));
+}
 
 /* Align card heights when excerpts vary and avoid overflow */
-.post-grid > li { display: flex; min-width: 0; }
-.post-grid > li > * { width: 100%; }
+.post-grid > li {
+  display: flex;
+  min-width: 0;
+}
+.post-grid > li > * {
+  width: 100%;
+}
 
 /* Modern perf: prevent layout shift while images load (safe intrinsic size) */
-.post-grid > li { content-visibility: auto; contain-intrinsic-size: 360px 420px; }
+.post-grid > li {
+  content-visibility: auto;
+  contain-intrinsic-size: 360px 420px;
+}
 
 /* Respect reduced motion; keep content-visibility optimization */
 @media (prefers-reduced-motion: reduce) {
-  .post-grid > li { content-visibility: auto; }
+  .post-grid > li {
+    content-visibility: auto;
+  }
 }
 
 /* Fix Plan 123.4 — ensure grid children can shrink at ≤320px and never force horizontal scroll */
 .post-grid .pcard,
-.post-grid .pcard__content { min-width: 0; }
+.post-grid .pcard__content {
+  min-width: 0;
+}
 
-.post-grid .pcard__media img { width: 100%; height: auto; display: block; }
+.post-grid .pcard__media img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

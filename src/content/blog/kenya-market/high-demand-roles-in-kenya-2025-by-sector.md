@@ -7,11 +7,11 @@ updated: 2025-10-24
 author: Sev
 category: kenya-market
 tags:
-   - Kenya job market 2025
-   - Salary bands Kenya
-   - High demand jobs
-   - Sectors 2025
-  
+  - Kenya job market 2025
+  - Salary bands Kenya
+  - High demand jobs
+  - Sectors 2025
+
 slug: high-demand-roles-in-kenya-2025-by-sector
 draft: false
 canonical: /blog/kenya-market/high-demand-roles-in-kenya-2025-by-sector/
@@ -30,7 +30,6 @@ sources:
   - label: World Bank Kenya Economic Update
     url: https://www.worldbank.org/en/country/kenya/publication/kenya-economic-update-keu
 ---
-
 
 ## Outcome in 30 seconds
 
@@ -64,20 +63,20 @@ Publish a small portfolio aligned to your target sector: data project, case stud
 
 ## Table: sectors and sample roles
 
-| Sector | Sample roles (2025) | Why it’s hot |
-|---|---|---|
-| Digital & fintech | Software developer, data analyst, cybersecurity specialist | Mobile money maturity and SaaS adoption fuel hiring |
-| Healthcare | Nurse practitioner, telehealth coordinator, health data manager | Demographic growth and UHC investments |
-| Renewable energy & agriculture | Project manager, agritech analyst, climate finance officer | Incentives and climate-smart projects |
-| Logistics & supply chain | Supply chain analyst, e-commerce ops manager, fleet optimisation specialist | E-commerce growth and regional trade |
+| Sector                         | Sample roles (2025)                                                         | Why it’s hot                                        |
+| ------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------- |
+| Digital & fintech              | Software developer, data analyst, cybersecurity specialist                  | Mobile money maturity and SaaS adoption fuel hiring |
+| Healthcare                     | Nurse practitioner, telehealth coordinator, health data manager             | Demographic growth and UHC investments              |
+| Renewable energy & agriculture | Project manager, agritech analyst, climate finance officer                  | Incentives and climate-smart projects               |
+| Logistics & supply chain       | Supply chain analyst, e-commerce ops manager, fleet optimisation specialist | E-commerce growth and regional trade                |
 
 ## Checklist (publish-ready)
 
-- [ ] Transferable skills identified  
-- [ ] Sector-specific qualifications mapped and scheduled  
-- [ ] Two informational interviews completed  
-- [ ] One portfolio project published  
-- [ ] Contingency sector selected in case of slowdown  
+- [ ] Transferable skills identified
+- [ ] Sector-specific qualifications mapped and scheduled
+- [ ] Two informational interviews completed
+- [ ] One portfolio project published
+- [ ] Contingency sector selected in case of slowdown
 
 ## Proof and pitfalls
 

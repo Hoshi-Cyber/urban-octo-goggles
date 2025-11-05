@@ -53,12 +53,6 @@ const top = Array.isArray(items) ? items.slice(0, Math.max(0, limit)) : [];
 
 import css from "./TrendingList.css?url";
 ---
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 {top.length > 0 && (

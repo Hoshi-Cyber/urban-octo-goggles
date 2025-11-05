@@ -17,7 +17,7 @@ export type PaginateResult = {
   totalPages: number;
   currentPage: number;
   start: number; // inclusive
-  end: number;   // exclusive
+  end: number; // exclusive
 };
 
 export function pageCount(totalItems: number, perPage: number): number {
@@ -35,7 +35,10 @@ export function clampPage(page: number, totalPages: number): number {
  * Compute slice indices for the given page (1-indexed).
  * Returns [start, end) suitable for Array.prototype.slice.
  */
-export function sliceRange(currentPage: number, perPage: number): { start: number; end: number } {
+export function sliceRange(
+  currentPage: number,
+  perPage: number,
+): { start: number; end: number } {
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
   return { start, end };
@@ -44,7 +47,11 @@ export function sliceRange(currentPage: number, perPage: number): { start: numbe
 /**
  * Convenience: paginate + slice indices in one call.
  */
-export function paginate(totalItems: number, perPage: number, currentPage: number): PaginateResult {
+export function paginate(
+  totalItems: number,
+  perPage: number,
+  currentPage: number,
+): PaginateResult {
   const totalPages = pageCount(totalItems, perPage);
   const page = clampPage(currentPage, totalPages);
   const { start, end } = sliceRange(page, perPage);
@@ -78,7 +85,11 @@ export function pageHref(basePath: string, page: number): string {
  * - prev of page >2 is /blog/page/{n-1}/
  * - next of last page is null
  */
-export function makeRelLinks(currentPage: number, totalPages: number, basePath: string): PageLinks {
+export function makeRelLinks(
+  currentPage: number,
+  totalPages: number,
+  basePath: string,
+): PageLinks {
   const base = normalizeBasePath(basePath);
   const canonical = pageHref(base, currentPage);
 
@@ -87,7 +98,8 @@ export function makeRelLinks(currentPage: number, totalPages: number, basePath: 
     relPrev = currentPage === 2 ? `${base}/` : pageHref(base, currentPage - 1);
   }
 
-  const relNext = currentPage < totalPages ? pageHref(base, currentPage + 1) : null;
+  const relNext =
+    currentPage < totalPages ? pageHref(base, currentPage + 1) : null;
 
   return { canonical, relPrev, relNext };
 }
@@ -95,7 +107,11 @@ export function makeRelLinks(currentPage: number, totalPages: number, basePath: 
 /**
  * Slice an array into the visible items for a given page.
  */
-export function pageItems<T>(items: T[], currentPage: number, perPage: number): T[] {
+export function pageItems<T>(
+  items: T[],
+  currentPage: number,
+  perPage: number,
+): T[] {
   const { start, end } = sliceRange(currentPage, perPage);
   return items.slice(start, end);
 }
@@ -112,6 +128,7 @@ export function pagesArray(totalPages: number): number[] {
  * Falls back to 1 if invalid.
  */
 export function parsePageParam(param: string | number | undefined): number {
-  const n = typeof param === "number" ? param : Number(String(param ?? "").trim());
+  const n =
+    typeof param === "number" ? param : Number(String(param ?? "").trim());
   return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1;
 }

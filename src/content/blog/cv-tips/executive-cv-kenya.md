@@ -26,7 +26,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Signal governance readiness and value creation at scale. Lead with strategy, risk, capital allocation, and stakeholder outcomes.
@@ -57,17 +56,17 @@ List committee work, policies approved, and disclosures improved.
 
 ## Table: governance signals to include
 
-| Area | Evidence |
-|---|---|
+| Area         | Evidence                                               |
+| ------------ | ------------------------------------------------------ |
 | Audit & Risk | Clean opinions, risk appetite set, loss events reduced |
-| ESG | Emissions baseline, diversity goals, supplier audits |
-| Strategy | Portfolio rebalancing, capex discipline, ROIC gains |
+| ESG          | Emissions baseline, diversity goals, supplier audits   |
+| Strategy     | Portfolio rebalancing, capex discipline, ROIC gains    |
 
 ## Checklist (publish-ready)
 
-- [ ] Positioning summary with sector and scale  
-- [ ] Governance evidence and committee work  
-- [ ] 3–5 quantified bullets per executive role  
+- [ ] Positioning summary with sector and scale
+- [ ] Governance evidence and committee work
+- [ ] 3–5 quantified bullets per executive role
 - [ ] Regional scope highlighted
 
 ## Proof and pitfalls

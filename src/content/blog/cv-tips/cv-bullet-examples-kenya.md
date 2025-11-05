@@ -26,7 +26,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 See how to transform weak task bullets into quantified outcomes recruiters prefer.
@@ -53,20 +52,20 @@ After: “Processed **1,200** supplier invoices per month with **99.8%** accurac
 
 ## Table: six role families, before → after
 
-| Role | Before | After |
-|---|---|---|
-| Finance | “Managed petty cash” | “Digitised petty cash with monthly **KES 500K** throughput; cut reconciliation time **40%**.” |
-| Sales | “Talked to clients” | “Closed **KES 18M** ARR; **22%** win-rate improvement with 3-step demo flow.” |
-| Ops | “Coordinated deliveries” | “Raised OTIF from **81% → 93%** by route batching and vendor scorecards.” |
-| IT | “Maintained systems” | “Cut downtime **35%**; MTTR from **3h → 1.9h** across 120 nodes.” |
-| HR | “Handled onboarding” | “Reduced time-to-productivity **25%** via 7-day preboarding and LMS playbooks.” |
-| Customer Support | “Resolved tickets” | “Improved FCR **+14pp**; CSAT **4.6/5** on 2,400 tickets/quarter.” |
+| Role             | Before                   | After                                                                                         |
+| ---------------- | ------------------------ | --------------------------------------------------------------------------------------------- |
+| Finance          | “Managed petty cash”     | “Digitised petty cash with monthly **KES 500K** throughput; cut reconciliation time **40%**.” |
+| Sales            | “Talked to clients”      | “Closed **KES 18M** ARR; **22%** win-rate improvement with 3-step demo flow.”                 |
+| Ops              | “Coordinated deliveries” | “Raised OTIF from **81% → 93%** by route batching and vendor scorecards.”                     |
+| IT               | “Maintained systems”     | “Cut downtime **35%**; MTTR from **3h → 1.9h** across 120 nodes.”                             |
+| HR               | “Handled onboarding”     | “Reduced time-to-productivity **25%** via 7-day preboarding and LMS playbooks.”               |
+| Customer Support | “Resolved tickets”       | “Improved FCR **+14pp**; CSAT **4.6/5** on 2,400 tickets/quarter.”                            |
 
 ## Checklist (publish-ready)
 
-- [ ] Metric first, action next  
-- [ ] Scope named (KES, volume, users, regions)  
-- [ ] Max 2 lines per bullet  
+- [ ] Metric first, action next
+- [ ] Scope named (KES, volume, users, regions)
+- [ ] Max 2 lines per bullet
 - [ ] Consistent tense and punctuation
 
 ## Proof and pitfalls

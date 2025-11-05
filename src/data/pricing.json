@@ -4,11 +4,7 @@
     "name": "Starter",
     "priceRange": "KSh 1,000 – 1,500",
     "description": "Entry‑level CV that passes ATS, perfect for students and new graduates.",
-    "features": [
-      "ATS‑optimized CV",
-      "One revision",
-      "Standard 3‑day delivery"
-    ],
+    "features": ["ATS‑optimized CV", "One revision", "Standard 3‑day delivery"],
     "ctaLabel": "Choose Strater",
     "highlight": false
   },

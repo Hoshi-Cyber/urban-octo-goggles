@@ -28,7 +28,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Convert profile views into leads. Use five blocks to communicate relevance fast.
@@ -47,10 +46,10 @@ Value: methods you use. Proof: metric. Scope: industries or functions.
 
 ### Step 1: write the five blocks
 
-- **Who** — current or target role and problem you solve  
-- **Value** — methods or approach  
-- **Proof** — quantified achievement  
-- **Scope** — industries or functions  
+- **Who** — current or target role and problem you solve
+- **Value** — methods or approach
+- **Proof** — quantified achievement
+- **Scope** — industries or functions
 - **CTA** — invite contact
 
 ### Step 2: localise with Kenya context
@@ -63,18 +62,18 @@ Specify how to engage you and for what.
 
 ## Table: five-block template examples
 
-| Role | Example five-block summary |
-|---|---|
+| Role                 | Example five-block summary                                                                                                                                                                                                                               |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Supply chain analyst | Who: I help FMCG firms cut delivery times and costs. Value: I use data analytics and process mapping. Proof: Reduced logistics costs by **15%** for a Nairobi distributor. Scope: Healthcare, retail, agritech. CTA: Let’s streamline your supply chain. |
-| Software developer | Who: I build fintech apps for seamless mobile payments. Value: Kotlin and microservices. Proof: Led a team processing **KES 2B** without downtime. Scope: Banking, telecom, agritech. CTA: Need secure payment solutions? Reach out. |
-| HR consultant | Who: I guide SMEs on hiring and retention. Value: Competency frameworks and onboarding. Proof: Helped **50+** businesses improve retention **20%**. Scope: Startups and NGOs. CTA: Let’s optimise your people pipeline. |
+| Software developer   | Who: I build fintech apps for seamless mobile payments. Value: Kotlin and microservices. Proof: Led a team processing **KES 2B** without downtime. Scope: Banking, telecom, agritech. CTA: Need secure payment solutions? Reach out.                     |
+| HR consultant        | Who: I guide SMEs on hiring and retention. Value: Competency frameworks and onboarding. Proof: Helped **50+** businesses improve retention **20%**. Scope: Startups and NGOs. CTA: Let’s optimise your people pipeline.                                  |
 
 ## Checklist (publish-ready)
 
-- [ ] One to two sentences per block  
-- [ ] One metric included  
-- [ ] Localised examples and **KES** figures  
-- [ ] Under 300 words, scannable on mobile  
+- [ ] One to two sentences per block
+- [ ] One metric included
+- [ ] Localised examples and **KES** figures
+- [ ] Under 300 words, scannable on mobile
 - [ ] Specific CTA
 
 ## Proof and pitfalls

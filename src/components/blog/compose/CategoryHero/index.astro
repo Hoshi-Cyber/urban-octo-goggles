@@ -1,5 +1,7 @@
 ---
-import "./CategoryHero.css";
+// File: src/components/blog/compose/CategoryHero/index.astro
+
+import css from "./CategoryHero.css?url";
 
 export interface Cta { href: string; label: string }
 export interface Stats {
@@ -22,7 +24,9 @@ function fmtDate(d?: string | Date) {
   try {
     const date = typeof d === "string" ? new Date(d) : d;
     return date.toLocaleDateString("en-KE", { year: "numeric", month: "short" });
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 const lastUpdatedText = fmtDate(stats.lastUpdated);
@@ -34,8 +38,8 @@ const statBits = [
 
 const dekId = "category-hero-dek";
 ---
-
 <section class="category-hero" data-section="category-hero">
+  <link rel="stylesheet" href={css} />
   <!-- Single, page-level container lives in the parent page (Fix Plan 107). -->
   <div class="category-hero__card">
     <header class="category-hero__head">

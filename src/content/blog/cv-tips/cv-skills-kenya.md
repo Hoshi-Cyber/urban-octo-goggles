@@ -25,7 +25,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Targeted skills increase match scores and interview rates. Map core hard and soft skills to the role family.
@@ -52,17 +51,17 @@ Portfolio link, metric, certification, or system you used.
 
 ## Table: example matrix
 
-| Role family | Hard skills | Soft skills |
-|---|---|---|
-| Finance | IFRS, reconciliations, Excel, Power BI | Stakeholder comms, accuracy, prioritisation |
-| Ops | SOP design, Lean, inventory, logistics | Coordination, problem solving, time management |
-| Sales | CRM, discovery, proposals, negotiation | Listening, persistence, objection handling |
-| IT | Networks, SQL, scripting, cloud basics | Incident comms, documentation, teamwork |
+| Role family | Hard skills                            | Soft skills                                    |
+| ----------- | -------------------------------------- | ---------------------------------------------- |
+| Finance     | IFRS, reconciliations, Excel, Power BI | Stakeholder comms, accuracy, prioritisation    |
+| Ops         | SOP design, Lean, inventory, logistics | Coordination, problem solving, time management |
+| Sales       | CRM, discovery, proposals, negotiation | Listening, persistence, objection handling     |
+| IT          | Networks, SQL, scripting, cloud basics | Incident comms, documentation, teamwork        |
 
 ## Checklist (publish-ready)
 
-- [ ] 8–12 skills only, clustered by role  
-- [ ] One proof artefact per top skill  
+- [ ] 8–12 skills only, clustered by role
+- [ ] One proof artefact per top skill
 - [ ] No generic lists without evidence
 
 ## Proof and pitfalls

@@ -63,7 +63,7 @@ declare global {
       body.offsetHeight,
       doc.offsetHeight,
       body.clientHeight,
-      doc.clientHeight
+      doc.clientHeight,
     );
     return { scrollTop, viewport, fullHeight };
   };

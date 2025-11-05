@@ -17,7 +17,9 @@
   justify-content: center;
 }
 
-.pagination__item { display: inline-flex; }
+.pagination__item {
+  display: inline-flex;
+}
 
 /* Controls: Prev/Next */
 .pagination__control {
@@ -91,7 +93,9 @@
 
 /* ≥640px: slightly larger tap targets */
 @media (min-width: 640px) {
-  .pagination { padding-block: var(--space-10); }
+  .pagination {
+    padding-block: var(--space-10);
+  }
   .pagination__page,
   .pagination__page.is-current {
     min-width: 2.5rem;

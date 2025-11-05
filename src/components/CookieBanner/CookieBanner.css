@@ -4,9 +4,19 @@
    Reserved space to prevent layout shift (CLS)
    JS updates --cb-height to the exact banner height.
 ---------------------------------------------------- */
-:root { --cb-height: 96px; }          /* mobile fallback */
-@media (min-width: 640px){ :root { --cb-height: 112px; } }  /* sm */
-@media (min-width: 1024px){ :root { --cb-height: 128px; } } /* lg */
+:root {
+  --cb-height: 96px;
+} /* mobile fallback */
+@media (min-width: 640px) {
+  :root {
+    --cb-height: 112px;
+  }
+} /* sm */
+@media (min-width: 1024px) {
+  :root {
+    --cb-height: 128px;
+  }
+} /* lg */
 
 .cb__reserve {
   block-size: var(--cb-height);
@@ -28,7 +38,7 @@
   bottom: 0;
   z-index: 60;
   background: color-mix(in oklab, var(--color-surface) 92%, #000 0%);
-  box-shadow: 0 -6px 24px rgba(17,24,39,.08);
+  box-shadow: 0 -6px 24px rgba(17, 24, 39, 0.08);
   border-top: 1px solid var(--color-light);
 }
 
@@ -71,15 +81,21 @@
 /* ----------------------------------------------------
    Larger screens
 ---------------------------------------------------- */
-@media (min-width: 640px) { /* sm */
+@media (min-width: 640px) {
+  /* sm */
   .cb__inner {
     grid-template-columns: 1fr auto;
     align-items: center;
   }
 }
-@media (min-width: 1024px) { /* lg */
-  .cb__title { font-size: var(--fs-xl); }
-  .cb__inner { padding-block: var(--space-6); }
+@media (min-width: 1024px) {
+  /* lg */
+  .cb__title {
+    font-size: var(--fs-xl);
+  }
+  .cb__inner {
+    padding-block: var(--space-6);
+  }
 }
 
 /* Respect existing button tokens/utilities:

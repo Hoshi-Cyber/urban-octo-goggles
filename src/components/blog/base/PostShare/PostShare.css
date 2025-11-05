@@ -16,7 +16,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: .5rem .9rem;
+  padding: 0.5rem 0.9rem;
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   color: var(--color-text);
@@ -25,7 +25,9 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .post .post__share-btn:focus-visible,

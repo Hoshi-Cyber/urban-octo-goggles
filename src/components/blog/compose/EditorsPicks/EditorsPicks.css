@@ -1,8 +1,14 @@
 /* src/components/blog/EditorsPicks/EditorsPicks.css */
 /* EditorsPicks — mobile-first, token-driven */
 
-.ep { padding-block: var(--space-6); }
-@media (min-width: 768px) { .ep { padding-block: var(--space-8); } }
+.ep {
+  padding-block: var(--space-6);
+}
+@media (min-width: 768px) {
+  .ep {
+    padding-block: var(--space-8);
+  }
+}
 
 .ep__head {
   display: grid;
@@ -13,7 +19,7 @@
   margin: 0;
   font-size: var(--fs-sm);
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 .ep__title {
@@ -29,7 +35,10 @@
   gap: var(--space-4);
 }
 @media (min-width: 768px) {
-  .ep__grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--space-6); }
+  .ep__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
 }
 
 .ep__card {
@@ -38,9 +47,14 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
-.ep__card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.ep__card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
 
 .ep__media img {
   width: 100%;
@@ -51,17 +65,33 @@
   background: var(--color-surface);
 }
 
-.ep__body { display: grid; gap: .5rem; padding: var(--space-4); }
+.ep__body {
+  display: grid;
+  gap: 0.5rem;
+  padding: var(--space-4);
+}
 .ep__cat {
   margin: 0;
-  font-size: var(--fs-xs, .75rem);
+  font-size: var(--fs-xs, 0.75rem);
   text-transform: uppercase;
-  letter-spacing: .06em;
+  letter-spacing: 0.06em;
   color: var(--color-muted);
 }
-.ep__cardTitle { margin: 0; font-weight: 700; font-size: var(--fs-lg); }
-.ep__excerpt { margin: 0; color: var(--color-muted); font-size: var(--fs-sm); }
-.ep__meta { margin: 0; color: var(--color-muted); font-size: var(--fs-xs, .75rem); }
+.ep__cardTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: var(--fs-lg);
+}
+.ep__excerpt {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+}
+.ep__meta {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-xs, 0.75rem);
+}
 
 /* Clamp helper */
 .clamp-3 {
@@ -73,5 +103,7 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .ep__card { transition: none; }
+  .ep__card {
+    transition: none;
+  }
 }

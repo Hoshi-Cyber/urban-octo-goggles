@@ -8,7 +8,9 @@
   padding: 0;
   list-style: none;
 }
-.ui-checklist__item { margin: 0; }
+.ui-checklist__item {
+  margin: 0;
+}
 
 .ui-checklist__label {
   display: grid;

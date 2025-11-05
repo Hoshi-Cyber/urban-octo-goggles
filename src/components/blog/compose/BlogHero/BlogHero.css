@@ -1,56 +1,70 @@
 /* BlogHero — mobile-first, token-driven (Fix Plan 148.1) */
 
 /* Section rhythm */
-.bloghero { padding-block: var(--space-8); }
-@media (min-width: 768px) { .bloghero { padding-block: var(--space-10); } }
-@media (min-width: 1024px){ .bloghero { padding-block: var(--space-12); } }
+.bloghero {
+  padding-block: var(--space-8);
+}
+@media (min-width: 768px) {
+  .bloghero {
+    padding-block: var(--space-10);
+  }
+}
+@media (min-width: 1024px) {
+  .bloghero {
+    padding-block: var(--space-12);
+  }
+}
 
 /* Wrapper: safe-area gutters + responsive grid */
-.bloghero__wrap{
+.bloghero__wrap {
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
   gap: var(--space-6);
   padding-inline: max(var(--space-6), env(safe-area-inset-left, 0px));
 }
-@media (min-width: 1024px){
-  .bloghero__wrap{
+@media (min-width: 1024px) {
+  .bloghero__wrap {
     grid-template-columns: 1.2fr 1fr;
     gap: clamp(var(--space-6), 3vw, var(--space-10));
   }
 }
 
 /* Title and deck */
-.bloghero__title{
+.bloghero__title {
   margin: 0 0 var(--space-2);
   font-size: clamp(var(--fs-2xl), 4.5vw, var(--fs-5xl));
   line-height: 1.1;
   font-weight: 800;
   color: var(--color-text);
 }
-.bloghero__sub{
+.bloghero__sub {
   margin: 0 0 var(--space-6);
   color: var(--color-muted);
   max-width: 60ch;
-  font-size: clamp(1rem, 1.2vw + .6rem, var(--fs-xl));
+  font-size: clamp(1rem, 1.2vw + 0.6rem, var(--fs-xl));
 }
 
 /* CTAs: stack on mobile, row from sm+ */
-.bloghero__ctas{
+.bloghero__ctas {
   display: grid;
   gap: var(--space-3);
 }
-.bloghero__ctas .btn{ width: 100%; }
-@media (min-width: 640px){
-  .bloghero__ctas{
+.bloghero__ctas .btn {
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .bloghero__ctas {
     grid-auto-flow: column;
     justify-content: start;
   }
-  .bloghero__ctas .btn{ width: auto; }
+  .bloghero__ctas .btn {
+    width: auto;
+  }
 }
 
 /* Media: show image in full (no cropping) */
-.bloghero__media{
+.bloghero__media {
   margin: 0;
   /* removed fixed aspect-ratio */
   border-radius: var(--radius-xl);
@@ -62,40 +76,44 @@
     #0b1220
   );
 }
-.bloghero__media img{
+.bloghero__media img {
   display: block;
   width: 100%;
-  height: auto;              /* keep intrinsic ratio */
-  object-fit: contain;       /* no crop */
+  height: auto; /* keep intrinsic ratio */
+  object-fit: contain; /* no crop */
   object-position: center;
 }
 
 /* Decorative fallback when no cover is provided */
-.bloghero__fallback{
+.bloghero__fallback {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.ring{
+.ring {
   position: absolute;
   inset: auto auto 8% 75%;
   width: 26%;
   aspect-ratio: 1 / 1;
   border-radius: 9999px;
   border: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
-  box-shadow: inset 0 0 0 6px color-mix(in oklab, var(--color-primary) 25%, transparent);
-  opacity: .9;
+  box-shadow: inset 0 0 0 6px
+    color-mix(in oklab, var(--color-primary) 25%, transparent);
+  opacity: 0.9;
 }
-.ring--sm{
+.ring--sm {
   inset: auto auto 12% 78%;
   width: 16%;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 /* Reduced motion */
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce) {
   .bloghero__media,
-  .ring{ transition: none; animation: none; }
+  .ring {
+    transition: none;
+    animation: none;
+  }
 }
 
 /* Removed (no longer used with 148.1):

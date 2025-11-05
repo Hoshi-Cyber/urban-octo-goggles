@@ -1,25 +1,59 @@
 ---
-import "./Pagination.css";
+// File: src/components/blog/compose/Pagination/index.astro
+
+import css from "./Pagination.css?url";
 
 export interface Props {
   basePath: string;   // e.g., "/blog" or "/blog/category/cv-tips"
   current: number;    // 1-based
   total: number;      // total pages ≥ 1
+  /** Optional query to preserve across links (only sort, tag are kept). */
+  query?: string | URLSearchParams | Record<string, string | number | null | undefined>;
 }
 
-const { basePath, current, total } = Astro.props as Props;
+const { basePath, current, total, query } = Astro.props as Props;
 
+/* -------------------------- Query preservation -------------------------- */
+function toSearchParams(q: Props["query"]): URLSearchParams {
+  if (!q) return new URLSearchParams();
+  if (typeof q === "string") return new URLSearchParams(q.startsWith("?") ? q.slice(1) : q);
+  if (q instanceof URLSearchParams) return new URLSearchParams(q.toString());
+  const usp = new URLSearchParams();
+  for (const [k, v] of Object.entries(q)) {
+    if (v === undefined || v === null || v === "") continue;
+    usp.set(k, String(v));
+  }
+  return usp;
+}
+
+// Only keep params we support client-side: sort, tag
+function filteredQueryString(q: Props["query"]): string {
+  const src = toSearchParams(q);
+  const out = new URLSearchParams();
+  const sort = src.get("sort");
+  const tag = src.get("tag");
+  if (sort) out.set("sort", sort);
+  if (tag) out.set("tag", tag);
+  const s = out.toString();
+  return s ? `?${s}` : "";
+}
+
+const qs = filteredQueryString(query);
+
+/* ----------------------------- Href helpers ----------------------------- */
 // Normalize base path to always end with "/" to satisfy trailingSlash: "always".
 // Page 1 = `${base}/`
 // Page N>1 = `${base}page/N/`
 const base = basePath.endsWith("/") ? basePath : `${basePath}/`;
-const hrefFor = (n: number) => (n === 1 ? `${base}` : `${base}page/${n}/`);
+const hrefFor = (n: number) => {
+  const path = n === 1 ? `${base}` : `${base}page/${n}/`;
+  return `${path}${qs}`;
+};
 
-// Clamp
+/* -------------------------------- State -------------------------------- */
 const cur = Math.max(1, Math.min(current, Math.max(1, total)));
 
 // Build windowed page list with gaps
-// Strategy: always show 1 and total, plus a sliding window around current.
 const windowSize = 1; // pages on each side of current
 const pages: (number | "...")[] = [];
 const add = (x: number | "...") => pages.push(x);
@@ -37,8 +71,8 @@ if (total <= 7) {
   add(total);
 }
 ---
-
 <nav class="pagination" aria-label="Pagination" data-section="pagination">
+  <link rel="stylesheet" href={css} />
   <div class="container">
     <ol class="pagination__list" role="list">
       {/* Prev */}

@@ -3,7 +3,7 @@
 export type Level = "Graduate" | "Entry" | "Mid" | "Senior" | "Executive";
 
 export type Media = {
-  src: string;  // root-relative under /public
+  src: string; // root-relative under /public
   alt: string;
   width?: number;
   height?: number;
@@ -70,8 +70,7 @@ const items: Sample[] = [
     level: "Senior",
     industry: "Finance",
     before: "Managed budgets.",
-    after:
-      "Oversaw KSh 100M+ budgets; new controls cut overspend 15%.",
+    after: "Oversaw KSh 100M+ budgets; new controls cut overspend 15%.",
     media: {
       src: "/assets/images/samples/senior-finance.jpg",
       alt: "Finance CV preview",
@@ -100,8 +99,7 @@ const items: Sample[] = [
     level: "Executive",
     industry: "Operations",
     before: "Head of operations.",
-    after:
-      "Directed multi-site ops (200+ staff), −KSh 2M annual costs.",
+    after: "Directed multi-site ops (200+ staff), −KSh 2M annual costs.",
     media: {
       src: "/assets/images/samples/exec-ops.jpg",
       alt: "Executive operations CV preview",
@@ -112,14 +110,20 @@ const items: Sample[] = [
 ];
 
 // Filters
-const LEVEL_ORDER: Level[] = ["Graduate", "Entry", "Mid", "Senior", "Executive"];
+const LEVEL_ORDER: Level[] = [
+  "Graduate",
+  "Entry",
+  "Mid",
+  "Senior",
+  "Executive",
+];
 
-export const levels: Level[] = Array.from(new Set(items.map((i) => i.level))).sort(
-  (a, b) => LEVEL_ORDER.indexOf(a) - LEVEL_ORDER.indexOf(b)
-);
+export const levels: Level[] = Array.from(
+  new Set(items.map((i) => i.level)),
+).sort((a, b) => LEVEL_ORDER.indexOf(a) - LEVEL_ORDER.indexOf(b));
 
 export const industries: string[] = Array.from(
-  new Set(items.map((i) => i.industry))
+  new Set(items.map((i) => i.industry)),
 ).sort();
 
 // Page config

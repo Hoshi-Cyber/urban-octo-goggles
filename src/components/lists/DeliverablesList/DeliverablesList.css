@@ -2,20 +2,20 @@
 /* Mobile-first. Uses your design tokens where present. */
 
 .delivs {
-  padding-block: var(--space-2, .5rem);
+  padding-block: var(--space-2, 0.5rem);
 }
 
 .delivs__header {
-  margin-bottom: var(--space-3, .75rem);
+  margin-bottom: var(--space-3, 0.75rem);
 }
 
 .delivs__eyebrow {
-  margin: 0 0 .25rem;
-  font-size: .75rem;
-  letter-spacing: .06em;
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-primary, #0B57D0) 55%, #000);
-  opacity: .8;
+  color: color-mix(in oklab, var(--color-primary, #0b57d0) 55%, #000);
+  opacity: 0.8;
 }
 
 .delivs__title {
@@ -27,23 +27,26 @@
 .delivs__list {
   /* 1 → 2 columns at md */
   display: grid;
-  gap: var(--space-3, .75rem);
+  gap: var(--space-3, 0.75rem);
   grid-template-columns: 1fr;
 }
 
 @media (min-width: 640px) {
-  .delivs__list { grid-template-columns: 1fr 1fr; }
+  .delivs__list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .delivs__item {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: start;
-  gap: var(--space-2, .5rem);
-  padding: var(--space-3, .75rem) var(--space-3, .75rem);
-  border: 1px solid color-mix(in oklab, var(--color-primary, #0B57D0) 14%, #e5e7eb);
-  background: color-mix(in oklab, var(--color-primary, #0B57D0) 4%, #fff);
-  border-radius: var(--radius-lg, .75rem);
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-3, 0.75rem);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary, #0b57d0) 14%, #e5e7eb);
+  background: color-mix(in oklab, var(--color-primary, #0b57d0) 4%, #fff);
+  border-radius: var(--radius-lg, 0.75rem);
 }
 
 .delivs__icon {
@@ -52,9 +55,10 @@
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 9999px;
-  color: var(--color-primary, #0B57D0);
-  background: color-mix(in oklab, var(--color-primary, #0B57D0) 12%, #fff);
-  border: 1px solid color-mix(in oklab, var(--color-primary, #0B57D0) 22%, transparent);
+  color: var(--color-primary, #0b57d0);
+  background: color-mix(in oklab, var(--color-primary, #0b57d0) 12%, #fff);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
   flex: 0 0 auto;
 }
 
@@ -67,11 +71,14 @@
 .delivs a:focus-visible,
 .delivs button:focus-visible,
 .delivs__item:focus-visible {
-  outline: 2px solid var(--color-primary, #0B57D0);
+  outline: 2px solid var(--color-primary, #0b57d0);
   outline-offset: 2px;
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

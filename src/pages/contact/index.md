@@ -5,6 +5,7 @@ description: "Send us an inquiry or chat via WhatsApp to get started on your CV,
 seo:
   canonical: "/contact/"
 ---
+
 import ContactForm from '../../components/forms/ContactForm.astro'
 
 ## Let’s Work Together

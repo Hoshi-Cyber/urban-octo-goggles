@@ -30,7 +30,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Your LinkedIn headline is prime real estate. In Kenya’s competitive market, a clear headline stating your value proposition can attract recruiters and clients fast. Use the formula **value + scope + proof** so someone clicks to read more. With over **30 million** working-age people and unemployment at **5.6%** [2], clarity is a competitive advantage.
@@ -54,6 +53,7 @@ Choose a keyword recruiters search for (job title or core skill). If you’re tr
 ### Step 2: add your scope
 
 After the keyword, specify domain or industry. Examples:
+
 - “Finance analyst | Microfinance & lending”
 - “Software developer | Agri-tech & data platforms”
 - “HR consultant | SMEs & startups”
@@ -61,6 +61,7 @@ After the keyword, specify domain or industry. Examples:
 ### Step 3: finish with proof
 
 End with a number, achievement, or credential:
+
 - “Cut reporting time **30%**”
 - “Saved **KES 10M** in procurement”
 - “Delivered **50+** projects”
@@ -68,22 +69,22 @@ End with a number, achievement, or credential:
 
 ## Table: headline formulas by persona
 
-| Persona       | Formula example |
-|:--------------|:----------------|
-| Graduate      | **Aspiring data analyst** \| University projects \| *Built app used by 2,000 students* |
-| Mid-career    | **Finance analyst** \| FP&A & dashboards \| *Cut reporting time 30%* |
-| Entrepreneur  | **HR consultant** \| SMEs & startups \| *Helped 100+ founders hire* |
-| Executive     | **Operations director** \| Manufacturing & logistics \| *Reduced downtime 35%* |
+| Persona      | Formula example                                                                        |
+| :----------- | :------------------------------------------------------------------------------------- |
+| Graduate     | **Aspiring data analyst** \| University projects \| _Built app used by 2,000 students_ |
+| Mid-career   | **Finance analyst** \| FP&A & dashboards \| _Cut reporting time 30%_                   |
+| Entrepreneur | **HR consultant** \| SMEs & startups \| _Helped 100+ founders hire_                    |
+| Executive    | **Operations director** \| Manufacturing & logistics \| _Reduced downtime 35%_         |
 
 ## Checklist (publish-ready)
 
-- [ ] Headline starts with primary function or desired role  
-- [ ] Industry or domain specified  
-- [ ] Metric, credential, or achievement included  
-- [ ] Under **120 characters** for mobile where possible  
-- [ ] Keywords, not adjectives  
-- [ ] Headline aligned with Summary and Experience sections  
-- [ ] Visibility settings allow headline to be shown to everyone  
+- [ ] Headline starts with primary function or desired role
+- [ ] Industry or domain specified
+- [ ] Metric, credential, or achievement included
+- [ ] Under **120 characters** for mobile where possible
+- [ ] Keywords, not adjectives
+- [ ] Headline aligned with Summary and Experience sections
+- [ ] Visibility settings allow headline to be shown to everyone
 
 ## Proof and pitfalls
 

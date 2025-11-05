@@ -1,21 +1,21 @@
 ---
+import css from "./PostUpdatedBadge.css?url";
+
 interface Props { date?: string | Date; updated?: string | Date; }
 const toDate = (d?: string | Date) => (d ? new Date(d) : undefined);
-const published = toDate(Astro.props?.date);
-const modified = toDate(Astro.props?.updated);
+const published = toDate((Astro.props as Props)?.date);
+const modified = toDate((Astro.props as Props)?.updated);
 const show = published && modified ? modified > published : Boolean(modified);
 
 const fmt = (d?: Date) =>
   d
     ? new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(d)
     : null;
-
-// Colocated CSS
-const sheet = new URL("./PostUpdatedBadge.css", import.meta.url).toString();
 ---
+<link rel="stylesheet" href={css} />
+
 {show && modified && (
   <div class="post__updated" aria-live="polite">
-    <link rel="stylesheet" href={sheet} />
     Updated on {fmt(modified)}
   </div>
 )}

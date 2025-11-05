@@ -1,5 +1,5 @@
 ---
-// src/components/blog/compose/LeadMagnetStrip/index.astro
+// File: src/components/blog/compose/LeadMagnetStrip/index.astro
 /**
  * LeadMagnetStrip — free PDF/email capture.
  * Props:
@@ -19,6 +19,7 @@ export interface Props {
   source?: string;
   successHref?: string;
 }
+
 const {
   title,
   sub = "Get practical, local advice that wins interviews.",
@@ -28,15 +29,9 @@ const {
   successHref
 } = Astro.props as Props;
 
+// Local component CSS only (per Fix Plan 155)
 import css from "./LeadMagnetStrip.css?url";
 ---
-
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 <section class="lms" aria-label="Lead magnet">

@@ -1,4 +1,6 @@
 ---
+import css from "./PostTags.css?url";
+
 type Variant = "header" | "footer";
 
 interface PostTagsProps {
@@ -8,9 +10,6 @@ interface PostTagsProps {
 
 const { tags = [], variant = "header" } = Astro.props as PostTagsProps;
 
-// Colocated CSS
-const sheet = new URL("./PostTags.css", import.meta.url).toString();
-
 // Robust, local slugify for tag URLs
 const slugify = (s: string) =>
   s
@@ -19,26 +18,24 @@ const slugify = (s: string) =>
     .replace(/[\s\W-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 ---
+<link rel="stylesheet" href={css} />
 
 {tags.length > 0 && (
-  <>
-    <link rel="stylesheet" href={sheet} />
-    <ul
-      class={`post__tags${variant === "footer" ? " post__tags--footer" : ""}`}
-      aria-label="Tags"
-    >
-      {tags.slice(0, 12).map((t) => (
-        <li>
-          <a
-            class="post__tag"
-            href={`/blog/tag/${slugify(t)}/`}
-            rel="tag"
-            itemprop="keywords"
-          >
-            {t}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </>
+  <ul
+    class={`post__tags${variant === "footer" ? " post__tags--footer" : ""}`}
+    aria-label="Tags"
+  >
+    {tags.slice(0, 12).map((t) => (
+      <li>
+        <a
+          class="post__tag"
+          href={`/blog/tag/${slugify(t)}/`}
+          rel="tag"
+          itemprop="keywords"
+        >
+          {t}
+        </a>
+      </li>
+    ))}
+  </ul>
 )}

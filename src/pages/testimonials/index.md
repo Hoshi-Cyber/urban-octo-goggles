@@ -5,6 +5,7 @@ description: "Hear from professionals across Kenya who trusted us with their CVs
 seo:
   canonical: "/testimonials/"
 ---
+
 import TestimonialCard from '../../components/common/TestimonialCard.astro'
 
 ## What Our Clients Say

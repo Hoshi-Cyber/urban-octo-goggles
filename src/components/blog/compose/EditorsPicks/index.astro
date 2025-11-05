@@ -1,5 +1,5 @@
 ---
-// src/components/blog/compose/EditorsPicks/index.astro
+// File: src/components/blog/compose/EditorsPicks/index.astro
 /**
  * EditorsPicks — curated 3-post strip.
  * Props:
@@ -26,17 +26,11 @@ const {
 } = Astro.props as Props;
 
 const fmt = (d: string|Date) =>
-  new Date(d).toLocaleDateString('en-KE', { year: 'numeric', month: 'short', day: 'numeric' });
+  new Date(d).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" });
 
-// Fix Plan 95: import CSS via ?url
+// Local component CSS only (per Fix Plan 155)
 import css from "./EditorsPicks.css?url";
 ---
-<style is:global>
-  @import "../../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={css} />
 
 {posts.length > 0 && (
@@ -70,7 +64,7 @@ import css from "./EditorsPicks.css?url";
                 <time datetime={new Date(p.frontmatter.date).toISOString()}>
                   {fmt(p.frontmatter.date)}
                 </time>
-                {typeof p.frontmatter?.readingTime === 'number' && <> · {p.frontmatter.readingTime} min read</>}
+                {typeof p.frontmatter?.readingTime === "number" && <> · {p.frontmatter.readingTime} min read</>}
               </p>
             </div>
           </article>

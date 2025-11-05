@@ -26,7 +26,6 @@ sources:
     url: https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
 
-
 ## Outcome in 30 seconds
 
 Recruiters skim for value creation. Measure cost, time, revenue, risk, quality, and scale. Convert duties to numbers and Kenya-specific KPIs.
@@ -57,18 +56,18 @@ Keep 5–7 strongest bullets in the last 5–7 years. Older content moves to a �
 
 ## Table: metric ideas by function
 
-| Function | Metrics recruiters value |
-|---|---|
-| Finance | Collection rate, DSO, variance, audit findings |
-| Ops | Turnaround time, SLA, waste %, on-time delivery |
-| Sales | Pipeline, conversion, KES closed, retention |
-| IT | Uptime, incident MTTR, defect rate, security score |
+| Function | Metrics recruiters value                           |
+| -------- | -------------------------------------------------- |
+| Finance  | Collection rate, DSO, variance, audit findings     |
+| Ops      | Turnaround time, SLA, waste %, on-time delivery    |
+| Sales    | Pipeline, conversion, KES closed, retention        |
+| IT       | Uptime, incident MTTR, defect rate, security score |
 
 ## Checklist (publish-ready)
 
-- [ ] Each role has 2–4 quantified bullets  
-- [ ] Metrics mapped to Kenyan sector norms  
-- [ ] Results lead the bullet, action follows  
+- [ ] Each role has 2–4 quantified bullets
+- [ ] Metrics mapped to Kenyan sector norms
+- [ ] Results lead the bullet, action follows
 - [ ] Irrelevant tasks removed
 
 ## Proof and pitfalls

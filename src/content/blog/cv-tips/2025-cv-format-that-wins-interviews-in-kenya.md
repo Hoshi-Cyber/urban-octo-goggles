@@ -3,8 +3,8 @@ title: 2025 CV format that wins interviews in Kenya
 description: >-
   A practical playbook to structure your CV around outcomes so you get more
   interviews in Kenya.
-date: '2025-10-20'
-updated: '2025-10-20'
+date: "2025-10-20"
+updated: "2025-10-20"
 author: Sev
 category: cv-tips
 tags:
@@ -34,7 +34,6 @@ sources:
     url: >-
       https://www.ulandssekretariatet.dk/wp-content/uploads/2024/09/Kenya-LMP-2024-final1.pdf
 ---
-
 
 ## Outcome in 30 seconds
 
@@ -66,8 +65,8 @@ Go beyond the advert. Check LinkedIn profiles of people currently in similar rol
 
 Transform duties into achievements. Use the formula: **action + scope + metric + result**.
 
-- *Mid-career procurement officer*: “Negotiated supplier contracts worth **KES 50M**, cutting costs by **12%** and shortening delivery times by **2 weeks**.”  
-- *Graduate*: “Led a team of four in developing a budgeting app that reached **1,000 downloads** within three months.”
+- _Mid-career procurement officer_: “Negotiated supplier contracts worth **KES 50M**, cutting costs by **12%** and shortening delivery times by **2 weeks**.”
+- _Graduate_: “Led a team of four in developing a budgeting app that reached **1,000 downloads** within three months.”
 
 Quantify even soft skills. If you improved customer satisfaction, cite the change in NPS or number of positive testimonials. If you managed a team, state its size and highlight retention or productivity improvements.
 
@@ -79,23 +78,23 @@ Localise salary and impact. If budgets were in USD, convert impact into KES and 
 
 ## Table: example bullets by level
 
-| Level      | Example outcome-focused bullet |
-|-----------:|--------------------------------|
-| Graduate   | Increased social media engagement for a student society by **150%** in six months by running weekly LinkedIn polls and analysing results |
+|      Level | Example outcome-focused bullet                                                                                                            |
+| ---------: | ----------------------------------------------------------------------------------------------------------------------------------------- |
+|   Graduate | Increased social media engagement for a student society by **150%** in six months by running weekly LinkedIn polls and analysing results  |
 | Mid-career | Managed a **KES 30M** budget for a Nairobi construction project, delivering on time and **8% under budget** through supplier negotiations |
-| Senior     | Led a team of **20 engineers** at a telecommunications firm to cut network downtime by **35%** and save **KES 45M** in maintenance costs |
+|     Senior | Led a team of **20 engineers** at a telecommunications firm to cut network downtime by **35%** and save **KES 45M** in maintenance costs  |
 
 ## Checklist (publish-ready)
 
-- [ ] Two-sentence summary highlights target role and top achievements  
-- [ ] Bullets follow **action + scope + metric + result**  
-- [ ] Buzzwords removed and replaced with **KES** or percentage outcomes  
-- [ ] Maximum two pages, consistent spacing, simple font  
-- [ ] Keywords adapted from a current Kenyan job advert without stuffing  
-- [ ] Proofread for spelling, grammar, and date formats  
-- [ ] Saved as **PDF** to preserve formatting  
-- [ ] USD figures converted into **KES** with year noted  
-- [ ] No unnecessary personal data (ID numbers, photos, marital status)  
+- [ ] Two-sentence summary highlights target role and top achievements
+- [ ] Bullets follow **action + scope + metric + result**
+- [ ] Buzzwords removed and replaced with **KES** or percentage outcomes
+- [ ] Maximum two pages, consistent spacing, simple font
+- [ ] Keywords adapted from a current Kenyan job advert without stuffing
+- [ ] Proofread for spelling, grammar, and date formats
+- [ ] Saved as **PDF** to preserve formatting
+- [ ] USD figures converted into **KES** with year noted
+- [ ] No unnecessary personal data (ID numbers, photos, marital status)
 
 ## Proof and pitfalls
 

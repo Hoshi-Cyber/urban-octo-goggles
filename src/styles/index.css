@@ -1,41 +1,49 @@
 /* Entry point for all styles */
-@import './tokens.css';
-@import './base.css';
-@import './typography.css';
-@import './utilities.css';
-@import './breakpoints.css';
+@import "./tokens.css";
+@import "./base.css";
+@import "./typography.css";
+@import "./utilities.css";
+@import "./breakpoints.css";
 
 /* Page rhythm utilities (Fix Plan 114) */
-@import './sections.css';
+@import "./sections.css";
 
 /* Components (site-wide) */
-@import './components/PostGrid.css';
+@import "./components/PostGrid.css";
 
 /* Page Header pattern (Pricing, and reusable elsewhere) */
-.page-header { margin-top: var(--space-2, .5rem); }
-.page-header .h1 { margin: 0 0 var(--space-2, .5rem); }
+.page-header {
+  margin-top: var(--space-2, 0.5rem);
+}
+.page-header .h1 {
+  margin: 0 0 var(--space-2, 0.5rem);
+}
 
 /* Visually distinct but not heavy */
-.page-lead{
+.page-lead {
   margin: 0;
   max-width: 68ch;
-  font-size: clamp(1rem, .35vw + 1rem, 1.125rem);
+  font-size: clamp(1rem, 0.35vw + 1rem, 1.125rem);
   line-height: 1.55;
   color: var(--color-muted, #374151);
-  background: color-mix(in oklab, var(--color-primary, #0B57D0) 3%, #fff);
-  border: 1px solid color-mix(in oklab, var(--color-primary, #0B57D0) 14%, transparent);
+  background: color-mix(in oklab, var(--color-primary, #0b57d0) 3%, #fff);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary, #0b57d0) 14%, transparent);
   padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   border-radius: var(--radius-2xl, 16px);
-  box-shadow: var(--shadow-xs, 0 1px 1px rgba(17,24,39,.05));
+  box-shadow: var(--shadow-xs, 0 1px 1px rgba(17, 24, 39, 0.05));
 }
 
 /* Desktop alignment, no overlap with nav */
-@media (min-width: 1024px){
-  .page-header{
+@media (min-width: 1024px) {
+  .page-header {
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: end;
-    gap: var(--space-3, .75rem);
+    gap: var(--space-3, 0.75rem);
   }
-  .page-lead{ grid-column: 1 / -1; max-width: 60ch; }
+  .page-lead {
+    grid-column: 1 / -1;
+    max-width: 60ch;
+  }
 }

@@ -1,8 +1,14 @@
 /* TrendingList — mobile-first, token-driven (Fix Plan 152) */
 
 /* Section rhythm */
-.trend { padding-block: var(--space-6); }
-@media (min-width: 768px) { .trend { padding-block: var(--space-8); } }
+.trend {
+  padding-block: var(--space-6);
+}
+@media (min-width: 768px) {
+  .trend {
+    padding-block: var(--space-8);
+  }
+}
 
 /* Head */
 .trend__head {
@@ -14,7 +20,7 @@
   margin: 0;
   font-size: var(--fs-sm);
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 .trend__title {
@@ -39,7 +45,9 @@
   }
 }
 
-.tl__item { list-style: none; }
+.tl__item {
+  list-style: none;
+}
 
 /* Clickable row */
 .tl__link {
@@ -52,8 +60,11 @@
   background: var(--surface-1, var(--color-surface));
   color: inherit;
   text-decoration: none;
-  transition: background-color .12s ease, box-shadow .12s ease, transform .12s ease;
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,.04));
+  transition:
+    background-color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.04));
 }
 .tl__link:hover {
   background: color-mix(in oklab, var(--color-primary) 6%, #fff);
@@ -71,31 +82,41 @@
 }
 
 /* Content block */
-.tl__content { display: grid; gap: .125rem; min-width: 0; }
-.tl__title { font-weight: 600; }
+.tl__content {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.tl__title {
+  font-weight: 600;
+}
 .tl__meta {
-  font-size: var(--fs-xs, .75rem);
+  font-size: var(--fs-xs, 0.75rem);
   color: var(--color-muted);
   display: inline-flex;
   align-items: center;
-  gap: .5ch;
+  gap: 0.5ch;
   flex-wrap: wrap;
 }
 
 /* Category chip */
 .tl__chip {
   display: inline-block;
-  padding: .125rem .5rem;
+  padding: 0.125rem 0.5rem;
   border-radius: 999px;
   background: var(--surface-3, #eef1f6);
   color: inherit;
 }
 
 /* Chevron */
-.tl__chev { color: var(--color-muted); }
+.tl__chev {
+  color: var(--color-muted);
+}
 
 /* Footer CTA: use same spacing as feed actions; button style comes from .pfl__viewAll */
-.tl__footer { margin-top: var(--space-6); }
+.tl__footer {
+  margin-top: var(--space-6);
+}
 
 /* Focus visible */
 .tl__link:focus-visible {

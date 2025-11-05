@@ -1,24 +1,35 @@
 /* Hero */
-.section { padding-block: var(--space-10); }
-@media (min-width: 768px) { .section { padding-block: var(--space-12); } }
+.section {
+  padding-block: var(--space-10);
+}
+@media (min-width: 768px) {
+  .section {
+    padding-block: var(--space-12);
+  }
+}
 
 .hero__grid {
   display: grid;
   gap: var(--space-8);
 }
 @media (min-width: 768px) {
-  .hero__grid { grid-template-columns: 1fr 1fr; align-items: center; }
+  .hero__grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
 }
 
 .eyebrow {
   font-size: var(--fs-sm);
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
   margin: 0 0 var(--space-2) 0;
 }
 
-.hero__sub { margin-bottom: var(--space-6); }
+.hero__sub {
+  margin-bottom: var(--space-6);
+}
 
 .hero__actions {
   display: flex;
@@ -32,7 +43,14 @@
   overflow: hidden;
   box-shadow: var(--shadow-md);
 }
-.hero__media img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+.hero__media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
 
 /* Focus visibility */
-a.btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+a.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

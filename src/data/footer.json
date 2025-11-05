@@ -1,6 +1,9 @@
 {
   "social": [
-    { "icon": "linkedin", "href": "https://www.linkedin.com/company/cvwriting-ke" },
+    {
+      "icon": "linkedin",
+      "href": "https://www.linkedin.com/company/cvwriting-ke"
+    },
     { "icon": "x-twitter", "href": "https://twitter.com/cvwritingke" },
     { "icon": "facebook", "href": "https://facebook.com/cvwritingke" }
   ],
@@ -10,7 +13,10 @@
       "links": [
         { "label": "CV Writing", "href": "/services/cv-writing/" },
         { "label": "Cover Letter", "href": "/services/cover-letter/" },
-        { "label": "LinkedIn Optimization", "href": "/services/linkedin-optimization/" }
+        {
+          "label": "LinkedIn Optimization",
+          "href": "/services/linkedin-optimization/"
+        }
       ]
     },
     {

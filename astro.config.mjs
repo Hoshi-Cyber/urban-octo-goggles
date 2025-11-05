@@ -1,5 +1,6 @@
 // astro.config.mjs
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import netlify from "@astrojs/netlify";
@@ -10,7 +11,11 @@ export default defineConfig({
   trailingSlash: "always",
   output: "server",
   adapter: netlify(),
-  integrations: [tailwind(), mdx()],
+  integrations: [
+    react(), // enable React islands
+    tailwind(),
+    mdx(),
+  ],
   vite: {
     resolve: {
       alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },

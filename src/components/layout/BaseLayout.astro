@@ -1,9 +1,12 @@
 ---
+// File: src/components/layout/BaseLayout.astro
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
 import CookieBanner from "../CookieBanner/index.astro";
-import "../../styles/index.css";
 import siteConfig from "@/site.config.json";
+
+// Import global CSS as a URL and attach via <link> in <head>
+import globalCssUrl from "../../styles/index.css?url";
 
 export interface SEO {
   canonical?: string;
@@ -79,6 +82,9 @@ const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
     {prevHref && <link rel="prev" href={prevHref} />}
     {nextHref && <link rel="next" href={nextHref} />}
 
+    <!-- Global CSS entry -->
+    <link rel="stylesheet" href={globalCssUrl} />
+
     <!-- Performance: network hints -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
@@ -94,19 +100,30 @@ const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+
+    <!-- Visible skip link styling for keyboard users -->
+    <style is:inline>
+      .skip-link{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
+      .skip-link:focus{position:static;width:auto;height:auto;padding:.5rem .75rem;background:var(--color-primary,#0a58ca);color:#fff;border-radius:.375rem}
+    </style>
+
+    <!-- Optional per-page head injection -->
+    <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
     <noscript>
       <iframe
-        src={"https://www.googletagmanager.com/ns.html?id="+gtmId}
+        src={"https://www.googletagmanager.com/ns.html?id=" + gtmId}
         height="0"
         width="0"
         style="display:none;visibility:hidden">
       </iframe>
     </noscript>
 
+    <a href="#main" class="skip-link">Skip to main content</a>
+
     <MainNav />
-    <main id="main-content" class="flex-grow page-content" role="main" tabindex="-1" data-section="main">
+    <main id="main" class="flex-grow page-content" role="main" tabindex="-1" data-section="main">
       <slot />
     </main>
     <Footer />
@@ -121,7 +138,7 @@ const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
         function grantAnalyticsOnly() {
           try {
             if (typeof window.gtag === 'function') {
-              window.gtag('consent','update',{
+              window.gtag('consent','update', {
                 analytics_storage:'granted',
                 functionality_storage:'granted',
                 security_storage:'granted',

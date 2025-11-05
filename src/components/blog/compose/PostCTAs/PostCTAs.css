@@ -14,13 +14,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: .625rem 1rem;
+  padding: 0.625rem 1rem;
   border-radius: var(--radius-lg);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--fs-sm);
   line-height: 1.2;
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .post .post__cta:focus-visible {
