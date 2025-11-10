@@ -1,2 +1,1 @@
-export * from "./Breadcrumbs";
-export * from "./PostShare";
+export { default as BlogPost } from "./BlogPost.astro";

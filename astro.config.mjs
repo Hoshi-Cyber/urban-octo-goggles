@@ -7,7 +7,7 @@ import netlify from "@astrojs/netlify";
 import { fileURLToPath } from "url";
 
 export default defineConfig({
-  site: "https://cvwriting.co.ke",
+  site: process.env.ASTRO_SITE || undefined,
   trailingSlash: "always",
   output: "server",
   adapter: netlify(),

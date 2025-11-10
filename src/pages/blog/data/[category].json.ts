@@ -1,106 +1,78 @@
 // File: src/pages/blog/data/[category].json.ts
-// Purpose: Serve JSON for a blog category with media fields used by the client list.
-// Parity with SSR media resolution: thumbnail → image → cover → ogImage → fallback.
-// Ref: Fix Plan 162.  // :contentReference[oaicite:1]{index=1}
-
 import type { APIRoute } from "astro";
+import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { CATEGORIES, prettyCategoryTitle } from "../../../lib/blog/categories";
-import { categorySlug, postUrlFromEntry } from "../../../lib/slug";
+import { prettyCategoryTitle } from "../../../lib/blog/categories";
+import { categorySlug, postSlugFromEntry, postUrlFromEntry } from "../../../lib/slug";
 
-export const prerender = true;
+type Category = "cv-tips" | "linkedin" | "career-growth" | "kenya-market";
 
-/** Pre-build one JSON file per category */
-export async function getStaticPaths() {
-  return CATEGORIES.map((c: string) => ({
-    params: { category: categorySlug(c) },
-  }));
+const CATEGORIES = ["cv-tips", "linkedin", "career-growth", "kenya-market"] as const;
+
+function isCategory(v: string): v is Category {
+  return (CATEGORIES as readonly string[]).includes(v);
 }
 
-/** Derive best-available thumbnail with intrinsic size fallbacks (prevents CLS) */
-function getThumb(p: any) {
-  const t =
-    p?.data?.thumbnail ??
-    p?.data?.image ??
-    p?.data?.cover ??
-    p?.data?.ogImage ??
-    null;
+type Item = {
+  title: string;
+  category: string;
+  date: Date | string | null;
+  tags: string[];
+  slug: string;
+  url: string;
+  excerpt: string;
+  cover: unknown | null;
+};
 
-  const src = typeof t === "string" ? t : t?.src ?? "/assets/logos/logo-wide-1200.png";
-  const alt =
-    (typeof t === "object" && t?.alt) ? t.alt :
-    p?.data?.title ?? "Post thumbnail";
-  const width =
-    (typeof t === "object" && typeof t?.width === "number") ? t.width : 1200;
-  const height =
-    (typeof t === "object" && typeof t?.height === "number") ? t.height : 675;
+const ts = (d: Item["date"]): number => (d ? new Date(d as Date | string).getTime() : 0);
 
-  return { src, alt, width, height };
-}
-
-/** GET /blog/data/<category>.json */
 export const GET: APIRoute = async ({ params }) => {
-  const categoryParam = String(params.category || "");
-  const cat = categorySlug(categoryParam);
-
-  // Validate category
-  const allowed = new Set(CATEGORIES.map((c: string) => categorySlug(c)));
-  if (!allowed.has(cat)) {
+  const raw = (params.category ?? "").toString();
+  if (!isCategory(raw)) {
     return new Response(
-      JSON.stringify({ error: "unknown-category", category: categoryParam }),
-      { status: 404, headers: { "content-type": "application/json; charset=utf-8" } },
+      JSON.stringify({ category: raw, categoryPretty: raw, count: 0, items: [] }),
+      { headers: { "content-type": "application/json; charset=utf-8" }, status: 200 }
     );
   }
+  const cat: Category = raw;
 
-  // Fetch posts for category
-  const all = await getCollection(
+  const posts: CollectionEntry<"blog">[] = await getCollection(
     "blog",
-    ({ data }) => !data.draft && categorySlug(data.category) === cat,
+    (entry: CollectionEntry<"blog">) =>
+      !entry.data.draft && categorySlug(entry.data.category) === cat
   );
 
-  // Map to client payload with media fields
-  const items = all
-    .map((p) => {
-      const { src, alt, width, height } = getThumb(p);
-      const date = new Date(p.data.date);
+  const items: Item[] = posts
+    .map((p: CollectionEntry<"blog">) => {
+      const d = p.data;
+      const primaryDate: Date | string | null =
+        // prefer updated → pubDate → date when present
+        (d as { updated?: Date | string }).updated ??
+        (d as { pubDate?: Date | string }).pubDate ??
+        d.date ??
+        null;
+
       return {
-        slug: p.slug,
-        title: p.data.title,
+        title: d.title,
+        category: categorySlug(d.category),
+        date: primaryDate,
+        tags: d.tags ?? [],
+        slug: postSlugFromEntry(p.slug),
         url: postUrlFromEntry(p),
-        date: isNaN(date.getTime()) ? null : date.toISOString(),
-        tags: Array.isArray(p.data.tags) ? p.data.tags : [],
-        estReadMin:
-          typeof p.data.readingTimeMinutes === "number"
-            ? p.data.readingTimeMinutes
-            : typeof p.data.readingTime === "number"
-            ? p.data.readingTime
-            : null,
-        thumbnailSrc: src,
-        thumbnailAlt: alt,
-        thumbnailW: width,
-        thumbnailH: height,
+        excerpt: d.excerpt ?? "",
+        cover: (d as { cover?: unknown }).cover ?? null,
       };
     })
-    // newest first, mirrors SSR
-    .sort((a, b) => +new Date(b.date || 0) - +new Date(a.date || 0));
+    .sort((a, b) => ts(b.date) - ts(a.date));
 
-  const body = JSON.stringify(
-    {
-      category: cat,
-      categoryPretty: prettyCategoryTitle(cat),
-      count: items.length,
-      items,
-    },
-    null,
-    0,
-  );
+  const body = {
+    category: cat,
+    categoryPretty: prettyCategoryTitle(cat),
+    count: items.length,
+    items,
+  };
 
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      // Cache aggressively in static hosting; adjust if needed.
-      "cache-control": "public, max-age=3600, immutable",
-    },
+  return new Response(JSON.stringify(body), {
+    headers: { "content-type": "application/json; charset=utf-8" },
   });
 };
