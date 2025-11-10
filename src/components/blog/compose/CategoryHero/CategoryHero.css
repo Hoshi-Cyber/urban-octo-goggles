@@ -1,46 +1,33 @@
-/* CategoryHero — mobile-first, brand tokens
-   FP-111: more vertical padding on all screens; wider mobile-only gutters.
-   Page spacing stays with .stack. */
+/* CategoryHero — mobile-first, tokenized
+   Fix Plan 158: no inner horizontal gutters; block padding only; grid >= lg when media exists. */
 
-/* Section wrapper stays neutral; the card holds the visuals */
+/* Section wrapper stays neutral; page .container owns gutters */
 .category-hero {
-  padding-block: clamp(var(--space-5), 2.2vw, var(--space-7));
   background: transparent;
+  padding-block: clamp(var(--space-8), 3vw, var(--space-12));
 }
 
-/* Rounded, elevated card with balanced inner padding */
-.category-hero__card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-light);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-
-  /* Increased vertical padding globally.
-     Increased horizontal gutters on mobile first, then normalize on ≥640px. */
-  padding: clamp(var(--space-10), 7vw, var(--space-18)) /* top/bottom */
-    clamp(var(--space-8), 8vw, var(--space-10)); /* left/right (mobile-wider) */
+/* Grid wrapper: single column by default; becomes two-column only on lg+ when media is present */
+.category-hero__grid {
+  display: block;
+  max-width: 72rem;
+  margin-inline: auto;
 }
 
-/* Normalize horizontal gutters from tablet up */
-@media (min-width: 640px) {
-  .category-hero__card {
-    padding-inline: clamp(var(--space-7), 6.5vw, var(--space-10));
+/* Activate grid only when a media pane exists (component adds .has-media) */
+@media (min-width: 1024px) {
+  .category-hero__grid.has-media {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(var(--space-6), 3vw, var(--space-10));
+    align-items: center;
   }
 }
 
-/* Extra hard floors for very small screens */
-@media (max-width: 360px) {
-  .category-hero__card {
-    padding: var(--space-10) var(--space-8);
-  }
-}
-
+/* Head column */
 .category-hero__head {
   display: grid;
   gap: var(--space-4);
-  max-width: 72rem;
-  margin-inline: auto;
 }
 
 /* Eyebrow */
@@ -55,19 +42,19 @@
 /* Title + dek */
 .category-hero__title {
   margin: 0;
-  font-size: clamp(var(--fs-2xl), 5vw, var(--fs-4xl));
+  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-5xl));
   line-height: 1.15;
   font-weight: 800;
   color: var(--color-text);
 }
 .category-hero__dek {
   margin: 0;
-  font-size: var(--fs-lg);
+  font-size: clamp(1rem, 1.1vw + 0.6rem, var(--fs-xl));
   color: var(--color-muted);
   max-width: 60ch;
 }
 
-/* Metrics — smaller, lighter pills with responsive ramp */
+/* Metrics — compact pills */
 .category-hero__stats {
   margin: 0;
   padding: 0;
@@ -81,46 +68,40 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45ch;
-  padding: 0.3rem 0.6rem;
+  padding: 0.34rem 0.65rem;
   border-radius: 9999px;
   background: var(--color-light);
   color: var(--color-muted);
   border: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
-.category-hero__stat + .category-hero__stat::before {
-  content: none;
-}
-
-/* On ≥640px, allow pills to breathe a bit more */
-@media (min-width: 640px) {
-  .category-hero__stat {
-    padding: 0.34rem 0.65rem;
-  }
-}
+.category-hero__stat + .category-hero__stat::before { content: none; }
 
 /* CTAs: stack on mobile, row on ≥640px */
 .category-hero__ctas {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-auto-flow: row;
   gap: var(--space-3);
 }
-.category-hero__ctas .btn {
-  width: 100%;
-}
+.category-hero__ctas .btn { width: 100%; }
+
 @media (min-width: 640px) {
   .category-hero__ctas {
     grid-auto-flow: column;
-    grid-template-columns: unset;
     justify-content: start;
   }
-  .category-hero__ctas .btn {
-    width: auto;
-  }
+  .category-hero__ctas .btn { width: auto; }
+}
+
+/* Optional media pane */
+.category-hero__media img,
+.category-hero__media svg,
+.category-hero__media picture {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .category-hero__ctas {
-    transition: none;
-  }
+  .category-hero__ctas { transition: none; }
 }

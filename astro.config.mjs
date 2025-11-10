@@ -7,7 +7,7 @@ import netlify from "@astrojs/netlify";
 import { fileURLToPath } from "url";
 
 export default defineConfig({
-  site: process.env.ASTRO_SITE || undefined,
+  site: "https://cvwriting.co.ke",
   trailingSlash: "always",
   output: "server",
   adapter: netlify(),
@@ -18,8 +18,18 @@ export default defineConfig({
   ],
   vite: {
     resolve: {
-      alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
-      extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".astro"],
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)), // Allows "@/..." imports
+      },
+      extensions: [
+        ".mjs",
+        ".js",
+        ".ts",
+        ".jsx",
+        ".tsx",
+        ".json",
+        ".astro",
+      ],
     },
   },
 });

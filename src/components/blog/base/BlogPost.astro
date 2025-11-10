@@ -1,20 +1,21 @@
 ---
-// src/components/layout/BlogPost.astro
-import BaseLayout from "./BaseLayout.astro";
+// src/components/blog/base/BlogPost.astro
+import BaseLayout from "../../layout/BaseLayout.astro";
 
 // Blog components
-import PostHeader from "../blog/compose/PostHeader/index.astro";
-import PostMeta from "../blog/compose/PostMeta/index.astro";
-import PostTags from "../blog/compose/PostTags/index.astro";
-import PostCover from "../blog/compose/PostCover/index.astro";
-import PostCTAs from "../blog/compose/PostCTAs/index.astro";
+import PostHeader from "../compose/PostHeader/index.astro";
+import PostMeta from "../compose/PostMeta/index.astro";
+import PostTags from "../compose/PostTags/index.astro";
+import PostCover from "../compose/PostCover/index.astro";
+import PostCTAs from "../compose/PostCTAs/index.astro";
+import LeadMagnetStrip from "../compose/LeadMagnetStrip/index.astro"; // end-of-article conversion strip
 
 // UI
-import Badge from "../ui/Badge/index.astro";
+import Badge from "../../ui/Badge/index.astro";
 
-// Styles as URLs for head-slot injection
-import sheetUrl from "./BlogPost.css?url";
-import proseCssUrl from "../../styles/prose.css?url";
+// FP-172: bundle CSS instead of head <link> URLs
+import "./BlogPost.css";
+import "../../../styles/prose.css";
 
 export interface Cover {
   src: string;
@@ -30,6 +31,10 @@ export interface SEO {
 }
 export interface CTA {
   label: string;
+  url: string;
+}
+export interface PrevNext {
+  title: string;
   url: string;
 }
 export interface Props {
@@ -51,6 +56,10 @@ export interface Props {
   // optional breadcrumb inputs
   category?: string;
   categoryUrl?: string;
+
+  // adjacent navigation
+  prev?: PrevNext | null;
+  next?: PrevNext | null;
 }
 
 const props = Astro.props as Props;
@@ -64,6 +73,8 @@ const {
   ctaSecondary,
   category,
   categoryUrl,
+  prev = null,
+  next = null,
 } = props;
 
 // reading time normalization
@@ -81,19 +92,13 @@ const updatedDate = props.updated ? new Date(props.updated) : publishedDate;
 const isoPublished = publishedDate ? publishedDate.toISOString() : null;
 const isoModified = updatedDate ? updatedDate.toISOString() : null;
 
-const displayDate = publishedDate
-  ? new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(
-      publishedDate
-    )
-  : null;
-
 const tagList = (tags || []).slice(0, 12);
 
 // canonical
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "";
-const fmCanonical = props.canonical;
 const seoIn = props.seo ?? {};
-const canonicalSrc = seoIn.canonical ?? fmCanonical ?? Astro.url.pathname;
+const fmCanonical = props.canonical;
+const canonicalSrc = (seoIn as any).canonical ?? fmCanonical ?? Astro.url.pathname;
 const canonical =
   canonicalSrc && canonicalSrc.startsWith("http") ? canonicalSrc : `${siteUrl}${canonicalSrc ?? ""}`;
 
@@ -103,28 +108,34 @@ if (!cover && typeof props.ogImage === "string" && props.ogImage.trim()) {
   cover = { src: props.ogImage.trim(), alt: title };
 }
 
-// json-ld (Article)
+// JSON-LD (Article)
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   headline: title,
   datePublished: isoPublished || undefined,
   dateModified: isoModified || undefined,
-  author: author ? { "@type": "Person", name: author } : undefined,
-  image: cover?.src ? `${siteUrl}${cover.src}` : undefined,
+  author: author ? [{ "@type": "Person", name: author }] : undefined,
+  image: cover?.src ? (cover.src.startsWith("http") ? cover.src : `${siteUrl}${cover.src}`) : undefined,
   mainEntityOfPage: canonical,
-  description: description || seoIn?.description,
+  description: description || (seoIn as any)?.description,
+  publisher: { "@type": "Organization", name: "CV Writing Kenya" }
 };
 
 // helpers
 const showUpdatedBadge =
   publishedDate && updatedDate && updatedDate.getTime() > publishedDate.getTime();
 
-// breadcrumb data (UI + JSON-LD)
+// breadcrumbs (UI + JSON-LD)
 const crumbs = [
   { label: "Blog", href: "/blog" },
   ...(category
-    ? [{ label: category, href: categoryUrl && categoryUrl.startsWith("/") ? categoryUrl : `/blog/category/${encodeURIComponent(category!.toLowerCase())}` }]
+    ? [{
+        label: category,
+        href: categoryUrl && categoryUrl.startsWith("/")
+          ? categoryUrl
+          : `/blog/category/${encodeURIComponent(category!.toLowerCase())}`
+      }]
     : []),
   { label: title, href: canonical }
 ];
@@ -139,12 +150,14 @@ const breadcrumbJsonLd = {
     item: c.href.startsWith("http") ? c.href : `${siteUrl}${c.href}`
   }))
 };
+
+// slot checks
+const hasToc = Astro.slots.has("toc");
+const hasRelated = Astro.slots.has("related");
 ---
 <BaseLayout title={title} description={description} seo={{ ...seoIn, canonical }}>
-  {/* Inject page-specific assets into <head> via BaseLayout head slot */}
+  {/* Head: JSON-LD only; CSS is bundled via imports (FP-172) */}
   <fragment slot="head">
-    <link rel="stylesheet" href={sheetUrl} />
-    <link rel="stylesheet" href={proseCssUrl} />
     <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
   </fragment>
@@ -160,7 +173,7 @@ const breadcrumbJsonLd = {
       </ol>
     </nav>
 
-    {/* Header stack */}
+    {/* Header */}
     <PostHeader title={title} eyebrow="Blog" />
 
     {showUpdatedBadge && (
@@ -180,17 +193,31 @@ const breadcrumbJsonLd = {
 
     {tagList.length > 0 && <PostTags tags={tagList} variant="header" />}
 
-    {/* Cover image */}
+    {/* Cover image — wrapped for CSS targeting (FP-172) */}
     {cover?.src && (
-      <PostCover
-        src={cover.src}
-        alt={cover.alt ?? ""}
-        width={cover.width ?? 1280}
-        height={cover.height ?? 720}
-      />
+      <figure class="post__cover">
+        <PostCover
+          src={cover.src}
+          alt={cover.alt ?? ""}
+          width={cover.width ?? 1280}
+          height={cover.height ?? 720}
+        />
+      </figure>
     )}
 
-    {/* Inline CTAs early */}
+    {/* Lead paragraph */}
+    {description && (
+      <p class="post__lead">{description}</p>
+    )}
+
+    {/* Optional Table of Contents */}
+    {hasToc && (
+      <aside class="post__toc" aria-label="Table of contents">
+        <slot name="toc" />
+      </aside>
+    )}
+
+    {/* Inline CTAs */}
     {(ctaPrimary || ctaSecondary) && (
       <PostCTAs
         primary={ctaPrimary ? { label: ctaPrimary.label, url: ctaPrimary.url } : undefined}
@@ -203,11 +230,40 @@ const breadcrumbJsonLd = {
       <slot />
     </section>
 
+    {/* Author card */}
+    {author && (
+      <section class="post__author" aria-labelledby="about-author">
+        <h3 id="about-author">About the author</h3>
+        <p>{author}</p>
+      </section>
+    )}
+
+    {/* Next/Prev navigation */}
+    {(prev || next) && (
+      <nav class="post__nav" aria-label="Post navigation">
+        {prev && <a class="post__navLink post__navPrev" href={prev.url}>← {prev.title}</a>}
+        {next && <a class="post__navLink post__navNext" href={next.url}>{next.title} →</a>}
+      </nav>
+    )}
+
+    {/* Related posts */}
+    {hasRelated && (
+      <section class="post__related" aria-labelledby="related-articles">
+        <h3 id="related-articles">Related articles</h3>
+        <slot name="related" />
+      </section>
+    )}
+
     {/* Footer tags */}
     {tagList.length > 0 && (
       <footer class="post__footer">
         <PostTags tags={tagList} variant="footer" />
       </footer>
     )}
+
+    {/* LeadMagnetStrip at the end (deferred) */}
+    <section class="post__leadmagnet">
+      <LeadMagnetStrip />
+    </section>
   </article>
 </BaseLayout>

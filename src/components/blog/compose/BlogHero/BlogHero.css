@@ -1,39 +1,40 @@
-/* BlogHero — mobile-first, token-driven (Fix Plan 148.1) */
+/* BlogHero — mobile-first, token-driven (FP-158)
+   - No inner horizontal gutters; page/container owns side padding
+   - Block padding only on the section
+   - Single column by default; grid >= lg when media exists */
 
 /* Section rhythm */
 .bloghero {
-  padding-block: var(--space-8);
+  padding-block: clamp(var(--space-8), 3vw, var(--space-12));
 }
-@media (min-width: 768px) {
-  .bloghero {
-    padding-block: var(--space-10);
-  }
+
+/* Grid wrapper: single column by default; activates at lg only if media exists */
+.bloghero__grid {
+  display: block;
+  max-width: 72rem;
+  margin-inline: auto;
 }
+
+/* Enable two-column grid only when a media pane is present */
 @media (min-width: 1024px) {
-  .bloghero {
-    padding-block: var(--space-12);
+  .bloghero__grid.has-media {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(var(--space-6), 3vw, var(--space-10));
+    align-items: center;
   }
 }
 
-/* Wrapper: safe-area gutters + responsive grid */
-.bloghero__wrap {
+/* Copy column */
+.bloghero__copy {
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: var(--space-6);
-  padding-inline: max(var(--space-6), env(safe-area-inset-left, 0px));
-}
-@media (min-width: 1024px) {
-  .bloghero__wrap {
-    grid-template-columns: 1.2fr 1fr;
-    gap: clamp(var(--space-6), 3vw, var(--space-10));
-  }
+  gap: var(--space-4);
 }
 
 /* Title and deck */
 .bloghero__title {
   margin: 0 0 var(--space-2);
-  font-size: clamp(var(--fs-2xl), 4.5vw, var(--fs-5xl));
+  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-5xl));
   line-height: 1.1;
   font-weight: 800;
   color: var(--color-text);
@@ -42,31 +43,28 @@
   margin: 0 0 var(--space-6);
   color: var(--color-muted);
   max-width: 60ch;
-  font-size: clamp(1rem, 1.2vw + 0.6rem, var(--fs-xl));
+  font-size: clamp(1rem, 1.1vw + 0.6rem, var(--fs-xl));
 }
 
 /* CTAs: stack on mobile, row from sm+ */
 .bloghero__ctas {
   display: grid;
+  grid-auto-flow: row;
   gap: var(--space-3);
 }
-.bloghero__ctas .btn {
-  width: 100%;
-}
+.bloghero__ctas .btn { width: 100%; }
+
 @media (min-width: 640px) {
   .bloghero__ctas {
     grid-auto-flow: column;
     justify-content: start;
   }
-  .bloghero__ctas .btn {
-    width: auto;
-  }
+  .bloghero__ctas .btn { width: auto; }
 }
 
 /* Media: show image in full (no cropping) */
 .bloghero__media {
   margin: 0;
-  /* removed fixed aspect-ratio */
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -79,8 +77,8 @@
 .bloghero__media img {
   display: block;
   width: 100%;
-  height: auto; /* keep intrinsic ratio */
-  object-fit: contain; /* no crop */
+  height: auto;            /* keep intrinsic ratio */
+  object-fit: contain;     /* no crop */
   object-position: center;
 }
 
@@ -109,6 +107,7 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .bloghero__ctas { transition: none; }
   .bloghero__media,
   .ring {
     transition: none;
@@ -116,6 +115,6 @@
   }
 }
 
-/* Removed (no longer used with 148.1):
-   .bloghero__badge, .bloghero__stat
-*/
+/* Removed with FP-158:
+   - Any padding-inline on wrapper elements (gutters now belong to the page container)
+   - tablet/laptop two-column grid when no media exists */

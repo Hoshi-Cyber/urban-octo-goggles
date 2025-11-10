@@ -1,18 +1,24 @@
-/* src/components/blog/RelatedCategories/RelatedCategories.css
+/* File: src/components/blog/compose/RelatedCategories/RelatedCategories.css
    RelatedCategories — high-contrast branded chips
-   FP-114: unify headings via .section-title, use compact variant to tighten padding near footer.
+   FP-169.2: parity across all category pages, ≥44px tap targets, visible focus rings,
+             no dependency on extra wrappers, optional host spacing var.
 */
 
 /* =========================
    Core variables
    ========================= */
 .rc {
-  /* Internal padding; outer separation handled by page stack utilities */
+  /* Outer separation is governed by the page stack.
+     Provide an optional host margin var for safe use outside stacks. */
+  --rc-mt: 0;
+
+  /* Internal padding */
   --rc-pad-y: clamp(var(--space-6), 3vw, var(--space-10));
   --rc-pad-x: var(--space-4);
   --rc-gap: var(--space-3);
 
-  /* Pill sizing */
+  /* Pill sizing (≥44px target on mobile) */
+  --rc-pill-min-h: 2.75rem; /* 44px */
   --rc-pill-py: 0.55rem;
   --rc-pill-px: 1rem;
   --rc-radius: var(--radius-lg);
@@ -32,15 +38,17 @@
   --rc-hover-bg: var(--color-light-alt);
 }
 
-/* Section (no margins; plays nicely inside .stack) */
+/* Section: no fixed margins; plays nicely inside .stack.
+   Optional top margin via --rc-mt for standalone usage. */
 .rc {
+  margin-block-start: var(--rc-mt);
   border-top: var(--rc-border);
   padding-block: var(--rc-pad-y);
   padding-inline: var(--rc-pad-x);
   background: var(--rc-bg);
 }
 
-/* Title (unified with global section-title) */
+/* Title (unified with global .section-title) */
 .rc .section-title {
   margin: 0 0 var(--space-4);
 }
@@ -55,11 +63,14 @@
   list-style: none;
 }
 
-/* Pill link — branded outline + subtle elevation */
+/* Pill link — branded outline + subtle elevation
+   Accessibility: >=44px hit area, visible :focus-visible. */
 .rc__link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5ch;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--rc-pill-min-h);
   padding: var(--rc-pill-py) var(--rc-pill-px);
   border-radius: var(--rc-radius);
   background: var(--rc-pill-bg);
@@ -71,8 +82,7 @@
   border: 1px solid transparent;
   box-shadow:
     var(--shadow-sm),
-    inset 0 0 0 2px
-      color-mix(in srgb, var(--rc-ring) var(--rc-ring-alpha), transparent);
+    inset 0 0 0 2px color-mix(in srgb, var(--rc-ring) var(--rc-ring-alpha), transparent);
   transition:
     background-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -115,14 +125,14 @@
 .rc__link--ghost {
   background: transparent;
   color: var(--color-primary);
-  box-shadow: inset 0 0 0 2px
-    color-mix(in srgb, var(--rc-ring) 20%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--rc-ring) 20%, transparent);
 }
 
 /* Modifiers */
 .rc.rc--compact {
   --rc-pad-y: clamp(var(--space-4), 2.2vw, var(--space-6));
   --rc-gap: var(--space-2);
+  --rc-pill-min-h: 2.75rem; /* keep 44px target even when compact */
   --rc-pill-py: 0.45rem;
   --rc-pill-px: 0.85rem;
   --rc-radius: 9999px;
@@ -130,6 +140,14 @@
 /* Tighter title spacing in compact mode */
 .rc.rc--compact .section-title {
   margin-bottom: var(--space-3);
+}
+
+/* ≥640px: increase to 48px targets */
+@media (min-width: 640px) {
+  .rc {
+    --rc-pill-min-h: 3rem; /* 48px */
+    --rc-pill-px: 1.1rem;
+  }
 }
 
 /* Reduced motion + forced colors */

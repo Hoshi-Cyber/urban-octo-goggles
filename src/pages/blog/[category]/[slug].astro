@@ -1,7 +1,9 @@
 ---
 // File: src/pages/blog/[category]/[slug].astro
+// FP-172: Styling reliability + TOC rendered when headings exist (≥3 H2/H3)
+
 import { getCollection, getEntry } from "astro:content";
-import BlogPost from "../../../components/layout/BlogPost.astro";
+import BlogPost from "../../../components/blog/base/BlogPost.astro";
 import { prettyCategoryTitle } from "../../../lib/blog/categories";
 import {
   categorySlug,
@@ -31,8 +33,10 @@ if (!entry) {
   return Astro.redirect("/404");
 }
 
-const { Content } = await entry.render();
-const data = entry.data as {
+/** Render content and collect headings for TOC */
+const { Content, headings = [] } = await entry.render();
+
+type PostData = {
   title: string;
   description?: string;
   seo?: any;
@@ -47,6 +51,7 @@ const data = entry.data as {
   readingTime?: number;
   readingTimeMinutes?: number;
 };
+const data = entry.data as PostData;
 
 /** Canonical URL pieces via helpers */
 const cat = categorySlug(data.category);
@@ -58,7 +63,57 @@ const cover = data.cover ?? data.ogImage ?? null;
 const coverUrl = typeof cover === "string" ? cover : cover?.src ?? null;
 const readingTime = data.readingTime ?? data.readingTimeMinutes ?? null;
 
-/** JSON-LD */
+/** ---------- FP-172: TOC renders when headings exist (≥3 H2/H3) ---------- */
+const tocHeadings = (headings as Array<{ depth: number; slug: string; text: string }> | undefined)
+  ?.filter(h => h.depth === 2 || h.depth === 3) ?? [];
+const showToc = tocHeadings.length >= 3;
+
+/** ---------- Prev/Next within same category ---------- */
+const allPosts = await getCollection("blog");
+const inSameCategory = allPosts
+  .filter(p => categorySlug((p.data as any)?.category) === cat)
+  .filter(p => !!(p.data as any)?.date)
+  .sort((a, b) => {
+    const da = new Date((a.data as any).date).getTime();
+    const db = new Date((b.data as any).date).getTime();
+    return da - db; // ascending by date
+  });
+
+const idx = inSameCategory.findIndex(p => postSlugFromEntry(p.slug) === postSlugFromEntry(entry.slug));
+
+const prevPost = idx > 0 ? inSameCategory[idx - 1] : null;
+const nextPost = idx >= 0 && idx < inSameCategory.length - 1 ? inSameCategory[idx + 1] : null;
+
+const prev = prevPost ? { title: (prevPost.data as any).title, url: postUrlFromEntry(prevPost) } : null;
+const next = nextPost ? { title: (nextPost.data as any).title, url: postUrlFromEntry(nextPost) } : null;
+
+/** ---------- Related posts by category + tags overlap ---------- */
+const currentTags = new Set((data.tags ?? []).map(t => String(t).toLowerCase()));
+function tagOverlapScore(candidateTags: string[] | undefined) {
+  if (!candidateTags?.length || currentTags.size === 0) return 0;
+  const set = new Set(candidateTags.map(t => t.toLowerCase()));
+  let score = 0;
+  for (const t of currentTags) if (set.has(t)) score++;
+  return score;
+}
+
+const relatedCandidates = allPosts
+  .filter(p => p.slug !== entry.slug)
+  .filter(p => categorySlug((p.data as any)?.category) === cat)
+  .map(p => ({
+    entry: p,
+    score: tagOverlapScore((p.data as any)?.tags),
+    dateMs: (p.data as any)?.date ? new Date((p.data as any).date).getTime() : 0
+  }))
+  .sort((a, b) => {
+    // higher tag score first, then newer first
+    if (b.score !== a.score) return b.score - a.score;
+    return b.dateMs - a.dateMs;
+  })
+  .slice(0, 6);
+
+/** ---------- JSON-LD ---------- */
+const modified = data.updated ?? data.updatedAt ?? data.date ?? undefined;
 const breadcrumbs = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -70,7 +125,6 @@ const breadcrumbs = {
   ],
 };
 
-const modified = data.updated ?? data.updatedAt ?? data.date ?? undefined;
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -83,6 +137,7 @@ const articleLd = {
   author: data.author ? [{ "@type": "Person", name: data.author }] : undefined,
   articleSection: prettyCategoryTitle(cat),
   keywords: Array.isArray(data.tags) ? data.tags.join(", ") : undefined,
+  publisher: { "@type": "Organization", name: "CV Writing Kenya" }
 };
 ---
 <BlogPost
@@ -94,6 +149,10 @@ const articleLd = {
   readingTime={readingTime}
   tags={data.tags}
   cover={cover}
+  category={prettyCategoryTitle(cat)}
+  categoryUrl={`/blog/${cat}/`}
+  prev={prev}
+  next={next}
 >
   <fragment slot="head">
     <link rel="canonical" href={canonical} />
@@ -102,6 +161,35 @@ const articleLd = {
     <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbs)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(articleLd)}</script>
   </fragment>
+
+  {/* FP-172: Conditional TOC slot (by headings count) */}
+  {showToc && tocHeadings.length > 0 && (
+    <fragment slot="toc">
+      <nav aria-label="Table of contents">
+        <ol>
+          {tocHeadings.map((h) => (
+            <li style={`margin-left:${h.depth === 3 ? "1rem" : "0"};`}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </fragment>
+  )}
+
+  {/* Related posts slot guarded to avoid empty section */}
+  {relatedCandidates.length > 0 && (
+    <fragment slot="related">
+      <ul>
+        {relatedCandidates.map(({ entry }) => {
+          const e = entry as typeof entry;
+          const url = postUrlFromEntry(e);
+          const title = (e.data as any).title as string;
+          return (<li><a href={url}>{title}</a></li>);
+        })}
+      </ul>
+    </fragment>
+  )}
 
   <Content />
 </BlogPost>

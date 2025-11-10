@@ -2,29 +2,32 @@
 // File: src/pages/blog/[category]/page/[page].astro
 /**
  * Paginated category view (pages ≥ 2)
- * IA: Breadcrumbs → Lean hero → Utility bar → Grid → Pagination
- * Static default with client-side sort/filter takeover per Fix Plan 156.
+ * IA: Breadcrumbs → Lean hero → Utility bar → Grid → LeadMagnet → Pagination → RelatedCategories
+ * Static default with client-side sort/filter takeover (Fix Plan 156).
  *
- * Step 4 — Performance Controls:
- * - Provide width/height for covers to prevent CLS.
- * - First visible card image loads "eager"; the rest "lazy".
- * - Preload first-fold image via <link rel="preload" as="image">.
- * - No extra hydration beyond Utility Bar.
- *
- * Step 5 — Head Tags & JSON-LD Parity:
- * - Canonical + rel=prev/next.
- * - Inline JSON-LD: BreadcrumbList, ItemList, CollectionPage with absolute URLs.
- * - Structure mirrors page 1.
+ * FP-159: Keep CategoryUtilityBar inside the page container.
+ * FP-160: Raise desktop stack gap between lean hero, toolbar, and list.
+ * FP-163/164: Unify card markup and CSS with Blog home “Latest articles”.
+ * FP-166: LeadMagnetStrip modern placement and CSS parity on paginated pages.
+ * FP-169: Pagination sits inside the same stack right after LeadMagnetStrip.
+ * FP-169.2: Add RelatedCategories after Pagination; no extra wrappers; up to 6 chips.
  */
 
 import BaseLayout from "../../../../components/layout/BaseLayout.astro";
 import Breadcrumbs from "../../../../components/blog/base/Breadcrumbs/index.astro";
-import PostCard from "../../../../components/blog/compose/PostCard/index.astro";
 import Pagination from "../../../../components/blog/compose/Pagination/index.astro";
-import "../../../../styles/components/PostGrid.css";
+import RelatedCategories from "../../../../components/blog/compose/RelatedCategories/index.astro";
 
+// Toolbar island
 import CategoryUtilityBar from "../../../../components/blog/compose/CategoryUtilityBar";
 import "../../../../components/blog/compose/CategoryUtilityBar/styles.css";
+
+// Feed CSS used on Blog home “Latest articles”
+import feedCssUrl from "../../../../components/blog/compose/PostFeedLatest/PostFeedLatest.css?url";
+
+// FP-166: Lead magnet component + CSS
+import LeadMagnetStrip from "../../../../components/blog/compose/LeadMagnetStrip/index.astro";
+import lmsCss from "../../../../components/blog/compose/LeadMagnetStrip/LeadMagnetStrip.css?url";
 
 import { getCollection } from "astro:content";
 import {
@@ -36,13 +39,10 @@ import {
   prettyCategoryTitle,
   buildCategoryTitle,
   buildCategoryDescription,
+  relatedCategories, // FP-169.2: helper to derive sibling categories
 } from "../../../../lib/blog/categories";
 
-import {
-  categorySlug,
-  postUrlFromEntry,
-  abs as absUrl,
-} from "../../../../lib/slug";
+import { categorySlug, postUrlFromEntry, abs as absUrl } from "../../../../lib/slug";
 
 export const prerender = true;
 
@@ -59,9 +59,8 @@ export async function getStaticPaths() {
       return Array.from({ length: count }, (_, i) => ({
         params: { category: cSlug, page: String(i + 1) },
       }));
-    })
+    }),
   );
-
   return entries.flat().filter((p) => p.params.page !== "1");
 }
 
@@ -73,7 +72,6 @@ function getThumb(p: any) {
   const t = p?.data?.thumbnail ?? p?.data?.image ?? p?.data?.cover ?? p?.data?.ogImage ?? null;
   const src = typeof t === "string" ? t : t?.src ?? "/assets/logos/logo-wide-1200.png";
   const alt = (typeof t === "object" && t?.alt) ? t.alt : p?.data?.title ?? "Post thumbnail";
-  // Use dimensions from content if present, else 16:9 fallback to avoid CLS
   const width = (typeof t === "object" && typeof t?.width === "number") ? t.width : 1200;
   const height = (typeof t === "object" && typeof t?.height === "number") ? t.height : 675;
   return { src, alt, width, height };
@@ -90,7 +88,7 @@ const posts = all
     const { src: thumbnailSrc, alt: thumbnailAlt, width: thumbnailW, height: thumbnailH } = getThumb(p);
     const date = new Date(p.data.date);
     return {
-      url: postUrlFromEntry(p), // single source of truth
+      url: postUrlFromEntry(p),
       title: p.data.title,
       description: p.data.description,
       stage: p.data.stage ?? null,
@@ -152,7 +150,7 @@ const collectionPageLd = {
   "@type": "CollectionPage",
   url: absUrl(canonical, Astro.site),
   name: `${pretty} — Page ${current}`,
-  isPartOf: absUrl(basePath + "/", Astro.site)
+  isPartOf: absUrl(basePath + "/", Astro.site),
 };
 
 /** Visible breadcrumbs */
@@ -163,7 +161,7 @@ const breadcrumbItems = [
   { label: `Page ${current}`, current: true },
 ];
 
-/** First card image for OG + optional preload (paginated parity) */
+/** First card image for OG + optional preload */
 const ogImage = pageItems[0]?.thumbnailSrc ?? null;
 ---
 
@@ -175,8 +173,12 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
     <meta property="og:title" content={pageTitle} />
     <meta property="og:url" content={canonical} />
     {ogImage && <meta property="og:image" content={ogImage} />}
-    {/* Preload first-fold image to improve LCP */}
     {ogImage && <link rel="preload" as="image" href={ogImage} />}
+
+    <!-- Load the same CSS used by Blog home “Latest articles” -->
+    <link rel="stylesheet" href={feedCssUrl} />
+    <!-- FP-166: Ensure LeadMagnetStrip modern styles are present -->
+    <link rel="stylesheet" href={lmsCss} />
 
     <!-- JSON-LD parity -->
     <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
@@ -187,66 +189,118 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
   <section class="container page-gap-after" data-section="category" aria-label="Category articles">
     <Breadcrumbs items={breadcrumbItems} />
 
-    <header data-section="hero" style="max-width:56rem; padding: 0 var(--space-4) var(--space-6);">
-      <h1 class="h2" style="margin: 0 0 var(--space-2);">{pretty}</h1>
-      <p class="text-muted" style="margin: 0 0 var(--space-3);">Page {current} of {pageCount}</p>
-      <div class="flex items-center gap-3 flex-wrap">
-        <a class="btn btn-primary" href="/services/cv-rewrite?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-primary" data-section="hero">Book CV Rewrite</a>
-        <a class="btn" href="/offers/free-cv-audit?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-secondary" data-section="hero">Free 24-Point CV Audit</a>
-      </div>
-    </header>
+    {/* Page-level stack governs spacing; desktop gap raised (FP-160) */}
+    <div class="stack" style="--section-gap: clamp(var(--space-5), 2vw, var(--space-10));">
+      {/* Lean hero for paginated views. No inner horizontal padding. */}
+      <header data-section="hero" style="max-width:56rem;">
+        <h1 class="h2" style="margin: 0 0 var(--space-2);">{pretty}</h1>
+        <p class="text-muted" style="margin: 0 0 var(--space-3);">Page {current} of {pageCount}</p>
+        <div class="flex items-center gap-3 flex-wrap">
+          <a class="btn btn-primary" href="/services/cv-rewrite?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-primary" data-section="hero">Book CV Rewrite</a>
+          <a class="btn" href="/offers/free-cv-audit?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-secondary" data-section="hero">Free 24-Point CV Audit</a>
+        </div>
+      </header>
 
-    <!-- Utility bar island: client-side sort/filter + client pagination -->
-    <CategoryUtilityBar client:load category={cat} pageSize={PER_PAGE} mountId="category-client-list" />
-
-    <!-- Client mount. Labeled for a11y; when populated, the SSR grid below is auto-hidden via CSS -->
-    <section aria-labelledby="client-articles-heading" style="padding: 0 var(--space-4);">
-      <h2 id="client-articles-heading" class="sr-only">Articles</h2>
-      <ol id="category-client-list" role="list"></ol>
-    </section>
-
-    <!-- SSR fallback grid for SEO and no-JS -->
-    {pageItems.length === 0 ? (
-      <p class="text-muted" style="padding: 0 var(--space-4);">No posts yet. Check back soon.</p>
-    ) : (
-      <section class="ssr-grid" data-section="grid" aria-labelledby="ssr-articles-heading" style="padding: 0 var(--space-4);">
-        <h2 id="ssr-articles-heading" class="sr-only">Articles</h2>
-        <ol class="post-grid" role="list">
-          {pageItems.map((p, i) => (
-            <li role="listitem">
-              <PostCard
-                url={p.url}
-                title={p.title}
-                excerpt={p.description}
-                dateISO={p.dateISO}
-                readMin={p.readMins}
-                stage={p.stage}
-                /* Pass intrinsic sizing and loading hints to prevent CLS and control LCP */
-                cover={{ src: p.thumbnailSrc, alt: p.thumbnailAlt, width: p.thumbnailW, height: p.thumbnailH, loading: i === 0 ? "eager" : "lazy" }}
-                data-pos={start + i + 1}
-                data-cta="post-card"
-                category={pretty}
-                categoryHref={`${basePath}/`}
-              />
-            </li>
-          ))}
-        </ol>
+      {/* Toolbar stays inside the container; spacing handled by the stack */}
+      <section aria-label="Category controls">
+        <CategoryUtilityBar client:load category={cat} pageSize={PER_PAGE} mountId="category-client-list" prettyCategory={pretty} />
       </section>
-    )}
 
-    {pageCount > 1 && (
-      <Pagination
-        basePath={basePath}
-        current={current}
-        total={pageCount}
-        query={Astro.url.search}   /* preserve ?sort & ?tag per Fix Plan 156.1 */
-      />
-    )}
+      {/* Inner stack: list → lead magnet → pagination → related (FP-169.2) */}
+      <div class="stack" style="--section-gap: clamp(var(--space-8), 3vw, var(--space-12));">
+        {/* Visible section header per Fix Plan 165 */}
+        <section aria-labelledby="latest-heading">
+          <header class="pfl__head">
+            <p class="pfl__eyebrow">From the blog</p>
+            <h2 id="latest-heading" class="pfl__title">Latest articles</h2>
+          </header>
+
+          {/* Client mount. Uses the exact pfl__grid contract for takeover parity */}
+          <div class="pfl" aria-label="Client-rendered articles">
+            <ol id="category-client-list" class="pfl__grid" role="list"></ol>
+          </div>
+
+          {/* SSR fallback grid for SEO and no-JS — no tags rendered */}
+          {pageItems.length === 0 ? (
+            <p class="text-muted">No posts yet. Check back soon.</p>
+          ) : (
+            <section class="ssr-grid" data-section="grid" aria-labelledby="ssr-articles-heading">
+              <h3 id="ssr-articles-heading" class="sr-only">Articles</h3>
+              <ol class="pfl__grid" role="list">
+                {pageItems.slice(0, 8).map((p, i) => {
+                  const eager = i < 4;
+                  const high = i < 2;
+                  const dateStr = new Date(p.date).toLocaleDateString();
+                  const catName = pretty;
+                  const excerpt = p.description ?? "";
+                  return (
+                    <li role="listitem">
+                      <article class="pfl__card" aria-label={p.title}>
+                        <a class="pfl__media" href={p.url}>
+                          {p.thumbnailSrc && (
+                            <img
+                              src={p.thumbnailSrc}
+                              alt={p.thumbnailAlt ?? p.title}
+                              width={p.thumbnailW}
+                              height={p.thumbnailH}
+                              loading={eager ? "eager" : "lazy"}
+                              decoding="async"
+                              {...(high ? { fetchpriority: "high" } : {})}
+                            />
+                          )}
+                        </a>
+                        <div class="pfl__body">
+                          <p class="pfl__cat"><a href={`${basePath}/`}>{catName}</a></p>
+                          <h3 class="pfl__cardTitle">
+                            <a href={p.url} class="pfl__link">{p.title}</a>
+                          </h3>
+                          {excerpt && <p class="pfl__excerpt clamp-3">{excerpt}</p>}
+                          <p class="pfl__meta">
+                            <time dateTime={p.dateISO}>{dateStr}</time> · {typeof p.readMins === "number" ? p.readMins : "—"} min read
+                          </p>
+                        </div>
+                      </article>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          )}
+        </section>
+
+        {/* FP-166: Lead magnet appears immediately after “Latest articles” */}
+        <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF">
+          <LeadMagnetStrip
+            title="Get the CV Optimization PDF"
+            sub="Join 12,000+ professionals receiving actionable, local career tactics."
+            action="/api/subscribe"
+            source="blog_category_leadmagnet_paged"
+          />
+        </section>
+
+        {/* FP-169: Pagination now inside the same stack, immediately after LeadMagnetStrip */}
+        {pageCount > 1 && (
+          <Pagination
+            basePath={basePath}
+            current={current}
+            total={pageCount}
+            query={Astro.url.search}   /* preserve ?sort & ?tag */
+          />
+        )}
+
+        {/* FP-169.2: Related categories after Pagination; up to 6 chips; canonical URLs */}
+        <RelatedCategories
+          current={cat}
+          items={relatedCategories(cat).slice(0, 6)}
+          title="Related categories"
+          variant="compact"
+        />
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
   /* Hide SSR grid when the client list has content */
-  #category-client-list:not(:empty) + .ssr-grid { display: none; }
+  #category-client-list:not(:empty) ~ .ssr-grid { display: none; }
 </style>
- 

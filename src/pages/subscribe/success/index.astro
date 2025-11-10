@@ -1,0 +1,155 @@
+---
+/**
+ * File: src/pages/subscribe/success/index.astro
+ * Purpose: Dedicated success page for LeadMagnetStrip opt-ins.
+ * FP-168.1+: Hover states for all buttons. Left-aligned, no underlines.
+ *  - Noindex
+ *  - Responsive apps grid (1 col → 2 cols @ sm+)
+ *  - A11y: role=status message, semantic groups
+ *  - Analytics events preserved
+ */
+
+import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import Button from "../../../components/cta/Button"; // folder import resolves to index.astro
+
+const title = "Success — Check your inbox";
+const desc =
+  "You’re in. We’ve emailed your CV Optimization PDF. Open your email app to access it. If it’s not there, check Spam/Promotions.";
+const canonical = "/subscribe/success/";
+---
+
+<BaseLayout title={title} description={desc} seo={{ canonical }}>
+  <fragment slot="head">
+    <meta name="robots" content="noindex" />
+    <meta property="og:title" content={title} />
+    <meta property="og:url" content={canonical} />
+  </fragment>
+
+  <section class="container page-gap-after" aria-labelledby="thanks-title">
+    <div class="card success__panel stack" style="--section-gap: var(--space-4);">
+      <h1 id="thanks-title" class="h1">Check your inbox</h1>
+
+      <p class="muted">
+        We sent your <strong>CV Optimization PDF</strong> to your email. It can take a minute.
+        If you don’t see it, check <em>Spam</em> or <em>Promotions</em>.
+      </p>
+
+      <!-- Open email app shortcuts -->
+      <div class="success__apps" role="group" aria-label="Open your email app">
+        <Button label="Open Gmail" href="https://mail.google.com/mail/u/0/#inbox" variant="ghost" size="md" block />
+        <Button label="Open Outlook" href="https://outlook.live.com/mail/" variant="ghost" size="md" block />
+        <Button label="Open Yahoo Mail" href="https://mail.yahoo.com/" variant="ghost" size="md" block />
+        <Button label="Open default email app" href="mailto:" variant="ghost" size="md" block />
+      </div>
+
+      <!-- CTAs -->
+      <div class="success__ctaRow">
+        <button class="btn btn-secondary" id="resend-btn" type="button" data-cta="leadmagnet_resend">
+          Resend email
+        </button>
+
+        <Button
+          label="Book a CV Rewrite"
+          href="/services/cv-rewrite?utm_source=blog&utm_medium=success_page&utm_campaign=leadmagnet_upsell"
+          variant="primary"
+          size="md"
+          block
+          cta="leadmagnet_upsell"
+        />
+      </div>
+
+      <p id="resend-status" class="success__status" role="status" hidden>
+        Resending… check your inbox shortly.
+      </p>
+    </div>
+  </section>
+
+  <style>
+    /* Panel sizing and left alignment */
+    .success__panel {
+      max-width: 48rem;
+      margin-inline: auto;
+      padding: clamp(var(--space-6), 4vw, var(--space-8));
+      text-align: left;
+    }
+
+    /* Apps grid: single column on mobile, two columns on sm+ */
+    .success__apps {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+    @media (min-width: 640px) {
+      .success__apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* CTA row: stack → side-by-side */
+    .success__ctaRow {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: 1fr;
+      align-items: start;
+      justify-items: start;
+    }
+    @media (min-width: 768px) {
+      .success__ctaRow { grid-template-columns: auto auto; }
+    }
+
+    .muted { color: var(--color-muted); }
+
+    .success__status {
+      font-size: var(--fs-sm);
+      color: var(--color-accent);
+      margin: 0;
+    }
+
+    /* ---------- Hover states (uses tokens; no underlines) ---------- */
+    .btn,
+    .btn:where(a) { text-decoration: none; transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease, transform .02s ease; }
+
+    /* Primary */
+    .btn.btn-primary:hover {
+      filter: brightness(0.97);
+      box-shadow: 0 6px 18px rgba(17, 24, 39, 0.15);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    /* Secondary */
+    .btn.btn-secondary:hover {
+      background: color-mix(in oklab, var(--color-primary) 8%, #fff);
+      border-color: color-mix(in oklab, var(--color-primary) 28%, rgba(17,24,39,.14));
+      color: var(--color-text);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    /* Ghost variant from reusable Button component, if present */
+    .btn-ghost:hover,
+    .btn.btn-ghost:hover {
+      background: color-mix(in oklab, var(--color-primary) 8%, #fff);
+      border-color: color-mix(in oklab, var(--color-primary) 22%, rgba(17,24,39,.12));
+      color: var(--color-text);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    /* Remove any accidental underline on focus/hover for anchor buttons */
+    .btn:focus-visible,
+    .btn:hover { text-decoration: none; }
+  </style>
+
+  <script is:inline>
+    (() => {
+      window.dispatchEvent(new CustomEvent("leadmagnet_success_page_view"));
+      const btn = document.getElementById("resend-btn");
+      const status = document.getElementById("resend-status");
+      btn?.addEventListener("click", () => {
+        window.dispatchEvent(new CustomEvent("leadmagnet_resend_request"));
+        status?.removeAttribute("hidden");
+        // TODO: integrate with ESP to actually resend
+      }, { passive: true });
+    })();
+  </script>
+</BaseLayout>

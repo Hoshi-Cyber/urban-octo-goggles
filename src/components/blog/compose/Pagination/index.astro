@@ -83,6 +83,7 @@ if (total <= 7) {
             href={hrefFor(cur - 1)}
             rel="prev"
             data-cta="pagination-prev"
+            aria-label={`Go to page ${cur - 1}`}
           >
             ‹ Prev
           </a>
@@ -97,12 +98,19 @@ if (total <= 7) {
           {p === "..." ? (
             <span class="pagination__gap" aria-hidden="true">…</span>
           ) : p === cur ? (
-            <span class="pagination__page is-current" aria-current="page">{p}</span>
+            <span
+              class="pagination__page is-current"
+              aria-current="page"
+              aria-label={`Page ${p}, current`}
+            >
+              {p}
+            </span>
           ) : (
             <a
               class="pagination__page"
               href={hrefFor(p as number)}
               data-cta="pagination-page"
+              aria-label={`Go to page ${(p as number)}`}
             >
               {p}
             </a>
@@ -118,6 +126,7 @@ if (total <= 7) {
             href={hrefFor(cur + 1)}
             rel="next"
             data-cta="pagination-next"
+            aria-label={`Go to page ${cur + 1}`}
           >
             Next ›
           </a>

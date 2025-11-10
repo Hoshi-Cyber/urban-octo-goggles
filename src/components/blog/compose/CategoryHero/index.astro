@@ -15,9 +15,18 @@ export interface Props {
   stats?: Stats;
   primaryCta?: Cta;
   secondaryCta?: Cta;
+  /** Fix Plan 158: do NOT add inner horizontal gutters by default */
+  contained?: boolean; // if true, allow an inner container (defaults to false)
 }
 
-const { title, dek, stats = {}, primaryCta, secondaryCta } = Astro.props as Props;
+const {
+  title,
+  dek,
+  stats = {},
+  primaryCta,
+  secondaryCta,
+  contained = false,
+} = Astro.props as Props;
 
 function fmtDate(d?: string | Date) {
   if (!d) return null;
@@ -37,14 +46,34 @@ const statBits = [
 ].filter(Boolean) as string[];
 
 const dekId = "category-hero-dek";
+const titleId = "category-hero-title";
+
+/** Detect optional media slot; grid activates at lg only when media exists */
+const hasMedia = Astro.slots.has?.("media") === true;
 ---
-<section class="category-hero" data-section="category-hero">
+<section
+  class="category-hero"
+  data-section="category-hero"
+  data-contained={String(contained)}
+  data-has-media={String(hasMedia)}
+  aria-labelledby={titleId}
+>
   <link rel="stylesheet" href={css} />
-  <!-- Single, page-level container lives in the parent page (Fix Plan 107). -->
-  <div class="category-hero__card">
+
+  {/*
+    Fix Plan 158:
+    - No inner container/gutters by default; rely on page-level .container for horizontal padding.
+    - Keep only padding-block in CSS (no padding-inline).
+    - Single column by default; grid only at lg when media exists.
+  */}
+  <div class:list={[
+    "category-hero__grid",
+    hasMedia ? "has-media" : "no-media",
+    contained ? "is-contained" : "is-uncontained",
+  ]}>
     <header class="category-hero__head">
       <p class="category-hero__eyebrow">Blog Category</p>
-      <h1 class="category-hero__title">{title}</h1>
+      <h1 id={titleId} class="category-hero__title">{title}</h1>
 
       {dek && <p id={dekId} class="category-hero__dek">{dek}</p>}
 
@@ -79,5 +108,11 @@ const dekId = "category-hero-dek";
         </div>
       )}
     </header>
+
+    {hasMedia && (
+      <div class="category-hero__media" aria-hidden="true">
+        <slot name="media" />
+      </div>
+    )}
   </div>
 </section>

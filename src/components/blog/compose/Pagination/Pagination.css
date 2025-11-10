@@ -1,6 +1,16 @@
-/* Mobile-first. Uses shared tokens and container rhythm. */
+/* Mobile-first. Uses shared tokens and container rhythm.
+   FP-169: Works without extra outer wrappers; relies on parent stack when present.
+   - Visible focus rings via :focus-visible
+   - Tap targets >= 44px (>= 48px at sm+)
+   - Resilient spacing with optional CSS var override
+*/
 
+/* Optional top spacing if used outside a parent stack:
+   Set --pagination-mt on the host to standard rhythm, e.g. var(--space-10).
+   Default is 0 to avoid double spacing inside stacks/sections.
+*/
 .pagination {
+  margin-block-start: var(--pagination-mt, 0);
   padding-block: var(--space-8);
   background: var(--color-background);
   border-top: 1px solid var(--color-light);
@@ -25,7 +35,10 @@
 .pagination__control {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
+  justify-content: center;
+  min-height: 2.75rem; /* 44px target */
+  min-width: 2.75rem;  /* 44px target */
+  padding: 0 var(--space-4);
   font-size: var(--fs-base);
   font-weight: 600;
   color: var(--color-primary);
@@ -34,12 +47,19 @@
   border: 1px solid var(--color-light);
   background: var(--color-background);
   box-shadow: var(--shadow-sm);
+  outline: none;
   outline-offset: 2px;
 }
-.pagination__control:hover,
-.pagination__control:focus {
+
+.pagination__control:hover {
   background: var(--color-surface);
 }
+
+.pagination__control:focus-visible {
+  outline: 2px solid var(--color-primary);
+  background: var(--color-surface);
+}
+
 .pagination__control.is-disabled {
   color: var(--color-muted);
   opacity: 0.6;
@@ -51,8 +71,8 @@
 .pagination__page,
 .pagination__page.is-current {
   display: inline-flex;
-  min-width: 2.25rem;
-  height: 2.25rem;
+  min-width: 2.75rem; /* 44px */
+  height: 2.75rem;    /* 44px */
   padding-inline: var(--space-2);
   align-items: center;
   justify-content: center;
@@ -62,15 +82,22 @@
   text-decoration: none;
   border: 1px solid var(--color-light);
   box-shadow: var(--shadow-sm);
+  outline: none;
+  outline-offset: 2px;
 }
 
 .pagination__page {
   color: var(--color-text);
   background: var(--color-background);
 }
-.pagination__page:hover,
-.pagination__page:focus {
+
+.pagination__page:hover {
   color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.pagination__page:focus-visible {
+  outline: 2px solid var(--color-primary);
   background: var(--color-surface);
 }
 
@@ -91,14 +118,19 @@
   user-select: none;
 }
 
-/* ≥640px: slightly larger tap targets */
+/* ≥640px: slightly larger tap targets and breathing room */
 @media (min-width: 640px) {
   .pagination {
     padding-block: var(--space-10);
   }
   .pagination__page,
   .pagination__page.is-current {
-    min-width: 2.5rem;
-    height: 2.5rem;
+    min-width: 3rem; /* 48px */
+    height: 3rem;    /* 48px */
+  }
+  .pagination__control {
+    min-height: 3rem; /* 48px */
+    min-width: 3rem;  /* 48px */
+    padding: 0 var(--space-5);
   }
 }

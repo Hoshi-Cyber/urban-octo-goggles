@@ -1,26 +1,66 @@
-/* src/components/blog/LeadMagnetStrip/LeadMagnetStrip.css */
-/* LeadMagnetStrip — mobile-first, token-driven */
+/* src/components/blog/compose/LeadMagnetStrip/LeadMagnetStrip.css */
+/* LeadMagnetStrip — FP-166.1 vertical + FP-166.2 md fixes
+   + FP-166.4 wrapper-scoped gutters + FP-166.5 padding enforcement
+   + FP-166.6 desktop gutter override guard
+   + FP-168 inline success/error UX and a11y states */
 
+/* Container */
 .lms {
   padding-block: var(--space-6);
   background: color-mix(in oklab, var(--color-primary) 6%, #fff);
   border-top: 1px solid rgba(17, 24, 39, 0.06);
   border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  overflow: clip;
+
+  /* Responsive gutters token */
+  --lms-pad-inline: var(--space-4); /* base ≤640px */
 }
 
-.lms__wrap {
-  display: grid;
-  gap: var(--space-4);
-  align-items: center;
+/* ≤640px unchanged */
+@media (min-width: 640px) {
+  .lms { --lms-pad-inline: clamp(var(--space-4), 4vw, var(--space-7)); }
 }
 
-@media (min-width: 768px) {
-  .lms__wrap {
-    grid-template-columns: 1fr auto;
-    gap: var(--space-6);
+/* 768+ add breathing room and enforce padding on background box */
+@media (min-width: 768px)  {
+  .lms {
+    --lms-pad-inline: clamp(var(--space-6), 5.5vw, var(--space-10));
+    padding-inline: var(--lms-pad-inline);
+  }
+}
+@media (min-width: 1024px) {
+  .lms {
+    --lms-pad-inline: clamp(var(--space-7), 5vw, var(--space-12));
+    padding-block: var(--space-8);
+    padding-inline: var(--lms-pad-inline);
+  }
+}
+@media (min-width: 1280px) {
+  .lms {
+    --lms-pad-inline: clamp(var(--space-8), 4.5vw, var(--space-14));
+    padding-inline: var(--lms-pad-inline);
   }
 }
 
+/* Wrapper: defensive padding against global .container rules */
+.lms__wrap {
+  display: grid;
+  gap: clamp(var(--space-4), 2vw, var(--space-6));
+  align-items: start;
+  justify-items: start;
+  padding-inline: var(--lms-pad-inline);
+}
+
+/* FP-166.6: High-specificity guards to beat late .container declarations */
+.lms .container.lms__wrap { padding-inline: var(--lms-pad-inline) !important; }
+/* If section uses a data hook (recommended), this wins regardless of load order */
+@media (min-width: 1024px) {
+  .lms[data-lms] .container.lms__wrap { padding-inline: var(--lms-pad-inline) !important; }
+}
+
+/* Copy */
 .lms__title {
   margin: 0 0 var(--space-1);
   font-weight: 800;
@@ -28,26 +68,57 @@
   font-size: clamp(var(--fs-lg), 3.4vw, var(--fs-2xl));
   color: var(--color-text);
 }
-
 .lms__sub {
   margin: 0;
   color: var(--color-muted);
   max-width: 60ch;
 }
 
+/* Ensure no unintended left indent */
+.lms__title,
+.lms__sub,
+.lms__label { margin-left: 0; }
+
+/* ---- Status messages (FP-168) ---- */
+.lms__success,
+.lms__error {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+
+.lms__success {
+  color: var(--color-accent);
+}
+
+/* Use token with safe fallback to ensure ≥4.5:1 contrast */
+.lms__error {
+  color: var(--color-danger, #b91c1c); /* fallback = red-700 */
+}
+
+/* Form: vertical flow with unified, constrained width */
 .lms__form {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-2);
-  align-items: center;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 42rem;
+}
+@media (min-width: 768px) {
+  .lms__form { gap: var(--space-4); }
 }
 
-@media (min-width: 640px) {
-  .lms__form {
-    gap: var(--space-3);
-  }
+/* Copy block uses same constraint so left edges align */
+.lms__copy { width: 100%; max-width: 42rem; }
+
+/* Label */
+.lms__label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-muted);
 }
 
+/* Input */
 .lms__input {
   height: 44px;
   padding: 0 var(--space-3);
@@ -56,20 +127,45 @@
   background: #fff;
   color: var(--color-text);
   font: inherit;
-  min-width: 16rem;
+  width: 100%;
+  min-width: 0;
 }
-
 .lms__input:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 35%, #fff);
 }
 
+/* FP-168: Invalid state when script sets aria-invalid="true" */
+.lms__input[aria-invalid="true"] {
+  border-color: var(--color-danger, #b91c1c);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger, #b91c1c) 25%, #fff);
+}
+
+/* CTA: full width on mobile; auto on md+ */
 .lms__btn {
   min-height: 44px;
   padding: 0 var(--space-4);
   white-space: nowrap;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .lms__btn { width: auto; justify-self: start; }
 }
 
+/* Focus visibility (WCAG 2.1 AA) */
+.lms .btn:focus-visible,
+.lms__btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Disabled state */
+.lms__btn[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* Honeypot */
 .lms__hp {
   position: absolute !important;
   left: -9999px !important;

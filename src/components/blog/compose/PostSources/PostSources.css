@@ -1,5 +1,5 @@
 @import "../../../../styles/tokens.css";
-@import "../../../styles/typography.css";
+@import "../../../../styles/typography.css";
 
 /* Scope to post only */
 .post .post__sources {

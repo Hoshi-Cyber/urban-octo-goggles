@@ -1,12 +1,14 @@
-/* src/components/blog/PostFeedLatest/PostFeedLatest.css */
-/* PostFeedLatest — elevated, brand-aligned, mobile-first */
+/* src/components/blog/compose/PostFeedLatest/PostFeedLatest.css */
+/* PostFeedLatest — elevated, brand-aligned, mobile-first
+   Source of truth for blog cards across Home and Category pages (Fix Plan 163)
+*/
+
+/* Section padding */
 .pfl {
   padding-block: var(--space-6);
 }
 @media (min-width: 768px) {
-  .pfl {
-    padding-block: var(--space-8);
-  }
+  .pfl { padding-block: var(--space-8); }
 }
 
 /* Head */
@@ -29,24 +31,25 @@
   font-size: clamp(var(--fs-xl), 3.6vw, var(--fs-3xl));
 }
 
-/* Grid: 1→2→4 columns */
+/* Grid: 1→2→4 columns
+   Also safe to use as <ol class="pfl__grid"> */
 .pfl__grid {
   display: grid;
   gap: var(--space-6);
+  list-style: none;  /* list reset for <ol>/<ul> usage */
+  padding: 0;
+  margin: 0;
 }
 @media (min-width: 640px) {
-  .pfl__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .pfl__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
-  .pfl__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+  .pfl__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 } /* keep 4-up at lg+ */
 
-/* Card */
-.pfl__card {
+/* Card: can be applied on <li> or <article> */
+.pfl__card,
+.pfl__card article {
   display: grid;
   background: var(--color-surface);
   border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
@@ -58,28 +61,49 @@
     box-shadow 0.15s ease,
     border-color 0.15s ease;
 }
-.pfl__card:hover {
+.pfl__card:hover,
+.pfl__card article:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: color-mix(in oklab, var(--color-text) 14%, transparent);
 }
-.pfl__card:focus-within {
+.pfl__card:focus-within,
+.pfl__card article:focus-within {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 35%, white);
 }
-.pfl__card.is-hidden {
+.pfl__card.is-hidden,
+.pfl__card article.is-hidden {
   display: none;
 }
 
 /* Media */
+.pfl__media {
+  display: block;
+  overflow: hidden;
+  background: var(--color-light);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-text) 6%, transparent);
+}
 .pfl__media img {
   width: 100%;
   height: auto;
   display: block;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9; /* CLS-safe fallback */
   object-fit: cover;
-  background: var(--color-light);
-  border-bottom: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+}
+
+/* Optional empty media placeholder to keep layout stable */
+.pfl__media--empty {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      color-mix(in oklab, var(--color-text) 5%, white),
+      color-mix(in oklab, var(--color-text) 5%, white) 8px,
+      color-mix(in oklab, var(--color-text) 7%, white) 8px,
+      color-mix(in oklab, var(--color-text) 7%, white) 16px
+    );
+  border-bottom: 1px solid color-mix(in oklab, var(--color-text) 6%, transparent);
 }
 
 /* Body */
@@ -95,7 +119,8 @@
   letter-spacing: 0.06em;
   color: var(--color-muted);
 }
-.pfl__cardTitle {
+.pfl__cardTitle,
+.pfl__titleText {
   margin: 0;
   font-weight: 700;
   font-size: var(--fs-lg);
@@ -111,7 +136,24 @@
   font-size: var(--fs-xs, 0.75rem);
 }
 
-/* No underlines */
+/* Tag chips (parity with category pages) */
+.pfl__tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.pfl__tags li {
+  list-style: none;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 999px;
+}
+
+/* Links */
 .pfl :where(a) {
   text-decoration: none !important;
   color: inherit;
@@ -125,9 +167,7 @@
   color: var(--color-text);
   font-weight: 700;
 }
-.pfl__link:hover {
-  color: var(--color-primary);
-}
+.pfl__link:hover { color: var(--color-primary); }
 .pfl__link:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 35%, white);
@@ -182,7 +222,6 @@
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .pfl__card,
-  .pfl__viewAll {
-    transition: none;
-  }
+  .pfl__card article,
+  .pfl__viewAll { transition: none; }
 }

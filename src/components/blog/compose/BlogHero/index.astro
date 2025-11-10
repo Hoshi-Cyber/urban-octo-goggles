@@ -2,8 +2,9 @@
 // File: src/components/blog/compose/BlogHero/index.astro
 /**
  * BlogHero — mobile-first hero with dual CTAs.
- * Fix Plan 148.1: remove badge/statline, show image in full.
- * Fix Plan 155: stop per-component global @imports; BaseLayout links src/styles/index.css once.
+ * FP-148.1: remove badge/statline, show image in full.
+ * FP-155: BaseLayout links global CSS once; component stays local-only.
+ * FP-158: no inner horizontal gutters; block padding only; grid >= lg when media exists.
  */
 
 export interface Cover { src: string; alt?: string; width?: number; height?: number }
@@ -15,6 +16,8 @@ export interface Props {
   secondaryHref?: string
   secondaryLabel?: string
   cover?: Cover | null
+  /** FP-158: default false to avoid nested containers/gutters */
+  contained?: boolean
 }
 
 const {
@@ -25,17 +28,38 @@ const {
   secondaryHref = "/blog/",
   secondaryLabel = "Read Latest",
   cover = null,
+  contained = false,
 } = Astro.props as Props
 
 // Local component CSS only
 import css from "./BlogHero.css?url"
+
+const titleId = "bloghero-title"
+/** Grid should only activate at lg if media exists */
+const hasMedia = Boolean(cover?.src)
 ---
 <link rel="stylesheet" href={css} />
 
-<section class="bloghero" data-section="blog-hero" aria-label="Blog hero">
-  <div class="container bloghero__wrap">
+<section
+  class="bloghero"
+  data-section="blog-hero"
+  data-contained={String(contained)}
+  data-has-media={String(hasMedia)}
+  aria-labelledby={titleId}
+>
+  {/*
+    FP-158:
+    - Do NOT add an inner .container here; rely on page-level container for gutters.
+    - Single column by default; grid only at lg when media exists.
+    - CTAs stack on mobile; row from sm+ (handled in CSS).
+  */}
+  <div class:list={[
+    "bloghero__grid",
+    hasMedia ? "has-media" : "no-media",
+    contained ? "is-contained" : "is-uncontained",
+  ]}>
     <div class="bloghero__copy">
-      <h1 class="bloghero__title h1">{title}</h1>
+      <h1 id={titleId} class="bloghero__title h1">{title}</h1>
       {sub && <p id="bloghero-dek" class="bloghero__sub">{sub}</p>}
 
       <div class="bloghero__ctas">
@@ -58,23 +82,17 @@ import css from "./BlogHero.css?url"
       </div>
     </div>
 
-    {/* Media pane: image if provided, otherwise decorative fallback */}
-    <figure class="bloghero__media" aria-hidden="true">
-      {cover?.src ? (
+    {hasMedia && (
+      <figure class="bloghero__media" aria-hidden="true">
         <img
-          src={cover.src}
-          alt={cover.alt ?? ""}
-          width={cover.width ?? 960}
-          height={cover.height ?? 720}
+          src={cover!.src}
+          alt={cover!.alt ?? ""}
+          width={cover!.width ?? 960}
+          height={cover!.height ?? 720}
           loading="eager"
           decoding="async"
         />
-      ) : (
-        <div class="bloghero__fallback">
-          <span class="ring ring--lg"></span>
-          <span class="ring ring--sm"></span>
-        </div>
-      )}
-    </figure>
+      </figure>
+    )}
   </div>
 </section>

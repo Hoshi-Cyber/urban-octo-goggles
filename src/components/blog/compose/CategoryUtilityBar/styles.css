@@ -1,88 +1,137 @@
+/* CategoryUtilityBar — FP-163
+   - Elevated toolbar card with clear contrast
+   - Block padding via clamp; no external margins
+   - Controls grid with protected gaps; desktop two columns
+   - 44px touch targets; strong focus-visible
+   - Sticky access on scroll
+   - IMPORTANT: Card/list styling removed here; PostFeedLatest.css is the single source of truth
+*/
+
+/* Toolbar surface */
 .cu-wrap {
+  position: sticky;
+  top: clamp(var(--space-2), 1.5vh, var(--space-4));
+  z-index: 10;
+  background: var(--color-surface);
+  border: 1px solid var(--color-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding:
+    clamp(var(--space-4), 2.2vw, var(--space-6))
+    clamp(var(--space-4), 3vw, var(--space-6));
   display: grid;
-  gap: 0.75rem;
-  margin-block: 0.75rem 1rem;
+  gap: clamp(var(--space-3), 2vw, var(--space-6));
+  /* no margin-block; page container controls section spacing */
 }
+
+/* Layout: controls then pagination on mobile; split at sm+ */
+@media (min-width: 640px) {
+  .cu-wrap {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+}
+
+/* Controls grid with explicit row/column gaps */
 .cu-controls {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr; /* mobile */
+  row-gap: clamp(var(--space-3), 2vw, var(--space-5));
+  column-gap: clamp(var(--space-4), 2vw, var(--space-8));
 }
+
+@media (min-width: 768px) {
+  .cu-controls {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .cu-controls {
+    grid-template-columns: repeat(2, minmax(14rem, 1fr));
+  }
+}
+
+/* Fields */
 .cu-field {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.35rem;
   font-size: 0.95rem;
 }
-.cu-field select {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--border, #ddd);
-  border-radius: 8px;
+
+.cu-field > span {
+  color: var(--color-muted);
+  font-size: 0.9rem;
 }
+
+.cu-field select {
+  width: 100%;
+  min-width: 14rem;
+  min-height: 44px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border, #d6d6d6);
+  background: var(--color-elevated, #fff);
+  border-radius: 12px;
+}
+
+.cu-field select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+}
+
+/* Clear button (tertiary) */
 .cu-clear {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--border, #ddd);
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border, #d6d6d6);
   background: transparent;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
 }
+
+.cu-clear:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.cu-clear:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+}
+
+/* Pagination block */
 .cu-pagination {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-3);
   align-items: center;
+  justify-content: flex-start;
 }
+
+@media (min-width: 640px) {
+  .cu-pagination {
+    justify-content: flex-end;
+  }
+}
+
 .cu-pagination button {
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--border, #ddd);
-  background: transparent;
-  border-radius: 8px;
+  min-height: 40px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border, #d6d6d6);
+  background: var(--color-elevated, #fff);
+  border-radius: 10px;
   cursor: pointer;
 }
+
+.cu-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .cu-page {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   opacity: 0.85;
 }
 
-/* Client-rendered grid target when island is active */
-#category-client-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  margin-top: 0.5rem;
-  list-style: none;
-  padding: 0;
-}
-#category-client-list .c-card {
-  list-style: none;
-}
-#category-client-list .c-card__media img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: 12px;
-}
-#category-client-list .c-card__title {
-  font-size: 1rem;
-  line-height: 1.3;
-  margin: 0.5rem 0 0.25rem;
-}
-#category-client-list .c-card__meta {
-  font-size: 0.85rem;
-  opacity: 0.8;
-  margin: 0 0 0.25rem;
-}
-#category-client-list .c-card__tags {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  padding: 0;
-  margin: 0;
-}
-#category-client-list .c-card__tags li {
-  list-style: none;
-  font-size: 0.75rem;
-  padding: 0.2rem 0.45rem;
-  border: 1px solid var(--border, #ddd);
-  border-radius: 999px;
-}
+/* NOTE:
+   Any styling for the cards/list (e.g., #category-client-list, .c-card, .c-card__media, etc.)
+   has been intentionally removed. Category pages must import PostFeedLatest.css so that the
+   pfl__* classes define visuals for both SSR and client-rendered cards. */

@@ -1,0 +1,308 @@
+/* src/components/blog/base/BlogPost.css */
+/* BlogPost layout — mobile-first, token-driven, post-scoped */
+
+/* ================
+   Shell
+   ================ */
+.post {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-10);
+}
+
+/* Constrain article container and center it */
+.post.container {
+  width: min(100% - var(--space-6), 70rem);
+  margin-inline: auto;
+}
+
+/* ================
+   Breadcrumbs
+   ================ */
+.post__breadcrumbs {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+.post__breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.post__breadcrumbs a {
+  text-decoration: none;
+}
+
+/* ================
+   Header
+   ================ */
+.post__eyebrow {
+  margin: 0 0 var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.post__title {
+  margin: 0 0 var(--space-4);
+  font-weight: 800;
+  line-height: 1.15;
+  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-4xl));
+  color: var(--color-text);
+}
+
+/* Updated badge spacing */
+.post__updated {
+  margin: 0 0 var(--space-3);
+}
+
+/* Meta list
+   Visuals live in: src/components/blog/PostMeta/PostMeta.css
+   Intentionally no `.post__meta` rules here to avoid duplication. */
+
+/* Tags are styled exclusively in:
+   src/components/blog/PostTags/PostTags.css
+   Intentionally no `.post__tags` or `.post__tag` rules here. */
+
+/* ================
+   Cover
+   ================ */
+.post__cover {
+  margin: 0 0 var(--space-8);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--color-surface);
+}
+.post__cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 16 / 9; /* prevents CLS */
+}
+
+/* ================
+   Lead paragraph  (FP-171)
+   ================ */
+.post__lead {
+  max-width: 72ch;
+  margin: 0 auto var(--space-6);
+  font-size: clamp(var(--fs-base), 1.8vw, var(--fs-lg));
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* ================
+   Table of Contents (FP-171)
+   ================ */
+.post__toc {
+  max-width: 72ch;
+  margin: 0 auto var(--space-8);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+.post__toc ol,
+.post__toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.post__toc li + li {
+  margin-top: .375rem;
+}
+.post__toc a {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+/* ================
+   Content
+   ================ */
+.post__content {
+  color: var(--color-text);
+  max-width: 72ch;
+  margin-inline: auto;
+  padding-bottom: var(--space-4);
+}
+
+/* Prose rhythm */
+.post__content > * + * {
+  margin-top: var(--space-4);
+}
+.post__content h2 {
+  margin-top: var(--space-8);
+  font-size: clamp(var(--fs-xl), 2.6vw, var(--fs-3xl));
+}
+.post__content h3 {
+  margin-top: var(--space-6);
+  font-size: clamp(var(--fs-lg), 2.2vw, var(--fs-2xl));
+}
+.post__content p {
+  line-height: 1.75;
+}
+.post__content ul,
+.post__content ol {
+  padding-left: 1.25rem;
+}
+.post__content li + li {
+  margin-top: 0.5rem;
+}
+.post__content blockquote {
+  margin: var(--space-6) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-border);
+  color: var(--color-muted);
+}
+
+/* Checklist and form controls inside content */
+.post__content input[type="checkbox"] {
+  inline-size: 1rem;
+  block-size: 1rem;
+  accent-color: var(--color-primary);
+  transform: translateY(2px);
+  margin-right: 0.5rem;
+}
+.post__content label {
+  cursor: pointer;
+}
+
+/* CTA helpers if present inside content */
+.post__content .cta,
+.post__content .callout {
+  margin-top: var(--space-8);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ================
+   Author card (FP-171)
+   ================ */
+.post__author {
+  max-width: 72ch;
+  margin: var(--space-10) auto 0;
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+.post__author h3 {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(var(--fs-lg), 2vw, var(--fs-xl));
+}
+
+/* ================
+   Next/Prev navigation (FP-171)
+   ================ */
+.post__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+  align-items: center;
+  max-width: 72ch;
+  margin: var(--space-8) auto 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.post__navLink {
+  text-decoration: none;
+  font-weight: 600;
+}
+.post__navPrev,
+.post__navNext {
+  flex: 1 1 auto;
+}
+.post__navPrev {
+  text-align: left;
+}
+.post__navNext {
+  text-align: right;
+}
+
+/* ================
+   Related posts (FP-171)
+   ================ */
+.post__related {
+  max-width: 72ch;
+  margin: var(--space-10) auto 0;
+}
+.post__related h3 {
+  margin: 0 0 var(--space-3);
+  font-size: clamp(var(--fs-lg), 2vw, var(--fs-xl));
+}
+.post__related ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+.post__related li a {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* ================
+   Footer boundary before footer tags
+   ================ */
+.post__footer {
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ================
+   Lead magnet wrapper (FP-171)
+   ================ */
+.post__leadmagnet {
+  max-width: 72ch;
+  margin: var(--space-10) auto 0;
+}
+
+/* ================
+   Focus visibility & contrast helpers (FP-171)
+   ================ */
+.post a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.post :where(h1,h2,h3,h4,h5,h6, p, li) {
+  color: var(--color-text);
+}
+
+/* Wider reading width on larger screens */
+@media (min-width: 640px) {
+  .post__related ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .post__content,
+  .post__lead,
+  .post__toc,
+  .post__author,
+  .post__nav,
+  .post__related,
+  .post__leadmagnet {
+    max-width: 80ch;
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .post__cover {
+    transition: none;
+  }
+}

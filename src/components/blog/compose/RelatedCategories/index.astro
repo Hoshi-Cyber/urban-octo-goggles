@@ -4,9 +4,9 @@ import css from "./RelatedCategories.css?url";
 export interface RelatedItem { title: string; slug: string }
 export interface Props {
   items: RelatedItem[];
-  current?: string | null;
-  title?: string;
-  variant?: "default" | "compact";
+  current?: string | null;                 // active category slug or name
+  title?: string;                          // section heading
+  variant?: "default" | "compact";         // visual density
 }
 
 const {
@@ -16,30 +16,36 @@ const {
   variant = "default",
 } = Astro.props as Props;
 
-const safeItems = (items || []).filter(Boolean);
-const headingId = "rc-heading";
-
 const slugify = (s: string) =>
   String(s || "uncategorized")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+
+const safeItems = (items || []).filter(Boolean);
+const currentSlug = current ? slugify(String(current)) : null;
+const headingId = "rc-heading";
 ---
 <link rel="stylesheet" href={css} />
 
-<!-- No inner .container here. Width is governed by the page-level container. -->
-<section class={`rc ${variant === "compact" ? "rc--compact" : ""}`} aria-labelledby={headingId} data-section="related-categories">
+<!-- FP-169.2: single semantic section. No inner .container; width inherits from page container. -->
+<section
+  class={`rc ${variant === "compact" ? "rc--compact" : ""}`}
+  aria-labelledby={headingId}
+  data-section="related-categories"
+>
   <h2 id={headingId} class="section-title">{title}</h2>
 
   {safeItems.length === 0 ? (
     <p class="text-muted">No related categories configured.</p>
   ) : (
-    <ul class="rc__list" aria-label="Related categories">
+    <ul class="rc__list" role="list" aria-label="Related categories">
       {safeItems.map((r) => {
         const catSlug = slugify(r.slug);
-        const href = `/blog/${catSlug}/`; // canonical category path per Fix Plan 125
-        const isCurrent = !!(current && slugify(String(current)) === catSlug);
+        const href = `/blog/${catSlug}/`; // canonical category URL with trailing slash
+        const isCurrent = !!(currentSlug && currentSlug === catSlug);
+
         return (
           <li>
             <a

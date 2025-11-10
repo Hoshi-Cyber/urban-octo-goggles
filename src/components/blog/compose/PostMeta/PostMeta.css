@@ -1,6 +1,6 @@
 @import "../../../../styles/tokens.css";
-@import "../../../styles/typography.css";
-@import "../../../styles/utilities.css";
+@import "../../../../styles/typography.css";
+@import "../../../../styles/utilities.css";
 
 /* Post meta — mobile-first, structural + visual lives here */
 .post .post__meta {
