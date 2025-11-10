@@ -35,3 +35,6 @@ LPT[1-9]
 lighthouse-baseline.json
 localhost_*.report.html
 tatus
+
+# Reserved Windows filename
+NUL
