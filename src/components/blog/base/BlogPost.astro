@@ -1,269 +1,282 @@
+// File: src/components/blog/base/BlogPost.astro
 ---
-// src/components/blog/base/BlogPost.astro
-import BaseLayout from "../../layout/BaseLayout.astro";
+import BaseLayout from "@/components/layout/BaseLayout.astro";
 
-// Blog components
-import PostHeader from "../compose/PostHeader/index.astro";
-import PostMeta from "../compose/PostMeta/index.astro";
-import PostTags from "../compose/PostTags/index.astro";
-import PostCover from "../compose/PostCover/index.astro";
-import PostCTAs from "../compose/PostCTAs/index.astro";
-import LeadMagnetStrip from "../compose/LeadMagnetStrip/index.astro"; // end-of-article conversion strip
-
-// UI
-import Badge from "../../ui/Badge/index.astro";
-
-// FP-172: bundle CSS instead of head <link> URLs
-import "./BlogPost.css";
-import "../../../styles/prose.css";
-
-export interface Cover {
-  src: string;
-  alt?: string;
-  width?: number;
-  height?: number;
-}
-export interface SEO {
-  canonical?: string;
-  title?: string;
-  description?: string;
-  [key: string]: any;
-}
-export interface CTA {
-  label: string;
-  url: string;
-}
-export interface PrevNext {
-  title: string;
-  url: string;
-}
 export interface Props {
   title: string;
   description?: string;
-  seo?: SEO;
-  canonical?: string;      // may arrive from MD frontmatter
-  ogImage?: string;
-  date?: string | Date;
-  updated?: string | Date;
-  author?: string;
-  readingTime?: number;
-  readingTimeMinutes?: number; // alias
-  tags?: string[];
-  cover?: Cover | null;
-  ctaPrimary?: CTA;
-  ctaSecondary?: CTA;
-
-  // optional breadcrumb inputs
-  category?: string;
-  categoryUrl?: string;
-
-  // adjacent navigation
-  prev?: PrevNext | null;
-  next?: PrevNext | null;
+  category: string;
+  tags: string[];
+  date: Date;
+  updated?: Date | null;
+  readingTime?: number | null;
+  cover?: {
+    src: ImageMetadata | string;
+    alt?: string;
+    width?: number;
+    height?: number;
+    caption?: string;
+    /** Optional advanced responsive sources provided via frontmatter */
+    srcsetAvif?: string; // e.g. "/imgs/cover-800.avif 800w, /imgs/cover-1200.avif 1200w"
+    srcsetWebp?: string; // e.g. "/imgs/cover-800.webp 800w, /imgs/cover-1200.webp 1200w"
+    sizes?: string;      // e.g. "(max-width: 768px) 100vw, 1200px"
+  };
+  canonical?: string;
+  tocHeadings?: Array<{ depth: number; slug: string; text: string }>;
+  showTOC?: boolean;
+  prev?: { data: any; slug: string } | null;
+  next?: { data: any; slug: string } | null;
+  related?: Array<{ data: any; slug: string }>;
+  /** Optional series nav (ordered). Rendered when present. */
+  series?: Array<{ title: string; url: string; index?: number }>;
 }
-
-const props = Astro.props as Props;
 
 const {
   title,
-  description = "",
-  author,
-  tags = [],
-  ctaPrimary,
-  ctaSecondary,
+  description,
   category,
-  categoryUrl,
-  prev = null,
-  next = null,
-} = props;
+  tags = [],
+  date,
+  updated = null,
+  readingTime = null,
+  cover,
+  canonical,
+  series = [],
+} = Astro.props as Props;
 
-// reading time normalization
-const readingTime =
-  typeof props.readingTime === "number"
-    ? props.readingTime
-    : typeof props.readingTimeMinutes === "number"
-    ? props.readingTimeMinutes
-    : undefined;
+// Formatters
+const fmt = new Intl.DateTimeFormat("en-KE", { year: "numeric", month: "short", day: "2-digit" });
 
-// dates
-const publishedDate = props.date ? new Date(props.date) : null;
-const updatedDate = props.updated ? new Date(props.updated) : publishedDate;
+// URL helpers
+const categoryUrl = `/blog/${category}/`;
 
-const isoPublished = publishedDate ? publishedDate.toISOString() : null;
-const isoModified = updatedDate ? updatedDate.toISOString() : null;
+// Derive responsive props for cover
+const coverIsString = typeof cover?.src === "string";
+const coverIsMeta = typeof cover?.src === "object" && cover?.src && "src" in cover.src;
 
-const tagList = (tags || []).slice(0, 12);
+// Precompute responsive <picture> attributes
+const coverImgSrc = coverIsString
+  ? (cover?.src as string)
+  : coverIsMeta
+  ? (cover?.src as any).src
+  : undefined;
 
-// canonical
-const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "";
-const seoIn = props.seo ?? {};
-const fmCanonical = props.canonical;
-const canonicalSrc = (seoIn as any).canonical ?? fmCanonical ?? Astro.url.pathname;
-const canonical =
-  canonicalSrc && canonicalSrc.startsWith("http") ? canonicalSrc : `${siteUrl}${canonicalSrc ?? ""}`;
+const coverWidth = cover?.width || (coverIsMeta ? (cover?.src as any).width : undefined);
+const coverHeight = cover?.height || (coverIsMeta ? (cover?.src as any).height : undefined);
+const coverAlt = cover?.alt || "";
 
-// cover inference
-let cover: Cover | null = props.cover ?? null;
-if (!cover && typeof props.ogImage === "string" && props.ogImage.trim()) {
-  cover = { src: props.ogImage.trim(), alt: title };
-}
-
-// JSON-LD (Article)
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: title,
-  datePublished: isoPublished || undefined,
-  dateModified: isoModified || undefined,
-  author: author ? [{ "@type": "Person", name: author }] : undefined,
-  image: cover?.src ? (cover.src.startsWith("http") ? cover.src : `${siteUrl}${cover.src}`) : undefined,
-  mainEntityOfPage: canonical,
-  description: description || (seoIn as any)?.description,
-  publisher: { "@type": "Organization", name: "CV Writing Kenya" }
-};
-
-// helpers
-const showUpdatedBadge =
-  publishedDate && updatedDate && updatedDate.getTime() > publishedDate.getTime();
-
-// breadcrumbs (UI + JSON-LD)
-const crumbs = [
-  { label: "Blog", href: "/blog" },
-  ...(category
-    ? [{
-        label: category,
-        href: categoryUrl && categoryUrl.startsWith("/")
-          ? categoryUrl
-          : `/blog/category/${encodeURIComponent(category!.toLowerCase())}`
-      }]
-    : []),
-  { label: title, href: canonical }
-];
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: crumbs.map((c, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: c.label,
-    item: c.href.startsWith("http") ? c.href : `${siteUrl}${c.href}`
-  }))
-};
-
-// slot checks
-const hasToc = Astro.slots.has("toc");
-const hasRelated = Astro.slots.has("related");
+// Defaults for sizes when not provided
+const coverSizes = cover?.sizes || "(max-width: 768px) 100vw, 1200px";
 ---
-<BaseLayout title={title} description={description} seo={{ ...seoIn, canonical }}>
-  {/* Head: JSON-LD only; CSS is bundled via imports (FP-172) */}
-  <fragment slot="head">
-    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-    <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-  </fragment>
 
-  <article class="post container" itemscope itemtype="https://schema.org/Article">
-    {/* Breadcrumbs */}
-    <nav class="post__breadcrumbs" aria-label="Breadcrumb">
-      <ol>
-        {crumbs.slice(0, -1).map((c) => (
-          <li><a href={c.href}>{c.label}</a></li>
-        ))}
-        <li aria-current="page">{crumbs[crumbs.length - 1].label}</li>
+<BaseLayout title={title} description={description}>
+  {/* Optional skip link slot if layout owns header; fallback provided here */}
+  <slot name="skiplink">
+    <a class="skip-link" href="#post-main">Skip to content</a>
+  </slot>
+
+  <article id="post-main" class="post stack stack--first-tight page-gap-after" role="article" aria-labelledby="post-title">
+    <!-- 1) Breadcrumbs -->
+    <nav class="post__breadcrumbs container" aria-label="Breadcrumbs">
+      <ol class="crumbs">
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href={categoryUrl}>{category.replaceAll("-", " ")}</a></li>
+        <li aria-current="page" class="current">{title}</li>
       </ol>
     </nav>
 
-    {/* Header */}
-    <PostHeader title={title} eyebrow="Blog" />
-
-    {showUpdatedBadge && (
-      <p class="post__updated">
-        <Badge title="Content updated">
-          Updated {new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(updatedDate!)}
-        </Badge>
+    <!-- 2) H1 + Eyebrow -->
+    <header class="post__head container">
+      <p class="post__eyebrow">
+        <a href={categoryUrl} class="cat">{category.replaceAll("-", " ")}</a>
       </p>
-    )}
+      <h1 id="post-title" class="post__title h1">{title}</h1>
+    </header>
 
-    <PostMeta
-      date={publishedDate ?? undefined}
-      updated={updatedDate ?? undefined}
-      author={author}
-      readingTime={typeof readingTime === "number" && readingTime > 0 ? readingTime : undefined}
-    />
+    <!-- 3) Meta row -->
+    <div class="post__meta container">
+      <p class="meta">
+        <time datetime={date.toISOString()}>{fmt.format(date)}</time>
+        {readingTime && <span aria-hidden="true"> · </span>}
+        {readingTime && <span>{readingTime} min read</span>}
+      </p>
+      <!-- 4) Updated badge -->
+      {updated && (
+        <p class="post__updated" title="Last updated">
+          Updated {fmt.format(updated)}
+        </p>
+      )}
+    </div>
 
-    {tagList.length > 0 && <PostTags tags={tagList} variant="header" />}
-
-    {/* Cover image — wrapped for CSS targeting (FP-172) */}
-    {cover?.src && (
-      <figure class="post__cover">
-        <PostCover
-          src={cover.src}
-          alt={cover.alt ?? ""}
-          width={cover.width ?? 1280}
-          height={cover.height ?? 720}
-        />
+    <!-- 5) Cover -->
+    {coverImgSrc && (
+      <figure class="post__cover container">
+        <picture>
+          {cover?.srcsetAvif && <source type="image/avif" srcset={cover.srcsetAvif} sizes={cover.sizes || coverSizes} />}
+          {cover?.srcsetWebp && <source type="image/webp" srcset={cover.srcsetWebp} sizes={cover.sizes || coverSizes} />}
+          <img
+            src={coverImgSrc}
+            alt={coverAlt}
+            width={coverWidth}
+            height={coverHeight}
+            loading="eager"
+            fetchpriority="high"
+          />
+        </picture>
+        {cover?.caption && <figcaption class="caption text-muted">{cover.caption}</figcaption>}
       </figure>
     )}
 
-    {/* Lead paragraph */}
+    <!-- 6) Lead paragraph (optional) -->
     {description && (
-      <p class="post__lead">{description}</p>
+      <div class="post__lead container">
+        <p class="page-lead">{description}</p>
+      </div>
     )}
 
-    {/* Optional Table of Contents */}
-    {hasToc && (
-      <aside class="post__toc" aria-label="Table of contents">
-        <slot name="toc" />
-      </aside>
-    )}
+    <!-- 7) TOC (slot) -->
+    <div class="container">
+      <slot name="toc" />
+    </div>
 
-    {/* Inline CTAs */}
-    {(ctaPrimary || ctaSecondary) && (
-      <PostCTAs
-        primary={ctaPrimary ? { label: ctaPrimary.label, url: ctaPrimary.url } : undefined}
-        secondary={ctaSecondary ? { label: ctaSecondary.label, url: ctaSecondary.url } : undefined}
-      />
-    )}
-
-    {/* Article body */}
-    <section class="post__content prose" itemprop="articleBody">
+    <!-- 8) Article body (provided by the route through default slot) -->
+    <div class="container">
       <slot />
+    </div>
+
+    <!-- 9) Series navigation (optional) -->
+    {Array.isArray(series) && series.length > 0 && (
+      <section class="post__series container" aria-label="In this series">
+        <h2 class="h4">In this series</h2>
+        <ol>
+          {series
+            .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+            .map((s) => (
+              <li>
+                <a href={s.url}>{s.title}</a>
+              </li>
+            ))}
+        </ol>
+      </section>
+    )}
+
+    <!-- 10) Footer tags + Share buttons -->
+    <footer class="post__footer container">
+      {tags.length > 0 && (
+        <ul class="post__tags">
+          {tags.map((t) => (
+            <li><a class="tag" href={`/tags/${t.toLowerCase()}/`}>{t}</a></li>
+          ))}
+        </ul>
+      )}
+      <div class="post__share" aria-label="Share">
+        <!-- No inline JS. Handled by analytics.ts listeners. -->
+        <button
+          class="btn btn-primary"
+          type="button"
+          data-cta="copy-link"
+          data-url={String(canonical || Astro.url)}
+          aria-controls="copy-status"
+        >
+          Copy link
+        </button>
+        <a
+          class="btn"
+          href={`https://wa.me/?text=${encodeURIComponent(canonical || Astro.url)}`}
+          rel="noopener"
+          target="_blank"
+          data-cta="share_click"
+          data-share="whatsapp"
+        >WhatsApp</a>
+        <a
+          class="btn"
+          href={`https://x.com/intent/tweet?url=${encodeURIComponent(canonical || Astro.url)}&text=${encodeURIComponent(title)}`}
+          rel="noopener"
+          target="_blank"
+          data-cta="share_click"
+          data-share="x"
+        >X</a>
+        <a
+          class="btn"
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical || Astro.url)}`}
+          rel="noopener"
+          target="_blank"
+          data-cta="share_click"
+          data-share="linkedin"
+        >LinkedIn</a>
+        <span id="copy-status" class="sr-only" aria-live="polite"></span>
+      </div>
+    </footer>
+
+    <!-- 11) Author card (optional slot for future extension) -->
+    <div class="post__author container">
+      <slot name="author" />
+    </div>
+
+    <!-- 12) Next/Prev -->
+    <nav class="post__nav container" aria-label="Post navigation">
+      <slot name="nav" />
+    </nav>
+
+    <!-- 13) Related (slot) -->
+    <section class="post__related container">
+      <slot name="related" />
     </section>
 
-    {/* Author card */}
-    {author && (
-      <section class="post__author" aria-labelledby="about-author">
-        <h3 id="about-author">About the author</h3>
-        <p>{author}</p>
-      </section>
-    )}
+    <!-- 14) Inline ad slot shell (optional, disabled by default; prevents CLS) -->
+    <section class="ad-slot container" hidden role="complementary" aria-label="Sponsored">
+      <div class="ad-box" style="width:336px;height:280px"></div>
+    </section>
 
-    {/* Next/Prev navigation */}
-    {(prev || next) && (
-      <nav class="post__nav" aria-label="Post navigation">
-        {prev && <a class="post__navLink post__navPrev" href={prev.url}>← {prev.title}</a>}
-        {next && <a class="post__navLink post__navNext" href={next.url}>{next.title} →</a>}
-      </nav>
-    )}
+    <!-- 15) LeadMagnet (deferred) -->
+    <section class="post__leadmagnet container">
+      <slot name="leadmagnet" />
+    </section>
 
-    {/* Related posts */}
-    {hasRelated && (
-      <section class="post__related" aria-labelledby="related-articles">
-        <h3 id="related-articles">Related articles</h3>
-        <slot name="related" />
-      </section>
-    )}
-
-    {/* Footer tags */}
-    {tagList.length > 0 && (
-      <footer class="post__footer">
-        <PostTags tags={tagList} variant="footer" />
-      </footer>
-    )}
-
-    {/* LeadMagnetStrip at the end (deferred) */}
-    <section class="post__leadmagnet">
-      <LeadMagnetStrip />
+    <!-- 16) Comments (deferred) -->
+    <section class="post__comments container">
+      <slot name="comments" />
     </section>
   </article>
 </BaseLayout>
+
+<style>
+  @import "@/styles/index.css";
+  /* Local page-level CSS lives in BlogPost.css */
+
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 0;
+    top: -40px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+  }
+  .skip-link:focus { top: 8px; z-index: 1000; }
+
+  /* Series list */
+  .post__series ol {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  /* Ad slot placeholder to avoid CLS */
+  .ad-slot[hidden] .ad-box { display: block; }
+  .ad-slot .ad-box {
+    background: var(--color-surface);
+    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Screen-reader only helper */
+  .sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+</style>

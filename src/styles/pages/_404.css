@@ -1,0 +1,131 @@
+/* File: src/styles/pages/_404.css
+   Refactored to use global tokens, base, utilities, and breakpoints.
+   No local :root overrides. */
+
+/* Base page context uses global base.css defaults for font, colors, overflow, etc. */
+/* Wrapper */
+.nf {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: min(8vh, 6rem) var(--space-4);
+  background: linear-gradient(
+    180deg,
+    var(--color-surface) 0%,
+    var(--color-light-alt) 100%
+  );
+}
+
+/* Card */
+.nf__card {
+  width: 100%;
+  max-width: 46rem;
+  background: var(--color-background);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: clamp(var(--space-6), 4vw, var(--space-12));
+  text-align: center;
+}
+
+/* Icon / heading / lead */
+.nf__icon {
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  line-height: 1;
+  margin-bottom: var(--space-4);
+  color: var(--color-primary);
+}
+
+.nf__title {
+  font-size: clamp(var(--fs-xl), 3vw, var(--fs-2xl));
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-2);
+}
+
+.nf__lead {
+  margin: 0 auto var(--space-6);
+  color: var(--color-muted);
+  max-width: 64ch;
+}
+
+/* Actions */
+.nf__actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+/* Buttons use global .btn utilities; keep a light alias for legacy markup */
+.btn {
+  /* Height and alignment tweak for this page without redefining global button visuals */
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+/* Primary alias (maps old .btn--primary to global palette) */
+.btn--primary,
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+.btn--primary:hover,
+.btn-primary:hover,
+.btn--primary:focus,
+.btn-primary:focus {
+  background-color: var(--color-primary-hover);
+}
+
+/* Search */
+.nf__search {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.nf__search input[type="search"] {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  border: 1px solid #d1d5db; /* consider a global border token when available */
+  border-radius: var(--radius-md);
+  font-size: var(--fs-base);
+  background: #fff;
+  color: var(--color-text);
+}
+
+/* Hint */
+.nf__hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+}
+
+/* Accessible-only text utility for labels */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Responsive layout (uses global breakpoint scale) */
+@media (min-width: 640px) {
+  .nf__actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}

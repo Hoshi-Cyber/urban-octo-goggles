@@ -1,0 +1,40 @@
+---
+export interface Item {
+  data: {
+    title: string;
+    category: string;
+    description?: string;
+    date?: string | Date;
+  };
+  slug: string;
+}
+
+export interface Props {
+  prev?: Item | null;
+  next?: Item | null;
+}
+
+const { prev = null, next = null } = Astro.props as Props;
+
+const hrefOf = (p: Item) => `/blog/${p.data.category}/${p.slug}/`;
+---
+
+<nav class="postnav container" aria-label="Post navigation">
+  {prev && (
+    <a class="postnav__card postnav__prev" href={hrefOf(prev)} rel="prev">
+      <span class="postnav__kicker" aria-hidden="true">Previous</span>
+      <span class="postnav__title">{prev.data.title}</span>
+    </a>
+  )}
+
+  {next && (
+    <a class="postnav__card postnav__next" href={hrefOf(next)} rel="next">
+      <span class="postnav__kicker" aria-hidden="true">Next</span>
+      <span class="postnav__title">{next.data.title}</span>
+    </a>
+  )}
+</nav>
+
+<style>
+  @import "./PostNav.css";
+</style>

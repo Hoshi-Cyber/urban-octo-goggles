@@ -1,0 +1,47 @@
+---
+/**
+ * Provider-agnostic comments wrapper.
+ * Renders an accessible region and optional provider mount.
+ *
+ * Props:
+ * - provider?: "placeholder" | "giscus" | "hyvor" | "disqus"
+ * - heading?: string
+ * - hint?: string
+ * - mountId?: string   // element id used by external provider scripts
+ */
+interface Props {
+  provider?: "placeholder" | "giscus" | "hyvor" | "disqus";
+  heading?: string;
+  hint?: string;
+  mountId?: string;
+}
+
+const {
+  provider = "placeholder",
+  heading = "Comments",
+  hint = "Comments load on demand to keep pages fast.",
+  mountId = "comments-mount",
+} = Astro.props as Props;
+---
+<section class="comments container" role="region" aria-label="Comments">
+  <header class="comments__head section-head">
+    <h2 class="section-title">{heading}</h2>
+    <p class="section-sub text-muted">{hint}</p>
+  </header>
+
+  <div class="comments__body">
+    <!-- Mount target. External scripts can attach here if you choose a provider later. -->
+    <div id={mountId} class="comments__mount" data-provider={provider}></div>
+
+    {provider === "placeholder" && (
+      <div class="comments__placeholder" role="note" aria-live="polite">
+        <p class="mb-4">Comments are disabled for now.</p>
+        <p class="mb-0">Enable a provider to collect discussion without hurting Core Web Vitals.</p>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  @import "./Comments.css";
+</style>

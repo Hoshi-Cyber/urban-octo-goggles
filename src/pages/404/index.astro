@@ -1,0 +1,59 @@
+---
+/* File: src/pages/404/index.astro
+   Uses global styles and page-scoped CSS at src/styles/pages/_404.css */
+import globalCssUrl from "@/styles/index.css?url";
+
+// Page CSS moved out of /pages per Fix Plan 186
+const pageCssUrl = await import("../../styles/pages/_404.css?url").then((m) => m.default);
+
+const title = "404: Not found";
+const description = "The page you requested does not exist.";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href={globalCssUrl} />
+    <link rel="stylesheet" href={pageCssUrl} />
+  </head>
+  <body>
+    <main class="nf" role="main" aria-labelledby="nf-title">
+      <section class="nf__card" aria-live="polite">
+        <div class="nf__icon" aria-hidden="true">🧭</div>
+        <h1 id="nf-title" class="nf__title">{title}</h1>
+        <p class="nf__lead">{description}</p>
+
+        <nav class="nf__actions" aria-label="Suggested actions">
+          <a href="/" class="btn btn--primary">Go to homepage</a>
+          <a href="/blog/" class="btn">Browse articles</a>
+        </nav>
+
+        <form
+          action="/search/"
+          method="GET"
+          class="nf__search"
+          role="search"
+          aria-label="Site search"
+        >
+          <label class="sr-only" for="q">Search</label>
+          <input
+            id="q"
+            name="q"
+            type="search"
+            placeholder="Search the site"
+            autocomplete="off"
+          />
+          <button type="submit" class="btn btn--primary">Search</button>
+        </form>
+
+        <p class="nf__hint">
+          If you followed a link, it may be outdated or the page was moved.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

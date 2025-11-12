@@ -1,0 +1,46 @@
+.mdx-code {
+  position: relative;
+}
+
+/* Inherit prose defaults for pre/code; tighten padding */
+.mdx-code__pre {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-light);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+}
+
+/* Copy button */
+.mdx-code__copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-light);
+  background: #fff;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.mdx-code__copy:hover,
+.mdx-code__copy:focus-visible {
+  border-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 20%, transparent);
+}
+
+/* Status text */
+.mdx-code__copy .label::after {
+  content: attr(data-ready);
+}
+.mdx-code__copy[data-state="copied"] .label::after {
+  content: attr(data-copied);
+}
+
+/* Very small screens: keep button tappable without overlapping text */
+@media (max-width: 359px) {
+  .mdx-code__copy { top: 10px; right: 10px; }
+}

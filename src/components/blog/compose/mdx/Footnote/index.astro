@@ -1,0 +1,12 @@
+---
+interface Props { id?: string | number }
+const { id } = Astro.props as Props;
+const label = id ? `Footnote ${id}` : "Footnote";
+---
+<sup class="mdx-footnote">
+  <a href={id ? `#fn-${id}` : "#"} aria-label={label}>[{id ?? "n"}]</a>
+</sup>
+
+<style>
+  @import "./Footnote.css";
+</style>

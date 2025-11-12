@@ -1,0 +1,31 @@
+---
+/**
+ * Usage in MDX:
+ * <Code>
+ * {`const x = 1`}
+ * </Code>
+ */
+---
+<div class="mdx-code">
+  <pre class="mdx-code__pre"><code><slot /></code></pre>
+  <button
+    class="mdx-code__copy"
+    type="button"
+    aria-label="Copy code to clipboard"
+    onClick={`(function(btn){
+      const pre = btn.previousElementSibling;
+      if(!pre) return;
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(()=>{
+        btn.dataset.state='copied';
+        setTimeout(()=>{ btn.dataset.state='ready'; }, 1400);
+      });
+    })(this)`}
+  >
+    <span class="label" data-ready="Copy" data-copied="Copied">Copy</span>
+  </button>
+</div>
+
+<style>
+  @import "./Code.css";
+</style>

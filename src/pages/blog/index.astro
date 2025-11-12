@@ -9,12 +9,20 @@ import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astr
 import Pagination from "../../components/blog/compose/Pagination/index.astro";
 import { getCollection } from "astro:content";
 
+const PLACEHOLDER = "/assets/images/placeholder/blog-hero.webp";
+
 const slugify = (s: string) =>
   String(s || "uncategorized")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+
+// Heuristic validator to weed out obviously bad image values
+const isBad = (v: unknown) =>
+  v === null ||
+  v === undefined ||
+  (typeof v === "string" && (!v.trim() || v.includes("undefined") || v.includes("null")));
 
 // Load non-draft posts
 const all = await getCollection("blog", ({ data }) => !data.draft);
@@ -25,6 +33,23 @@ const posts = all
   .map((p) => {
     const postSlug = p.slug.split("/").pop()!;
     const categorySlug = slugify(p.data.category ?? "uncategorized");
+
+    // Prefer frontmatter.cover.src, then frontmatter.cover (string), then ogImage (string)
+    let coverSrc: string | null = null;
+    const cover = (p.data as any).cover;
+    const ogImage = (p.data as any).ogImage;
+
+    if (cover && typeof cover === "object" && typeof cover.src === "string") {
+      coverSrc = cover.src;
+    } else if (typeof cover === "string") {
+      coverSrc = cover;
+    } else if (typeof ogImage === "string") {
+      coverSrc = ogImage;
+    }
+
+    // Fault-tolerant fallback to placeholder per Fix Plan 181
+    if (isBad(coverSrc)) coverSrc = PLACEHOLDER;
+
     return {
       title: p.data.title,
       description: p.data.description,
@@ -32,15 +57,13 @@ const posts = all
       date: new Date(p.data.date),
       author: p.data.author,
       tags: p.data.tags ?? [],
-      cover:
-        typeof p.data.cover === "string"
-          ? p.data.cover
-          : (p.data.cover?.src ?? p.data.ogImage ?? null),
+      cover: coverSrc,
       category: p.data.category ?? "Uncategorized",
       categorySlug,
-      readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
+      readingTime: (p.data as any).readingTimeMinutes ?? p.data.readingTime ?? undefined,
     };
   })
+  .filter((p) => !isBad(p.cover)) // skip any remaining obviously broken image values
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
 // Build category counts by slug (for grid badges)
@@ -75,13 +98,17 @@ const feedPosts = pagePostsRaw.map((p) => ({
   },
 }));
 
-// Trending list (Fix Plan 151)
+// Trending list
 const trendingItems = posts.slice(0, 5).map((p, i) => ({
   rank: i + 1,
   title: p.title,
   href: p.href,
   category: p.category,
-  date: p.date.toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" }),
+  date: p.date.toLocaleDateString("en-KE", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }),
   readingTime: p.readingTime,
   cover: p.cover ? { src: p.cover, alt: p.title } : null,
 }));
@@ -91,7 +118,7 @@ const svg = {
   pen: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
   linkedin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554V14.86c0-1.334-.27-3.049-1.86-3.049-1.863 0-2.148 1.454-2.148 2.957v5.684H9.33V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.603 0 4.267 2.372 4.267 5.457v6.284zM5.337 7.433a2.062 2.062 0 110-4.124 2.062 2.062 0 010 4.124zM7.114 20.452H3.56V9h3.553v11.452z"/></svg>`,
   briefcase: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12h.01"/></svg>`,
-  chart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="9" width="3" height="7" rx="1"/><rect x="12" y="5" width="3" height="11" rx="1"/><rect x="17" y="12" width="3" height="4" rx="1"/></svg>`
+  chart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="9" width="3" height="7" rx="1"/><rect x="12" y="5" width="3" height="11" rx="1"/><rect x="17" y="12" width="3" height="4" rx="1"/></svg>`,
 };
 
 // Category cards using inline SVG strings and attached counts
@@ -114,8 +141,8 @@ const categoryCards = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "url": canonical,
-  "name": "CV Writing Kenya — Blog",
+  url: canonical,
+  name: "CV Writing Kenya — Blog",
 };
 ---
 
@@ -131,7 +158,10 @@ const jsonLd = {
     primaryLabel="Get Professional CV Help"
     secondaryHref="/blog/"
     secondaryLabel="Read Latest"
-    cover={featured?.cover ? { src: featured.cover, alt: featured.title } : null}
+    cover={{
+      src: featured?.cover ?? PLACEHOLDER,
+      alt: featured?.title ?? "Blog hero",
+    }}
   />
 
   <!-- Explore Categories with counts -->
@@ -139,10 +169,10 @@ const jsonLd = {
 
   <PostFeedLatest
     posts={feedPosts}
-    pageSize={8}                 {/* Fix Plan 149: render up to 8 cards */}
+    pageSize={8}                 /* Fix Plan 149: render up to 8 cards */
     eyebrow="From the blog"
     title="Latest articles"
-    moreHref={relNext ?? "/blog/"}  {/* Fix Plan 149: route to archive when available */}
+    moreHref={relNext ?? "/blog/"}  /* Route to archive when available */
     moreLabel="View all"
     moreAriaLabel="View all blog posts"
     ctaClass="pfl__viewAll"

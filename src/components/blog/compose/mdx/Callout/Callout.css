@@ -1,0 +1,40 @@
+.mdx-callout {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-light);
+  background: var(--color-surface);
+}
+
+.mdx-callout__title {
+  margin: 0 0 var(--space-2);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.mdx-callout__body > * + * {
+  margin-top: var(--space-2);
+}
+
+/* Variants driven by tokens */
+.mdx-callout[data-type="info"] {
+  border-color: color-mix(in oklab, var(--color-primary) 24%, transparent);
+  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
+}
+.mdx-callout[data-type="success"] {
+  border-color: color-mix(in oklab, var(--color-accent) 24%, transparent);
+  background: color-mix(in oklab, var(--color-accent) 6%, #fff);
+}
+.mdx-callout[data-type="warn"] {
+  border-color: color-mix(in oklab, var(--color-warning) 28%, transparent);
+  background: color-mix(in oklab, var(--color-warning) 8%, #fff);
+}
+.mdx-callout[data-type="danger"] {
+  border-color: color-mix(in oklab, var(--color-error) 28%, transparent);
+  background: color-mix(in oklab, var(--color-error) 8%, #fff);
+}
+
+/* Focus safety for any interactive children */
+.mdx-callout :where(a,button):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline-offset: 2px;
+}

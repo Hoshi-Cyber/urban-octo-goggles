@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/site.config": ["src/site.config.ts"]
     },
     "types": ["astro/client"],
     "moduleResolution": "bundler",

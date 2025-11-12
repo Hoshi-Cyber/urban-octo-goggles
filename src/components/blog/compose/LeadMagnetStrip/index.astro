@@ -1,201 +1,42 @@
 ---
-/* File: src/components/blog/compose/LeadMagnetStrip/index.astro
- * LeadMagnetStrip — free PDF/email capture.
- * FP-166.5: Keep `.container lms__wrap` while enforcing component-scoped gutters.
- * FP-167: Trailing-slash safe action for subscribe endpoint; no hydration required.
- * FP-168: Inline success & error UX, focus management, analytics events, email preservation.
- *
- * Props:
- *  - title: string
- *  - sub?: string
- *  - action?: string           // form action URL (defaults to "/api/subscribe/")
- *  - method?: "get" | "post"   // default "post"
- *  - source?: string           // hidden source tag
- *  - successHref?: string      // optional redirect after submit (handled server-side)
- */
+interface Cta {
+  label: string;
+  href: string;
+}
 
-export interface Props {
-  title: string;
-  sub?: string;
-  action?: string;
-  method?: "get" | "post";
-  source?: string;
-  successHref?: string;
+interface Props {
+  title?: string;
+  subtitle?: string;
+  primary?: Cta;     // e.g., { label: "Download guide", href: "/guide.pdf" }
+  secondary?: Cta;   // e.g., { label: "No thanks", href: "#" }
+  icon?: string;     // optional emoji or small SVG text
 }
 
 const {
-  title,
-  sub = "Get practical, local advice that wins interviews.",
-  action = "/api/subscribe/", // FP-167: default with trailing slash
-  method = "post",
-  source = "blog_leadmagnet",
-  successHref,
+  title = "Get the complete guide",
+  subtitle = "Practical steps you can apply today. No fluff.",
+  primary = { label: "Download free PDF", href: "#" },
+  secondary = { label: "Maybe later", href: "#" },
+  icon = "📘",
 } = Astro.props as Props;
-
-// Normalize action to respect trailingSlash: "always"
-const normalizedAction =
-  typeof action === "string" && action.length > 0
-    ? (action.endsWith("/") ? action : `${action}/`)
-    : "/api/subscribe/";
-
-// Local component CSS (single source of truth for FP-166.*)
-import css from "./LeadMagnetStrip.css?url";
 ---
-<link rel="stylesheet" href={css} />
-
-<section class="lms" aria-label="Lead magnet">
-  {/* Keep both classes:
-      - `container` for global max-width behavior.
-      - `lms__wrap` for component-scoped responsive gutters (FP-166.4/166.5). */}
-  <div class="container lms__wrap" data-lms-wrap>
-    <div class="lms__copy">
-      <h2 class="lms__title">{title}</h2>
-      {sub && <p class="lms__sub">{sub}</p>}
-
-      {/* Inline success status; revealed via URL param; focusable for a11y */}
-      <p id="lms-success" class="lms__success" role="status" hidden tabindex="-1">
-        Check your inbox for the PDF.
-      </p>
-
-      {/* Inline error status per FP-168; populated by script; focusable for a11y */}
-      <p id="lms-error" class="lms__error" role="alert" hidden tabindex="-1">
-        Enter a valid email.
-      </p>
+<section class="leadmag container" role="region" aria-label="Lead magnet">
+  <div class="leadmag__card card">
+    <div class="leadmag__content">
+      <div class="leadmag__icon" aria-hidden="true">{icon}</div>
+      <h2 class="leadmag__title h2">{title}</h2>
+      <p class="leadmag__subtitle">{subtitle}</p>
     </div>
 
-    <form
-      id="leadmagnet-form"
-      class="lms__form"
-      action={normalizedAction}
-      method={method}
-      data-source={source}
-      novalidate
-    >
-      <label for="lms-email" class="lms__label">Email</label>
-      <input
-        id="lms-email"
-        class="lms__input"
-        type="email"
-        name="email"
-        placeholder="you@example.com"
-        required
-        autocomplete="email"
-        autocapitalize="none"
-        spellcheck="false"
-        inputmode="email"
-        aria-describedby="lms-success lms-error"
-      />
-      <input type="hidden" name="source" value={source} />
-      {successHref && <input type="hidden" name="success" value={successHref} />}
-
-      {/* Honeypot */}
-      <input
-        type="text"
-        name="company"
-        tabindex="-1"
-        autocomplete="off"
-        class="lms__hp"
-        aria-hidden="true"
-      />
-
-      <button
-        class="lms__btn btn btn-primary"
-        type="submit"
-        data-cta="leadmagnet-submit"
-        aria-label="Get the PDF"
-      >
-        <span class="lms__btnText">Get the PDF</span>
-      </button>
-    </form>
+    <div class="leadmag__actions">
+      <a class="btn btn-primary" href={primary.href}>{primary.label}</a>
+      {secondary && (
+        <a class="btn leadmag__secondary" href={secondary.href}>{secondary.label}</a>
+      )}
+    </div>
   </div>
-
-  {/* Lazy attach behavior; analytics dispatch; inline success+error handling; email preservation */}
-  <script is:inline>
-    (() => {
-      const section = document.currentScript?.parentElement;
-      if (!section) return;
-
-      const attach = () => {
-        const form = section.querySelector("#leadmagnet-form");
-        const email = section.querySelector("#lms-email");
-        const successEl = section.querySelector("#lms-success");
-        const errorEl = section.querySelector("#lms-error");
-        const btn = section.querySelector(".lms__btn");
-        const btnText = section.querySelector(".lms__btnText");
-        const src = form?.getAttribute("data-source") || "blog";
-
-        if (!form || !email || !btn || !btnText) return;
-
-        // Parse URL params once
-        let params: URLSearchParams | null = null;
-        try { params = new URLSearchParams(window.location.search); } catch {}
-
-        // Preserve email value from query (?email=...) on error flows
-        const qEmail = params?.get("email");
-        if (qEmail && typeof qEmail === "string") {
-          (email as HTMLInputElement).value = qEmail;
-        }
-
-        // Helper: show a message, focus it, and dispatch analytics
-        const reveal = (el: HTMLElement | null, evtName: string) => {
-          if (!el) return;
-          el.removeAttribute("hidden");
-          // Focus after paint for better reliability
-          setTimeout(() => { (el as HTMLElement).focus?.(); }, 0);
-          window.dispatchEvent(new CustomEvent(evtName, { detail: { source: src } }));
-        };
-
-        // Success/ error display based on URL params (FP-168)
-        try {
-          const err = params?.get("error");
-          if (params && (params.get("success") === "1" || params.get("sub") === "ok" || params.get("subscribed") === "1")) {
-            reveal(successEl, "leadmagnet_success");
-          } else if (err) {
-            // Map error codes to friendly copy + a11y state
-            let msg = "Please try again.";
-            if (err === "invalid_email") msg = "Enter a valid email.";
-            if (err === "try_again") msg = "Something went wrong. Please try again.";
-            if (errorEl) {
-              errorEl.textContent = msg;
-              (email as HTMLInputElement).setAttribute("aria-invalid", "true");
-            }
-            reveal(errorEl, "leadmagnet_error");
-          }
-        } catch {}
-
-        form.addEventListener(
-          "submit",
-          () => {
-            // Analytics event (GA4/Plausible can listen to this)
-            window.dispatchEvent(
-              new CustomEvent("leadmagnet_submit", { detail: { source: src } })
-            );
-
-            // Basic UX: disable during submit
-            btn.setAttribute("disabled", "true");
-            btnText.textContent = "Sending...";
-          },
-          { passive: true }
-        );
-      };
-
-      // Intersection-based lazy attach (no framework hydration)
-      if ("IntersectionObserver" in window) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                attach();
-                io.disconnect();
-              }
-            });
-          },
-          { rootMargin: "200px 0px" }
-        );
-        io.observe(section);
-      } else {
-        attach();
-      }
-    })();
-  </script>
 </section>
+
+<style>
+  @import "./LeadMagnetStrip.css";
+</style>

@@ -1,11 +1,13 @@
 ---
 // File: src/components/layout/BaseLayout.astro
+// Notes: Fix Plan 186 compliant. Do not place comments before this fence.
+
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
 import CookieBanner from "../CookieBanner/index.astro";
-import siteConfig from "@/site.config.json";
+import siteConfig from "@/site.config";
 
-// Import global CSS as a URL and attach via <link> in <head>
+// Global CSS emitted URL (fixes CSS 404 from hardcoded public path)
 import globalCssUrl from "../../styles/index.css?url";
 
 export interface SEO {
@@ -16,13 +18,9 @@ export interface SEO {
 export interface Props {
   title?: string;
   description?: string;
-  /** Absolute or path; if omitted we’ll derive from Astro.url */
   canonical?: string | null;
-  /** Absolute or path; omit when not paginated */
   relPrev?: string | null;
-  /** Absolute or path; omit when not paginated */
   relNext?: string | null;
-  /** Optional extra SEO props (ogImage, etc.) */
   seo?: SEO | Record<string, unknown>;
 }
 
@@ -35,13 +33,15 @@ const {
   seo = {},
 } = Astro.props as Props;
 
-const headTitle = String(title).trim() || "CV Writing Kenya";
+// Single canonical page title used everywhere
+const pageTitle: string = (String(title).trim() || "CV Writing Kenya");
 
+// Env + site
 const isDev = import.meta.env.DEV;
 const siteUrl = (siteConfig as any).siteUrl?.replace(/\/$/, "") ?? "";
 const base = isDev ? "" : siteUrl;
 
-// Canonical: relative in dev, absolute in prod; prefer explicit prop, then seo.canonical, then request URL
+// Canonical
 const canonicalSrc =
   (typeof inCanonical === "string" && inCanonical) ||
   (seo as any)?.canonical ||
@@ -51,7 +51,7 @@ const canonical = canonicalSrc?.startsWith("http")
   ? canonicalSrc
   : `${base}${canonicalSrc ?? ""}`;
 
-// prev/next: allow relative or absolute; normalize to absolute in prod, relative in dev
+// Prev/Next
 function absOrRel(href: string | null): string | null {
   if (!href) return null;
   if (href.startsWith("http")) return href;
@@ -60,110 +60,90 @@ function absOrRel(href: string | null): string | null {
 const prevHref = absOrRel(relPrev);
 const nextHref = absOrRel(relNext);
 
-// OG image: relative in dev, absolute in prod
+// OG image
 const ogImageIn = (seo as any)?.ogImage as string | undefined;
 const ogImage = isDev
   ? (ogImageIn || "/assets/logos/logo-square-512.png")
-  : (ogImageIn ? new URL(ogImageIn, base).toString()
-               : new URL("/assets/logos/logo-square-512.png", base).toString());
+  : (ogImageIn
+      ? new URL(ogImageIn, base).toString()
+      : new URL("/assets/logos/logo-square-512.png", base).toString());
 
-const gtmId: string = (siteConfig as any).gtmId ?? "GTM-XXXXXXX";
+// IDs
+const ga4Id: string | undefined =
+  (siteConfig as any).ga4Id || (siteConfig as any).measurementId;
+const gtmId: string | undefined = (siteConfig as any).gtmId;
 ---
+
 <!DOCTYPE html>
 <html lang="en" data-gtm={gtmId}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{headTitle}</title>
+    <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
 
     <link rel="canonical" href={canonical} />
     {prevHref && <link rel="prev" href={prevHref} />}
     {nextHref && <link rel="next" href={nextHref} />}
 
-    <!-- Global CSS entry -->
+    <!-- Global CSS (served from emitted URL) -->
     <link rel="stylesheet" href={globalCssUrl} />
 
-    <!-- Performance: network hints -->
+    <!-- Hints -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
+    <!-- Favicons -->
     <link rel="icon" href="/assets/logos/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/logos/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/logos/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/logos/apple-touch-icon-180.png" />
 
+    <!-- Open Graph -->
     <meta property="og:site_name" content="CV Writing Kenya" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={headTitle} />
+    <meta property="og:title" content={pageTitle} />
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
 
-    <!-- Visible skip link styling for keyboard users -->
-    <style is:inline>
-      .skip-link{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
-      .skip-link:focus{position:static;width:auto;height:auto;padding:.5rem .75rem;background:var(--color-primary,#0a58ca);color:#fff;border-radius:.375rem}
-    </style>
+    <!-- Surface GA4 ID for client-side analytics bootstrap -->
+    {ga4Id && <meta name="x-ga4-id" content={ga4Id} />}
 
     <!-- Optional per-page head injection -->
     <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
-    <noscript>
-      <iframe
-        src={"https://www.googletagmanager.com/ns.html?id=" + gtmId}
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden">
-      </iframe>
-    </noscript>
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={"https://www.googletagmanager.com/ns.html?id=" + gtmId}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden">
+        </iframe>
+      </noscript>
+    )}
 
     <a href="#main" class="skip-link">Skip to main content</a>
 
     <MainNav />
-    <main id="main" class="flex-grow page-content" role="main" tabindex="-1" data-section="main">
+    <main
+      id="main"
+      class="flex-grow page-content"
+      role="main"
+      tabindex="-1"
+      data-section="main"
+      data-title={pageTitle}
+    >
       <slot />
     </main>
+
     <Footer />
     <CookieBanner />
 
-    <!-- Analytics listener (CTA + scroll depth) -->
-    <script type="module" src="/src/scripts/analytics/cta-listeners.ts" defer></script>
-
-    <!-- CMP hook → grant analytics only on accept -->
-    <script is:inline>
-      (function () {
-        function grantAnalyticsOnly() {
-          try {
-            if (typeof window.gtag === 'function') {
-              window.gtag('consent','update', {
-                analytics_storage:'granted',
-                functionality_storage:'granted',
-                security_storage:'granted',
-                ad_storage:'denied',
-                ad_user_data:'denied',
-                ad_personalization:'denied'
-              });
-            } else if (Array.isArray(window.dataLayer)) {
-              window.dataLayer.push({ event:'consent_update_fallback', analytics_storage:'granted' });
-            }
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event:'update_consent', consent:'analytics_granted' });
-          } catch (_) {}
-        }
-
-        window.addEventListener('cmp:accept', grantAnalyticsOnly);
-        window.addEventListener('cookie:accept', grantAnalyticsOnly);
-
-        document.addEventListener('click', function(e){
-          var t = e.target;
-          if (!(t instanceof Element)) return;
-          var accept = t.closest('[data-consent="accept"], [data-cmp="accept"], #cookie-accept');
-          if (accept) grantAnalyticsOnly();
-        }, { capture:true });
-      })();
-    </script>
+    <!-- Consent-mode analytics bootstrap -->
+    <script type="module" src="/src/lib/analytics.ts"></script>
   </body>
 </html>

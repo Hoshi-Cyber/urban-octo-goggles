@@ -1,0 +1,61 @@
+/* Mobile-first, uses global tokens, base, utilities, and breakpoints */
+
+.postnav {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+}
+
+.postnav__card {
+  display: block;
+  padding: var(--space-4);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 12%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    transform 0.15s ease-in-out;
+}
+
+.postnav__card:hover,
+.postnav__card:focus {
+  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
+  border-color: color-mix(in oklab, var(--color-primary) 28%, transparent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.postnav__kicker {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.postnav__title {
+  display: block;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+/* Larger screens: two-column layout */
+@media (min-width: 768px) {
+  .postnav {
+    grid-template-columns: 1fr 1fr;
+  }
+  .postnav__prev { text-align: left; }
+  .postnav__next { text-align: right; }
+}
+
+/* Focus visibility */
+.postnav a:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline-offset: 2px;
+}

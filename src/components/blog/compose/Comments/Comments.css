@@ -1,0 +1,38 @@
+/* Accessible, performant comment region. Mobile-first. */
+
+.comments {
+  padding-block: var(--space-6);
+}
+
+.comments__body {
+  border: 1px solid var(--color-light);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.comments__mount {
+  min-height: 56px; /* reserve space to prevent layout shift when provider hydrates */
+}
+
+/* Placeholder style */
+.comments__placeholder {
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
+  border: 1px dashed color-mix(in oklab, var(--color-primary) 22%, transparent);
+}
+
+/* md+: more breathing room */
+@media (min-width: 768px) {
+  .comments__body {
+    padding: var(--space-6);
+  }
+}
+
+/* Focus safety for any embedded widgets */
+.comments :where(a, button, input, textarea, iframe):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline-offset: 2px;
+}

@@ -1,3 +1,4 @@
+// File: src/components/blog/compose/index.ts
 export { default as BlogHero } from "./BlogHero/index.astro";
 export { default as BottomCTA } from "./BottomCTA/index.astro";
 export { default as CategoryGrid } from "./CategoryGrid/index.astro";
@@ -21,3 +22,8 @@ export { default as PostUpdatedBadge } from "./PostUpdatedBadge/index.astro";
 export { default as RelatedCategories } from "./RelatedCategories/index.astro";
 export { default as TeaserGrid } from "./TeaserGrid/index.astro";
 export { default as TrendingList } from "./TrendingList/index.astro";
+
+/** MDX components: enforce lazy images + intrinsic sizing (Fix Plan 185) */
+export { mdxComponents } from "./mdx";
+/** Optional default export for convenience imports */
+export { mdxComponents as default } from "./mdx";

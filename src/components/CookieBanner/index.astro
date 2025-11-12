@@ -1,14 +1,6 @@
----
-/** File: src/components/CookieBanner/index.astro
- * Fix Plan 146 — Bottom-fixed banner with reserved height to prevent CLS.
- * - Renders a spacer (.cb__reserve) so content never jumps.
- * - Height is synced to the real banner via JS (ResizeObserver).
- * - If prior choice exists, hide both banner and spacer immediately.
- */
+// File: src/components/CookieBanner/index.astro
+/** CookieBanner — CLS-safe consent banner without inline JS (CSP-friendly) */
 import "./CookieBanner.css";
-
-const storageKey = "consent.analytics.choice"; // 'granted' | 'denied'
-const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
 ---
 
 <!-- Reserve spacer: sits in normal flow so fixed banner doesn’t cause CLS -->
@@ -23,6 +15,7 @@ const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
   aria-live="polite"
   aria-label="Cookie consent"
   hidden
+  data-cb
 >
   <div class="cb__inner container">
     <div class="cb__content">
@@ -40,100 +33,5 @@ const cookieName = "consent_analytics";        // mirrors storage for SSR/infra
   </div>
 </div>
 
-<script is:inline>
-  (function () {
-    var KEY = "consent.analytics.choice";
-    var COOKIE = "consent_analytics";
-
-    var banner  = document.getElementById('cookie-banner');
-    var reserve = document.getElementById('cookie-banner-reserve');
-    var accept  = document.getElementById('cb-accept');
-    var decline = document.getElementById('cb-decline');
-
-    function getChoice() {
-      try { return localStorage.getItem(KEY); } catch (_) { return null; }
-    }
-    function setChoice(value) {
-      try { localStorage.setItem(KEY, value); } catch (_) {}
-      try {
-        document.cookie = COOKIE + "=" + encodeURIComponent(value)
-          + "; Max-Age=" + (3600*24*365)
-          + "; Path=/; SameSite=Lax";
-      } catch (_) {}
-    }
-    function updateConsent(granted) {
-      // Consent Mode v2 payload
-      var payload = granted ? {
-        analytics_storage: 'granted',
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'granted'
-      } : {
-        analytics_storage: 'denied',
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied'
-      };
-      (window.gtag || function(){ (window.dataLayer = window.dataLayer || []).push(arguments); })('consent', 'update', payload);
-      (window.dataLayer = window.dataLayer || []).push({
-        event: 'consent_choice',
-        consent: granted ? 'granted' : 'denied'
-      });
-      // Fire site-wide hooks used by BaseLayout
-      window.dispatchEvent(new CustomEvent(granted ? 'cookie:accept' : 'cookie:decline'));
-      if (granted) window.dispatchEvent(new CustomEvent('cmp:accept'));
-    }
-
-    function show()  { if (banner)  banner.hidden  = false; if (reserve) reserve.hidden = false; }
-    function hide()  { if (banner)  banner.hidden  = true;  if (reserve) reserve.hidden = true;  }
-
-    // Sync spacer height with real banner height (handles responsive copy/buttons)
-    var ro;
-    function observeHeight() {
-      if (!banner) return;
-      if (typeof ResizeObserver === 'function') {
-        ro = new ResizeObserver(function(entries) {
-          var rect = entries[0] && entries[0].contentRect;
-          if (rect && rect.height) {
-            document.documentElement.style.setProperty('--cb-height', rect.height + 'px');
-          }
-        });
-        ro.observe(banner);
-      } else {
-        // Fallback: one-time measure
-        setTimeout(function(){
-          var h = banner.getBoundingClientRect().height;
-          if (h) document.documentElement.style.setProperty('--cb-height', h + 'px');
-        }, 0);
-      }
-    }
-
-    // Expose a reopen hook (footer “Manage cookies”)
-    window.openCookieBanner = function() {
-      show(); observeHeight();
-    };
-
-    // Initial state
-    var choice = getChoice();
-    if (choice === 'granted' || choice === 'denied') {
-      // User has a prior choice → collapse both immediately
-      hide();
-    } else {
-      // No choice yet → reserve space first, then show banner to avoid CLS
-      if (reserve) reserve.hidden = false;
-      show();
-      observeHeight();
-    }
-
-    // Wire buttons
-    if (accept) accept.addEventListener('click', function () {
-      setChoice('granted'); updateConsent(true); hide();
-      if (ro && ro.disconnect) ro.disconnect();
-    }, { passive: true });
-
-    if (decline) decline.addEventListener('click', function () {
-      setChoice('denied'); updateConsent(false); hide();
-      if (ro && ro.disconnect) ro.disconnect();
-    }, { passive: true });
-  })();
-</script>
+<!-- External module (no inline JS → compatible with strict CSP) -->
+<script type="module" src="/src/scripts/consent-banner.ts"></script>
