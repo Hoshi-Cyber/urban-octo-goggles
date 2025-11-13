@@ -1,10 +1,16 @@
-// File: src/pages/blog/[category]/[slug].astro
 ---
+// File: src/pages/blog/[category]/[slug].astro
+// Fix Plan 187: Delegate canonical/SEO base to BaseLayout via absolute canonical prop.
+
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+
+// Layout + page components
+import BaseLayout from "@/components/layout/BaseLayout.astro";
 import BlogPost from "@/components/blog/base/BlogPost.astro";
 import PostNav from "@/components/blog/compose/PostNav/index.astro";
 import { mdxComponents } from "@/components/blog/compose/mdx";
+
 import site from "@/site.config";
 
 // Route params (SSR)
@@ -26,6 +32,7 @@ const entry = allPosts.find((p) => {
 });
 
 if (!entry) {
+  // Respect trailingSlash: "always"
   return Astro.redirect("/404/");
 }
 
@@ -42,12 +49,16 @@ const date = new Date(entry.data.date);
 const updated = entry.data.updated ? new Date(entry.data.updated) : null;
 const readingTime = entry.data.readingTime ?? null;
 
-// Canonical URL
+// Absolute site URL
 const siteUrl: string | undefined =
-  (site && typeof site.siteUrl === "string" && site.siteUrl) || Astro.site?.origin;
+  (site && typeof (site as any).siteUrl === "string" && (site as any).siteUrl) ||
+  Astro.site?.origin;
+
+// Canonical (absolute) – handed off to BaseLayout
 const pathname = `/blog/${categorySlug}/${entryBaseSlug}/`;
-const canonical =
-  entry.data.canonical || (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
+const canonicalAbs =
+  (entry.data as any)?.canonical ||
+  (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
 
 // Cover image data
 const cover = entry.data.cover as
@@ -102,21 +113,22 @@ const related = allPosts
 
 // ---------- JSON-LD ----------
 const publisherName =
-  (site && (site.publisherName || site.orgName)) ||
-  (new URL(siteUrl || Astro.url).hostname ?? "Site");
+  (site && ((site as any).publisherName || (site as any).orgName)) ||
+  new URL(siteUrl || Astro.url).hostname;
 
 const publisherLogoUrl =
-  (site && (site.publisherLogo || site.orgLogo)) || undefined;
+  (site && ((site as any).publisherLogo || (site as any).orgLogo)) || undefined;
 
 const author =
   typeof entry.data.author === "string"
     ? { "@type": "Person", name: entry.data.author }
     : {
         "@type": "Person",
-        name: entry.data.author?.name,
-        url: entry.data.author?.url,
-        ...(Array.isArray(entry.data.author?.sameAs) && entry.data.author?.sameAs.length
-          ? { sameAs: entry.data.author?.sameAs }
+        name: (entry.data as any).author?.name,
+        url: (entry.data as any).author?.url,
+        ...(Array.isArray((entry.data as any).author?.sameAs) &&
+        (entry.data as any).author?.sameAs.length
+          ? { sameAs: (entry.data as any).author?.sameAs }
           : {}),
       };
 
@@ -133,9 +145,9 @@ const jsonLd: Record<string, any> = {
   datePublished: date.toISOString(),
   ...(updated ? { dateModified: updated.toISOString() } : {}),
   inLanguage: "en",
-  mainEntityOfPage: canonical,
+  mainEntityOfPage: canonicalAbs,
   image:
-    entry.data.ogImage ||
+    (entry.data as any).ogImage ||
     (typeof cover?.src === "string"
       ? cover?.src
       : typeof cover?.src === "object"
@@ -162,11 +174,11 @@ const breadcrumbsLd = {
     { "@type": "ListItem", position: 1, name: "Home",  item: siteUrl ? new URL("/", siteUrl).toString() : "/" },
     { "@type": "ListItem", position: 2, name: "Blog",  item: siteUrl ? new URL("/blog/", siteUrl).toString() : "/blog/" },
     { "@type": "ListItem", position: 3, name: (categorySlug || "").replaceAll("-", " "), item: siteUrl ? new URL(`/blog/${categorySlug}/`, siteUrl).toString() : `/blog/${categorySlug}/` },
-    { "@type": "ListItem", position: 4, name: title, item: canonical || pathname }
+    { "@type": "ListItem", position: 4, name: title, item: canonicalAbs || pathname }
   ],
 };
 
-// Props for layout component
+// Props for BlogPost component
 const layoutProps = {
   title,
   description,
@@ -176,159 +188,146 @@ const layoutProps = {
   updated,
   readingTime,
   cover,
-  canonical,
   tocHeadings,
   showTOC,
   prev,
   next,
   related,
 };
-
-// ---------- LCP preload helpers ----------
-function coverToUrlAndSet() {
-  const fm = entry.data as any;
-  const href =
-    typeof cover?.src === "string"
-      ? cover.src
-      : typeof cover?.src === "object"
-      ? cover.src.src
-      : (fm?.ogImage ?? null);
-
-  const srcset: string | undefined = Array.isArray(fm?.coverSrcset)
-    ? (fm.coverSrcset as string[]).join(", ")
-    : typeof fm?.coverSrcset === "string"
-    ? (fm.coverSrcset as string)
-    : undefined;
-
-  return { href, srcset };
-}
-const { href: lcpHref, srcset: lcpSrcset } = coverToUrlAndSet();
-const lcpSizes = "(max-width: 768px) 100vw, 1200px";
 ---
-<html lang="en">
-  <head>
-    {canonical && <link rel="canonical" href={canonical} />}
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalAbs}
+  seo={{ ogImage: (entry.data as any)?.ogImage }}
+>
+  <!-- Robots policy -->
+  <meta
+    slot="head"
+    name="robots"
+    content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+  />
 
-    {/* Robots policy */}
-    <meta
-      name="robots"
-      content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
-    />
+  <!-- Optional hreflang set when alternates provided -->
+  {alternates &&
+    alternates.map((alt) => (
+      <link slot="head" rel="alternate" hreflang={alt.hrefLang} href={alt.href} />
+    ))}
 
-    {/* Optional hreflang set when alternates provided */}
-    {alternates &&
-      alternates.map((alt) => (
-        <link rel="alternate" hreflang={alt.hrefLang} href={alt.href} />
-      ))}
+  <!-- LCP image preload (only one) -->
+  {(() => {
+    const fm = entry.data as any;
+    const href =
+      typeof cover?.src === "string"
+        ? cover.src
+        : typeof cover?.src === "object"
+        ? cover.src.src
+        : fm?.ogImage ?? null;
 
-    {/* LCP image preload (only one) */}
-    {lcpHref && (
+    const srcset: string | undefined = Array.isArray(fm?.coverSrcset)
+      ? (fm.coverSrcset as string[]).join(", ")
+      : typeof fm?.coverSrcset === "string"
+      ? (fm.coverSrcset as string)
+      : undefined;
+
+    return href ? (
       <link
+        slot="head"
         rel="preload"
         as="image"
-        href={lcpHref}
-        {...(lcpSrcset ? { imagesrcset: lcpSrcset } : {})}
-        imagesizes={lcpSizes}
+        href={href}
+        {...(srcset ? { imagesrcset: srcset } : {})}
+        imagesizes="(max-width: 768px) 100vw, 1200px"
         fetchpriority="high"
       />
-    )}
+    ) : null;
+  })()}
 
-    {/* Structured data */}
-    <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-    <script type="application/ld+json">{JSON.stringify(breadcrumbsLd)}</script>
+  <!-- Structured data -->
+  <script slot="head" type="application/ld+json">
+    {JSON.stringify(jsonLd)}
+  </script>
+  <script slot="head" type="application/ld+json">
+    {JSON.stringify(breadcrumbsLd)}
+  </script>
 
-    {/* Open Graph */}
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={title} />
-    {description && <meta property="og:description" content={description} />}
-    {canonical && <meta property="og:url" content={canonical} />}
-    {entry.data.ogImage && typeof entry.data.ogImage === "string" && (
-      <meta property="og:image" content={entry.data.ogImage} />
-    )}
-    {site?.siteName && <meta property="og:site_name" content={site.siteName} />}
+  <!-- Article-specific Open Graph/Twitter (BaseLayout already sets url/image/title/description) -->
+  <meta slot="head" property="og:type" content="article" />
+  {site?.siteName && <meta slot="head" property="og:site_name" content={(site as any).siteName} />}
+  <meta slot="head" name="twitter:card" content="summary_large_image" />
 
-    {/* Twitter */}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    {description && <meta name="twitter:description" content={description} />}
-    {entry.data.ogImage && typeof entry.data.ogImage === "string" && (
-      <meta name="twitter:image" content={entry.data.ogImage} />
-    )}
-  </head>
-  <body>
-    {/* Reading progress bar */}
-    <div id="read-progress" class="read-progress" aria-hidden="true"></div>
-    <script type="module" src="/src/components/blog/islands/readingProgress.ts"></script>
+  <!-- Reading progress bar (island) -->
+  <div id="read-progress" class="read-progress" aria-hidden="true"></div>
+  <script type="module" src="/src/components/blog/islands/readingProgress.ts"></script>
 
-    <BlogPost {...layoutProps}>
-      {/* TOC slot — collapsible details */}
-      {showTOC && (
-        <Fragment slot="toc">
-          <details class="toc-details">
-            <summary>Table of contents</summary>
-            <ol class="toc-list">
-              {tocHeadings.map((h) => (
-                <li class={`d${h.depth}`}>
-                  <a href={`#${h.slug}`}>{h.text}</a>
-                </li>
-              ))}
-            </ol>
-          </details>
-        </Fragment>
-      )}
-
-      {/* Article body with MDX shortcodes enabled */}
-      <section class="post__content prose">
-        <Content components={mdxComponents} />
-      </section>
-
-      {/* Mid-content inline CTA (one only, with UTM) */}
-      <section class="post__inlineCta container" style="margin-block: var(--space-8);">
-        <div class="card">
-          <h2 class="h4">Ready for a CV upgrade?</h2>
-          <p>Get a professional rewrite tailored for ATS and recruiters.</p>
-          <a
-            class="btn btn-primary"
-            href="/services/cv-rewrite?utm_source=blog&utm_medium=post&utm_campaign=inline-cta"
-          >Book now</a>
-        </div>
-      </section>
-
-      {/* Lead magnet slot */}
-      <Fragment slot="leadmagnet">
-        <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF" class="container">
-          <form method="post" action="/api/subscribe/">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" required inputmode="email" />
-            <button type="submit" class="btn btn-primary">Get the guide</button>
-            <p class="privacy-note">We respect your privacy.</p>
-          </form>
-        </section>
+  <BlogPost {...layoutProps}>
+    {/* TOC slot — collapsible details */}
+    {showTOC && (
+      <Fragment slot="toc">
+        <details class="toc-details">
+          <summary>Table of contents</summary>
+          <ol class="toc-list">
+            {tocHeadings.map((h) => (
+              <li class={`d${h.depth}`}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
       </Fragment>
+    )}
 
-      {/* Related slot */}
-      {related.length > 0 && (
-        <Fragment slot="related">
-          <ul class="post__relatedList">
-            {related.map((p) => {
-              const url = `/blog/${p.data.category ?? catFromPath(p)}/${baseSlug(p)}/`;
-              return (
-                <li>
-                  <a href={url}>{p.data.title}</a>
-                </li>
-              );
-            })}
-          </ul>
-        </Fragment>
-      )}
+    {/* Article body with MDX shortcodes enabled */}
+    <section class="post__content prose">
+      <Content components={mdxComponents} />
+    </section>
 
-      {/* Prev/Next slot */}
-      <Fragment slot="nav">
-        <PostNav prev={prev} next={next} />
+    {/* Mid-content inline CTA (one only, with UTM) */}
+    <section class="post__inlineCta container" style="margin-block: var(--space-8);">
+      <div class="card">
+        <h2 class="h4">Ready for a CV upgrade?</h2>
+        <p>Get a professional rewrite tailored for ATS and recruiters.</p>
+        <a
+          class="btn btn-primary"
+          href="/services/cv-rewrite?utm_source=blog&utm_medium=post&utm_campaign=inline-cta"
+        >Book now</a>
+      </div>
+    </section>
+
+    {/* Lead magnet slot */}
+    <Fragment slot="leadmagnet">
+      <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF" class="container">
+        <form method="post" action="/api/subscribe/">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required inputmode="email" />
+          <button type="submit" class="btn btn-primary">Get the guide</button>
+          <p class="privacy-note">We respect your privacy.</p>
+        </form>
+      </section>
+    </Fragment>
+
+    {/* Related slot */}
+    {related.length > 0 && (
+      <Fragment slot="related">
+        <ul class="post__relatedList">
+          {related.map((p) => {
+            const url = `/blog/${p.data.category ?? catFromPath(p)}/${baseSlug(p)}/`;
+            return (
+              <li>
+                <a href={url}>{p.data.title}</a>
+              </li>
+            );
+          })}
+        </ul>
       </Fragment>
-    </BlogPost>
-  </body>
-</html>
+    )}
+
+    {/* Prev/Next slot */}
+    <Fragment slot="nav">
+      <PostNav prev={prev} next={next} />
+    </Fragment>
+  </BlogPost>
+</BaseLayout>
 
 <style>
 /* Page-scoped utilities for slots. Main styling lives in BlogPost.css */
