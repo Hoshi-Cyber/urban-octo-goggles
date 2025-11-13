@@ -1,12 +1,11 @@
 // File: src/components/blog/compose/CategoryUtilityBar/index.client.tsx
 // React island for client-side sort/filter + pagination on category pages.
 // Mount: <CategoryUtilityBar client:load category={category} pageSize={PER_PAGE} mountId="category-client-list" />
-// Data:  /blog/data/<category>.json (server endpoint provides SSR-parity media fields)
 
 import React, { useEffect, useMemo, useState } from "react";
 
 type Post = {
-  slug: string;
+  slug?: string;
   title: string;
   url: string;
   date: string;               // ISO
@@ -20,7 +19,7 @@ type Post = {
   thumbnailH?: number | null;
 
   // Legacy back-compat
-  cover?: { src: string | null; alt: string | null };
+  cover?: { src: string | null; alt: string | null } | null;
 };
 
 type Props = {
@@ -59,38 +58,81 @@ function paginate<T>(arr: T[], page: number, pageSize: number) {
 }
 
 function escapeHtml(s: string) {
-  return s.replace(/[&<>"']/g, (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }) as const)[c]!);
+  return s.replace(
+    /[&<>"']/g,
+    (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }) as const)[c]!
+  );
+}
+
+/**
+ * Build a client dataset from the SSR fallback grid (no network).
+ * Looks for: section.ssr-grid ol.pfl__grid li article
+ * - title:    h3 a (supports .pfl__cardTitle or .pfl__title)
+ * - url:      from the same anchor
+ * - date:     time[dateTime]
+ * - read:     parsed from .pfl__meta ("· N min read")
+ * - image:    .pfl__media img
+ */
+function readFromSSR(): Post[] {
+  if (typeof document === "undefined") return [];
+  const container = document.querySelector("section.ssr-grid ol.pfl__grid");
+  if (!container) return [];
+  const items = Array.from(container.querySelectorAll("li"));
+  return items.map((li) => {
+    const a =
+      (li.querySelector("h3 a") as HTMLAnchorElement | null) ||
+      (li.querySelector(".pfl__cardTitle a") as HTMLAnchorElement | null) ||
+      (li.querySelector(".pfl__title a") as HTMLAnchorElement | null);
+    const url = a?.getAttribute("href") || "#";
+    const title = (a?.textContent || "").trim();
+
+    const timeEl = li.querySelector("time") as HTMLTimeElement | null;
+    const dateISO = (timeEl?.getAttribute("dateTime") || "").trim();
+
+    const metaText = (li.querySelector(".pfl__meta")?.textContent || "").trim();
+    const readMatch = metaText.match(/(\d+)\s*min\s*read/i);
+    const estReadMin = readMatch ? Number(readMatch[1]) : null;
+
+    const img = li.querySelector(".pfl__media img") as HTMLImageElement | null;
+    const thumbnailSrc = img?.getAttribute("src") || null;
+    const thumbnailAlt = img?.getAttribute("alt") || null;
+    const thumbnailW = img?.getAttribute("width") ? Number(img.getAttribute("width")) : null;
+    const thumbnailH = img?.getAttribute("height") ? Number(img.getAttribute("height")) : null;
+
+    return {
+      title,
+      url,
+      date: dateISO || new Date().toISOString(),
+      tags: [],
+      estReadMin,
+      thumbnailSrc,
+      thumbnailAlt,
+      thumbnailW,
+      thumbnailH,
+      cover: null,
+    } as Post;
+  });
 }
 
 export default function CategoryUtilityBar({ category, pageSize, mountId }: Props) {
   const [{ sort, tag, page }, setState] = useState(() => parseSearch());
   const [all, setAll] = useState<Post[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   // Ensure URL-derived state is applied on mount
   useEffect(() => {
     setState(parseSearch());
   }, []);
 
-  // Load dataset once (non-underscore endpoint)
-  const dataUrl = `/blog/data/${category}.json`;
+  // Load dataset once from SSR (no fetch; no /blog/data/*.json)
   useEffect(() => {
-    let cancel = false;
-    fetch(dataUrl)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status} loading ${dataUrl}`);
-        return r.json();
-      })
-      .then((data: Post[]) => {
-        if (!cancel) setAll(data);
-      })
-      .catch((e) => {
-        if (!cancel) setError(String(e));
-      });
-    return () => {
-      cancel = true;
-    };
-  }, [dataUrl]);
+    const fromSSR = readFromSSR();
+    if (fromSSR.length > 0) {
+      setAll(fromSSR);
+    } else {
+      // If nothing found, keep SSR as-is by leaving `all` null.
+      setAll(null);
+    }
+  }, []);
 
   // Back/forward support
   useEffect(() => {
@@ -130,20 +172,24 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
     }
     if (next.page !== undefined) sp.set("page", String(Math.max(1, next.page)));
     const qs = sp.toString();
-    const nextUrl = typeof window !== "undefined" ? (qs ? `${window.location.pathname}?${qs}` : `${window.location.pathname}`) : "";
+    const nextUrl =
+      typeof window !== "undefined"
+        ? qs
+          ? `${window.location.pathname}?${qs}`
+          : `${window.location.pathname}`
+        : "";
     if (typeof window !== "undefined") window.history.pushState({}, "", nextUrl);
     setState(parseSearch());
   }
 
   /**
    * DOM takeover:
-   * - Do nothing until `all` is non-null. This preserves the SSR list on first paint.
-   * - On fetch error, we also do nothing here so SSR remains visible.
-   * - When we do render, output the exact pfl__* markup used by PostFeedLatest.
+   * - If `all` is null, do nothing (preserves SSR grid entirely).
+   * - If `all` is non-null (we parsed SSR), we render into the mount host.
    */
   useEffect(() => {
     if (typeof document === "undefined" || !mountId) return;
-    if (all === null) return; // defer until data is loaded
+    if (all === null) return; // leave SSR intact
 
     const host = document.getElementById(mountId);
     if (!host) return;
@@ -156,7 +202,6 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
         ? `<li class="pfl__card" aria-live="polite"><article><div class="pfl__body"><p class="pfl__meta">No posts found.</p></div></article></li>`
         : pageItems
             .map((p, i) => {
-              // Prefer new thumbnail* fields; fall back to legacy cover
               const src = p.thumbnailSrc ?? p.cover?.src ?? null;
               const alt = (p.thumbnailAlt ?? p.cover?.alt ?? p.title ?? "").trim();
               const w = p.thumbnailW ?? 1200;
@@ -188,15 +233,7 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
             .join("");
   }, [all, pageItems, mountId]);
 
-  if (error) {
-    // Important: do NOT clear SSR on error. This small inline notice is enough.
-    return (
-      <div className="cu-error" role="status">
-        Failed to load category data. {error}
-      </div>
-    );
-  }
-
+  // Tags: build from dataset if available; otherwise empty (controls still usable for sort/pagination)
   const tagsSorted = useMemo(() => {
     if (!all) return [];
     const set = new Set<string>();

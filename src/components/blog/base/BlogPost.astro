@@ -1,6 +1,10 @@
-// File: src/components/blog/base/BlogPost.astro
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro";
+/* File: src/components/blog/base/BlogPost.astro
+   Purpose: Pure article markup. No layout import/use here.
+   FP-189: Visual balance via external BlogPost.css (token-driven, no CLS)
+*/
+import type { ImageMetadata } from "astro";
+import "./BlogPost.css";
 
 export interface Props {
   title: string;
@@ -17,9 +21,9 @@ export interface Props {
     height?: number;
     caption?: string;
     /** Optional advanced responsive sources provided via frontmatter */
-    srcsetAvif?: string; // e.g. "/imgs/cover-800.avif 800w, /imgs/cover-1200.avif 1200w"
-    srcsetWebp?: string; // e.g. "/imgs/cover-800.webp 800w, /imgs/cover-1200.webp 1200w"
-    sizes?: string;      // e.g. "(max-width: 768px) 100vw, 1200px"
+    srcsetAvif?: string;
+    srcsetWebp?: string;
+    sizes?: string;
   };
   canonical?: string;
   tocHeadings?: Array<{ depth: number; slug: string; text: string }>;
@@ -27,7 +31,6 @@ export interface Props {
   prev?: { data: any; slug: string } | null;
   next?: { data: any; slug: string } | null;
   related?: Array<{ data: any; slug: string }>;
-  /** Optional series nav (ordered). Rendered when present. */
   series?: Array<{ title: string; url: string; index?: number }>;
 }
 
@@ -44,17 +47,13 @@ const {
   series = [],
 } = Astro.props as Props;
 
-// Formatters
 const fmt = new Intl.DateTimeFormat("en-KE", { year: "numeric", month: "short", day: "2-digit" });
-
-// URL helpers
 const categoryUrl = `/blog/${category}/`;
 
-// Derive responsive props for cover
 const coverIsString = typeof cover?.src === "string";
-const coverIsMeta = typeof cover?.src === "object" && cover?.src && "src" in cover.src;
+const coverIsMeta =
+  typeof cover?.src === "object" && cover?.src && "src" in (cover as any).src;
 
-// Precompute responsive <picture> attributes
 const coverImgSrc = coverIsString
   ? (cover?.src as string)
   : coverIsMeta
@@ -64,219 +63,177 @@ const coverImgSrc = coverIsString
 const coverWidth = cover?.width || (coverIsMeta ? (cover?.src as any).width : undefined);
 const coverHeight = cover?.height || (coverIsMeta ? (cover?.src as any).height : undefined);
 const coverAlt = cover?.alt || "";
-
-// Defaults for sizes when not provided
 const coverSizes = cover?.sizes || "(max-width: 768px) 100vw, 1200px";
 ---
 
-<BaseLayout title={title} description={description}>
-  {/* Optional skip link slot if layout owns header; fallback provided here */}
-  <slot name="skiplink">
-    <a class="skip-link" href="#post-main">Skip to content</a>
-  </slot>
+<!-- Pure article; page wraps this with <BaseLayout> -->
+<article
+  id="post-main"
+  class="post stack stack--first-tight page-gap-after"
+  role="article"
+  aria-labelledby="post-title"
+>
+  <!-- 1) Breadcrumbs -->
+  <nav class="post__breadcrumbs container" aria-label="Breadcrumbs">
+    <ol class="crumbs">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href={categoryUrl}>{category.replaceAll("-", " ")}</a></li>
+      <li aria-current="page" class="current">{title}</li>
+    </ol>
+  </nav>
 
-  <article id="post-main" class="post stack stack--first-tight page-gap-after" role="article" aria-labelledby="post-title">
-    <!-- 1) Breadcrumbs -->
-    <nav class="post__breadcrumbs container" aria-label="Breadcrumbs">
-      <ol class="crumbs">
-        <li><a href="/">Home</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href={categoryUrl}>{category.replaceAll("-", " ")}</a></li>
-        <li aria-current="page" class="current">{title}</li>
-      </ol>
-    </nav>
+  <!-- 2) H1 + Eyebrow -->
+  <header class="post__head container">
+    <p class="post__eyebrow">
+      <a href={categoryUrl} class="cat">{category.replaceAll("-", " ")}</a>
+    </p>
+    <h1 id="post-title" class="post__title h1">{title}</h1>
+  </header>
 
-    <!-- 2) H1 + Eyebrow -->
-    <header class="post__head container">
-      <p class="post__eyebrow">
-        <a href={categoryUrl} class="cat">{category.replaceAll("-", " ")}</a>
+  <!-- 3) Meta row -->
+  <div class="post__meta container">
+    <p class="meta">
+      <time datetime={date.toISOString()}>{fmt.format(date)}</time>
+      {readingTime && <span aria-hidden="true"> · </span>}
+      {readingTime && <span>{readingTime} min read</span>}
+    </p>
+    {updated && (
+      <p class="post__updated" title="Last updated">
+        Updated {fmt.format(updated)}
       </p>
-      <h1 id="post-title" class="post__title h1">{title}</h1>
-    </header>
-
-    <!-- 3) Meta row -->
-    <div class="post__meta container">
-      <p class="meta">
-        <time datetime={date.toISOString()}>{fmt.format(date)}</time>
-        {readingTime && <span aria-hidden="true"> · </span>}
-        {readingTime && <span>{readingTime} min read</span>}
-      </p>
-      <!-- 4) Updated badge -->
-      {updated && (
-        <p class="post__updated" title="Last updated">
-          Updated {fmt.format(updated)}
-        </p>
-      )}
-    </div>
-
-    <!-- 5) Cover -->
-    {coverImgSrc && (
-      <figure class="post__cover container">
-        <picture>
-          {cover?.srcsetAvif && <source type="image/avif" srcset={cover.srcsetAvif} sizes={cover.sizes || coverSizes} />}
-          {cover?.srcsetWebp && <source type="image/webp" srcset={cover.srcsetWebp} sizes={cover.sizes || coverSizes} />}
-          <img
-            src={coverImgSrc}
-            alt={coverAlt}
-            width={coverWidth}
-            height={coverHeight}
-            loading="eager"
-            fetchpriority="high"
-          />
-        </picture>
-        {cover?.caption && <figcaption class="caption text-muted">{cover.caption}</figcaption>}
-      </figure>
     )}
+  </div>
 
-    <!-- 6) Lead paragraph (optional) -->
-    {description && (
-      <div class="post__lead container">
-        <p class="page-lead">{description}</p>
-      </div>
-    )}
+  <!-- 5) Cover -->
+  {coverImgSrc && (
+    <figure class="post__cover container">
+      <picture>
+        {cover?.srcsetAvif && (
+          <source type="image/avif" srcset={cover.srcsetAvif} sizes={cover.sizes || coverSizes} />
+        )}
+        {cover?.srcsetWebp && (
+          <source type="image/webp" srcset={cover.srcsetWebp} sizes={cover.sizes || coverSizes} />
+        )}
+        <img
+          src={coverImgSrc}
+          alt={coverAlt}
+          width={coverWidth}
+          height={coverHeight}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </picture>
+      {cover?.caption && <figcaption class="caption text-muted">{cover.caption}</figcaption>}
+    </figure>
+  )}
 
-    <!-- 7) TOC (slot) -->
-    <div class="container">
-      <slot name="toc" />
+  <!-- 6) Lead paragraph (optional) -->
+  {description && (
+    <div class="post__lead container">
+      <p class="page-lead">{description}</p>
     </div>
+  )}
 
-    <!-- 8) Article body (provided by the route through default slot) -->
-    <div class="container">
-      <slot />
-    </div>
+  <!-- 7) TOC (slot) -->
+  <div class="container">
+    <slot name="toc" />
+  </div>
 
-    <!-- 9) Series navigation (optional) -->
-    {Array.isArray(series) && series.length > 0 && (
-      <section class="post__series container" aria-label="In this series">
-        <h2 class="h4">In this series</h2>
-        <ol>
-          {series
-            .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
-            .map((s) => (
-              <li>
-                <a href={s.url}>{s.title}</a>
-              </li>
-            ))}
-        </ol>
-      </section>
-    )}
+  <!-- 8) Article body (provided by the route through default slot) -->
+  <div class="container">
+    <slot />
+  </div>
 
-    <!-- 10) Footer tags + Share buttons -->
-    <footer class="post__footer container">
-      {tags.length > 0 && (
-        <ul class="post__tags">
-          {tags.map((t) => (
-            <li><a class="tag" href={`/tags/${t.toLowerCase()}/`}>{t}</a></li>
+  <!-- 9) Series navigation (optional) -->
+  {Array.isArray(series) && series.length > 0 && (
+    <section class="post__series container" aria-label="In this series">
+      <h2 class="h4">In this series</h2>
+      <ol>
+        {series
+          .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+          .map((s) => (
+            <li><a href={s.url}>{s.title}</a></li>
           ))}
-        </ul>
-      )}
-      <div class="post__share" aria-label="Share">
-        <!-- No inline JS. Handled by analytics.ts listeners. -->
-        <button
-          class="btn btn-primary"
-          type="button"
-          data-cta="copy-link"
-          data-url={String(canonical || Astro.url)}
-          aria-controls="copy-status"
-        >
-          Copy link
-        </button>
-        <a
-          class="btn"
-          href={`https://wa.me/?text=${encodeURIComponent(canonical || Astro.url)}`}
-          rel="noopener"
-          target="_blank"
-          data-cta="share_click"
-          data-share="whatsapp"
-        >WhatsApp</a>
-        <a
-          class="btn"
-          href={`https://x.com/intent/tweet?url=${encodeURIComponent(canonical || Astro.url)}&text=${encodeURIComponent(title)}`}
-          rel="noopener"
-          target="_blank"
-          data-cta="share_click"
-          data-share="x"
-        >X</a>
-        <a
-          class="btn"
-          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical || Astro.url)}`}
-          rel="noopener"
-          target="_blank"
-          data-cta="share_click"
-          data-share="linkedin"
-        >LinkedIn</a>
-        <span id="copy-status" class="sr-only" aria-live="polite"></span>
-      </div>
-    </footer>
+      </ol>
+    </section>
+  )}
 
-    <!-- 11) Author card (optional slot for future extension) -->
-    <div class="post__author container">
-      <slot name="author" />
+  <!-- 10) Footer tags + Share buttons -->
+  <footer class="post__footer container">
+    {tags.length > 0 && (
+      <ul class="post__tags">
+        {tags.map((t) => (
+          <li><a class="tag" href={`/tags/${t.toLowerCase()}/`}>{t}</a></li>
+        ))}
+      </ul>
+    )}
+    <div class="post__share" aria-label="Share">
+      <!-- No inline JS. Handled by analytics.ts listeners. -->
+      <button
+        class="btn btn-primary"
+        type="button"
+        data-cta="copy-link"
+        data-url={String(canonical || Astro.url)}
+        aria-controls="copy-status"
+      >
+        Copy link
+      </button>
+      <a
+        class="btn"
+        href={`https://wa.me/?text=${encodeURIComponent(canonical || Astro.url)}`}
+        rel="noopener"
+        target="_blank"
+        data-cta="share_click"
+        data-share="whatsapp"
+      >WhatsApp</a>
+      <a
+        class="btn"
+        href={`https://x.com/intent/tweet?url=${encodeURIComponent(canonical || Astro.url)}&text=${encodeURIComponent(title)}`}
+        rel="noopener"
+        target="_blank"
+        data-cta="share_click"
+        data-share="x"
+      >X</a>
+      <a
+        class="btn"
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical || Astro.url)}`}
+        rel="noopener"
+        target="_blank"
+        data-cta="share_click"
+        data-share="linkedin"
+      >LinkedIn</a>
+      <span id="copy-status" class="sr-only" aria-live="polite"></span>
     </div>
+  </footer>
 
-    <!-- 12) Next/Prev -->
-    <nav class="post__nav container" aria-label="Post navigation">
-      <slot name="nav" />
-    </nav>
+  <!-- 11) Author card (optional slot for future extension) -->
+  <div class="post__author container">
+    <slot name="author" />
+  </div>
 
-    <!-- 13) Related (slot) -->
-    <section class="post__related container">
-      <slot name="related" />
-    </section>
+  <!-- 12) Next/Prev -->
+  <nav class="post__nav container" aria-label="Post navigation">
+    <slot name="nav" />
+  </nav>
 
-    <!-- 14) Inline ad slot shell (optional, disabled by default; prevents CLS) -->
-    <section class="ad-slot container" hidden role="complementary" aria-label="Sponsored">
-      <div class="ad-box" style="width:336px;height:280px"></div>
-    </section>
+  <!-- 13) Related (slot) -->
+  <section class="post__related container">
+    <slot name="related" />
+  </section>
 
-    <!-- 15) LeadMagnet (deferred) -->
-    <section class="post__leadmagnet container">
-      <slot name="leadmagnet" />
-    </section>
+  <!-- 14) Inline ad slot shell (optional, disabled by default; prevents CLS) -->
+  <section class="ad-slot container" hidden role="complementary" aria-label="Sponsored">
+    <div class="ad-box" style="width:336px;height:280px"></div>
+  </section>
 
-    <!-- 16) Comments (deferred) -->
-    <section class="post__comments container">
-      <slot name="comments" />
-    </section>
-  </article>
-</BaseLayout>
+  <!-- 15) LeadMagnet (deferred) -->
+  <section class="post__leadmagnet container">
+    <slot name="leadmagnet" />
+  </section>
 
-<style>
-  @import "@/styles/index.css";
-  /* Local page-level CSS lives in BlogPost.css */
-
-  .skip-link {
-    position: absolute;
-    inset-inline-start: 0;
-    top: -40px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-  }
-  .skip-link:focus { top: 8px; z-index: 1000; }
-
-  /* Series list */
-  .post__series ol {
-    margin: 0;
-    padding-inline-start: 1.25rem;
-  }
-
-  /* Ad slot placeholder to avoid CLS */
-  .ad-slot[hidden] .ad-box { display: block; }
-  .ad-slot .ad-box {
-    background: var(--color-surface);
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-  }
-
-  /* Screen-reader only helper */
-  .sr-only {
-    position: absolute !important;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0);
-    white-space: nowrap; border: 0;
-  }
-</style>
+  <!-- 16) Comments (deferred) -->
+  <section class="post__comments container">
+    <slot name="comments" />
+  </section>
+</article>

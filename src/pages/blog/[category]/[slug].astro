@@ -1,6 +1,9 @@
 ---
-// File: src/pages/blog/[category]/[slug].astro
-// Fix Plan 187: Delegate canonical/SEO base to BaseLayout via absolute canonical prop.
+/**
+ * File: src/pages/blog/[category]/[slug].astro
+ * Fix Plan 188: Single-post runtime fix (BaseLayout import) + JSON 404 hygiene.
+ * Delegates canonical/SEO base to BaseLayout via absolute canonical prop.
+ */
 
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";

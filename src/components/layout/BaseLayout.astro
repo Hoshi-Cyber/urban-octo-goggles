@@ -150,7 +150,10 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <Footer />
     <CookieBanner />
 
-    <!-- Consent-mode analytics bootstrap -->
-    <script type="module" src="/src/lib/analytics.ts"></script>
+    <!-- Consent-mode analytics bootstrap (bundled; no /src/* HTTP fetch) -->
+    <script type="module">
+      import "@/lib/analytics.ts";
+      import "@/scripts/consent-banner.ts"; // side-effects only
+    </script>
   </body>
 </html>

@@ -1,225 +1,226 @@
 /* File: src/components/blog/base/BlogPost.css */
-@layer components {
-  .post {
-    /* spacing rhythm managed by sections.css stack utilities */
-  }
+/* FP-189: Visual balance for single-post page. Plain CSS (no @layer). */
 
-  .post .container {
-    /* container sizing and gutters from base/breakpoints */
-  }
-
-  /* Reading progress bar (Fix Plan 185) */
-  .read-progress {
-    position: sticky;
-    top: 0;
-    height: 4px;
-    background: transparent;
-    z-index: 20;
-    pointer-events: none; /* do not block header interactions */
-  }
-  .read-progress::after {
-    content: "";
-    display: block;
-    height: 4px;
-    width: calc(var(--p, 0) * 100%);
-    background: var(--color-primary);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .read-progress { display: none; }
-  }
-
-  /* 1) Breadcrumbs */
-  .post__breadcrumbs .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: var(--fs-sm);
-    color: var(--color-muted);
-  }
-  .post__breadcrumbs .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
-  .post__breadcrumbs .current { color: var(--color-text); font-weight: 600; }
-
-  /* 2) Eyebrow + Title */
-  .post__eyebrow {
-    margin: 0 0 var(--space-2);
-    font-size: var(--fs-sm);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--color-muted);
-  }
-  .post__eyebrow .cat { color: inherit; }
-  .post__title { margin: 0 0 var(--space-2); }
-
-  /* 3) Meta row */
-  .post__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-4);
-    color: var(--color-muted);
-  }
-  .post__meta .meta {
-    margin: 0;
-    font-size: var(--fs-sm);
-  }
-
-  /* 4) Updated badge */
-  .post__updated {
-    margin: 0;
-    font-size: var(--fs-sm);
-    padding: 2px 8px;
-    border-radius: var(--radius-md);
-    background: var(--color-light);
-    color: var(--color-text);
-  }
-
-  /* 5) Cover */
-  .post__cover {
-    margin: 0;
-  }
-  .post__cover img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16/9; /* avoid CLS on unknown sizes */
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-  }
-  .post__cover .caption {
-    margin-top: var(--space-2);
-    font-size: var(--fs-sm);
-    color: var(--color-muted);
-  }
-
-  /* 6) Lead paragraph */
-  .post__lead .page-lead {
-    /* uses existing page-lead pattern */
-  }
-
-  /* 7) TOC (legacy nav block kept for compatibility) */
-  .post__toc {
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-  }
-  .post__toc a:hover, .post__toc a:focus { text-decoration: underline; }
-
-  /* 7a) TOC Mobile Toggle (Fix Plan 185) */
-  .toc-details {
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    padding: var(--space-2);
-  }
-  .toc-details > summary {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    cursor: pointer;
-    list-style: none;
-    font-weight: 600;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-  }
-  .toc-details > summary::-webkit-details-marker { display: none; }
-  .toc-details[open] > summary { background: color-mix(in oklab, var(--color-primary) 6%, transparent); }
-  .toc-details .toc-list {
-    margin: var(--space-2) 0 0 0;
-    padding: 0 var(--space-2) var(--space-2) var(--space-2);
-    list-style: none;
-  }
-  .toc-details .toc-list li { margin: 0.25rem 0; }
-  .toc-details .toc-list li.d3 { padding-left: 0.75rem; }
-
-  /* 8) Article body */
-  .post__content.prose {
-    /* prose defaults imported globally; keep scoped container only */
-  }
-
-  /* 9) Series (optional) */
-  .post__series { padding-block: var(--space-4); }
-  .post__series ol { margin: 0; padding-inline-start: 1.25rem; }
-
-  /* 10) Inline ad slot shell (optional, prevents CLS) */
-  .ad-slot {
-    /* keep space reserved even before load; toggle [hidden] on the section to control visibility */
-    margin-block: var(--space-6);
-  }
-  .ad-slot .ad-box {
-    width: 336px;
-    height: 280px;
-    background: var(--color-surface);
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
-  }
-
-  /* 11) Footer tags + Share */
-  .post__footer {
-    display: grid;
-    gap: var(--space-4);
-  }
-  .post__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .post__tags .tag {
-    display: inline-block;
-    padding: 6px 10px;
-    border: 1px solid color-mix(in oklab, var(--color-primary) 20%, transparent);
-    border-radius: 999px;
-    font-size: var(--fs-sm);
-    color: var(--color-primary);
-    background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  }
-  .post__share {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-
-  /* 12) Author card placeholder */
-  .post__author { }
-
-  /* 13) Prev/Next */
-  .post__nav { }
-
-  /* 14) Related */
-  .post__related { }
-
-  /* 15) Lead magnet */
-  .post__leadmagnet { }
-
-  /* 16) Comments */
-  .post__comments { }
-
-  /* Focus visibility and contrast */
-  :where(.post a, .post button):focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
-    outline-offset: 2px;
-  }
-
-  /* 17) Skip link baseline styling (fallback if layout doesn't provide it) */
-  .skip-link {
-    position: absolute;
-    inset-inline-start: 0;
-    top: -40px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-  }
-  .skip-link:focus { top: 8px; z-index: 1000; }
+.post {
+  /* spacing rhythm managed by sections.css stack utilities */
 }
+
+.post .container {
+  /* container sizing and gutters from base/breakpoints */
+}
+
+/* Reading progress bar (Fix Plan 185) */
+.read-progress {
+  position: sticky;
+  top: 0;
+  height: 4px;
+  background: transparent;
+  z-index: 20;
+  pointer-events: none; /* do not block header interactions */
+}
+.read-progress::after {
+  content: "";
+  display: block;
+  height: 4px;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--color-primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .read-progress { display: none; }
+}
+
+/* 1) Breadcrumbs */
+.post__breadcrumbs .crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+.post__breadcrumbs .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
+.post__breadcrumbs .current { color: var(--color-text); font-weight: 600; }
+
+/* 2) Eyebrow + Title */
+.post__eyebrow {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--color-muted);
+}
+.post__eyebrow .cat { color: inherit; }
+.post__title { margin: 0 0 var(--space-2); }
+
+/* 3) Meta row */
+.post__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  color: var(--color-muted);
+}
+.post__meta .meta {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+/* 4) Updated badge */
+.post__updated {
+  margin: 0;
+  font-size: var(--fs-sm);
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  background: var(--color-light);
+  color: var(--color-text);
+}
+
+/* 5) Cover */
+.post__cover {
+  margin: 0;
+}
+.post__cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9; /* avoid CLS on unknown sizes */
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.post__cover .caption {
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* 6) Lead paragraph */
+.post__lead .page-lead {
+  /* uses existing page-lead pattern */
+}
+
+/* 7) TOC (legacy nav block kept for compatibility) */
+.post__toc {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+  border-radius: var(--radius-lg);
+}
+.post__toc a:hover,
+.post__toc a:focus { text-decoration: underline; }
+
+/* 7a) TOC Mobile Toggle (Fix Plan 185) */
+.toc-details {
+  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: var(--space-2);
+}
+.toc-details > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+}
+.toc-details > summary::-webkit-details-marker { display: none; }
+.toc-details[open] > summary { background: color-mix(in oklab, var(--color-primary) 6%, transparent); }
+.toc-details .toc-list {
+  margin: var(--space-2) 0 0 0;
+  padding: 0 var(--space-2) var(--space-2) var(--space-2);
+  list-style: none;
+}
+.toc-details .toc-list li { margin: 0.25rem 0; }
+.toc-details .toc-list li.d3 { padding-left: 0.75rem; }
+
+/* 8) Article body */
+.post__content.prose {
+  /* prose defaults imported globally; keep scoped container only */
+}
+
+/* 9) Series (optional) */
+.post__series { padding-block: var(--space-4); }
+.post__series ol { margin: 0; padding-inline-start: 1.25rem; }
+
+/* 10) Inline ad slot shell (optional, prevents CLS) */
+.ad-slot {
+  /* keep space reserved even before load; toggle [hidden] on the section to control visibility */
+  margin-block: var(--space-6);
+}
+.ad-slot .ad-box {
+  width: 336px;
+  height: 280px;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+/* 11) Footer tags + Share */
+.post__footer {
+  display: grid;
+  gap: var(--space-4);
+}
+.post__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.post__tags .tag {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in oklab, var(--color-primary) 20%, transparent);
+  border-radius: 999px;
+  font-size: var(--fs-sm);
+  color: var(--color-primary);
+  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
+}
+.post__share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* 12) Author card placeholder */
+.post__author {}
+
+/* 13) Prev/Next */
+.post__nav {}
+
+/* 14) Related */
+.post__related {}
+
+/* 15) Lead magnet */
+.post__leadmagnet {}
+
+/* 16) Comments */
+.post__comments {}
+
+/* Focus visibility and contrast */
+:where(.post a, .post button):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline-offset: 2px;
+}
+
+/* 17) Skip link baseline styling (fallback if layout doesn't provide it) */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 0;
+  top: -40px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+.skip-link:focus { top: 8px; z-index: 1000; }
 
 /* Responsive refinements */
 @media (min-width: 768px) {
