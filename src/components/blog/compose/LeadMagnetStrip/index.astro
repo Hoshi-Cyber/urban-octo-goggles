@@ -1,42 +1,102 @@
 ---
-interface Cta {
-  label: string;
-  href: string;
-}
+// src/components/blog/compose/LeadMagnetStrip/index.astro
 
-interface Props {
-  title?: string;
-  subtitle?: string;
-  primary?: Cta;     // e.g., { label: "Download guide", href: "/guide.pdf" }
-  secondary?: Cta;   // e.g., { label: "No thanks", href: "#" }
-  icon?: string;     // optional emoji or small SVG text
-}
+import sheet from "./LeadMagnetStrip.css?url";
+import type { LeadMagnetStripProps } from "./types";
 
 const {
-  title = "Get the complete guide",
-  subtitle = "Practical steps you can apply today. No fluff.",
-  primary = { label: "Download free PDF", href: "#" },
-  secondary = { label: "Maybe later", href: "#" },
-  icon = "📘",
-} = Astro.props as Props;
----
-<section class="leadmag container" role="region" aria-label="Lead magnet">
-  <div class="leadmag__card card">
-    <div class="leadmag__content">
-      <div class="leadmag__icon" aria-hidden="true">{icon}</div>
-      <h2 class="leadmag__title h2">{title}</h2>
-      <p class="leadmag__subtitle">{subtitle}</p>
-    </div>
+  eyebrow,
+  title,
+  body,
+  primaryCtaLabel,
+  primaryCtaHref,
+  secondaryCtaLabel,
+  secondaryCtaHref,
+  finePrint,
+  id,
+  className,
+} = Astro.props as LeadMagnetStripProps;
 
-    <div class="leadmag__actions">
-      <a class="btn btn-primary" href={primary.href}>{primary.label}</a>
-      {secondary && (
-        <a class="btn leadmag__secondary" href={secondary.href}>{secondary.label}</a>
+const hasPrimaryCta =
+  typeof primaryCtaLabel === "string" &&
+  primaryCtaLabel.trim().length > 0 &&
+  typeof primaryCtaHref === "string" &&
+  primaryCtaHref.trim().length > 0;
+
+const hasSecondaryCta =
+  typeof secondaryCtaLabel === "string" &&
+  secondaryCtaLabel.trim().length > 0 &&
+  typeof secondaryCtaHref === "string" &&
+  secondaryCtaHref.trim().length > 0;
+
+const hasShellContent =
+  (title && title.trim().length > 0) ||
+  (body && body.trim().length > 0) ||
+  hasPrimaryCta;
+
+const headingId = id ? `${id}-leadmagnet-title` : "leadmagnet-title";
+const hasTitle = Boolean(title && title.trim().length > 0);
+const ariaLabel = hasTitle ? undefined : "Lead magnet";
+---
+
+<link rel="stylesheet" href={sheet} />
+
+{hasShellContent && (
+  <section
+    class={`leadMagnet${className ? ` ${className}` : ""}`}
+    id={id}
+    aria-label={ariaLabel}
+    aria-labelledby={hasTitle ? headingId : undefined}
+    data-section="lead-magnet"
+  >
+    <div class="leadMagnet__inner">
+      <div class="leadMagnet__copy">
+        {eyebrow && (
+          <p class="leadMagnet__eyebrow">
+            {eyebrow}
+          </p>
+        )}
+
+        {title && (
+          <h2 id={headingId} class="leadMagnet__title h4">
+            {title}
+          </h2>
+        )}
+
+        {body && (
+          <p class="leadMagnet__body">
+            {body}
+          </p>
+        )}
+
+        {finePrint && (
+          <p class="leadMagnet__finePrint">
+            {finePrint}
+          </p>
+        )}
+      </div>
+
+      {(hasPrimaryCta || hasSecondaryCta) && (
+        <div class="leadMagnet__actions">
+          {hasPrimaryCta && (
+            <a
+              href={primaryCtaHref}
+              class="leadMagnet__primaryCta"
+            >
+              {primaryCtaLabel}
+            </a>
+          )}
+
+          {hasSecondaryCta && (
+            <a
+              href={secondaryCtaHref}
+              class="leadMagnet__secondaryCta"
+            >
+              {secondaryCtaLabel}
+            </a>
+          )}
+        </div>
       )}
     </div>
-  </div>
-</section>
-
-<style>
-  @import "./LeadMagnetStrip.css";
-</style>
+  </section>
+)}

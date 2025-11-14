@@ -1,98 +1,112 @@
-@import "../../../../styles/index.css";
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
-@import "../../../../styles/utilities.css";
+/* src/components/blog/compose/PostTags/PostTags.css */
 
-/* Tag list: horizontal row with wrap */
-.post__tags {
+/*
+  PostTags – compact tag pills near the end of the article.
+  Mobile-first, token-driven, aligned with global blog styling.
+*/
+
+/* Section wrapper inside single post footer */
+.post .post__tagsSection {
+  margin-block: var(--space-6);
+}
+
+/* Section label */
+.post .post__tagsTitle {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+/* Tags container (legacy + component-local) */
+.post .post__tags,
+.post-tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-6);
-  padding: 0;
-  list-style: none;
-}
-
-.post__tags--footer {
-  margin-top: var(--space-8);
-}
-
-/* Ensure items lay out inline and never show bullets */
-.post__tags > li {
-  display: inline-flex;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Tag pill */
-.post__tag {
+/* Tag item (li) */
+.post .post__tagsItem,
+.post-tags__item {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+/* Tag pill (link) – unified styling */
+.post .post__tag,
+.post-tags__item a {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.65rem; /* touch target */
-  min-height: 2rem; /* ~32px target */
-  border-radius: var(--radius-full);
-  background: var(--color-light);
-  color: var(--color-text);
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.08);
+  justify-content: center;
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-1) * 0.75);
+  min-height: 2rem;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-light-alt);
+  background-color: var(--color-light);
+  color: var(--color-muted);
   font-size: var(--fs-sm);
-  line-height: 1;
+  line-height: 1.4;
   text-decoration: none;
+  white-space: nowrap;
   transition:
-    box-shadow 120ms ease,
-    background-color 120ms ease,
-    color 120ms ease,
-    transform 80ms ease;
-  -webkit-tap-highlight-color: transparent;
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    color 140ms ease-out,
+    transform 80ms ease-out,
+    box-shadow 140ms ease-out;
 }
 
-/* Hover/active/focus */
-.post__tag:hover {
-  background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.18);
+/* Hover/active/focus states – subtle, secondary hierarchy */
+.post .post__tag:hover,
+.post-tags__item a:hover {
+  background-color: var(--color-primary-light, var(--color-surface));
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   text-decoration: none;
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
-.post__tag:active {
+
+.post .post__tag:active,
+.post-tags__item a:active {
   transform: translateY(0.5px);
 }
-.post__tag:visited {
+
+.post .post__tag:visited,
+.post-tags__item a:visited {
   color: var(--color-text);
 }
-.post__tag:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  box-shadow: inset 0 0 0 1px var(--color-primary-600);
+
+.post .post__tag:focus-visible,
+.post-tags__item a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary);
 }
 
-/* Responsive spacing bump */
+/* Spacing bump on larger screens */
 @media (min-width: 1024px) {
-  .post__tags {
+  .post .post__tags,
+  .post-tags {
     gap: var(--space-3);
   }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .post__tag {
+  .post .post__tag,
+  .post-tags__item a {
     transition: none;
   }
-  .post__tag:active {
-    transform: none;
-  }
-}
 
-/* Forced colors (Windows HC) */
-@media (forced-colors: active) {
-  .post__tag {
-    border: 1px solid CanvasText;
-    background: Canvas;
-    color: CanvasText;
-    box-shadow: none;
-  }
-  .post__tag:focus-visible {
-    outline: 2px solid Highlight;
-    outline-offset: 2px;
+  .post .post__tag:active,
+  .post-tags__item a:active {
+    transform: none;
   }
 }

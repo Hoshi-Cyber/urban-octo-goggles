@@ -1,167 +1,135 @@
-/* File: src/components/blog/compose/RelatedCategories/RelatedCategories.css
-   RelatedCategories — high-contrast branded chips
-   FP-169.2: parity across all category pages, ≥44px tap targets, visible focus rings,
-             no dependency on extra wrappers, optional host spacing var.
+/* src/components/blog/compose/RelatedCategories/RelatedCategories.css */
+
+/*
+  RelatedCategories – related articles block for single post page.
+  Mobile-first, token-driven, visually aligned with blog listing cards.
+  FP-190.1: Single-column base, progressive grid at 640 / 1024 / 1280.
 */
 
-/* =========================
-   Core variables
-   ========================= */
-.rc {
-  /* Outer separation is governed by the page stack.
-     Provide an optional host margin var for safe use outside stacks. */
-  --rc-mt: 0;
-
-  /* Internal padding */
-  --rc-pad-y: clamp(var(--space-6), 3vw, var(--space-10));
-  --rc-pad-x: var(--space-4);
-  --rc-gap: var(--space-3);
-
-  /* Pill sizing (≥44px target on mobile) */
-  --rc-pill-min-h: 2.75rem; /* 44px */
-  --rc-pill-py: 0.55rem;
-  --rc-pill-px: 1rem;
-  --rc-radius: var(--radius-lg);
-
-  /* Section visuals */
-  --rc-border: 1px solid var(--color-light);
-  --rc-bg: var(--color-surface);
-
-  /* Pill visuals */
-  --rc-pill-bg: #fff;
-  --rc-pill-text: var(--color-primary);
-  --rc-pill-text-active: #fff;
-
-  /* Branded outlines and states */
-  --rc-ring: var(--color-primary);
-  --rc-ring-alpha: 28%;
-  --rc-hover-bg: var(--color-light-alt);
+/* Wrapper inside single post */
+.post .post__related .relatedPosts,
+.related {
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-light-alt);
 }
 
-/* Section: no fixed margins; plays nicely inside .stack.
-   Optional top margin via --rc-mt for standalone usage. */
-.rc {
-  margin-block-start: var(--rc-mt);
-  border-top: var(--rc-border);
-  padding-block: var(--rc-pad-y);
-  padding-inline: var(--rc-pad-x);
-  background: var(--rc-bg);
-}
-
-/* Title (unified with global .section-title) */
-.rc .section-title {
+/* Heading */
+.post .post__related .relatedPosts__title,
+.related__title {
   margin: 0 0 var(--space-4);
+  font-size: var(--fs-lg);
+  font-weight: 600;
 }
 
-/* List */
-.rc__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--rc-gap);
+/* Grid layout */
+.post .post__related .relatedPosts__list,
+.related-grid {
   margin: 0;
   padding: 0;
   list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
-/* Pill link — branded outline + subtle elevation
-   Accessibility: >=44px hit area, visible :focus-visible. */
-.rc__link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-height: var(--rc-pill-min-h);
-  padding: var(--rc-pill-py) var(--rc-pill-px);
-  border-radius: var(--rc-radius);
-  background: var(--rc-pill-bg);
-  color: var(--rc-pill-text);
-  font-size: var(--fs-base);
-  font-weight: 600;
+.post .post__related .relatedPosts__item {
+  margin: 0;
+}
+
+/* Card surface */
+.post .post__related .relatedPosts__card,
+.related-card {
+  display: block;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-sm);
   text-decoration: none;
-  line-height: 1.25;
-  border: 1px solid transparent;
-  box-shadow:
-    var(--shadow-sm),
-    inset 0 0 0 2px color-mix(in srgb, var(--rc-ring) var(--rc-ring-alpha), transparent);
-  transition:
-    background-color 0.15s ease,
-    box-shadow 0.15s ease,
-    color 0.15s ease;
+  color: inherit;
 }
 
-@supports not (color-mix(in srgb, black, white)) {
-  .rc__link {
-    border-color: var(--rc-ring);
-    box-shadow: var(--shadow-sm);
-  }
+/* Optional media thumbnail */
+.post .post__related .relatedPosts__media {
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-light);
+  aspect-ratio: 16 / 9;
 }
 
-@media (hover: hover) {
-  .rc__link:hover {
-    background: #fff;
-    box-shadow:
-      var(--shadow-sm),
-      inset 0 0 0 2px var(--rc-ring);
-    text-decoration: none;
-  }
+.post .post__related .relatedPosts__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.rc__link:focus-visible {
-  outline: 2px solid var(--rc-ring);
-  outline-offset: 2px;
+/* Category label */
+.post .post__related .relatedPosts__cat,
+.related-card__category {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
 }
 
-/* Active/current state — solid primary chip */
-.rc__link[aria-current="true"],
-.rc__link--solid {
-  background: var(--rc-ring);
-  color: var(--rc-pill-text-active);
-  box-shadow:
-    var(--shadow-sm),
-    inset 0 0 0 2px var(--rc-ring);
+/* Title */
+.post .post__related .relatedPosts__postTitle,
+.related-card__title {
+  margin: 0 0 var(--space-1);
+  font-weight: 600;
+  line-height: 1.35;
 }
 
-/* Ghost variant (secondary style) */
-.rc__link--ghost {
-  background: transparent;
+.post .post__related .relatedPosts__postTitle a,
+.related-card__title a {
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.post .post__related .relatedPosts__postTitle a:hover,
+.post .post__related .relatedPosts__postTitle a:focus-visible,
+.related-card__title a:hover,
+.related-card__title a:focus-visible {
   color: var(--color-primary);
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--rc-ring) 20%, transparent);
+  outline: none;
+  text-decoration: underline;
 }
 
-/* Modifiers */
-.rc.rc--compact {
-  --rc-pad-y: clamp(var(--space-4), 2.2vw, var(--space-6));
-  --rc-gap: var(--space-2);
-  --rc-pill-min-h: 2.75rem; /* keep 44px target even when compact */
-  --rc-pill-py: 0.45rem;
-  --rc-pill-px: 0.85rem;
-  --rc-radius: 9999px;
-}
-/* Tighter title spacing in compact mode */
-.rc.rc--compact .section-title {
-  margin-bottom: var(--space-3);
+/* Meta: date + reading time */
+.post .post__related .relatedPosts__meta {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
 }
 
-/* ≥640px: increase to 48px targets */
+/* Columns by breakpoint: 1 → 2 → 3 → 4 */
 @media (min-width: 640px) {
-  .rc {
-    --rc-pill-min-h: 3rem; /* 48px */
-    --rc-pill-px: 1.1rem;
+  .post .post__related .relatedPosts__list,
+  .related-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Reduced motion + forced colors */
-@media (prefers-reduced-motion: reduce) {
-  .rc__link {
-    transition: none;
+@media (min-width: 1024px) {
+  .post .post__related .relatedPosts__list,
+  .related-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (forced-colors: active) {
-  .rc__link {
-    border: 1px solid CanvasText !important;
-    box-shadow: none !important;
+
+@media (min-width: 1280px) {
+  .post .post__related .relatedPosts__list,
+  .related-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .rc__link:focus-visible {
-    outline-color: Highlight;
+}
+
+/* Reduced motion – cards keep static elevation */
+@media (prefers-reduced-motion: reduce) {
+  .post .post__related .relatedPosts__card,
+  .related-card {
+    transition: none;
   }
 }

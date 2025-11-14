@@ -1,8 +1,8 @@
 ---
 /**
  * File: src/pages/blog/[category]/[slug].astro
- * Fix Plan 188: Single-post runtime fix (BaseLayout import) + JSON 404 hygiene.
- * Delegates canonical/SEO base to BaseLayout via absolute canonical prop.
+ * Fix Plan 190 & 190.2: Wire compose components + MDX map (single-post),
+ * ensure cover is correctly passed to BlogPost, and wire a visible comments slot.
  */
 
 import type { CollectionEntry } from "astro:content";
@@ -11,7 +11,6 @@ import { getCollection } from "astro:content";
 // Layout + page components
 import BaseLayout from "@/components/layout/BaseLayout.astro";
 import BlogPost from "@/components/blog/base/BlogPost.astro";
-import PostNav from "@/components/blog/compose/PostNav/index.astro";
 import { mdxComponents } from "@/components/blog/compose/mdx";
 
 import site from "@/site.config";
@@ -63,10 +62,26 @@ const canonicalAbs =
   (entry.data as any)?.canonical ||
   (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
 
-// Cover image data
-const cover = entry.data.cover as
-  | { src: string | { src: string; width?: number; height?: number }; alt?: string; width?: number; height?: number }
+// Raw cover data from frontmatter (passed through to BlogPost)
+const cover = (entry.data as any).cover;
+
+// Typed alias used for preload / JSON-LD image logic
+type CoverForMeta =
+  | {
+      src:
+        | string
+        | {
+            src: string;
+            width?: number;
+            height?: number;
+          };
+      alt?: string;
+      width?: number;
+      height?: number;
+    }
   | undefined;
+
+const coverForMeta = cover as CoverForMeta;
 
 // Optional alternates for hreflang (array of { hrefLang, href })
 type Alternate = { hrefLang: string; href: string };
@@ -74,7 +89,7 @@ const alternates = Array.isArray((entry.data as any)?.alternates)
   ? ((entry.data as any).alternates as Alternate[])
   : undefined;
 
-// Build TOC: H2/H3 only → use <details> for mobile-friendly collapse
+// Build TOC: H2/H3 only (rendered via PostToc inside BlogPost)
 const tocHeadings = headings
   .filter((h: any) => h.depth === 2 || h.depth === 3)
   .map((h: any) => ({ depth: h.depth, slug: h.slug, text: h.text }));
@@ -83,11 +98,17 @@ const showTOC = tocHeadings.length >= 3;
 // Prev/Next within same category by date
 const inSameCategory = allPosts
   .filter((p) => (p.data.category ?? catFromPath(p)) === categorySlug)
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  .sort(
+    (a, b) =>
+      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  );
 
 const idx = inSameCategory.findIndex((p) => baseSlug(p) === entryBaseSlug);
 const prev = idx > 0 ? inSameCategory[idx - 1] : null;
-const next = idx >= 0 && idx < inSameCategory.length - 1 ? inSameCategory[idx + 1] : null;
+const next =
+  idx >= 0 && idx < inSameCategory.length - 1
+    ? inSameCategory[idx + 1]
+    : null;
 
 // Related posts: same category then tag-overlap score
 function overlapScore(a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) {
@@ -109,7 +130,8 @@ const related = allPosts
   .sort(
     (a, b) =>
       b.score - a.score ||
-      new Date(b.post.data.date).getTime() - new Date(a.post.data.date).getTime()
+      new Date(b.post.data.date).getTime() -
+        new Date(a.post.data.date).getTime()
   )
   .slice(0, 6)
   .map((x) => x.post);
@@ -120,7 +142,8 @@ const publisherName =
   new URL(siteUrl || Astro.url).hostname;
 
 const publisherLogoUrl =
-  (site && ((site as any).publisherLogo || (site as any).orgLogo)) || undefined;
+  (site && ((site as any).publisherLogo || (site as any).orgLogo)) ||
+  undefined;
 
 const author =
   typeof entry.data.author === "string"
@@ -138,7 +161,9 @@ const author =
 // Estimate wordCount if not provided: readingTime (min) * 200 wpm
 const wordCount =
   (entry.data as any).wordCount ??
-  (typeof readingTime === "number" ? Math.max(1, Math.round(readingTime * 200)) : undefined);
+  (typeof readingTime === "number"
+    ? Math.max(1, Math.round(readingTime * 200))
+    : undefined);
 
 const jsonLd: Record<string, any> = {
   "@context": "https://schema.org",
@@ -151,17 +176,22 @@ const jsonLd: Record<string, any> = {
   mainEntityOfPage: canonicalAbs,
   image:
     (entry.data as any).ogImage ||
-    (typeof cover?.src === "string"
-      ? cover?.src
-      : typeof cover?.src === "object"
-      ? cover?.src.src
+    (typeof coverForMeta?.src === "string"
+      ? coverForMeta.src
+      : typeof coverForMeta?.src === "object"
+      ? coverForMeta.src.src
       : undefined),
   author,
   publisher: {
     "@type": "Organization",
     name: publisherName,
     ...(publisherLogoUrl
-      ? { logo: { "@type": "ImageObject", url: String(publisherLogoUrl) } }
+      ? {
+          logo: {
+            "@type": "ImageObject",
+            url: String(publisherLogoUrl),
+          },
+        }
       : {}),
   },
   articleSection: categorySlug,
@@ -174,10 +204,34 @@ const breadcrumbsLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home",  item: siteUrl ? new URL("/", siteUrl).toString() : "/" },
-    { "@type": "ListItem", position: 2, name: "Blog",  item: siteUrl ? new URL("/blog/", siteUrl).toString() : "/blog/" },
-    { "@type": "ListItem", position: 3, name: (categorySlug || "").replaceAll("-", " "), item: siteUrl ? new URL(`/blog/${categorySlug}/`, siteUrl).toString() : `/blog/${categorySlug}/` },
-    { "@type": "ListItem", position: 4, name: title, item: canonicalAbs || pathname }
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteUrl ? new URL("/", siteUrl).toString() : "/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: siteUrl
+        ? new URL("/blog/", siteUrl).toString()
+        : "/blog/",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: (categorySlug || "").replaceAll("-", " "),
+      item: siteUrl
+        ? new URL(`/blog/${categorySlug}/`, siteUrl).toString()
+        : `/blog/${categorySlug}/`,
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      name: title,
+      item: canonicalAbs || pathname,
+    },
   ],
 };
 
@@ -190,6 +244,7 @@ const layoutProps = {
   date,
   updated,
   readingTime,
+  // Pass raw cover object directly from frontmatter (Fix Plan 190.2)
   cover,
   tocHeadings,
   showTOC,
@@ -214,17 +269,22 @@ const layoutProps = {
   <!-- Optional hreflang set when alternates provided -->
   {alternates &&
     alternates.map((alt) => (
-      <link slot="head" rel="alternate" hreflang={alt.hrefLang} href={alt.href} />
+      <link
+        slot="head"
+        rel="alternate"
+        hreflang={alt.hrefLang}
+        href={alt.href}
+      />
     ))}
 
   <!-- LCP image preload (only one) -->
   {(() => {
     const fm = entry.data as any;
     const href =
-      typeof cover?.src === "string"
-        ? cover.src
-        : typeof cover?.src === "object"
-        ? cover.src.src
+      typeof coverForMeta?.src === "string"
+        ? coverForMeta.src
+        : typeof coverForMeta?.src === "object"
+        ? coverForMeta.src.src
         : fm?.ogImage ?? null;
 
     const srcset: string | undefined = Array.isArray(fm?.coverSrcset)
@@ -256,95 +316,37 @@ const layoutProps = {
 
   <!-- Article-specific Open Graph/Twitter (BaseLayout already sets url/image/title/description) -->
   <meta slot="head" property="og:type" content="article" />
-  {site?.siteName && <meta slot="head" property="og:site_name" content={(site as any).siteName} />}
+  {site?.siteName && (
+    <meta
+      slot="head"
+      property="og:site_name"
+      content={(site as any).siteName}
+    />
+  )}
   <meta slot="head" name="twitter:card" content="summary_large_image" />
 
   <!-- Reading progress bar (island) -->
-  <div id="read-progress" class="read-progress" aria-hidden="true"></div>
-  <script type="module" src="/src/components/blog/islands/readingProgress.ts"></script>
+  <div
+    id="read-progress"
+    class="read-progress"
+    aria-hidden="true"
+  ></div>
+  <script
+    type="module"
+    src="/src/components/blog/islands/readingProgress.ts"
+  ></script>
 
   <BlogPost {...layoutProps}>
-    {/* TOC slot — collapsible details */}
-    {showTOC && (
-      <Fragment slot="toc">
-        <details class="toc-details">
-          <summary>Table of contents</summary>
-          <ol class="toc-list">
-            {tocHeadings.map((h) => (
-              <li class={`d${h.depth}`}>
-                <a href={`#${h.slug}`}>{h.text}</a>
-              </li>
-            ))}
-          </ol>
-        </details>
-      </Fragment>
-    )}
+    {/* Article body with MDX shortcodes enabled; BlogPost handles TOC, tags, share, nav, related, lead magnet via compose components */}
+    <Content components={mdxComponents} />
 
-    {/* Article body with MDX shortcodes enabled */}
-    <section class="post__content prose">
-      <Content components={mdxComponents} />
+    {/* Fix Plan 190.2: ensure Comments slot has visible content */}
+    <section slot="comments" class="comments-placeholder">
+      <h2 class="h4">Comments</h2>
+      <p>
+        Comments for this article will be available soon. For now, you can
+        reach us via the contact page if you have questions or feedback.
+      </p>
     </section>
-
-    {/* Mid-content inline CTA (one only, with UTM) */}
-    <section class="post__inlineCta container" style="margin-block: var(--space-8);">
-      <div class="card">
-        <h2 class="h4">Ready for a CV upgrade?</h2>
-        <p>Get a professional rewrite tailored for ATS and recruiters.</p>
-        <a
-          class="btn btn-primary"
-          href="/services/cv-rewrite?utm_source=blog&utm_medium=post&utm_campaign=inline-cta"
-        >Book now</a>
-      </div>
-    </section>
-
-    {/* Lead magnet slot */}
-    <Fragment slot="leadmagnet">
-      <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF" class="container">
-        <form method="post" action="/api/subscribe/">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="email" required inputmode="email" />
-          <button type="submit" class="btn btn-primary">Get the guide</button>
-          <p class="privacy-note">We respect your privacy.</p>
-        </form>
-      </section>
-    </Fragment>
-
-    {/* Related slot */}
-    {related.length > 0 && (
-      <Fragment slot="related">
-        <ul class="post__relatedList">
-          {related.map((p) => {
-            const url = `/blog/${p.data.category ?? catFromPath(p)}/${baseSlug(p)}/`;
-            return (
-              <li>
-                <a href={url}>{p.data.title}</a>
-              </li>
-            );
-          })}
-        </ul>
-      </Fragment>
-    )}
-
-    {/* Prev/Next slot */}
-    <Fragment slot="nav">
-      <PostNav prev={prev} next={next} />
-    </Fragment>
   </BlogPost>
 </BaseLayout>
-
-<style>
-/* Page-scoped utilities for slots. Main styling lives in BlogPost.css */
-.toc-list { list-style: none; margin: 0; padding: 0 var(--space-2) var(--space-2) var(--space-2); }
-.toc-list li { margin: 0.25rem 0; }
-.toc-list li.d3 { padding-left: 0.75rem; }
-.post__relatedList { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
-
-/* Simple inline CTA card */
-.post__inlineCta .card {
-  padding: clamp(16px, 2.5vw, 24px);
-  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-</style>

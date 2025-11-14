@@ -1,19 +1,108 @@
-/* Keep component CSS minimal and scoped. Global tokens/typography come from styles/index.css */
+/* src/components/blog/compose/PostHeader/PostHeader.css */
+
+/*
+  Post header: category eyebrow + H1 + optional dek.
+  Mobile-first, constrained to reading width, aligned with global tokens.
+*/
 
 .post .post__header {
-  margin: 0 0 var(--space-6);
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+  margin-block-end: var(--space-4);
 }
 
-/* Eyebrow inherits type scale from global rules */
-.post .post__eyebrow {
-  display: inline-block;
+/* Inner header block */
+
+.post .postHeader__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-/* Title spacing guard when used standalone */
+/* Eyebrow / category label above title */
 
-/* Dek: short summary under the title */
-.post .post__dek {
-  margin-top: var(--space-3);
+.post .postHeader__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.post .postHeader__eyebrowLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-inline: var(--space-2);
+  padding-block: calc(var(--space-1) / 2);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: var(--fs-sm);
+  color: var(--color-primary);
+  background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  transition:
+    color 150ms ease-out,
+    background-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+
+.post .postHeader__eyebrowLink:hover,
+.post .postHeader__eyebrowLink:focus-visible {
+  background-color: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
+  box-shadow: var(--shadow-sm);
+  outline: none;
+}
+
+/* Title – main post H1 */
+
+.post .postHeader__title {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.2;
+  max-width: 26rem; /* keep titles readable on narrow screens */
+}
+
+/* Dek – short summary under the title */
+
+.post .postHeader__dek {
+  margin: 0;
+  margin-block-start: var(--space-3);
   max-width: 65ch;
   line-height: 1.5;
+  font-size: var(--fs-base);
+  color: var(--color-muted);
+}
+
+/* Responsive refinements */
+
+@media (min-width: 640px) {
+  .post .postHeader__title {
+    max-width: 32rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .post .post__header {
+    padding-inline: var(--space-6);
+    margin-block-end: var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .post .postHeader__inner {
+    gap: var(--space-3);
+  }
+
+  .post .postHeader__title {
+    max-width: 40rem;
+  }
+
+  .post .postHeader__dek {
+    font-size: var(--fs-lg);
+  }
 }

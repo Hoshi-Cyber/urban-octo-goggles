@@ -1,20 +1,58 @@
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
-@import "../../../../styles/utilities.css";
+/* src/components/blog/compose/PostCover/PostCover.css */
 
-/* Scope strictly to the post context */
+/*
+  Post cover / hero image for single blog post.
+  CLS-safe, mobile-first, aligned with global tokens.
+*/
+
 .post .post__cover {
   margin: 0 0 var(--space-8);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Ensure picture and image fill width and prevent layout shift */
+
+.post .post__cover picture {
+  display: block;
 }
 
 .post .post__cover img {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
   object-fit: cover;
-  aspect-ratio: 16 / 9; /* prevents CLS */
+  aspect-ratio: 16 / 9; /* fallback aspect ratio to guard against CLS */
+}
+
+/* Caption / credit line */
+
+.post .postCover__caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  background: var(--color-surface);
+}
+
+.post .postCover__captionText {
+  margin: 0;
+}
+
+.post .postCover__credit {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Slight tightening on very small screens if needed */
+
+@media (min-width: 768px) {
+  .post .postCover__caption {
+    padding-inline: var(--space-6);
+  }
 }

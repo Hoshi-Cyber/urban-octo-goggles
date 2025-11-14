@@ -1,21 +1,167 @@
 ---
-interface ShareProps { title: string; url: string; }
-const { title, url } = Astro.props as ShareProps;
+// src/components/blog/base/PostShare/index.astro
+
+import sheet from "./PostShare.css?url";
+import type { PostShareProps } from "./types";
+
+const { title, url, via, excerpt } = Astro.props as PostShareProps;
 
 const enc = (s: string) => encodeURIComponent(s);
+
 const shareUrl = url;
-const xUrl = `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(shareUrl)}`;
-const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${enc(shareUrl)}`;
+const shareText = excerpt ? `${title} – ${excerpt}` : title;
 
-// Colocated CSS
-const sheet = new URL("./PostShare.css", import.meta.url).toString();
+// X (Twitter)
+const xBase = "https://twitter.com/intent/tweet";
+let xUrl = `${xBase}?text=${enc(shareText)}&url=${enc(shareUrl)}`;
+if (via) {
+  xUrl += `&via=${enc(via)}`;
+}
 
-const onCopy = `navigator.clipboard&&navigator.clipboard.writeText('${shareUrl}');`;
+// LinkedIn
+const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${enc(
+  shareUrl,
+)}`;
+
+// WhatsApp
+const waText = `${shareText} ${shareUrl}`;
+const waUrl = `https://wa.me/?text=${enc(waText)}`;
+
+// Email
+const emailSubject = title;
+const emailBody = `${shareText}\n\n${shareUrl}`;
+const emailUrl = `mailto:?subject=${enc(emailSubject)}&body=${enc(emailBody)}`;
 ---
 <link rel="stylesheet" href={sheet} />
 
-<nav class="post__share" aria-label="Share this article">
-  <button class="post__share-btn" type="button" on:click={onCopy}>Copy link</button>
-  <a class="post__share-link" href={xUrl} rel="noopener nofollow" target="_blank" aria-label="Share on X">X</a>
-  <a class="post__share-link" href={liUrl} rel="noopener nofollow" target="_blank" aria-label="Share on LinkedIn">LinkedIn</a>
-</nav>
+<section
+  class="post__shareSection"
+  aria-labelledby="post-share-title"
+  role="region"
+>
+  <header class="post__shareHeader">
+    <h2 id="post-share-title" class="post__shareTitle h6">
+      Share this article
+    </h2>
+  </header>
+
+  <nav class="post__shareNav" aria-label="Share this article">
+    <ul class="post__shareList">
+      <!-- 1. Copy link -->
+      <li class="post__shareItem post__shareItem--copy">
+        <button
+          type="button"
+          class="post__shareButton post__shareButton--copy"
+          data-share-copy
+          data-share-url={shareUrl}
+          data-share-network="copy"
+        >
+          <span class="post__shareLabel">Copy link</span>
+        </button>
+      </li>
+
+      <!-- 2. WhatsApp -->
+      <li class="post__shareItem post__shareItem--whatsapp">
+        <a
+          href={waUrl}
+          class="post__shareButton post__shareButton--whatsapp"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label="Share on WhatsApp (opens in a new tab)"
+          data-share-network="whatsapp"
+        >
+          <span class="post__shareLabel">WhatsApp</span>
+        </a>
+      </li>
+
+      <!-- 3. LinkedIn -->
+      <li class="post__shareItem post__shareItem--linkedin">
+        <a
+          href={liUrl}
+          class="post__shareButton post__shareButton--linkedin"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label="Share on LinkedIn (opens in a new tab)"
+          data-share-network="linkedin"
+        >
+          <span class="post__shareLabel">LinkedIn</span>
+        </a>
+      </li>
+
+      <!-- 4. Email -->
+      <li class="post__shareItem post__shareItem--email">
+        <a
+          href={emailUrl}
+          class="post__shareButton post__shareButton--email"
+          aria-label="Share via email"
+          data-share-network="email"
+        >
+          <span class="post__shareLabel">Email</span>
+        </a>
+      </li>
+
+      <!-- 5. X (Twitter) -->
+      <li class="post__shareItem post__shareItem--x">
+        <a
+          href={xUrl}
+          class="post__shareButton post__shareButton--x"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label="Share on X (opens in a new tab)"
+          data-share-network="x"
+        >
+          <span class="post__shareLabel">X</span>
+        </a>
+      </li>
+    </ul>
+
+    <p
+      class="post__shareStatus"
+      aria-live="polite"
+      role="status"
+      data-share-status
+    ></p>
+  </nav>
+</section>
+
+<script>
+  if (typeof window !== "undefined") {
+    const statusEl = document.querySelector("[data-share-status]");
+
+    function setStatus(message) {
+      if (!statusEl) return;
+      statusEl.textContent = message || "";
+      if (!message) return;
+      window.setTimeout(() => {
+        if (statusEl.textContent === message) statusEl.textContent = "";
+      }, 4000);
+    }
+
+    document.addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const copyBtn = target.closest("[data-share-copy]");
+      if (!copyBtn) return;
+
+      const url = copyBtn.getAttribute("data-share-url");
+      if (!url) return;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const tmp = document.createElement("input");
+          tmp.value = url;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand("copy");
+          document.body.removeChild(tmp);
+        }
+        setStatus("Link copied to clipboard.");
+      } catch (err) {
+        setStatus("Unable to copy link. Please copy manually.");
+      }
+    });
+  }
+</script>

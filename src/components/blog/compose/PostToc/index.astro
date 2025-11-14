@@ -1,24 +1,36 @@
 ---
-import css from "./PostToc.css?url";
+// src/components/blog/compose/PostToc/index.astro
 
-type Depth = 2 | 3;
-interface Heading { id: string; text: string; depth: Depth; }
-interface TocProps { headings?: Heading[]; }
+import css from "./PostToc.css?url";
+import type { TocProps, TocHeading } from "./types";
 
 const { headings = [] } = Astro.props as TocProps;
-const items = headings.filter((h) => h && (h.depth === 2 || h.depth === 3));
-const show = items.length >= 2;
+
+// Only allow H2/H3-level headings
+const items: TocHeading[] = headings.filter(
+  (h) => h && (h.depth === 2 || h.depth === 3),
+);
+
+// Require a sensible minimum number of headings
+const MIN_ITEMS = 3;
+const showToc = items.length >= MIN_ITEMS;
 ---
 <link rel="stylesheet" href={css} />
 
-{show && (
-  <aside class="post__toc" aria-label="On this page">
-    <ul class="post__toc-list">
+{showToc && (
+  <nav class="post__toc" aria-labelledby="post-toc-title">
+    <h2 id="post-toc-title" class="post__toc-title h5">
+      On this page
+    </h2>
+
+    <ol class="post__toc-list">
       {items.map((h) => (
         <li class={`post__toc-item post__toc-item--d${h.depth}`}>
-          <a href={`#${h.id}`}>{h.text}</a>
+          <a href={`#${h.slug}`} class="post__toc-link">
+            {h.text}
+          </a>
         </li>
       ))}
-    </ul>
-  </aside>
+    </ol>
+  </nav>
 )}

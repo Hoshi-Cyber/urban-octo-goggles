@@ -1,64 +1,82 @@
-/* Mobile-first. Uses brand tokens and global utilities. */
+/* src/components/blog/base/Breadcrumbs/Breadcrumbs.css */
+
+/*
+  Blog breadcrumbs
+  - Compact, low-noise trail above the post header
+  - Mobile-first, wraps cleanly on narrow screens
+  - Uses color and subtle background (no underlines)
+*/
 
 .breadcrumbs {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
   padding-block: var(--space-2);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   color: var(--color-muted);
 }
 
 .breadcrumbs__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
 }
 
+/* Items + separators */
 .breadcrumbs__item {
   display: inline-flex;
   align-items: center;
-  min-width: 0; /* allow truncation */
+  gap: var(--space-1);
 }
 
-/* Separator */
-.breadcrumbs__item + .breadcrumbs__item::before {
+.breadcrumbs__item:not(:last-child)::after {
   content: "/";
-  margin-inline: var(--space-2);
-  color: var(--color-muted);
-  opacity: 0.6;
+  font-size: 0.9em;
+  color: color-mix(in oklab, var(--color-muted) 80%, transparent);
 }
 
-/* Links */
+/* Link + current styles */
 .breadcrumbs__link {
-  color: var(--color-muted);
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-1);
+  padding-block: 2px;
+  border-radius: 999px;
   text-decoration: none;
-  outline-offset: 2px;
-  max-width: 40ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--color-muted);
+  background-color: transparent;
+  transition:
+    color 150ms ease-out,
+    background-color 150ms ease-out,
+    box-shadow 150ms ease-out;
 }
 
 .breadcrumbs__link:hover,
-.breadcrumbs__link:focus {
+.breadcrumbs__link:focus-visible {
   color: var(--color-primary);
-  text-decoration: underline;
+  background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.05));
+  outline: none;
 }
 
-/* Current page */
 .breadcrumbs__current {
-  color: var(--color-text);
   font-weight: 600;
-  max-width: 40ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--color-text);
 }
 
-/* Slight readability bump on larger screens */
-@media (min-width: 640px) {
+/* Responsive refinements */
+@media (min-width: 768px) {
   .breadcrumbs {
-    font-size: var(--fs-base);
+    padding-block: var(--space-3);
+  }
+}
+
+@media (min-width: 1024px) {
+  .breadcrumbs {
+    padding-block: var(--space-4);
   }
 }

@@ -1,34 +1,88 @@
 ---
-// File: src/components/blog/compose/PostCover/index.astro
+// src/components/blog/compose/PostCover/index.astro
+// Fix Plan 190.2 – normalise cover prop (string | ImageMetadata) and
+// render a CLS-safe hero image card.
 
-interface PostCoverProps {
-  src: string
-  alt?: string
-  width?: number
-  height?: number
-  loading?: "eager" | "lazy"
+import css from "./PostCover.css?url";
+
+type CoverSrc =
+  | string
+  | {
+      src: string;
+      width?: number;
+      height?: number;
+    };
+
+interface CoverData {
+  src: CoverSrc;
+  alt?: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+  credit?: string;
 }
 
-const {
-  src,
-  alt = "",
-  width = 1280,
-  height = 720,
-  loading = "eager",
-} = Astro.props as PostCoverProps
+interface PostCoverProps {
+  cover: CoverData;
+  /**
+   * Optional post title, used as a fallback for alt text when cover.alt is missing.
+   */
+  title?: string;
+}
 
-// Local component CSS only (per Fix Plan 155)
-import css from "./PostCover.css?url"
+const { cover, title = "" } = Astro.props as PostCoverProps;
+
+const isMeta = cover && typeof cover.src !== "string";
+
+let imgSrc: string | undefined;
+let imgWidth: number | undefined;
+let imgHeight: number | undefined;
+
+if (isMeta) {
+  const meta = cover.src as { src: string; width?: number; height?: number };
+  imgSrc = meta.src;
+  imgWidth = meta.width ?? cover.width;
+  imgHeight = meta.height ?? cover.height;
+} else {
+  imgSrc = cover.src as string;
+  imgWidth = cover.width;
+  imgHeight = cover.height;
+}
+
+const imgAlt = cover.alt || title || "";
+const hasCaption = Boolean(cover.caption || cover.credit);
 ---
-<figure class="post__cover">
-  <link rel="stylesheet" href={css} />
-  <img
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    loading={loading}
-    decoding="async"
+<link rel="stylesheet" href={css} />
+
+{imgSrc && (
+  <figure
+    class="post__cover container"
     itemprop="image"
-  />
-</figure>
+    itemscope
+    itemtype="https://schema.org/ImageObject"
+  >
+    <img
+      src={imgSrc}
+      alt={imgAlt}
+      width={imgWidth}
+      height={imgHeight}
+      loading="lazy"
+      decoding="async"
+      itemprop="url"
+    />
+
+    {hasCaption && (
+      <figcaption class="caption">
+        {cover.caption && (
+          <span class="postCover__captionText">{cover.caption}</span>
+        )}
+        {cover.credit && (
+          <span class="postCover__credit">
+            {cover.caption && <span aria-hidden="true"> · </span>}
+            {cover.credit}
+          </span>
+        )}
+      </figcaption>
+    )}
+  </figure>
+)}

@@ -1,71 +1,213 @@
-/* Mobile-first CTA strip. Uses global tokens, .card, .btn, and container. */
+/* src/components/blog/compose/LeadMagnetStrip/LeadMagnetStrip.css */
 
-.leadmag {
-  padding-block: var(--space-6);
-}
+/*
+  LeadMagnetStrip – bottom-of-article conversion strip.
+  Mobile-first, token-driven, visually prominent but aligned with blog system.
+  FP-190.1: Card-style strip, stacked on mobile, horizontal at ≥768px.
+*/
 
-.leadmag__card {
-  display: grid;
-  gap: var(--space-4);
-  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-  background: color-mix(in oklab, var(--color-primary) 5%, #fff);
+/* Card surface */
+.leadMagnet,
+.post .post__leadmagnet .leadMagnet {
   border-radius: var(--radius-xl);
+  background-color: var(--color-primary-soft, var(--color-surface));
+  padding: var(--space-5);
+  box-shadow: var(--shadow-md);
 }
 
-.leadmag__content {
-  display: grid;
+/* Inner layout */
+.leadMagnet__inner,
+.post .post__leadmagnet .leadMagnet__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Copy column */
+.leadMagnet__copy,
+.post .post__leadmagnet .leadMagnet__copy {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
 }
 
-.leadmag__icon {
-  font-size: var(--fs-2xl);
-  line-height: 1;
+/* Eyebrow / label */
+.leadMagnet__eyebrow,
+.post .post__leadmagnet .leadMagnet__eyebrow {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
 }
 
-.leadmag__title {
+/* Title */
+.leadMagnet__title,
+.post .post__leadmagnet .leadMagnet__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+
+/* Body copy */
+.leadMagnet__body,
+.post .post__leadmagnet .leadMagnet__body {
   margin: 0;
+  max-width: 50rem;
+  font-size: var(--fs-base);
   color: var(--color-text);
 }
 
-.leadmag__subtitle {
+/* Fine print */
+.leadMagnet__finePrint,
+.post .post__leadmagnet .leadMagnet__finePrint {
   margin: 0;
+  font-size: var(--fs-sm);
   color: var(--color-muted);
-  max-width: 70ch;
 }
 
-.leadmag__actions {
-  display: grid;
+/* Actions column */
+.leadMagnet__actions,
+.post .post__leadmagnet .leadMagnet__actions {
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-3);
-  align-content: start;
 }
 
-.leadmag__secondary {
-  background: #fff;
-  color: var(--color-primary);
-  border: 1px solid color-mix(in oklab, var(--color-primary) 24%, transparent);
+/* Primary CTA (new + legacy class) */
+.leadMagnet__primary,
+.post .post__leadmagnet .leadMagnet__primary,
+.post .post__leadmagnet .leadMagnet__primaryCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-4);
+  padding-block: var(--space-2);
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    color 150ms ease-out,
+    box-shadow 100ms ease-out,
+    transform 80ms ease-out;
 }
 
-/* md+: split content and actions */
-@media (min-width: 768px) {
-  .leadmag__card {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    padding: var(--space-6);
-  }
-  .leadmag__actions {
-    justify-items: end;
-  }
+.leadMagnet__primary:hover,
+.post .post__leadmagnet .leadMagnet__primary:hover,
+.post .post__leadmagnet .leadMagnet__primaryCta:hover {
+  background-color: var(--color-primary-strong, var(--color-primary));
+  border-color: var(--color-primary-strong, var(--color-primary));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-0.5px);
 }
 
-/* xl+: larger breathing room */
-@media (min-width: 1280px) {
-  .leadmag__card {
-    padding: var(--space-8);
-  }
+.leadMagnet__primary:active,
+.post .post__leadmagnet .leadMagnet__primary:active,
+.post .post__leadmagnet .leadMagnet__primaryCta:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Focus visibility safety */
-.leadmag :where(a, button):focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+.leadMagnet__primary:focus-visible,
+.post .post__leadmagnet .leadMagnet__primary:focus-visible,
+.post .post__leadmagnet .leadMagnet__primaryCta:focus-visible {
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+/* Secondary CTA (new + legacy class) */
+.leadMagnet__secondary,
+.post .post__leadmagnet .leadMagnet__secondary,
+.post .post__leadmagnet .leadMagnet__secondaryCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-3);
+  padding-block: var(--space-2);
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-light-alt);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    color 150ms ease-out,
+    transform 80ms ease-out;
+}
+
+.leadMagnet__secondary:hover,
+.post .post__leadmagnet .leadMagnet__secondary:hover,
+.post .post__leadmagnet .leadMagnet__secondaryCta:hover {
+  background-color: var(--color-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.leadMagnet__secondary:active,
+.post .post__leadmagnet .leadMagnet__secondary:active,
+.post .post__leadmagnet .leadMagnet__secondaryCta:active {
+  transform: translateY(0.5px);
+}
+
+.leadMagnet__secondary:focus-visible,
+.post .post__leadmagnet .leadMagnet__secondaryCta:focus-visible,
+.post .post__leadmagnet .leadMagnet__secondary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive layout: horizontal from 768px */
+@media (min-width: 768px) {
+  .leadMagnet__inner,
+  .post .post__leadmagnet .leadMagnet__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .leadMagnet__copy,
+  .post .post__leadmagnet .leadMagnet__copy {
+    max-width: 42rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .leadMagnet__primary,
+  .leadMagnet__secondary,
+  .post .post__leadmagnet .leadMagnet__primary,
+  .post .post__leadmagnet .leadMagnet__secondary,
+  .post .post__leadmagnet .leadMagnet__primaryCta,
+  .post .post__leadmagnet .leadMagnet__secondaryCta {
+    transition: none;
+  }
+
+  .leadMagnet__primary:hover,
+  .leadMagnet__primary:active,
+  .leadMagnet__secondary:hover,
+  .leadMagnet__secondary:active,
+  .post .post__leadmagnet .leadMagnet__primary:hover,
+  .post .post__leadmagnet .leadMagnet__primary:active,
+  .post .post__leadmagnet .leadMagnet__secondary:hover,
+  .post .post__leadmagnet .leadMagnet__secondary:active,
+  .post .post__leadmagnet .leadMagnet__primaryCta:hover,
+  .post .post__leadmagnet .leadMagnet__primaryCta:active,
+  .post .post__leadmagnet .leadMagnet__secondaryCta:hover,
+  .post .post__leadmagnet .leadMagnet__secondaryCta:active {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
 }

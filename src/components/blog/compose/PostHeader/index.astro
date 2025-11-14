@@ -1,13 +1,52 @@
 ---
+// src/components/blog/compose/PostHeader/index.astro
 import type { PostHeaderProps } from "./types";
 import sheet from "./PostHeader.css?url";
 
-const { title, eyebrow, dek, id, class: className } = Astro.props as PostHeaderProps;
+const {
+  title,
+  category,
+  categoryUrl,
+  eyebrow,
+  dek,
+  id,
+  class: className,
+} = Astro.props as PostHeaderProps;
+
+const eyebrowLabel = eyebrow ?? category;
+
+// Compose root class in a safe, extensible way
+const baseClass = "post__header postHeader";
+const headerClass = [baseClass, className].filter(Boolean).join(" ");
 ---
 <link rel="stylesheet" href={sheet} />
 
-<header id={id} class={`post__header${className ? ` ${className}` : ""}`} data-section="post-header">
-  {eyebrow && <p class="post__eyebrow">{eyebrow}</p>}
-  <h1 class="post__title" itemprop="headline">{title}</h1>
-  {dek && <p class="post__dek">{dek}</p>}
+<header
+  id={id}
+  class={headerClass}
+  data-section="post-header"
+>
+  <div class="postHeader__inner">
+    {eyebrowLabel && (
+      <p class="postHeader__eyebrow">
+        {categoryUrl ? (
+          <a href={categoryUrl} class="postHeader__eyebrowLink">
+            {eyebrowLabel}
+          </a>
+        ) : (
+          <span>{eyebrowLabel}</span>
+        )}
+      </p>
+    )}
+
+    <h1 class="postHeader__title" itemprop="headline">
+      {title}
+    </h1>
+
+    {dek && (
+      <p class="postHeader__dek">
+        {dek}
+      </p>
+    )}
+  </div>
 </header>

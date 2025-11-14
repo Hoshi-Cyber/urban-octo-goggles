@@ -14,33 +14,41 @@
 /* Copy button */
 .mdx-code__copy {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 10px;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-light);
-  background: #fff;
+  background: var(--color-surface);
   font-size: var(--fs-sm);
   line-height: 1.2;
   color: var(--color-text);
+  cursor: pointer;
 }
 
-.mdx-code__copy:hover,
-.mdx-code__copy:focus-visible {
+.mdx-code__copy:hover {
   border-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
-  outline: none;
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 20%, transparent);
+}
+
+/* Accessible focus – token-based outline */
+.mdx-code__copy:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Status text */
 .mdx-code__copy .label::after {
   content: attr(data-ready);
 }
+
 .mdx-code__copy[data-state="copied"] .label::after {
   content: attr(data-copied);
 }
 
 /* Very small screens: keep button tappable without overlapping text */
 @media (max-width: 359px) {
-  .mdx-code__copy { top: 10px; right: 10px; }
+  .mdx-code__copy {
+    top: var(--space-2);
+    right: var(--space-2);
+  }
 }

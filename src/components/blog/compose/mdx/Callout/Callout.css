@@ -15,26 +15,29 @@
   margin-top: var(--space-2);
 }
 
-/* Variants driven by tokens */
+/* Variants driven by tokens only */
 .mdx-callout[data-type="info"] {
   border-color: color-mix(in oklab, var(--color-primary) 24%, transparent);
-  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
+  background: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
 }
+
 .mdx-callout[data-type="success"] {
   border-color: color-mix(in oklab, var(--color-accent) 24%, transparent);
-  background: color-mix(in oklab, var(--color-accent) 6%, #fff);
+  background: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
 }
+
 .mdx-callout[data-type="warn"] {
   border-color: color-mix(in oklab, var(--color-warning) 28%, transparent);
-  background: color-mix(in oklab, var(--color-warning) 8%, #fff);
+  background: color-mix(in oklab, var(--color-warning) 8%, var(--color-surface));
 }
+
 .mdx-callout[data-type="danger"] {
   border-color: color-mix(in oklab, var(--color-error) 28%, transparent);
-  background: color-mix(in oklab, var(--color-error) 8%, #fff);
+  background: color-mix(in oklab, var(--color-error) 8%, var(--color-surface));
 }
 
 /* Focus safety for any interactive children */
-.mdx-callout :where(a,button):focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+.mdx-callout :where(a, button):focus-visible {
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
