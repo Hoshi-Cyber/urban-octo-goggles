@@ -1,12 +1,14 @@
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
-@import "../../../../styles/utilities.css";
+/* src/components/blog/compose/PostMeta/PostMeta.css */
 
-/* Post meta — mobile-first, structural + visual lives here */
+/*
+  Post meta row – published date, updated date, author, reading time.
+  Mobile-first, compact, and aligned with global tokens.
+*/
+
 .post .post__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem; /* compact, readable spacing */
+  gap: var(--space-1) var(--space-3);
   align-items: center;
   margin: 0 0 var(--space-4);
   padding: 0;
@@ -15,7 +17,8 @@
   font-size: var(--fs-sm);
 }
 
-/* Keep semantics without visual noise */
+/* Keep semantics readable for screen readers but visually minimal */
+
 .post .post__meta dt {
   position: absolute;
   width: 1px;
@@ -30,7 +33,19 @@
 
 .post .post__meta dd {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
 }
+
+/* Compact separators between meta items */
+
+.post .post__meta dd + dd::before {
+  content: "•";
+  margin-inline: var(--space-1);
+  color: var(--color-muted);
+}
+
+/* Dates stay on a single line to avoid awkward wrapping */
 
 .post .post__meta time {
   white-space: nowrap;

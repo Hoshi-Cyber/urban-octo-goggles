@@ -1,8 +1,14 @@
 # File: netlify.toml
 
 [build]
-  command = "npm ci && npm run build"
-  publish  = "dist"
+  # Astro (SSR) via Netlify adapter writes to ".netlify/"
+  command = "npm run build"
+  publish = ".netlify"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Adapter toggle used in astro.config.mjs
+  USE_NETLIFY = "true"
 
 # ---------------------------
 # Global security headers

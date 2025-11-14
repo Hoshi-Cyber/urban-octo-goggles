@@ -1,5 +1,7 @@
 // File: src/components/CookieBanner/index.astro
-/** CookieBanner — CLS-safe consent banner without inline JS (CSP-friendly) */
+/** CookieBanner — CLS-safe consent banner; no per-component JS import.
+ *  FP-187 5.d: Consent script is bundled once at the layout; do not import here.
+ */
 import "./CookieBanner.css";
 ---
 
@@ -33,5 +35,4 @@ import "./CookieBanner.css";
   </div>
 </div>
 
-<!-- External module (no inline JS → compatible with strict CSP) -->
-<script type="module" src="/src/scripts/consent-banner.ts"></script>
+<!-- FP-187 5.d: No script tag here. Consent logic is loaded globally by the layout. -->

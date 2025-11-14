@@ -11,6 +11,7 @@
  * FP-166: LeadMagnetStrip modern placement and CSS parity on paginated pages.
  * FP-169: Pagination sits inside the same stack right after LeadMagnetStrip.
  * FP-169.2: Add RelatedCategories after Pagination; no extra wrappers; up to 6 chips.
+ * FP-187.5c: Consolidate canonical/og:url into BaseLayout only.
  */
 
 import BaseLayout from "../../../../components/layout/BaseLayout.astro";
@@ -39,7 +40,7 @@ import {
   prettyCategoryTitle,
   buildCategoryTitle,
   buildCategoryDescription,
-  relatedCategories, // FP-169.2: helper to derive sibling categories
+  relatedCategories, // FP-169.2
 } from "../../../../lib/blog/categories";
 
 import { categorySlug, postUrlFromEntry, abs as absUrl } from "../../../../lib/slug";
@@ -165,13 +166,15 @@ const breadcrumbItems = [
 const ogImage = pageItems[0]?.thumbnailSrc ?? null;
 ---
 
-<BaseLayout title={pageTitle} description={desc} seo={{ canonical }}>
-  <fragment slot="head">
-    <link rel="canonical" href={canonical} />
-    {prevUrl && <link rel="prev" href={prevUrl} />}
-    {nextUrl && <link rel="next" href={nextUrl} />}
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:url" content={canonical} />
+<BaseLayout
+  title={pageTitle}
+  description={desc}
+  seo={{ canonical, ogImage }}
+  relPrev={prevUrl}
+  relNext={nextUrl}
+>
+  <Fragment slot="head">
+    {/* FP-187.5c: canonical and og:url are emitted by BaseLayout exclusively */}
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <link rel="preload" as="image" href={ogImage} />}
 
@@ -184,7 +187,7 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
     <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(itemListLd)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(collectionPageLd)}</script>
-  </fragment>
+  </Fragment>
 
   <section class="container page-gap-after" data-section="category" aria-label="Category articles">
     <Breadcrumbs items={breadcrumbItems} />

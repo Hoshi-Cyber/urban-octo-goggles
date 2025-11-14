@@ -1,6 +1,7 @@
 ---
-// File: src/components/layout/BaseLayout.astro
-// Notes: Fix Plan 186 compliant. Do not place comments before this fence.
+/** File: src/components/layout/BaseLayout.astro
+    Fix Plan 187: Robust canonical resolver + unified usage
+*/
 
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
@@ -38,24 +39,32 @@ const pageTitle: string = (String(title).trim() || "CV Writing Kenya");
 
 // Env + site
 const isDev = import.meta.env.DEV;
-const siteUrl = (siteConfig as any).siteUrl?.replace(/\/$/, "") ?? "";
-const base = isDev ? "" : siteUrl;
 
-// Canonical
-const canonicalSrc =
-  (typeof inCanonical === "string" && inCanonical) ||
-  (seo as any)?.canonical ||
-  Astro.url.pathname;
+// Base URL from config (trim trailing slash)
+const siteUrl: string = (siteConfig as any)?.siteUrl?.replace(/\/$/, "") || "";
 
-const canonical = canonicalSrc?.startsWith("http")
-  ? canonicalSrc
-  : `${base}${canonicalSrc ?? ""}`;
+// Helper: make absolute URL
+function toAbsolute(u: string): string {
+  if (!u) return "";
+  try {
+    // Already absolute?
+    return new URL(u).href;
+  } catch {
+    // Resolve against configured siteUrl if available; else leave as-is
+    return siteUrl ? siteUrl + (u.startsWith("/") ? u : `/${u}`) : u;
+  }
+}
 
-// Prev/Next
+// Compute canonical (single source of truth)
+const pageCanonical: string =
+  (typeof inCanonical === "string" && inCanonical.trim())
+    ? toAbsolute(inCanonical.trim())
+    : (siteUrl ? siteUrl + Astro.url.pathname : Astro.url.href);
+
+// Prev/Next (resolve to absolute if relative)
 function absOrRel(href: string | null): string | null {
   if (!href) return null;
-  if (href.startsWith("http")) return href;
-  return `${base}${href}`;
+  return toAbsolute(href);
 }
 const prevHref = absOrRel(relPrev);
 const nextHref = absOrRel(relNext);
@@ -64,9 +73,7 @@ const nextHref = absOrRel(relNext);
 const ogImageIn = (seo as any)?.ogImage as string | undefined;
 const ogImage = isDev
   ? (ogImageIn || "/assets/logos/logo-square-512.png")
-  : (ogImageIn
-      ? new URL(ogImageIn, base).toString()
-      : new URL("/assets/logos/logo-square-512.png", base).toString());
+  : (ogImageIn ? toAbsolute(ogImageIn) : toAbsolute("/assets/logos/logo-square-512.png"));
 
 // IDs
 const ga4Id: string | undefined =
@@ -83,7 +90,7 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
 
-    <link rel="canonical" href={canonical} />
+    <link rel="canonical" href={pageCanonical} />
     {prevHref && <link rel="prev" href={prevHref} />}
     {nextHref && <link rel="next" href={nextHref} />}
 
@@ -105,7 +112,7 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     {description && <meta property="og:description" content={description} />}
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={pageCanonical} />
     <meta property="og:image" content={ogImage} />
 
     <!-- Surface GA4 ID for client-side analytics bootstrap -->
@@ -143,7 +150,10 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <Footer />
     <CookieBanner />
 
-    <!-- Consent-mode analytics bootstrap -->
-    <script type="module" src="/src/lib/analytics.ts"></script>
+    <!-- Consent-mode analytics bootstrap (bundled; no /src/* HTTP fetch) -->
+    <script type="module">
+      import "@/lib/analytics.ts";
+      import "@/scripts/consent-banner.ts"; // side-effects only
+    </script>
   </body>
 </html>

@@ -1,234 +1,264 @@
 /* File: src/components/blog/base/BlogPost.css */
-@layer components {
-  .post {
-    /* spacing rhythm managed by sections.css stack utilities */
-  }
+/* FP-191: Balanced, compact single-post layout (layout only, no per-component overrides). */
 
-  .post .container {
-    /* container sizing and gutters from base/breakpoints */
-  }
+.post {
+  /* Base article wrapper: single column, tighter vertical rhythm */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
 
-  /* Reading progress bar (Fix Plan 185) */
+/* Container alignment follows global .container; keep hook for future if needed */
+.post .container {}
+
+/* Core sections inside the post: ensure full width in the column flow */
+.post__body,
+.post__series,
+.post__author,
+.post__footer,
+.post__nav,
+.post__related,
+.post__leadmagnet,
+.post__comments,
+.ad-slot {
+  width: 100%;
+}
+
+/* 0) Breadcrumbs wrapper – just spacing & alignment */
+.post__breadcrumbs {
+  margin-block: var(--space-2);
+}
+
+/* Reading progress bar (Fix Plan 185) */
+.read-progress {
+  position: sticky;
+  top: 0;
+  height: 4px;
+  background: transparent;
+  z-index: 20;
+  pointer-events: none;
+}
+.read-progress::after {
+  content: "";
+  display: block;
+  height: 4px;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--color-primary);
+}
+@media (prefers-reduced-motion: reduce) {
   .read-progress {
-    position: sticky;
-    top: 0;
-    height: 4px;
-    background: transparent;
-    z-index: 20;
-    pointer-events: none; /* do not block header interactions */
+    display: none;
   }
-  .read-progress::after {
-    content: "";
-    display: block;
-    height: 4px;
-    width: calc(var(--p, 0) * 100%);
-    background: var(--color-primary);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .read-progress { display: none; }
-  }
+}
 
-  /* 1) Breadcrumbs */
-  .post__breadcrumbs .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: var(--fs-sm);
-    color: var(--color-muted);
-  }
-  .post__breadcrumbs .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
-  .post__breadcrumbs .current { color: var(--color-text); font-weight: 600; }
+/* Cover */
 
-  /* 2) Eyebrow + Title */
-  .post__eyebrow {
-    margin: 0 0 var(--space-2);
-    font-size: var(--fs-sm);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--color-muted);
-  }
-  .post__eyebrow .cat { color: inherit; }
-  .post__title { margin: 0 0 var(--space-2); }
+/* Constrain hero to reading width */
+.post__cover,
+.post__cover .container {
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
 
-  /* 3) Meta row */
-  .post__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-4);
-    color: var(--color-muted);
-  }
-  .post__meta .meta {
-    margin: 0;
-    font-size: var(--fs-sm);
-  }
+.post__cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 21 / 9;       /* shallower banner style */
+  max-height: 420px;
+  object-fit: cover;          /* crop edges, keep focal point */
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
 
-  /* 4) Updated badge */
-  .post__updated {
-    margin: 0;
-    font-size: var(--fs-sm);
-    padding: 2px 8px;
-    border-radius: var(--radius-md);
-    background: var(--color-light);
-    color: var(--color-text);
-  }
+.post__cover .caption {
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
 
-  /* 5) Cover */
-  .post__cover {
-    margin: 0;
-  }
-  .post__cover img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16/9; /* avoid CLS on unknown sizes */
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-  }
-  .post__cover .caption {
-    margin-top: var(--space-2);
-    font-size: var(--fs-sm);
-    color: var(--color-muted);
-  }
+/* Lead paragraph (intro section) */
 
-  /* 6) Lead paragraph */
-  .post__lead .page-lead {
-    /* uses existing page-lead pattern */
-  }
+.post__lead {
+  margin-block-start: 0;
+}
 
-  /* 7) TOC (legacy nav block kept for compatibility) */
-  .post__toc {
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-  }
-  .post__toc a:hover, .post__toc a:focus { text-decoration: underline; }
+.post__lead .page-lead {
+  max-width: 60ch;
+  margin-inline: auto;
+}
 
-  /* 7a) TOC Mobile Toggle (Fix Plan 185) */
-  .toc-details {
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    padding: var(--space-2);
-  }
-  .toc-details > summary {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    cursor: pointer;
-    list-style: none;
-    font-weight: 600;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-  }
-  .toc-details > summary::-webkit-details-marker { display: none; }
-  .toc-details[open] > summary { background: color-mix(in oklab, var(--color-primary) 6%, transparent); }
-  .toc-details .toc-list {
-    margin: var(--space-2) 0 0 0;
-    padding: 0 var(--space-2) var(--space-2) var(--space-2);
-    list-style: none;
-  }
-  .toc-details .toc-list li { margin: 0.25rem 0; }
-  .toc-details .toc-list li.d3 { padding-left: 0.75rem; }
+/* TOC (layout wrapper only – visual styles live in PostToc / toc-details) */
 
-  /* 8) Article body */
-  .post__content.prose {
-    /* prose defaults imported globally; keep scoped container only */
-  }
+.post__toc {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+  border-radius: var(--radius-lg);
+}
 
-  /* 9) Series (optional) */
-  .post__series { padding-block: var(--space-4); }
-  .post__series ol { margin: 0; padding-inline-start: 1.25rem; }
+/* TOC Mobile Toggle (Fix Plan 185) */
+.toc-details {
+  border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: var(--space-2);
+}
+.toc-details > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+}
+.toc-details > summary::-webkit-details-marker {
+  display: none;
+}
+.toc-details[open] > summary {
+  background: color-mix(in oklab, var(--color-primary) 6%, transparent);
+}
+.toc-details .toc-list {
+  margin: var(--space-2) 0 0 0;
+  padding: 0 var(--space-2) var(--space-2) var(--space-2);
+  list-style: none;
+}
+.toc-details .toc-list li {
+  margin: 0.25rem 0;
+}
+.toc-details .toc-list li.d3 {
+  padding-left: 0.75rem;
+}
 
-  /* 10) Inline ad slot shell (optional, prevents CLS) */
-  .ad-slot {
-    /* keep space reserved even before load; toggle [hidden] on the section to control visibility */
-    margin-block: var(--space-6);
-  }
-  .ad-slot .ad-box {
-    width: 336px;
-    height: 280px;
-    background: var(--color-surface);
-    border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
-  }
+/* Article body: keep within reading width */
 
-  /* 11) Footer tags + Share */
-  .post__footer {
-    display: grid;
-    gap: var(--space-4);
-  }
-  .post__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .post__tags .tag {
-    display: inline-block;
-    padding: 6px 10px;
-    border: 1px solid color-mix(in oklab, var(--color-primary) 20%, transparent);
-    border-radius: 999px;
-    font-size: var(--fs-sm);
-    color: var(--color-primary);
-    background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  }
-  .post__share {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
+.post__body .container {
+  max-width: var(--container-max);
+}
 
-  /* 12) Author card placeholder */
-  .post__author { }
+.post__body .prose {
+  margin-inline: auto;
+}
 
-  /* 13) Prev/Next */
-  .post__nav { }
+/* Series (optional) */
 
-  /* 14) Related */
-  .post__related { }
+.post__series {
+  padding-block: var(--space-4);
+}
 
-  /* 15) Lead magnet */
-  .post__leadmagnet { }
+.post__series ol {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
 
-  /* 16) Comments */
-  .post__comments { }
+/* Inline ad slot shell (optional, prevents CLS) */
 
-  /* Focus visibility and contrast */
-  :where(.post a, .post button):focus-visible {
-    outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
-    outline-offset: 2px;
-  }
+.ad-slot {
+  margin-block: var(--space-4);
+}
 
-  /* 17) Skip link baseline styling (fallback if layout doesn't provide it) */
-  .skip-link {
-    position: absolute;
-    inset-inline-start: 0;
-    top: -40px;
-    background: var(--color-surface);
-    color: var(--color-text);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-  }
-  .skip-link:focus { top: 8px; z-index: 1000; }
+/* Preserve space even when "hidden" attribute is set */
+.ad-slot[hidden] {
+  display: block;
+  visibility: hidden;
+}
+
+.ad-slot .ad-box {
+  width: 100%;
+  max-width: 336px;
+  min-height: 280px;
+  margin-inline: auto;
+  border-radius: var(--radius-md);
+  background-color: var(--color-light);
+}
+
+/* Footer tags + Share (layout only; detailed styles live in components) */
+
+.post__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block-start: var(--space-4);
+}
+
+/* Author section wrapper */
+
+.post__author {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-light-alt);
+}
+
+/* Comments section wrapper */
+
+.post__comments {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-light-alt);
+}
+
+/* Focus visibility and contrast */
+
+:where(.post a, .post button):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline-offset: 2px;
+}
+
+/* Skip link baseline styling (fallback if layout doesn't provide it) */
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 0;
+  top: -40px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+.skip-link:focus {
+  top: 8px;
+  z-index: 1000;
 }
 
 /* Responsive refinements */
-@media (min-width: 768px) {
-  .post__meta { align-items: center; }
-  .post__toc { padding: var(--space-6); }
+
+@media (min-width: 640px) {
+  /* Footer: side-by-side layout for tags + share */
+  .post__footer {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .post__footer > *:first-child {
+    flex: 1 1 auto; /* tags */
+  }
+
+  .post__footer > *:last-child {
+    flex: 0 0 auto; /* share */
+  }
 }
 
-/* Larger viewports: allow TOC to sit comfortably when using collapsible pattern */
+@media (min-width: 768px) {
+  .post__toc {
+    padding: var(--space-6);
+  }
+}
+
+/* Larger viewports: slightly more vertical air only where needed */
+
 @media (min-width: 1024px) {
-  .toc-details { padding: var(--space-3); }
-  .toc-details > summary { padding: var(--space-3); }
+  .post {
+    gap: var(--space-5);
+  }
+
+  .toc-details {
+    padding: var(--space-3);
+  }
+
+  .toc-details > summary {
+    padding: var(--space-3);
+  }
 }

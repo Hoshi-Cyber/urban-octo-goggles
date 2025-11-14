@@ -1,40 +1,77 @@
 ---
-export interface Item {
-  data: {
-    title: string;
-    category: string;
-    description?: string;
-    date?: string | Date;
+// src/components/blog/compose/PostNav/index.astro
+
+import sheet from "./PostNav.css?url";
+import type {
+  PostNavProps,
+  PostNavItemInput,
+  NavItemResolved,
+  SimplePostItem,
+  LegacyPostItem,
+} from "./types";
+
+const { prev = null, next = null } = Astro.props as PostNavProps;
+
+const normalizeItem = (item?: PostNavItemInput | null): NavItemResolved | null => {
+  if (!item) return null;
+
+  // Legacy shape: { data: { title, category, ... }, slug }
+  if ("data" in item) {
+    const legacy = item as LegacyPostItem;
+    const title = legacy.data?.title;
+    const category = legacy.data?.category;
+    const slug = legacy.slug;
+    // Prefer an explicit URL if present in data, otherwise fall back to
+    // the canonical blog route shape for backward compatibility.
+    const explicitUrl = (legacy.data as any)?.url as string | undefined;
+    const fallbackUrl =
+      category && slug ? `/blog/${category}/${slug}/` : undefined;
+    const href = explicitUrl ?? fallbackUrl;
+
+    if (!title || !href) return null;
+
+    return { title, href, category };
+  }
+
+  // New shape: { title, url, category? }
+  const simple = item as SimplePostItem;
+  if (!simple.title || !simple.url) return null;
+
+  return {
+    title: simple.title,
+    href: simple.url,
+    category: simple.category,
   };
-  slug: string;
-}
+};
 
-export interface Props {
-  prev?: Item | null;
-  next?: Item | null;
-}
-
-const { prev = null, next = null } = Astro.props as Props;
-
-const hrefOf = (p: Item) => `/blog/${p.data.category}/${p.slug}/`;
+const prevItem = normalizeItem(prev);
+const nextItem = normalizeItem(next);
+const hasAny = Boolean(prevItem || nextItem);
 ---
+<link rel="stylesheet" href={sheet} />
 
-<nav class="postnav container" aria-label="Post navigation">
-  {prev && (
-    <a class="postnav__card postnav__prev" href={hrefOf(prev)} rel="prev">
-      <span class="postnav__kicker" aria-hidden="true">Previous</span>
-      <span class="postnav__title">{prev.data.title}</span>
-    </a>
-  )}
+{hasAny && (
+  <div class="postNav" role="group" aria-label="Previous and next articles">
+    {prevItem && (
+      <a
+        class="postNav__card postNav__card--prev"
+        href={prevItem.href}
+        rel="prev"
+      >
+        <span class="postNav__label">Previous article</span>
+        <span class="postNav__title">{prevItem.title}</span>
+      </a>
+    )}
 
-  {next && (
-    <a class="postnav__card postnav__next" href={hrefOf(next)} rel="next">
-      <span class="postnav__kicker" aria-hidden="true">Next</span>
-      <span class="postnav__title">{next.data.title}</span>
-    </a>
-  )}
-</nav>
-
-<style>
-  @import "./PostNav.css";
-</style>
+    {nextItem && (
+      <a
+        class="postNav__card postNav__card--next"
+        href={nextItem.href}
+        rel="next"
+      >
+        <span class="postNav__label">Next article</span>
+        <span class="postNav__title">{nextItem.title}</span>
+      </a>
+    )}
+  </div>
+)}

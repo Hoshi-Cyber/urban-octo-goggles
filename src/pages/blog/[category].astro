@@ -163,12 +163,8 @@ const breadcrumbItems = [
 ];
 ---
 
-<BaseLayout title={pageTitle} description={desc} seo={{ canonical }}>
-  <fragment slot="head">
-    <link rel="canonical" href={canonical} />
-    {nextUrl && <link rel="next" href={nextUrl} />}
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:url" content={canonical} />
+<BaseLayout title={pageTitle} description={desc} seo={{ canonical, ogImage }} relNext={nextUrl}>
+  <Fragment slot="head">
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <link rel="preload" as="image" href={ogImage} />}
 
@@ -178,7 +174,7 @@ const breadcrumbItems = [
     <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(itemListLd)}</script>
     <script type="application/ld+json" is:inline>{JSON.stringify(collectionPageLd)}</script>
-  </fragment>
+  </Fragment>
 
   <section class="container page-gap-after" data-section="category" aria-label="Category articles">
     <Breadcrumbs items={breadcrumbItems} />

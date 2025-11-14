@@ -3,6 +3,7 @@
  * File: src/pages/subscribe/success/index.astro
  * Purpose: Dedicated success page for LeadMagnetStrip opt-ins.
  * FP-168.1+: Hover states for all buttons. Left-aligned, no underlines.
+ * FP-187.5c: Canonical/og:url emitted only by BaseLayout.
  *  - Noindex
  *  - Responsive apps grid (1 col → 2 cols @ sm+)
  *  - A11y: role=status message, semantic groups
@@ -19,11 +20,10 @@ const canonical = "/subscribe/success/";
 ---
 
 <BaseLayout title={title} description={desc} seo={{ canonical }}>
-  <fragment slot="head">
+  <Fragment slot="head">
     <meta name="robots" content="noindex" />
-    <meta property="og:title" content={title} />
-    <meta property="og:url" content={canonical} />
-  </fragment>
+    {/* FP-187.5c: Do not emit <link rel="canonical"> or og:url here; BaseLayout handles them */}
+  </Fragment>
 
   <section class="container page-gap-after" aria-labelledby="thanks-title">
     <div class="card success__panel stack" style="--section-gap: var(--space-4);">

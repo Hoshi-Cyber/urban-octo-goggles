@@ -1,41 +1,37 @@
 ---
+// src/components/blog/compose/PostTags/index.astro
+
 import css from "./PostTags.css?url";
+import type { PostTagsProps } from "./types";
 
-type Variant = "header" | "footer";
+const { tags = [] } = Astro.props as PostTagsProps;
 
-interface PostTagsProps {
-  tags?: string[];
-  variant?: Variant; // default: "header"
-}
-
-const { tags = [], variant = "header" } = Astro.props as PostTagsProps;
-
-// Robust, local slugify for tag URLs
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/[\s\W-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+const hasTags = Array.isArray(tags) && tags.length > 0;
 ---
 <link rel="stylesheet" href={css} />
 
-{tags.length > 0 && (
-  <ul
-    class={`post__tags${variant === "footer" ? " post__tags--footer" : ""}`}
-    aria-label="Tags"
+{hasTags && (
+  <section
+    class="post__tagsSection"
+    aria-labelledby="post-tags-title"
   >
-    {tags.slice(0, 12).map((t) => (
-      <li>
-        <a
-          class="post__tag"
-          href={`/blog/tag/${slugify(t)}/`}
-          rel="tag"
-          itemprop="keywords"
-        >
-          {t}
-        </a>
-      </li>
-    ))}
-  </ul>
+    <h2 id="post-tags-title" class="post__tagsTitle h6">
+      Tagged with
+    </h2>
+
+    <ul class="post__tags">
+      {tags.map((tag) => (
+        <li class="post__tagsItem">
+          <a
+            class="post__tag"
+            href={tag.href}
+            rel="tag"
+            itemprop="keywords"
+          >
+            {tag.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
 )}

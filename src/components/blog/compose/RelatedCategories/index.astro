@@ -1,65 +1,155 @@
 ---
-import css from "./RelatedCategories.css?url";
+// src/components/blog/compose/RelatedCategories/index.astro
 
-export interface RelatedItem { title: string; slug: string }
-export interface Props {
-  items: RelatedItem[];
-  current?: string | null;                 // active category slug or name
-  title?: string;                          // section heading
-  variant?: "default" | "compact";         // visual density
-}
+import sheet from "./RelatedCategories.css?url";
+import type {
+  RelatedCategoriesProps,
+  RelatedInputItem,
+  NormalisedRelatedItem,
+} from "./types";
 
 const {
   items = [],
-  current = null,
-  title = "Related categories",
-  variant = "default",
-} = Astro.props as Props;
+  heading = "Related articles",
+  categoryLabel,
+} = Astro.props as RelatedCategoriesProps;
 
-const slugify = (s: string) =>
-  String(s || "uncategorized")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+const safeItems = (items || []).filter(Boolean) as RelatedInputItem[];
 
-const safeItems = (items || []).filter(Boolean);
-const currentSlug = current ? slugify(String(current)) : null;
-const headingId = "rc-heading";
+const formatDate = (value?: string | Date): string | undefined => {
+  if (!value) return undefined;
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return undefined;
+  return new Intl.DateTimeFormat("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(d);
+};
+
+const normalizeItem = (item: RelatedInputItem): NormalisedRelatedItem | null => {
+  // Legacy shape: { data: { ... }, slug }
+  if ("data" in item) {
+    const data = item.data ?? {};
+    const title = data.title as string | undefined;
+    const category = data.category as string | undefined;
+    const explicitUrl = (data as any).url as string | undefined;
+    const slug = item.slug;
+
+    const href =
+      explicitUrl ??
+      (category && slug ? `/blog/${category}/${slug}/` : undefined);
+
+    if (!title || !href) return null;
+
+    const dateVal = data.date as string | Date | undefined;
+    const readingVal = data.readingTime as string | number | undefined;
+
+    const dateLabel = formatDate(dateVal);
+    const readingTimeLabel =
+      typeof readingVal === "number"
+        ? `${readingVal} min read`
+        : readingVal || undefined;
+
+    return {
+      title,
+      href,
+      category,
+      date: dateVal,
+      readingTime: readingVal,
+      cover: data.cover,
+      dateLabel,
+      readingTimeLabel,
+    };
+  }
+
+  // Simple shape: { title, url, category, ... }
+  const title = item.title;
+  const href = item.url;
+  if (!title || !href) return null;
+
+  const dateVal = item.date;
+  const readingVal = item.readingTime;
+
+  const dateLabel = formatDate(dateVal);
+  const readingTimeLabel =
+    typeof readingVal === "number"
+      ? `${readingVal} min read`
+      : readingVal || undefined;
+
+  return {
+    title,
+    href,
+    category: item.category,
+    date: dateVal,
+    readingTime: readingVal,
+    cover: item.cover,
+    dateLabel,
+    readingTimeLabel,
+  };
+};
+
+const normalised: NormalisedRelatedItem[] = safeItems
+  .map(normalizeItem)
+  .filter(Boolean) as NormalisedRelatedItem[];
+
+const hasItems = normalised.length > 0;
+const headingText =
+  categoryLabel && categoryLabel.trim().length > 0
+    ? `More in ${categoryLabel}`
+    : heading;
 ---
-<link rel="stylesheet" href={css} />
+<link rel="stylesheet" href={sheet} />
 
-<!-- FP-169.2: single semantic section. No inner .container; width inherits from page container. -->
-<section
-  class={`rc ${variant === "compact" ? "rc--compact" : ""}`}
-  aria-labelledby={headingId}
-  data-section="related-categories"
->
-  <h2 id={headingId} class="section-title">{title}</h2>
+{hasItems && (
+  <section
+    class="relatedPosts"
+    aria-labelledby="related-posts-title"
+    data-section="related-posts"
+  >
+    <h2 id="related-posts-title" class="relatedPosts__title h4">
+      {headingText}
+    </h2>
 
-  {safeItems.length === 0 ? (
-    <p class="text-muted">No related categories configured.</p>
-  ) : (
-    <ul class="rc__list" role="list" aria-label="Related categories">
-      {safeItems.map((r) => {
-        const catSlug = slugify(r.slug);
-        const href = `/blog/${catSlug}/`; // canonical category URL with trailing slash
-        const isCurrent = !!(currentSlug && currentSlug === catSlug);
+    <ul class="relatedPosts__list" aria-label="Related articles">
+      {normalised.map((item) => (
+        <li class="relatedPosts__item">
+          <a href={item.href} class="relatedPosts__card">
+            {item.cover?.src && (
+              <div class="relatedPosts__media">
+                <img
+                  src={item.cover.src}
+                  alt={item.cover.alt || ""}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )}
 
-        return (
-          <li>
-            <a
-              class={`rc__link${isCurrent ? " rc__link--solid" : ""}`}
-              href={href}
-              {...(isCurrent ? { "aria-current": "true" } : {})}
-              data-cta="related-category"
-              aria-label={`View ${r.title} posts`}
-            >
-              {r.title}
-            </a>
-          </li>
-        );
-      })}
+            {item.category && (
+              <p class="relatedPosts__cat">
+                {item.category}
+              </p>
+            )}
+
+            <h3 class="relatedPosts__postTitle">
+              {item.title}
+            </h3>
+
+            {(item.dateLabel || item.readingTimeLabel) && (
+              <p class="relatedPosts__meta">
+                {item.dateLabel && <span>{item.dateLabel}</span>}
+                {item.dateLabel && item.readingTimeLabel && (
+                  <span aria-hidden="true"> • </span>
+                )}
+                {item.readingTimeLabel && (
+                  <span>{item.readingTimeLabel}</span>
+                )}
+              </p>
+            )}
+          </a>
+        </li>
+      ))}
     </ul>
-  )}
-</section>
+  </section>
+)}

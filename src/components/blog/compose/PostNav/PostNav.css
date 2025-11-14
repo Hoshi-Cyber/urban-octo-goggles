@@ -1,61 +1,119 @@
-/* Mobile-first, uses global tokens, base, utilities, and breakpoints */
+/* src/components/blog/compose/PostNav/PostNav.css */
 
-.postnav {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
+/*
+  PostNav – previous/next article navigation.
+  Mobile-first, token-driven, aligned with global blog styling.
+  FP-190.1: Stack on mobile, split left/right at desktop, no sidebar.
+*/
+
+/* Wrapper: sits inside .post__nav section */
+.post .post__nav .postNav,
+.post-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   padding-block: var(--space-4);
+  border-top: 1px solid var(--color-light-alt);
 }
 
-.postnav__card {
+/* Card / item container */
+.post .postNav__card,
+.post-nav__item {
   display: block;
-  padding: var(--space-4);
-  border: 1px solid color-mix(in oklab, var(--color-primary) 12%, transparent);
+  padding: var(--space-3);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background-color: var(--color-light);
   text-decoration: none;
-  box-shadow: var(--shadow-sm);
   transition:
-    background-color 0.2s ease-in-out,
-    border-color 0.2s ease-in-out,
-    transform 0.15s ease-in-out;
+    background-color 140ms ease-out,
+    color 140ms ease-out,
+    box-shadow 80ms ease-out,
+    transform 80ms ease-out;
 }
 
-.postnav__card:hover,
-.postnav__card:focus {
-  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  border-color: color-mix(in oklab, var(--color-primary) 28%, transparent);
-  text-decoration: none;
-  transform: translateY(-1px);
+/* Hover/active states – light, secondary hierarchy */
+.post .postNav__card:hover,
+.post-nav__item:hover {
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-0.5px);
 }
 
-.postnav__kicker {
+.post .postNav__card:active,
+.post-nav__item:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Label above the title/link */
+.post .postNav__label,
+.post-nav__label {
   display: block;
-  font-size: var(--fs-sm);
-  color: var(--color-muted);
   margin-bottom: var(--space-1);
-  letter-spacing: 0.04em;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--color-muted);
 }
 
-.postnav__title {
+/* Title / link text */
+.post .postNav__title,
+.post-nav__link {
   display: block;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--color-text);
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
-/* Larger screens: two-column layout */
-@media (min-width: 768px) {
-  .postnav {
-    grid-template-columns: 1fr 1fr;
+/* Title/link hover + focus states */
+.post .postNav__card:hover .postNav__title,
+.post-nav__link:hover,
+.post-nav__link:focus-visible {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+  outline: none;
+}
+
+/* Desktop behaviour: two-column left/right layout */
+@media (min-width: 1024px) {
+  .post .post__nav .postNav,
+  .post-nav {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--space-4);
   }
-  .postnav__prev { text-align: left; }
-  .postnav__next { text-align: right; }
+
+  .post .postNav__card,
+  .post-nav__item {
+    flex: 1 1 0;
+  }
+
+  .post .postNav__card--prev,
+  .post-nav__item--prev {
+    margin-right: var(--space-2);
+    text-align: left;
+  }
+
+  .post .postNav__card--next,
+  .post-nav__item--next {
+    margin-left: var(--space-2);
+    text-align: right;
+  }
 }
 
-/* Focus visibility */
-.postnav a:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
-  outline-offset: 2px;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post .postNav__card,
+  .post-nav__item {
+    transition: none;
+  }
+
+  .post .postNav__card:hover,
+  .post .postNav__card:active,
+  .post-nav__item:hover,
+  .post-nav__item:active {
+    transform: none;
+    box-shadow: none;
+  }
 }
