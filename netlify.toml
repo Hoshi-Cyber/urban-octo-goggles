@@ -1,13 +1,13 @@
 # File: netlify.toml
 
 [build]
-  # Astro build publishes static assets from "dist/"
+  # Astro (SSR) via Netlify adapter writes to ".netlify/"
   command = "npm run build"
-  publish = "dist"
+  publish = ".netlify"
 
 [build.environment]
   NODE_VERSION = "20"
-  # Adapter toggle used in astro.config.mjs
+  # This env var is harmless now; keep if you want it for other logic
   USE_NETLIFY = "true"
 
 # ---------------------------
