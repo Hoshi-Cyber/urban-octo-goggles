@@ -10,7 +10,9 @@
   max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--space-4);
-  margin-block-end: var(--space-4);
+
+  /* slightly tighter to support overall compact vertical rhythm */
+  margin-block-end: var(--space-3);
 }
 
 /* Inner header block */
@@ -44,7 +46,11 @@
   text-decoration: none;
   font-size: var(--fs-sm);
   color: var(--color-primary);
-  background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
   transition:
     color 150ms ease-out,
     background-color 150ms ease-out,
@@ -53,18 +59,32 @@
 
 .post .postHeader__eyebrowLink:hover,
 .post .postHeader__eyebrowLink:focus-visible {
-  background-color: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 10%,
+    var(--color-surface)
+  );
   box-shadow: var(--shadow-sm);
   outline: none;
 }
 
-/* Title – main post H1 */
+/* Title – main post H1
+   - Fluid type using global tokens
+   - Scales between H2-ish size on very small screens
+     and a larger-than-default H1 on large screens.
+*/
 
 .post .postHeader__title {
   margin: 0;
-  color: var(--color-text);
-  line-height: 1.2;
-  max-width: 26rem; /* keep titles readable on narrow screens */
+  max-width: 26rem; /* keeps multi-line titles readable on very narrow screens */
+  font-weight: 700;
+
+  /* fluid, token-based font size */
+  font-size: clamp(
+    var(--fs-2xl),              /* minimum size on the smallest viewports */
+    5vw,                        /* fluid growth through mid-range widths */
+    calc(var(--fs-3xl) * 1.25)  /* upper cap on large screens */
+  );
 }
 
 /* Dek – short summary under the title */
@@ -78,7 +98,7 @@
   color: var(--color-muted);
 }
 
-/* Responsive refinements */
+/* Responsive refinements – layout only */
 
 @media (min-width: 640px) {
   .post .postHeader__title {
@@ -89,7 +109,13 @@
 @media (min-width: 768px) {
   .post .post__header {
     padding-inline: var(--space-6);
-    margin-block-end: var(--space-6);
+
+    /* keep header-to-next-section spacing compact on tablet+ */
+    margin-block-end: var(--space-4);
+  }
+
+  .post .postHeader__title {
+    max-width: 36rem;
   }
 }
 
@@ -98,8 +124,9 @@
     gap: var(--space-3);
   }
 
+  /* Desktop: allow full content width; font-size already capped by clamp() */
   .post .postHeader__title {
-    max-width: 40rem;
+    max-width: none;
   }
 
   .post .postHeader__dek {

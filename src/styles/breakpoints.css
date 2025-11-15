@@ -1,9 +1,11 @@
-/* Breakpoint helpers — Fix Plan 62 compliant
-   Mobile-first from 320px. Progressive enhancement at sm/md/lg/xl/2xl. */
+/* src/styles/base/breakpoints.css
+   Breakpoint helpers — Fix Plan 62 compliant
+   Mobile-first from ~320px, progressive enhancement at sm/md/lg/xl/2xl.
+*/
 
 /* Base: 320–639px */
 :root {
-  /* Typography base */
+  /* Typography base (body copy) */
   --fs-base: 1rem; /* 16px default */
 
   /* Layout container */
@@ -42,7 +44,19 @@
 /* lg ≥1024px */
 @media (min-width: 1024px) {
   :root {
-    --fs-base: 1.0625rem; /* subtle readability bump on large screens */
+    /* Slight readability bump for body text on larger screens */
+    --fs-base: 1.0625rem;
+
+    /* Desktop heading scale override
+       Base (from tokens.css):
+       --fs-xl: 1.25rem;
+       --fs-2xl: 1.5rem;
+       --fs-3xl: 1.875rem;
+       On desktop we push them up so H1 stands out more. */
+    --fs-xl: 1.375rem;  /* h3, section headings */
+    --fs-2xl: 1.75rem;  /* h2 */
+    --fs-3xl: 2.25rem;  /* primary H1 on pages/posts */
+
     --container-max: 1024px;
     --gap: 1.5rem;
   }
@@ -59,13 +73,16 @@
 /* 2xl ≥1536px */
 @media (min-width: 1536px) {
   :root {
-    /* cap content for optimal line length on very wide viewports */
+    /* Cap content for optimal line length on very wide viewports */
     --container-max: 72rem; /* 1152px */
     --gap: 2rem;
   }
 }
 
-/* Harder gutters for very small devices (≤359px) */
+/* Harder gutters for very small devices (≤359px)
+   Small corrective max-width rule to keep content off the edges
+   on ultra-narrow screens, still compatible with the mobile-first model.
+*/
 @media (max-width: 359px) {
   :root {
     --container-px: 0.875rem;

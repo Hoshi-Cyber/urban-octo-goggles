@@ -51,6 +51,10 @@ const date = new Date(entry.data.date);
 const updated = entry.data.updated ? new Date(entry.data.updated) : null;
 const readingTime = entry.data.readingTime ?? null;
 
+// Author data (flattened schema: author + optional authorUrl)
+const authorName = entry.data.author;
+const authorUrl: string | undefined = (entry.data as any).authorUrl ?? undefined;
+
 // Absolute site URL
 const siteUrl: string | undefined =
   (site && typeof (site as any).siteUrl === "string" && (site as any).siteUrl) ||
@@ -145,18 +149,15 @@ const publisherLogoUrl =
   (site && ((site as any).publisherLogo || (site as any).orgLogo)) ||
   undefined;
 
+// Flattened author JSON-LD using authorName + authorUrl
 const author =
-  typeof entry.data.author === "string"
-    ? { "@type": "Person", name: entry.data.author }
-    : {
+  authorName
+    ? {
         "@type": "Person",
-        name: (entry.data as any).author?.name,
-        url: (entry.data as any).author?.url,
-        ...(Array.isArray((entry.data as any).author?.sameAs) &&
-        (entry.data as any).author?.sameAs.length
-          ? { sameAs: (entry.data as any).author?.sameAs }
-          : {}),
-      };
+        name: authorName,
+        ...(authorUrl ? { url: authorUrl } : {}),
+      }
+    : undefined;
 
 // Estimate wordCount if not provided: readingTime (min) * 200 wpm
 const wordCount =
@@ -181,7 +182,7 @@ const jsonLd: Record<string, any> = {
       : typeof coverForMeta?.src === "object"
       ? coverForMeta.src.src
       : undefined),
-  author,
+  ...(author ? { author } : {}),
   publisher: {
     "@type": "Organization",
     name: publisherName,
@@ -251,6 +252,9 @@ const layoutProps = {
   prev,
   next,
   related,
+  // Fix Plan 192.2: wire author data into BlogPost/PostMeta
+  author: authorName,
+  authorUrl,
 };
 ---
 <BaseLayout

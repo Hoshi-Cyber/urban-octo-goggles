@@ -1,4 +1,12 @@
-/* Typography scale */
+/* src/styles/base/typography.css */
+/* Semantic typography scale – mobile-first, token-driven */
+
+/* Headings
+   - Use design tokens for font-size
+   - Balanced wrapping for multi-line headings
+   - Tight line-height for hierarchy, looser for lower levels
+*/
+
 h1,
 .h1 {
   font-size: var(--fs-3xl);
@@ -7,6 +15,8 @@ h1,
   color: var(--color-text);
   margin-top: 0;
   margin-bottom: var(--space-4);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
 }
 
 h2,
@@ -17,6 +27,8 @@ h2,
   color: var(--color-text);
   margin-top: var(--space-6);
   margin-bottom: var(--space-4);
+  text-wrap: balance;
+  letter-spacing: -0.01em;
 }
 
 h3,
@@ -27,28 +39,56 @@ h3,
   color: var(--color-text);
   margin-top: var(--space-6);
   margin-bottom: var(--space-3);
+  text-wrap: balance;
 }
+
+/* Body copy */
 
 p {
   font-size: var(--fs-base);
+  line-height: 1.6;
   color: var(--color-muted);
   margin-top: 0;
   margin-bottom: var(--space-4);
   max-width: 70ch;
 }
 
+/* Lists */
+
 ul,
 ol {
   margin-top: 0;
   margin-bottom: var(--space-4);
   padding-left: var(--space-6);
+  max-width: 70ch;
 }
 
 li {
   margin-bottom: var(--space-2);
 }
 
+/* Emphasis */
+
 strong {
   font-weight: 600;
   color: var(--color-text);
+}
+
+/* Desktop refinements – typography stays token-based, only spacing tweaks */
+
+@media (min-width: 1024px) {
+  h1,
+  .h1 {
+    margin-bottom: var(--space-5);
+  }
+
+  h2,
+  .h2 {
+    margin-top: var(--space-7);
+  }
+
+  h3,
+  .h3 {
+    margin-top: var(--space-6);
+  }
 }

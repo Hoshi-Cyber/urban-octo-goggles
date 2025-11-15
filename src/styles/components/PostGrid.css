@@ -1,37 +1,40 @@
-/* src/styles/components/PostGrid.css 
+/* src/styles/components/PostGrid.css
    PostGrid — mobile-first 1/2/3/4 columns, token-driven gutters
-   FP-112: add CSS var override for gutters, keep no outer spacing,
-   stabilize card heights, and preserve responsiveness. */
+   FP-112: CSS var override for gutters, no outer spacing, stabilized card
+   heights, and preserved responsiveness.
+*/
 
 /* Base grid: no margins; page rhythm comes from .stack / --section-gap */
 .post-grid {
   display: grid;
-  grid-template-columns: 1fr; /* <640px */
+  grid-template-columns: minmax(0, 1fr); /* <640px */
   gap: var(--post-grid-gap, clamp(var(--space-6), 2.8vw, var(--space-8)));
   list-style: none;
   margin: 0;
   padding: 0;
+
   align-items: stretch;
+  justify-items: stretch;
 }
 
 /* ≥640px (sm) -> 2 columns */
 @media (min-width: 640px) {
   .post-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 /* ≥1024px (lg) -> 3 columns */
 @media (min-width: 1024px) {
   .post-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 /* ≥1280px (xl) -> 4 columns */
 @media (min-width: 1280px) {
   .post-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -39,6 +42,7 @@
 .post-grid--tight {
   --post-grid-gap: clamp(var(--space-4), 2vw, var(--space-6));
 }
+
 .post-grid--roomy {
   --post-grid-gap: clamp(var(--space-7), 3vw, var(--space-10));
 }
@@ -47,15 +51,14 @@
 .post-grid > li {
   display: flex;
   min-width: 0;
-}
-.post-grid > li > * {
-  width: 100%;
-}
 
-/* Modern perf: prevent layout shift while images load (safe intrinsic size) */
-.post-grid > li {
+  /* Modern perf: prevent layout shift while images load (safe intrinsic size) */
   content-visibility: auto;
   contain-intrinsic-size: 360px 420px;
+}
+
+.post-grid > li > * {
+  width: 100%;
 }
 
 /* Respect reduced motion; keep content-visibility optimization */
@@ -71,6 +74,7 @@
   min-width: 0;
 }
 
+/* Media inside cards: responsive and safe */
 .post-grid .pcard__media img {
   width: 100%;
   height: auto;

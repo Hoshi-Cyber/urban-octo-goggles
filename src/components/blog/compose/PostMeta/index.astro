@@ -1,5 +1,4 @@
 ---
-// src/components/blog/compose/PostMeta/index.astro
 import css from "./PostMeta.css?url";
 
 type DateLike = string | Date;
@@ -8,12 +7,22 @@ interface PostMetaProps {
   date?: DateLike;
   updated?: DateLike;
   author?: string;
-  readingTime?: number; // minutes
+  authorUrl?: string;
+  /**
+   * Estimated reading time in whole minutes.
+   * When <= 0 or not provided, it is omitted from the meta row.
+   */
+  readingTime?: number | null;
 }
 
-const { date, updated, author, readingTime } = Astro.props as PostMetaProps;
+const { date, updated, author, authorUrl, readingTime } =
+  Astro.props as PostMetaProps;
 
-const toDate = (d?: DateLike) => (d ? new Date(d) : undefined);
+const toDate = (value?: DateLike) => {
+  if (!value) return undefined;
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d;
+};
 
 const published = toDate(date);
 const modified = toDate(updated);
@@ -29,16 +38,19 @@ const fmt = (d?: Date) =>
 
 const iso = (d?: Date) => (d ? d.toISOString() : undefined);
 
-const showUpdated =
-  published && modified ? modified.getTime() > published.getTime() : Boolean(modified);
+const hasUpdated =
+  published && modified
+    ? modified.getTime() > published.getTime()
+    : Boolean(modified);
 
-const hasMeta = Boolean(
-  published ||
-    showUpdated ||
-    author ||
-    (typeof readingTime === "number" && readingTime > 0),
-);
+const hasReadingTime =
+  typeof readingTime === "number" &&
+  Number.isFinite(readingTime) &&
+  readingTime > 0;
+
+const hasMeta = Boolean(published || hasUpdated || author || hasReadingTime);
 ---
+
 <link rel="stylesheet" href={css} />
 
 {hasMeta && (
@@ -54,12 +66,12 @@ const hasMeta = Boolean(
       </>
     )}
 
-    {showUpdated && modified && (
+    {hasUpdated && modified && (
       <>
         <dt>Updated</dt>
         <dd>
           <time datetime={iso(modified)} itemprop="dateModified">
-            Updated {fmt(modified)}
+            {fmt(modified)}
           </time>
         </dd>
       </>
@@ -69,15 +81,25 @@ const hasMeta = Boolean(
       <>
         <dt>Author</dt>
         <dd itemprop="author" itemscope itemtype="https://schema.org/Person">
-          <span itemprop="name">{author}</span>
+          {authorUrl ? (
+            <a href={authorUrl} itemprop="url">
+              <span itemprop="name">{author}</span>
+            </a>
+          ) : (
+            <span itemprop="name">{author}</span>
+          )}
         </dd>
       </>
     )}
 
-    {typeof readingTime === "number" && readingTime > 0 && (
+    {hasReadingTime && (
       <>
         <dt>Reading time</dt>
-        <dd>{readingTime} min read</dd>
+        <dd>
+          <span aria-label={`${readingTime} minute read`}>
+            {readingTime} min read
+          </span>
+        </dd>
       </>
     )}
   </dl>

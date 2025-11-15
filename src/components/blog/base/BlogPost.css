@@ -2,10 +2,10 @@
 /* FP-191: Balanced, compact single-post layout (layout only, no per-component overrides). */
 
 .post {
-  /* Base article wrapper: single column, tighter vertical rhythm */
+  /* Base article wrapper: single column, compact vertical rhythm */
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-2); /* tighter base gap for all sections */
 }
 
 /* Container alignment follows global .container; keep hook for future if needed */
@@ -24,9 +24,9 @@
   width: 100%;
 }
 
-/* 0) Breadcrumbs wrapper – just spacing & alignment */
+/* 0) Breadcrumbs wrapper – spacing handled by .post gap + breadcrumbs padding */
 .post__breadcrumbs {
-  margin-block: var(--space-2);
+  margin-block: 0; /* no extra margin to avoid oversized gap above H1 */
 }
 
 /* Reading progress bar (Fix Plan 185) */
@@ -65,7 +65,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 21 / 9;       /* shallower banner style */
-  max-height: 420px;
+  max-height: 360px;          /* slightly shorter for more compact page */
   object-fit: cover;          /* crop edges, keep focal point */
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
@@ -95,6 +95,8 @@
   background: var(--color-surface);
   border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
   border-radius: var(--radius-lg);
+  max-width: 60rem;                 /* keep TOC column visually aligned with prose */
+  margin-inline: auto;
 }
 
 /* TOC Mobile Toggle (Fix Plan 185) */
@@ -145,7 +147,7 @@
 /* Series (optional) */
 
 .post__series {
-  padding-block: var(--space-4);
+  padding-block: var(--space-3);
 }
 
 .post__series ol {
@@ -156,7 +158,7 @@
 /* Inline ad slot shell (optional, prevents CLS) */
 
 .ad-slot {
-  margin-block: var(--space-4);
+  margin-block: var(--space-3);
 }
 
 /* Preserve space even when "hidden" attribute is set */
@@ -186,14 +188,14 @@
 /* Author section wrapper */
 
 .post__author {
-  padding-block: var(--space-4);
+  padding-block: var(--space-3);
   border-top: 1px solid var(--color-light-alt);
 }
 
 /* Comments section wrapper */
 
 .post__comments {
-  padding-block: var(--space-4);
+  padding-block: var(--space-3);
   border-top: 1px solid var(--color-light-alt);
 }
 
@@ -245,13 +247,23 @@
   .post__toc {
     padding: var(--space-6);
   }
+
+  .post__series,
+  .post__author,
+  .post__comments {
+    padding-block: var(--space-4);
+  }
+
+  .ad-slot {
+    margin-block: var(--space-4);
+  }
 }
 
-/* Larger viewports: slightly more vertical air only where needed */
+/* Larger viewports: keep gap controlled for compact vertical rhythm */
 
 @media (min-width: 1024px) {
   .post {
-    gap: var(--space-5);
+    gap: var(--space-2); /* keep same compact gap on desktop – no extra inflation */
   }
 
   .toc-details {

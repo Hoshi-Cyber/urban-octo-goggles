@@ -1,11 +1,12 @@
-/* File: src/styles/pages/_404.css
+/* src/styles/pages/_404.css
    Refactored to use global tokens, base, utilities, and breakpoints.
-   No local :root overrides. */
+   No local :root overrides.
+*/
 
 /* Base page context uses global base.css defaults for font, colors, overflow, etc. */
 /* Wrapper */
 .nf {
-  min-height: 100%;
+  min-height: 100vh;
   display: grid;
   place-items: center;
   padding: min(8vh, 6rem) var(--space-4);
@@ -40,12 +41,16 @@
   font-weight: 700;
   color: var(--color-text);
   margin: 0 0 var(--space-2);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .nf__lead {
   margin: 0 auto var(--space-6);
   color: var(--color-muted);
   max-width: 64ch;
+  line-height: 1.6;
 }
 
 /* Actions */
@@ -56,29 +61,20 @@
   margin-bottom: var(--space-6);
 }
 
-/* Buttons use global .btn utilities; keep a light alias for legacy markup */
-.btn {
-  /* Height and alignment tweak for this page without redefining global button visuals */
+/* Buttons use global .btn utilities; scoped tweak for this page only */
+.nf .btn {
   min-height: 2.75rem;
   padding-inline: var(--space-4);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  border-radius: var(--radius-md);
 }
 
-/* Primary alias (maps old .btn--primary to global palette) */
-.btn--primary,
-.btn-primary {
+/* Legacy alias: old .btn--primary on this page should behave like .btn-primary */
+.nf .btn--primary {
   background-color: var(--color-primary);
   color: #ffffff;
   border: 1px solid transparent;
 }
-.btn--primary:hover,
-.btn-primary:hover,
-.btn--primary:focus,
-.btn-primary:focus {
+
+.nf .btn--primary:hover {
   background-color: var(--color-primary-hover);
 }
 
@@ -95,11 +91,23 @@
   width: 100%;
   min-height: 2.75rem;
   padding: 0 var(--space-4);
-  border: 1px solid #d1d5db; /* consider a global border token when available */
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 12%, var(--color-surface));
   border-radius: var(--radius-md);
   font-size: var(--fs-base);
-  background: #fff;
+  background: var(--color-background);
   color: var(--color-text);
+}
+
+.nf__search input[type="search"]::placeholder {
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+.nf__search input[type="search"]:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
 }
 
 /* Hint */

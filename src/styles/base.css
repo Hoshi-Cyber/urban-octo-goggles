@@ -1,10 +1,13 @@
-/* src/styles/base.css */
+/* src/styles/base.css
+   Global base + utility layer
+   Mobile-first baseline from 320px, progressive enhancement via min-width breakpoints.
+*/
 
 /* Base styles and resets */
 html {
   box-sizing: border-box;
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: 16px; /* 1rem baseline (mobile first) */
   line-height: 1.6;
 }
 
@@ -31,68 +34,110 @@ body {
   overflow-x: clip;
 }
 
+/* Links – token-driven, no underline (handled via color/outline) */
 a {
   color: var(--color-primary);
   text-decoration: none;
 }
-a:hover,
-a:focus {
+
+a:hover {
   color: var(--color-primary-hover);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
+a:focus-visible {
+  color: var(--color-primary-hover);
+  text-decoration: none;
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline-offset: 2px;
+}
+
+/* Global accessible skip link */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 0;
+  top: -40px;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus-visible {
+  top: var(--space-2);
+  z-index: 1000;
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000000);
+  outline-offset: 2px;
+}
+
+/* Media */
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
+/* Form controls */
 button {
   font-family: var(--font-sans);
   cursor: pointer;
 }
 
-/* Utility classes for layout */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-
-  /* Mobile-first resilient gutters (Fix Plan 108) */
-  padding-inline: clamp(16px, 4vw, 24px);
+button:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline-offset: 2px;
 }
 
+/* Layout utilities
+   NOTE: .container is defined in breakpoints.css using tokenized
+   --container-max and --container-px as the single source of truth.
+*/
+
+/* Flex utilities */
 .flex {
   display: flex;
 }
+
 .flex-col {
   flex-direction: column;
 }
+
 .flex-row {
   flex-direction: row;
 }
+
 .justify-between {
   justify-content: space-between;
 }
+
 .items-center {
   align-items: center;
 }
 
+/* Grid utilities (mobile-first baseline) */
 .grid {
   display: grid;
 }
+
 .grid-cols-1 {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-/* gap utilities */
+/* Gap utilities */
 .gap-4 {
   gap: var(--space-4);
 }
+
 .gap-6 {
   gap: var(--space-6);
 }
+
 .gap-8 {
   gap: var(--space-8);
 }
@@ -103,88 +148,110 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
 @media (min-width: 1024px) {
   .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
   .grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 /* Responsive, Tailwind-like utilities with escaped colons.
-   These power classes used in markup such as:
-   sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8 */
+   These power classes are used in markup such as:
+   sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8
+*/
 @media (min-width: 640px) {
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
 @media (min-width: 1024px) {
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
 @media (min-width: 1280px) {
   .xl\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+
   .xl\:gap-8 {
     gap: var(--space-8);
   }
 }
 
+/* Text utilities */
 .text-center {
   text-align: center;
 }
+
 .text-muted {
   color: var(--color-muted);
 }
 
+/* Spacing utilities */
 .mb-4 {
   margin-bottom: var(--space-4);
 }
+
 .mb-6 {
   margin-bottom: var(--space-6);
 }
+
 .mb-8 {
   margin-bottom: var(--space-8);
 }
+
 .mt-4 {
   margin-top: var(--space-4);
 }
+
 .mt-6 {
   margin-top: var(--space-6);
 }
+
 .mt-8 {
   margin-top: var(--space-8);
 }
+
 .ml-4 {
   margin-left: var(--space-4);
 }
+
 .py-6 {
   padding-top: var(--space-6);
   padding-bottom: var(--space-6);
 }
+
 .py-8 {
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
 }
+
 .px-4 {
   padding-left: var(--space-4);
   padding-right: var(--space-4);
 }
+
 .px-8 {
   padding-left: var(--space-8);
   padding-right: var(--space-8);
 }
 
+/* Surface utilities */
 .bg-surface {
   background: var(--color-surface);
 }
+
 .rounded-lg {
   border-radius: var(--radius-lg);
 }
+
 .shadow-md {
   box-shadow: var(--shadow-md);
 }

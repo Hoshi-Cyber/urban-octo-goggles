@@ -79,9 +79,8 @@ const webJsonLd = {
 
   <!-- Key metrics before features -->
   <section class="section--tight" aria-label="Key metrics">
-    <div class="container">
-      <StatStrip stats={stats} />
-    </div>
+    <!-- StatStrip owns its own .container internally -->
+    <StatStrip stats={stats} />
   </section>
 
   <!-- Services/features -->
@@ -91,7 +90,10 @@ const webJsonLd = {
   <section class="section" aria-labelledby="pricing-title" id="pricing">
     <div class="container">
       <h2 id="pricing-title" class="h2">Transparent Pricing</h2>
-      <p>Our packages deliver exceptional value without hidden fees. Choose the plan that fits your goals.</p>
+      <p>
+        Our packages deliver exceptional value without hidden fees. Choose the plan that fits your
+        goals.
+      </p>
       <PricingTable showTitle={false} />
     </div>
   </section>
@@ -107,6 +109,8 @@ const webJsonLd = {
   <StructuredData type="WebSite" data={webJsonLd} />
 
   <style>
-    .section--tight { padding-block: clamp(1.25rem, 2vw, 2rem); }
+    .section--tight {
+      padding-block: clamp(1.25rem, 2vw, 2rem);
+    }
   </style>
 </BaseLayout>

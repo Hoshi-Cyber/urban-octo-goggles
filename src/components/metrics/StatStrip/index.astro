@@ -4,17 +4,22 @@ export interface Stat {
   label: string;
 }
 
-const { stats = [], eyebrow = 'By the numbers', compact = false } = Astro.props as {
-  stats?: Stat[];
-  eyebrow?: string;
-  compact?: boolean;
-};
+const { stats = [], eyebrow = "By the numbers", compact = false } =
+  Astro.props as {
+    stats?: Stat[];
+    eyebrow?: string;
+    compact?: boolean;
+  };
 
-/* Bundle CSS (fixes vertical stack) */
+// Component stylesheet – handles all StatStrip visuals/layout.
 import "./StatStrip.css";
 ---
 
-<section class={`statstrip${compact ? ' statstrip--compact' : ''}`} aria-label="Key metrics" data-section="statstrip">
+<section
+  class={`statstrip${compact ? " statstrip--compact" : ""}`}
+  aria-label="Key metrics"
+  data-section="statstrip"
+>
   <div class="container statstrip__inner">
     <header class="statstrip__head">
       <p class="statstrip__eyebrow">{eyebrow}</p>
@@ -24,7 +29,9 @@ import "./StatStrip.css";
       <ul class="statstrip__list" role="list">
         {stats.map(({ value, label }) => (
           <li class="statstrip__item">
-            <div class="statstrip__value" aria-label={`${value} ${label}`}>{value}</div>
+            <div class="statstrip__value" aria-label={`${value} ${label}`}>
+              {value}
+            </div>
             <div class="statstrip__label">{label}</div>
           </li>
         ))}
@@ -32,10 +39,3 @@ import "./StatStrip.css";
     )}
   </div>
 </section>
-
-<style is:global>
-  @import "../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>

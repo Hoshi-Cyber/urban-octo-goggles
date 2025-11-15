@@ -1,24 +1,30 @@
 /* src/components/blog/compose/PostMeta/PostMeta.css */
-
 /*
   Post meta row – published date, updated date, author, reading time.
   Mobile-first, compact, and aligned with global tokens.
 */
 
 .post .post__meta {
+  /* Align with main content column */
+  width: 100%;
+  max-width: var(--container-max);
+  margin-block: 0 var(--space-4);
+  margin-inline: auto;
+
+  /* Mobile-first: tighter horizontal padding and gap */
+  padding-inline: var(--space-3);
+
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
   align-items: center;
-  margin: 0 0 var(--space-4);
-  padding: 0;
-  list-style: none;
+  gap: var(--space-1);
+
   color: var(--color-muted);
-  font-size: var(--fs-sm);
+  /* Slightly smaller on mobile, fallback to fs-sm if fs-xs is not defined */
+  font-size: var(--fs-xs, var(--fs-sm));
 }
 
 /* Keep semantics readable for screen readers but visually minimal */
-
 .post .post__meta dt {
   position: absolute;
   width: 1px;
@@ -31,22 +37,82 @@
   border: 0;
 }
 
+/* Chip-style meta items */
 .post .post__meta dd {
   margin: 0;
   display: inline-flex;
   align-items: center;
+
+  /* Mobile-first: compact chip padding */
+  padding-inline: var(--space-2);
+  padding-block: calc(var(--space-1) * 0.5);
+
+  border-radius: var(--radius-full, 9999px);
+
+  /* Very light tinted background to separate from page */
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    var(--color-light-alt) 15%
+  );
+
+  /* Slightly stronger, but still subtle, border outline */
+  border: 1px solid color-mix(
+    in srgb,
+    var(--color-light-alt) 70%,
+    var(--color-border, #d0d7e2) 30%
+  );
+
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--color-light-alt) 50%,
+      var(--color-border, #d0d7e2) 50%
+    );
+
+  line-height: 1.3;
 }
 
-/* Compact separators between meta items */
+/* Link styling inside meta chips (e.g. authorUrl) */
+.post .post__meta dd a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  text-decoration: none;
+  color: inherit;
+}
 
-.post .post__meta dd + dd::before {
-  content: "•";
-  margin-inline: var(--space-1);
-  color: var(--color-muted);
+/* Subtle hover/focus state for clickable meta chips */
+.post .post__meta dd:hover,
+.post .post__meta dd:focus-within {
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 80%,
+    var(--color-light-alt) 20%
+  );
+}
+
+.post .post__meta dd a:hover,
+.post .post__meta dd a:focus-visible {
+  text-decoration: none;
+  color: var(--color-foreground);
 }
 
 /* Dates stay on a single line to avoid awkward wrapping */
-
 .post .post__meta time {
   white-space: nowrap;
+}
+
+/* Tablet & desktop tuning */
+@media (min-width: 768px) {
+  .post .post__meta {
+    padding-inline: var(--space-4);
+    gap: var(--space-2);
+    font-size: var(--fs-sm);
+  }
+
+  .post .post__meta dd {
+    padding-inline: var(--space-3);
+    padding-block: calc(var(--space-1) * 0.75);
+  }
 }

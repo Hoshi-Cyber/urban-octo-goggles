@@ -11,16 +11,28 @@
   width: 100%;
   max-width: var(--container-max);
   margin-inline: auto;
-  padding-block: var(--space-2);
+
+  /* small breathing room above, no extra space below */
+  padding-block-start: var(--space-1);
+  padding-block-end: 0;
+
   font-size: var(--fs-xs);
   color: var(--color-muted);
 }
 
+/* Main list wrapper */
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1);
+
+  /* HARD RESET any global gap that might be applied */
+  gap: 0 !important;
+
+  /* We handle horizontal spacing via the "/" margins, not column-gap */
+  column-gap: 0;
+  row-gap: var(--space-1);
+
   margin: 0;
   padding: 0;
   list-style: none;
@@ -30,35 +42,65 @@
 .breadcrumbs__item {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+
+  /* No internal gap so text and "/" stay close */
+  gap: 0 !important;
 }
 
+/* Reset any legacy/global separator using ::before */
+.breadcrumbs__item::before {
+  content: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Our compact separator */
 .breadcrumbs__item:not(:last-child)::after {
   content: "/";
   font-size: 0.9em;
   color: color-mix(in oklab, var(--color-muted) 80%, transparent);
+
+  /*
+    Tighten space between text and "/"
+    - small margin before slash
+    - slightly larger margin after slash before the next crumb
+  */
+  margin-inline-start: 0.12rem !important;
+  margin-inline-end: 0.32rem !important;
 }
 
 /* Link + current styles */
 .breadcrumbs__link {
   display: inline-flex;
   align-items: center;
-  padding-inline: var(--space-1);
+
+  /* Tighter pills so padding does not create huge gaps */
+  padding-inline: calc(var(--space-1) * 0.6);
   padding-block: 2px;
   border-radius: 999px;
-  text-decoration: none;
+
+  /* Remove all text decoration, including hover/focus underlines from globals */
+  text-decoration: none !important;
+
   color: var(--color-muted);
   background-color: transparent;
+
   transition:
     color 150ms ease-out,
     background-color 150ms ease-out,
     box-shadow 150ms ease-out;
 }
 
+/* Hover/focus: no underline, just color + background change */
 .breadcrumbs__link:hover,
 .breadcrumbs__link:focus-visible {
+  text-decoration: none !important;
   color: var(--color-primary);
-  background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
   box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.05));
   outline: none;
 }
@@ -66,17 +108,37 @@
 .breadcrumbs__current {
   font-weight: 600;
   color: var(--color-text);
+  text-decoration: none; /* defensive: ensure no underline on current item */
 }
 
-/* Responsive refinements */
+/* Responsive refinements – mobile first, then scale spacing on larger viewports */
 @media (min-width: 768px) {
   .breadcrumbs {
-    padding-block: var(--space-3);
+    /* keep top modest, bottom zero */
+    padding-block-start: var(--space-1);
+    padding-block-end: 0;
   }
 }
 
+/*
+  Desktop refinement:
+  - Keep the current (post title) crumb on a single line.
+  - Use ellipsis to prevent it from forcing horizontal overflow.
+*/
 @media (min-width: 1024px) {
   .breadcrumbs {
-    padding-block: var(--space-4);
+    /* same compact spacing on desktop to avoid large gaps */
+    padding-block-start: var(--space-1);
+    padding-block-end: 0;
+  }
+
+  .breadcrumbs__item {
+    min-width: 0; /* allow current item to shrink within container */
+  }
+
+  .breadcrumbs__current {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

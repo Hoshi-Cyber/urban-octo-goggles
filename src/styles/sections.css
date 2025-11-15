@@ -1,11 +1,17 @@
-/* sections.css — Global page rhythm and section patterns
+/* src/styles/base/sections.css
+   Global page rhythm and section patterns
    Depends on tokens.css, typography.css, and base/breakpoints.
-   (Updated per FP-111/114) */
+   (Updated per FP-111/114)
+*/
 
+/* -------------------------- */
 /* Responsive vertical rhythm */
+/* -------------------------- */
+
 :root {
-  /* Default space between top-level sections (28px → 64px) */
+  /* Default space between top-level sections (28px → 56px) */
   --section-gap: clamp(var(--space-7), 4vw, var(--space-14));
+
   /* Guaranteed breathing room above footer (32px → 64px) */
   --page-gap: clamp(var(--space-8), 5vw, var(--space-16));
 }
@@ -19,9 +25,11 @@
 .stack--tight > * + * {
   margin-block-start: clamp(var(--space-4), 2.2vw, var(--space-6));
 }
+
 .stack--loose > * + * {
   margin-block-start: clamp(var(--space-8), 5vw, var(--space-16));
 }
+
 /* Use when only the first gap (e.g., after Breadcrumbs) should be tighter */
 .stack--first-tight > :first-child + * {
   margin-block-start: clamp(var(--space-3), 1.5vw, var(--space-5));
@@ -32,20 +40,91 @@
   padding-bottom: var(--page-gap);
 }
 
-/* Section header pattern (consistent across pages) */
+/* -------------------------- */
+/* Section header pattern     */
+/* -------------------------- */
+
 .section-head {
   display: grid;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
+
+/* Title: responsive clamp between h3 and h1 sizes */
 .section-title {
   margin: 0;
   font-weight: 800;
   line-height: 1.15;
   font-size: clamp(var(--fs-xl), 3.6vw, var(--fs-3xl));
+  color: var(--color-text);
+  text-wrap: balance;
 }
+
+/* Subtitle / lead: aligned with body tone */
 .section-sub {
   margin: 0;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted);
+  max-width: 70ch;
+}
+
+/* -------------------------- */
+/* Page header pattern        */
+/* -------------------------- */
+
+/* Wrapper for page-level heading + lead (e.g. Pricing, Blog index) */
+.page-header {
+  margin-top: var(--space-2);
+}
+
+/* H1 inside page header (reuses global .h1 typography) */
+.page-header .h1 {
+  margin: 0 0 var(--space-2);
+}
+
+/* Visually distinct page lead block below the title */
+.page-lead {
+  margin: 0;
+  max-width: 68ch;
+
+  font-size: clamp(var(--fs-base), 0.35vw + var(--fs-base), var(--fs-lg));
+  line-height: 1.55;
+
+  color: var(--color-muted);
+  background: color-mix(in oklab, var(--color-primary) 3%, var(--color-background));
+  border: 1px solid color-mix(in oklab, var(--color-primary) 14%, transparent);
+
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Desktop alignment, no overlap with nav */
+@media (min-width: 1024px) {
+  .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: flex-end;
+    gap: var(--space-3);
+  }
+
+  .page-lead {
+    grid-column: 1 / -1;
+    max-width: 60ch;
+  }
+}
+
+/* -------------------------- */
+/* Layout refinements         */
+/* -------------------------- */
+
+/* On wider screens, place title + subtitle side-by-side when appropriate */
+@media (min-width: 768px) {
+  .section-head {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+  }
 }
 
 /* Anchor offset if you use a sticky header */

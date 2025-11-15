@@ -3,6 +3,7 @@
   Colors and sizing variables comply with WCAG contrast requirements.
 */
 :root {
+  /* Brand colors */
   --color-primary: #0b57d0;
   --color-primary-hover: #0949af;
   --color-accent: #1e8e3e;
@@ -15,31 +16,44 @@
   --color-error: #d93025;
   --color-warning: #f59e0b;
 
-  --radius-xl: 16px;
-  --radius-lg: 12px;
+  /* Radius scale (matches usage in BlogPost/PostHeader/etc.) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
   --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadow scale (Breadcrumbs + components use shadow-xs/sm/md) */
+  --shadow-xs: 0 1px 1px rgba(17, 24, 39, 0.04);
   --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
   --shadow-md: 0 4px 12px rgba(17, 24, 39, 0.08);
 
-  /* spacing scale */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
+  /* Spacing scale (covers all tokens referenced in sections/base/BlogPost) */
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px – used in stack--first-tight */
+  --space-6: 1.5rem;    /* 24px */
+  --space-7: 1.75rem;   /* 28px – used in --section-gap clamp */
+  --space-8: 2rem;      /* 32px – used in page gaps, utilities */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-14: 3.5rem;   /* 56px – upper bound for --section-gap */
+  --space-16: 4rem;     /* 64px – upper bound for page/footer gaps */
 
-  /* font families */
+  /* Typography */
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --fs-sm: 0.9375rem;
-  --fs-base: 1rem;
-  --fs-lg: 1.125rem;
-  --fs-xl: 1.25rem;
-  --fs-2xl: 1.5rem;
-  --fs-3xl: 1.875rem;
-  --fs-4xl: 2.25rem;
+
+  /* Font-size tokens (mobile-first; larger viewports can override in breakpoints.css) */
+  --fs-xs: 0.8125rem;   /* 13px – used for breadcrumbs and micro text */
+  --fs-sm: 0.9375rem;   /* 15px */
+  --fs-base: 1rem;      /* 16px – body copy */
+  --fs-lg: 1.125rem;    /* 18px */
+  --fs-xl: 1.25rem;     /* 20px – small headings */
+  --fs-2xl: 1.5rem;     /* 24px – h2, key section titles on mobile */
+  --fs-3xl: 1.875rem;   /* 30px – h1 on mobile */
+  --fs-4xl: 2.25rem;    /* 36px – hero titles / marketing headlines */
 }

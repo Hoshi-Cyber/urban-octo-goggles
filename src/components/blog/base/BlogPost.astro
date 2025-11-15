@@ -36,6 +36,8 @@ export interface Props {
   date: Date;
   updated?: Date | null;
   readingTime?: number | null;
+  author?: string;
+  authorUrl?: string;
   cover?: {
     src: ImageMetadata | string;
     alt?: string;
@@ -74,6 +76,8 @@ const {
   date,
   updated = null,
   readingTime = null,
+  author,
+  authorUrl,
   cover,
   canonical,
   tocHeadings = [],
@@ -132,8 +136,8 @@ const sortedSeries: SeriesItem[] = hasSeries
   <!-- 1) Header (eyebrow + H1) -->
   <PostHeader id="post-title" {category} {title} categoryUrl={categoryUrl} />
 
-  <!-- 2) Meta row (date, reading time, updated) -->
-  <PostMeta {date} {readingTime} {updated} />
+  <!-- 2) Meta row (date, reading time, updated, author) -->
+  <PostMeta {date} {readingTime} {updated} {author} {authorUrl} />
 
   <!-- 3) Cover image (CLS-safe) -->
   {cover && <PostCover {cover} />}
