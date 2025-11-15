@@ -5,22 +5,19 @@ import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import { fileURLToPath } from "node:url";
 
-// Toggle Netlify adapter via env. Default: disabled for local dev.
-const useNetlify = process.env.USE_NETLIFY === "true";
-
-let adapter;
-if (useNetlify) {
-  const { default: netlify } = await import("@astrojs/netlify");
-  adapter = netlify();
-}
-
 export default defineConfig({
+  // Optional: set a default site URL; Netlify / custom domain can override
   site: process.env.ASTRO_SITE || undefined,
+
+  // Keep your trailing slash behavior
   trailingSlash: "always",
-  // Keep SSR to align with page reading params from Astro.params
-  output: "server",
-  adapter, // undefined in local dev; Netlify when USE_NETLIFY=true
+
+  // IMPORTANT: build as a static site, not SSR
+  output: "static",
+
+  // Standard integrations
   integrations: [react(), tailwind(), mdx()],
+
   vite: {
     resolve: {
       alias: {
