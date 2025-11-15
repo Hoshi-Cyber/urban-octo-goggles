@@ -35,31 +35,70 @@ const {
 } = Astro.props as Props;
 
 // Single canonical page title used everywhere
-const pageTitle: string = (String(title).trim() || "CV Writing Kenya");
+const pageTitle: string = String(title).trim() || "CV Writing Kenya";
 
 // Env + site
 const isDev = import.meta.env.DEV;
 
 // Base URL from config (trim trailing slash)
-const siteUrl: string = (siteConfig as any)?.siteUrl?.replace(/\/$/, "") || "";
+const siteUrl: string =
+  (siteConfig as any)?.siteUrl?.toString().replace(/\/$/, "") || "";
 
-// Helper: make absolute URL
-function toAbsolute(u: string): string {
-  if (!u) return "";
-  try {
-    // Already absolute?
-    return new URL(u).href;
-  } catch {
-    // Resolve against configured siteUrl if available; else leave as-is
-    return siteUrl ? siteUrl + (u.startsWith("/") ? u : `/${u}`) : u;
+/**
+ * Helper: coerce any input into an absolute URL string.
+ * - Accepts string | URL | anything else (falls back to String(value)).
+ * - Never calls .startsWith on a non-string.
+ */
+function toAbsolute(input: unknown): string {
+  if (input == null) return "";
+
+  // Normalise to string first
+  let u: string;
+  if (typeof input === "string") {
+    u = input;
+  } else if (input instanceof URL) {
+    u = input.href;
+  } else {
+    u = String(input);
   }
+
+  u = u.trim();
+  if (!u) return "";
+
+  // Already absolute http(s)
+  if (u.startsWith("http://") || u.startsWith("https://")) {
+    return u;
+  }
+
+  // If we have a configured siteUrl, resolve relative to that
+  if (siteUrl) {
+    return siteUrl + (u.startsWith("/") ? u : `/${u}`);
+  }
+
+  // No base configured – return as-is, but ensure it looks like a path
+  return u.startsWith("/") ? u : `/${u}`;
+}
+
+// Derive current path from Astro.url safely
+let currentPath = "/";
+try {
+  const urlVal: any = Astro.url;
+  if (urlVal instanceof URL) {
+    currentPath = urlVal.pathname || "/";
+  } else if (typeof urlVal === "string") {
+    // If Astro.url were ever a string, strip origin if present
+    const parsed = new URL(urlVal, "http://localhost");
+    currentPath = parsed.pathname || "/";
+  }
+} catch {
+  currentPath = "/";
 }
 
 // Compute canonical (single source of truth)
 const pageCanonical: string =
-  (typeof inCanonical === "string" && inCanonical.trim())
+  typeof inCanonical === "string" && inCanonical.trim()
     ? toAbsolute(inCanonical.trim())
-    : (siteUrl ? siteUrl + Astro.url.pathname : Astro.url.href);
+    : toAbsolute(currentPath);
 
 // Prev/Next (resolve to absolute if relative)
 function absOrRel(href: string | null): string | null {
@@ -70,10 +109,16 @@ const prevHref = absOrRel(relPrev);
 const nextHref = absOrRel(relNext);
 
 // OG image
-const ogImageIn = (seo as any)?.ogImage as string | undefined;
+const ogImageIn = (seo as any)?.ogImage as unknown;
 const ogImage = isDev
-  ? (ogImageIn || "/assets/logos/logo-square-512.png")
-  : (ogImageIn ? toAbsolute(ogImageIn) : toAbsolute("/assets/logos/logo-square-512.png"));
+  ? (typeof ogImageIn === "string" && ogImageIn.trim()
+      ? ogImageIn.trim()
+      : "/assets/logos/logo-square-512.png")
+  : toAbsolute(
+      (typeof ogImageIn === "string" && ogImageIn.trim()
+        ? ogImageIn.trim()
+        : "/assets/logos/logo-square-512.png")
+    );
 
 // IDs
 const ga4Id: string | undefined =
