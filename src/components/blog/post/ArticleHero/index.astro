@@ -1,0 +1,87 @@
+---
+/*
+  src/components/blog/post/ArticleHero/index.astro
+
+  FP-205.3:
+  - Composed hero for single blog posts.
+  - Uses existing PostHeader + PostMeta (+ PostUpdatedBadge) for semantics.
+  - Optional soft CTA using shared Button.
+  - BlogPostLayout wraps this in .container/.stack; do NOT add another container.
+*/
+
+import PostHeader from "@/components/blog/compose/PostHeader";
+import PostMeta from "@/components/blog/compose/PostMeta";
+import PostUpdatedBadge from "@/components/blog/compose/PostUpdatedBadge";
+import Button from "@/components/cta/Button";
+
+import "./ArticleHero.css";
+
+interface SoftCta {
+  label: string;
+  href: string;
+  /** Optional tracking identifier */
+  ctaId?: string;
+}
+
+export interface ArticleHeroProps {
+  category: string;
+  title: string;
+  heroTagline?: string;
+
+  publishedAt?: string | Date;
+  updatedAt?: string | Date;
+  readingTimeMinutes?: number;
+  authorName?: string;
+  authorUrl?: string;
+
+  softCta?: SoftCta;
+}
+
+const {
+  category,
+  title,
+  heroTagline,
+  publishedAt,
+  updatedAt,
+  readingTimeMinutes,
+  authorName,
+  authorUrl,
+  softCta,
+} = Astro.props as ArticleHeroProps;
+
+const categoryUrl = `/blog/${category}/`;
+const hasSoftCta = Boolean(softCta?.label && softCta?.href);
+---
+
+<section class="article-hero" aria-labelledby="post-hero-title">
+  <PostHeader
+    id="post-hero-title"
+    title={title}
+    category={category}
+    categoryUrl={categoryUrl}
+    dek={heroTagline}
+  />
+
+  <div class="article-hero__metaRow">
+    <PostMeta
+      date={publishedAt}
+      updated={updatedAt}
+      author={authorName}
+      authorUrl={authorUrl}
+      readingTime={readingTimeMinutes}
+    />
+
+    {hasSoftCta && (
+      <Button
+        label={softCta!.label}
+        href={softCta!.href}
+        variant="link"
+        size="sm"
+        class="article-hero__cta"
+        cta={softCta!.ctaId ?? "hero:soft-cta"}
+      />
+    )}
+  </div>
+
+  <PostUpdatedBadge date={publishedAt} updated={updatedAt} />
+</section>

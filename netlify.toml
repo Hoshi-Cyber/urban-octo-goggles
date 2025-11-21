@@ -26,33 +26,10 @@
 
   # CSP in Report-Only for staging on Netlify
   # Switch to Content-Security-Policy (enforced) after validating reports
-  Content-Security-Policy-Report-Only = """
-    default-src 'self';
-    base-uri 'self';
-    frame-ancestors 'self';
-    img-src 'self' https: data:;
-    font-src 'self' https: data:;
-    media-src 'self' https:;
-    object-src 'none';
-    connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com;
-    script-src 'self' https://www.googletagmanager.com 'unsafe-inline';
-    style-src 'self' 'unsafe-inline';
-    frame-src https://www.googletagmanager.com;
-    form-action 'self';
-    upgrade-insecure-requests;
-    report-to csp-endpoint; report-uri https://cvwriting.co.ke/.well-known/csp-reports
-  """
+  Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; frame-ancestors 'self'; img-src 'self' https: data:; font-src 'self' https: data:; media-src 'self' https:; object-src 'none'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; script-src 'self' https://www.googletagmanager.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src https://www.googletagmanager.com; form-action 'self'; upgrade-insecure-requests; report-to csp-endpoint; report-uri https://cvwriting.co.ke/.well-known/csp-reports"
 
   # Report-To group matching the CSP above
-  Report-To = """
-  {
-    "group": "csp-endpoint",
-    "max_age": 10886400,
-    "endpoints": [
-      { "url": "https://cvwriting.co.ke/.well-known/csp-reports" }
-    ]
-  }
-  """
+  Report-To = '{ "group": "csp-endpoint", "max_age": 10886400, "endpoints": [ { "url": "https://cvwriting.co.ke/.well-known/csp-reports" } ] }'
 
 # ---------------------------
 # Static asset caching

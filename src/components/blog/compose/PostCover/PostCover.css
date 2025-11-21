@@ -6,11 +6,26 @@
 */
 
 .post .post__cover {
-  margin: 0 0 var(--space-8);
+  margin: 0 0 var(--space-5); /* tighter on small screens */
   border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+}
+
+/* Step 6.2 – responsive vertical rhythm:
+   increase breathing room on tablet and desktop so the hero
+   feels balanced without dominating mobile viewports. */
+@media (min-width: 768px) {
+  .post .post__cover {
+    margin-bottom: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .post .post__cover {
+    margin-bottom: var(--space-10);
+  }
 }
 
 /* Ensure picture and image fill width and prevent layout shift */
@@ -24,7 +39,9 @@
   width: 100%;
   height: auto;
   object-fit: cover;
-  aspect-ratio: 16 / 9; /* fallback aspect ratio to guard against CLS */
+  /* Width/height attributes from HTML provide primary CLS safety;
+     aspect-ratio remains as a defensive fallback. */
+  aspect-ratio: 16 / 9;
 }
 
 /* Caption / credit line */
@@ -49,7 +66,7 @@
   font-style: italic;
 }
 
-/* Slight tightening on very small screens if needed */
+/* Slight tightening on larger screens */
 
 @media (min-width: 768px) {
   .post .postCover__caption {

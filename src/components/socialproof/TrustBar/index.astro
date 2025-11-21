@@ -1,64 +1,179 @@
 ---
-export interface Logo { src: string; alt?: string; width?: number; height?: number }
-export interface Rating { score?: number; count?: number; label?: string }
+// src/components/socialproof/TrustBar/index.astro
+
+import "./TrustBar.css";
+
+export interface Segment {
+  label: string;
+}
+
+export interface Rating {
+  score?: number;
+  count?: number;
+  label?: string;
+  since?: number;
+}
 
 export interface Props {
   variant?: "default" | "compact";
   eyebrow?: string;
-  rating?: Rating;               // may be undefined
-  logos?: Logo[];
+  rating?: Rating;
+  summary?: string;
+  segments?: Segment[];
+  footnote?: string;
 }
+
+const props = Astro.props as Props;
 
 const {
   variant = "default",
   eyebrow = "",
-  rating = {},
-  logos = [],
-} = Astro.props as Props;
+  rating,
+  summary,
+  segments = [],
+  footnote,
+} = props;
 
-const s = Number.isFinite(rating?.score as number) ? (rating!.score as number) : null;
-const scoreText = s !== null ? s.toFixed(1) : null;
-const countText = Number.isFinite(rating?.count as number) ? (rating!.count as number).toLocaleString() : null;
-const labelText = rating?.label ?? "Rating";
+// Rating core
+const score =
+  typeof rating?.score === "number" && Number.isFinite(rating.score)
+    ? rating.score
+    : null;
+const scoreText = score !== null ? score.toFixed(1) : null;
+
+const count =
+  typeof rating?.count === "number" && Number.isFinite(rating.count)
+    ? rating.count
+    : null;
+const countText = count !== null ? count.toLocaleString() : null;
+
+const labelTextBase =
+  typeof rating?.label === "string" && rating.label.trim().length > 0
+    ? rating.label.trim()
+    : "reviews";
+const labelText = labelTextBase;
+
+const hasRating = score !== null;
+
+// Copy blocks
+const summaryText =
+  typeof summary === "string" ? summary.trim() : "";
+const hasSummary = summaryText.length > 0;
+
+// Segments: normalize then optionally compact
+const normalizedSegments = Array.isArray(segments)
+  ? segments.filter(
+      (segment) =>
+        typeof segment?.label === "string" &&
+        segment.label.trim().length > 0
+    )
+  : [];
+
+const COMPACT_MAX_SEGMENTS = 5;
+
+const displayedSegments =
+  variant === "compact"
+    ? normalizedSegments.slice(0, COMPACT_MAX_SEGMENTS)
+    : normalizedSegments;
+
+const remainingSegments =
+  normalizedSegments.length > displayedSegments.length
+    ? normalizedSegments.length - displayedSegments.length
+    : 0;
+
+const hasDisplayedSegments = displayedSegments.length > 0;
+
+const footnoteText =
+  typeof footnote === "string" ? footnote.trim() : "";
+const hasFootnote = footnoteText.length > 0;
+
+// Stars
+const starCount =
+  score !== null ? Math.max(1, Math.min(5, Math.round(score))) : null;
+const starText = starCount ? "★".repeat(starCount) : "";
+
+// Since year
+const sinceYear =
+  typeof rating?.since === "number" && Number.isFinite(rating.since)
+    ? rating.since
+    : null;
+
+// A11y label for rating cluster
+const ratingAriaLabel = hasRating
+  ? `${labelText}: ${scoreText} out of 5${
+      countText ? `, based on ${countText} ${labelText}` : ""
+    }${sinceYear ? `, collected since ${sinceYear}` : ""}`
+  : undefined;
+
+// Presence flags
+const hasLeft = Boolean(eyebrow || hasRating);
+const hasBody = hasSummary || hasDisplayedSegments || hasFootnote;
 ---
-<section class={`trust ${variant === "compact" ? "trust--compact" : ""}`} aria-label="Social proof">
-  <div class="container trust__wrap">
-    {eyebrow && <p class="trust__eyebrow">{eyebrow}</p>}
 
-    {scoreText && (
-      <p class="trust__rating">
-        <span class="trust__score" aria-label={`${labelText}: ${scoreText} out of 5`}>{scoreText}</span>
-        {countText && <span class="trust__count">({countText})</span>}
-      </p>
-    )}
+{hasLeft || hasBody ? (
+  <section
+    class={`trustbar${variant === "compact" ? " trustbar--compact" : ""}`}
+    aria-label="Social proof"
+  >
+    <div class="trustbar__inner">
+      {hasLeft && (
+        <div class="trustbar__left">
+          <header class="trustbar__head">
+            {eyebrow && <p class="trustbar__eyebrow">{eyebrow}</p>}
 
-    {logos.length > 0 && (
-      <ul class="trust__logos" aria-label="Featured by">
-        {logos.map((l) => (
-          <li class="trust__logo">
-            <img
-              src={l.src}
-              alt={l.alt ?? ""}
-              width={l.width ?? 120}
-              height={l.height ?? 40}
-              loading="lazy"
-              decoding="async"
-            />
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-</section>
+            {hasRating && (
+              <p class="trustbar__rating" aria-label={ratingAriaLabel}>
+                {starText && (
+                  <span class="trustbar__stars" aria-hidden="true">
+                    {starText}
+                  </span>
+                )}
+                <span class="trustbar__score" aria-hidden="true">
+                  {scoreText}
+                  <span class="trustbar__score-max">/5</span>
+                </span>
+                <span class="trustbar__meta" aria-hidden="true">
+                  {countText ? `from ${countText}+ ${labelText}` : labelText}
+                </span>
+              </p>
+            )}
+          </header>
+        </div>
+      )}
 
-<style>
-  .trust{padding-block:var(--space-6);border-top:1px solid rgba(17,24,39,.06);background:var(--color-background)}
-  .trust__wrap{display:grid;gap:.5rem;justify-items:center;text-align:center}
-  .trust__eyebrow{margin:0;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--color-muted)}
-  .trust__rating{margin:.25rem 0 0;color:var(--color-text)}
-  .trust__score{font-weight:700}
-  .trust__count{margin-left:.25rem;color:var(--color-muted);font-size:.9em}
-  .trust__logos{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:center;margin:0;padding:0;list-style:none}
-  .trust__logo img{opacity:.9;filter:grayscale(100%);max-height:44px}
-  .trust--compact{padding-block:var(--space-4)}
-</style>
+      {hasBody && (
+        <div class="trustbar__right">
+          <div class="trustbar__body">
+            {hasSummary && (
+              <p class="trustbar__summary">
+                {summaryText}
+              </p>
+            )}
+
+            {hasDisplayedSegments && (
+              <ul class="trustbar__segments" aria-label="Who this is for">
+                {displayedSegments.map((segment) => (
+                  <li class="trustbar__segment-chip">
+                    {segment.label}
+                  </li>
+                ))}
+
+                {remainingSegments > 0 && (
+                  <li class="trustbar__segment-chip trustbar__segment-chip--more">
+                    +{remainingSegments} more
+                  </li>
+                )}
+              </ul>
+            )}
+
+            {hasFootnote && (
+              <p class="trustbar__footnote">
+                {footnoteText}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+) : null}

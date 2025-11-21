@@ -1,88 +1,108 @@
 ---
-// File: src/components/blog/compose/CategoryGrid/index.astro
-/**
- * CategoryGrid — vertical cards with variants per Fix Plan 147.2.
- * Structure: section -> h2 -> ul > li > a (icon, body, chevron)
- * Single-line titles, inline SVG support, per-card variant classes.
- *
- * Props:
- *  - eyebrow?: string
- *  - title?: string
- *  - items: Array<{
- *      icon?: string;   // emoji, inline <svg> string, or asset path
- *      title: string;
- *      blurb: string;
- *      href: string;
- *      count?: number;
- *    }>
- */
+// src/components/blog/compose/CategoryGrid/index.astro
 
-export interface Item {
-  icon?: string;
+import "./CategoryGrid.css";
+
+export interface CategoryCard {
+  icon?: string; // inline SVG string (optional)
   title: string;
   blurb: string;
   href: string;
   count?: number;
 }
-export interface Props {
+
+interface Props {
   eyebrow?: string;
   title?: string;
-  items: Item[];
+  items: CategoryCard[];
+  class?: string;
 }
 
-const {
-  eyebrow = "Topics",
-  title = "Explore Categories",
-  items = [],
-} = Astro.props as Props;
+const { eyebrow, title, items, class: className } = Astro.props as Props;
 
-import css from "./CategoryGrid.css?url";
+const VARIANTS = ["a", "b", "c", "d"];
+
+const baseId = "blog-explore-categories";
+const resolvedTitle =
+  typeof title === "string" && title.trim().length > 0
+    ? title
+    : "Explore categories";
+
+const sectionId =
+  resolvedTitle === "Explore categories"
+    ? baseId
+    : `${baseId}-${resolvedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 ---
-<link rel="stylesheet" href={css} />
 
-<section class="catgrid" aria-labelledby="cat-heading">
-  <div class="container">
-    <header class="catgrid__head">
-      {eyebrow && <p class="catgrid__eyebrow">{eyebrow}</p>}
-      <h2 id="cat-heading" class="catgrid__title">{title}</h2>
-    </header>
+<section
+  class={`catgrid ${className ?? ""}`}
+  aria-labelledby={sectionId}
+>
+  {/* Header: left-aligned, eyebrow directly above title, width constrained by container */}
+  <header class="catgrid__head container stack section-head">
+    {eyebrow && <p class="catgrid__eyebrow">{eyebrow}</p>}
 
-    <ul class="cat-grid" role="list">
-      {items.slice(0, 4).map((c, i) => {
-        const variant = (["a","b","c","d"] as const)[i % 4];
+    <h2 id={sectionId} class="section-title catgrid__title">
+      {resolvedTitle}
+    </h2>
+  </header>
+
+  {/* Grid: full-width across the section, no container wrapping the cards */}
+  {items?.length > 0 && (
+    <ul
+      class="cat-grid"
+      role="list"
+      aria-label={resolvedTitle}
+    >
+      {items.map((item, index) => {
+        const variant = VARIANTS[index % VARIANTS.length];
+        const hasCount =
+          typeof item.count === "number" && item.count > 0;
+        const countLabel = hasCount
+          ? `${item.count} ${item.count === 1 ? "post" : "posts"}`
+          : "";
+        const cardLabel = hasCount
+          ? `${item.title}, ${countLabel}`
+          : item.title;
+
         return (
           <li class={`cat cat--${variant}`}>
             <a
-              href={c.href}
-              class="cat__link"
-              aria-label={`Browse ${c.title}`}
-              data-cta="category-card"
+              href={item.href}
+              class="cat__link card"
+              aria-label={cardLabel}
             >
-              <div class="cat__icon" aria-hidden="true">
-                {
-                  // Inline SVG string
-                  c.icon?.includes?.("<svg")
-                    ? <div set:html={c.icon} />
-                    // Asset path
-                    : (c.icon?.endsWith?.(".svg") || c.icon?.startsWith?.("/"))
-                      ? <img src={c.icon} alt="" loading="lazy" decoding="async" fetchpriority="low" />
-                      // Emoji or fallback
-                      : <span>{c.icon ?? "📚"}</span>
-                }
-              </div>
+              {item.icon && (
+                <div
+                  class="cat__icon"
+                  aria-hidden="true"
+                  set:html={item.icon}
+                />
+              )}
 
               <div class="cat__body">
-                {/* Single-line with tooltip via title attr */}
-                <h3 class="cat__title" title={c.title}>{c.title}</h3>
-                {c.blurb && <p class="cat__desc">{c.blurb}</p>}
-                {typeof c.count === "number" && <span class="cat__count">{c.count} posts</span>}
+                <h3 class="cat__title">{item.title}</h3>
+
+                {item.blurb && (
+                  <p class="cat__desc">
+                    {item.blurb}
+                  </p>
+                )}
+
+                {hasCount && (
+                  <span class="cat__count">
+                    {countLabel}
+                  </span>
+                )}
               </div>
 
-              <div class="cat__chev" aria-hidden="true">→</div>
+              <span class="cat__chev" aria-hidden="true">
+                →
+              </span>
             </a>
           </li>
         );
       })}
     </ul>
-  </div>
+  )}
 </section>

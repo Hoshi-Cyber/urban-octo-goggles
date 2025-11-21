@@ -13,18 +13,22 @@ date: "2025-11-10"
 updated: "2025-11-10"            # or remove if never updated
 
 # Author (flattened schema)
-author: "Hoshi Consult Editorial"
-authorUrl: "/about/hoshi-consult-editorial"
+author: "Mezame Editorial"
+authorSlug: "mezame-editorial"
 
 # Reading time (either field is accepted)
 readingTime: 6            # or: readingTime: 6
 
-# Media (prefer root-relative URLs for correct JSON-LD image building)
+# Media (16:9 hero, ≥1200px wide, WebP/AVIF preferred, root-relative URL for JSON-LD)
 cover:
-  src: "/assets/images/placeholder/blog-hero.webp"
-  alt: "Candidate reviewing an ATS-friendly CV"
-  width: 1280
-  height: 720
+  src: "/assets/images/blog/<category>/<slug>-hero.webp"
+  alt: "Descriptive, human-readable summary of the hero scene"
+  width: 1200
+  height: 675
+  caption: "Optional visible caption"
+  credit: "Optional photographer/source credit"
+
+# Optional: ogImage only if you have a custom OG asset at /assets/images/og/blog/<slug>.webp
 
 # Optional SEO overrides (for reference when creating real posts)
 seo:
@@ -33,27 +37,26 @@ seo:
   canonical: "/blog/cv-tips/optimize-cv-for-ats-2025/"   # root-relative; absolute is also supported
 
 # Optional: alternative image source
-# ogImage: "/images/blog/ats-cv-2025-og.jpg"
 ---
 
 > **Summary:** This guide shows you how to structure, keyword, and format your CV so it parses cleanly in modern Applicant Tracking Systems without sacrificing human readability.
 
-## 1) Structure first
+## Structure first
 Use a single-column layout with clear section headings: **Summary**, **Experience**, **Skills**, **Education**.
 Avoid tables, text boxes, or multi-column grids that break parsing.
 
-## 2) Keywords with intent
+## Keywords with intent
 Derive keywords from the role spec. Mirror exact phrasing in **Experience** bullets where truthful.
 Avoid keyword dumps in a separate block that ATS may discount.
 
-## 3) Bullets that prove impact
+## Bullets that prove impact
 Each bullet: *action* → *scope* → *metric* → *outcome*.
 Example: “Reduced average time-to-offer from 32 to 18 days by restructuring screening rubric.”
 
-## 4) Skills that map to the role
+## Skills that map to the role
 Keep a concise, role-aligned skills section. Prefer concrete skills over vague traits.
 
-## 5) File hygiene
+## File hygiene
 Export as **PDF** unless employer mandates DOCX. Keep text selectable, not scanned images.
 Use a standard font, 10.5–12pt, and accessible contrast.
 

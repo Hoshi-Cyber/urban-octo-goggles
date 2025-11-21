@@ -9,7 +9,7 @@ import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astr
 import Pagination from "../../components/blog/compose/Pagination/index.astro";
 import { getCollection } from "astro:content";
 
-const PLACEHOLDER = "/assets/images/placeholder/blog-hero.webp";
+const PLACEHOLDER = "/assets/images/blog/hero/blog-home-hero.webp";
 
 const slugify = (s: string) =>
   String(s || "uncategorized")
@@ -22,7 +22,8 @@ const slugify = (s: string) =>
 const isBad = (v: unknown) =>
   v === null ||
   v === undefined ||
-  (typeof v === "string" && (!v.trim() || v.includes("undefined") || v.includes("null")));
+  (typeof v === "string" &&
+    (!v.trim() || v.includes("undefined") || v.includes("null")));
 
 // Load non-draft posts
 const all = await getCollection("blog", ({ data }) => !data.draft);
@@ -60,7 +61,10 @@ const posts = all
       cover: coverSrc,
       category: p.data.category ?? "Uncategorized",
       categorySlug,
-      readingTime: (p.data as any).readingTimeMinutes ?? p.data.readingTime ?? undefined,
+      readingTime:
+        (p.data as any).readingTimeMinutes ??
+        p.data.readingTime ??
+        undefined,
     };
   })
   .filter((p) => !isBad(p.cover)) // skip any remaining obviously broken image values
@@ -131,36 +135,78 @@ const card = (icon: string, title: string, slug: string, blurb: string) => ({
 });
 
 const categoryCards = [
-  card(svg.pen, "CV & Cover Letter Tips", "cv-tips", "Actionable guides for better applications."),
-  card(svg.linkedin, "LinkedIn & Branding", "linkedin", "Be discoverable and credible."),
-  card(svg.briefcase, "Interviews & Offers", "career-growth", "Prep, strategy, and negotiation."),
-  card(svg.chart, "Kenya Job Market", "kenya-market", "Local trends and salary intel."),
+  card(
+    svg.pen,
+    "CV & Cover Letter Tips",
+    "cv-tips",
+    "Actionable guides for better applications.",
+  ),
+  card(
+    svg.linkedin,
+    "LinkedIn & Branding",
+    "linkedin",
+    "Be discoverable and credible.",
+  ),
+  card(
+    svg.briefcase,
+    "Interviews & Offers",
+    "career-growth",
+    "Prep, strategy, and negotiation.",
+  ),
+  card(
+    svg.chart,
+    "Kenya Job Market",
+    "kenya-market",
+    "Local trends and salary intel.",
+  ),
 ];
 
-// Minimal JSON-LD for Blog home
+// Safe origin handling for JSON-LD (Astro.site may be undefined in dev)
+const siteOrigin = Astro.site?.origin ?? "";
+
+// JSON-LD for Blog home (enriched per Fix Plan 204)
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  url: canonical,
-  name: "CV Writing Kenya — Blog",
+  name: "CV Writing & Career Insights Blog",
+  url: siteOrigin ? `${siteOrigin}${canonical}` : canonical,
+  description:
+    "Practical guides on ATS-friendly CVs, cover letters, LinkedIn, interviews, and salary trends in Kenya.",
+  image: siteOrigin
+    ? `${siteOrigin}/assets/images/blog/og/blog-home-hero-og.webp`
+    : "/assets/images/blog/og/blog-home-hero-og.webp",
 };
 ---
 
-<BaseLayout title="Blog" description="Insights on ATS, CV writing, and career growth in Kenya" {canonical} {relPrev} {relNext}>
+<BaseLayout
+  title="CV Writing & Career Insights Blog | CVWriting.co.ke"
+  description="Practical guides on ATS-friendly CVs, cover letters, LinkedIn, interviews, and salary trends in Kenya."
+  {canonical}
+  {relPrev}
+  {relNext}
+  seo={{
+    ogImage: "/assets/images/blog/og/blog-home-hero-og.webp",
+    ogImageWidth: "1200",
+    ogImageHeight: "630",
+    twitterImage: "/assets/images/blog/og/blog-home-hero-og.webp",
+  }}
+>
   <script type="application/ld+json">
     {JSON.stringify(jsonLd)}
   </script>
 
   <BlogHero
-    title="Career Insights & Guides"
-    sub="Actionable posts on CVs, cover letters, LinkedIn, and job search."
+    title="CV Writing & Career Insights Blog for Kenya"
+    sub="Actionable posts on ATS-friendly CVs, cover letters, LinkedIn, interviews, and salary trends in Kenya."
     primaryHref="/contact/"
     primaryLabel="Get Professional CV Help"
     secondaryHref="/blog/"
     secondaryLabel="Read Latest"
     cover={{
       src: featured?.cover ?? PLACEHOLDER,
-      alt: featured?.title ?? "Blog hero",
+      alt:
+        featured?.title ??
+        "Illustration representing CV writing and career insights in Kenya",
     }}
   />
 
@@ -169,10 +215,10 @@ const jsonLd = {
 
   <PostFeedLatest
     posts={feedPosts}
-    pageSize={8}                 /* Fix Plan 149: render up to 8 cards */
+    pageSize={8} /* Fix Plan 149: render up to 8 cards */
     eyebrow="From the blog"
     title="Latest articles"
-    moreHref={relNext ?? "/blog/"}  /* Route to archive when available */
+    moreHref={relNext ?? "/blog/"} /* Route to archive when available */
     moreLabel="View all"
     moreAriaLabel="View all blog posts"
     ctaClass="pfl__viewAll"
@@ -183,7 +229,12 @@ const jsonLd = {
     <Pagination basePath="/blog" current={1} total={totalPages} />
   )}
 
-  <TrendingList items={trendingItems} eyebrow="Popular this month" title="Trending" limit={5} />
+  <TrendingList
+    items={trendingItems}
+    eyebrow="Popular this month"
+    title="Trending"
+    limit={5}
+  />
 
   <LeadMagnetStrip
     title="Free PDF: Top 10 CV Mistakes in Kenya"

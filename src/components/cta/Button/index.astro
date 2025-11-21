@@ -1,78 +1,72 @@
 ---
 /** Button — mobile-first, token-driven,
  * Polymorphic: <a> if href, else <button>.
- *
- * Props:
- *  label: string
- *  href?: string
- *  variant?: 'primary' | 'accent' | 'ghost' | 'link'
- *  size?: 'sm' | 'md' | 'lg'
- *  block?: boolean
- *  disabled?: boolean
- *  cta?: string
- *  target?: '_self' | '_blank'
- *  rel?: string
- *  ariaLabel?: string
- *  class?: string
  */
 
 export interface Props {
-  label: string
-  href?: string
-  variant?: 'primary' | 'accent' | 'ghost' | 'link'
-  size?: 'sm' | 'md' | 'lg'
-  block?: boolean
-  disabled?: boolean
-  cta?: string
-  target?: '_self' | '_blank'
-  rel?: string
-  ariaLabel?: string
-  class?: string
+  label: string;
+  href?: string;
+  variant?: "primary" | "accent" | "ghost" | "link";
+  size?: "sm" | "md" | "lg";
+  block?: boolean;
+  disabled?: boolean;
+  cta?: string;
+  target?: "_self" | "_blank";
+  rel?: string;
+  ariaLabel?: string;
+  class?: string;
 }
 
 const {
   label,
   href,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   block = false,
   disabled = false,
   cta,
   target,
   rel,
   ariaLabel,
-  class: className = ''
-} = Astro.props as Props
+  class: className = "",
+} = Astro.props as Props;
 
 const variantClass =
-  variant === 'accent' ? 'btn-accent' :
-  variant === 'ghost'  ? 'btn-ghost'  :
-  variant === 'link'   ? 'btn-link'   :
-  'btn-primary'
+  variant === "accent"
+    ? "btn-accent"
+    : variant === "ghost"
+    ? "btn-ghost"
+    : variant === "link"
+    ? "btn-link"
+    : "btn-primary";
 
 const sizeClass =
-  size === 'sm' ? 'btn-sm' :
-  size === 'lg' ? 'btn-lg' :
-  'btn-md'
+  size === "sm" ? "btn-sm" : size === "lg" ? "btn-lg" : "btn-md";
 
-const blockClass = block ? 'btn-block' : ''
+const blockClass = block ? "btn-block" : "";
 
-const resolvedTarget = target ?? undefined
-const resolvedRel = resolvedTarget === '_blank' ? (rel ?? 'noopener') : rel
-const dataCta = cta ?? `btn-${variant}`
+const resolvedTarget = target ?? undefined;
+const resolvedRel =
+  resolvedTarget === "_blank" ? rel ?? "noopener" : rel ?? undefined;
 
-import "./Button.css"   // Moved into frontmatter to prevent leaking into DOM
+const dataCta = cta ?? `btn-${variant}`;
+
+// Only apply aria-label when it adds extra information beyond the visible label
+const ariaLabelAttr =
+  ariaLabel && ariaLabel !== label ? ariaLabel : undefined;
+
+import "./Button.css";
 ---
 
 {href ? (
   <a
     href={disabled ? undefined : href}
     class={`btn ${variantClass} ${sizeClass} ${blockClass} ${className}`.trim()}
-    aria-label={ariaLabel}
+    aria-label={ariaLabelAttr}
     data-cta={dataCta}
     {...(resolvedTarget ? { target: resolvedTarget } : {})}
     {...(resolvedRel ? { rel: resolvedRel } : {})}
-    aria-disabled={disabled ? 'true' : undefined}
+    aria-disabled={disabled ? "true" : undefined}
     tabindex={disabled ? -1 : undefined}
   >
     <span class="btn__inner">
@@ -85,7 +79,7 @@ import "./Button.css"   // Moved into frontmatter to prevent leaking into DOM
   <button
     type="button"
     class={`btn ${variantClass} ${sizeClass} ${blockClass} ${className}`.trim()}
-    aria-label={ariaLabel}
+    aria-label={ariaLabelAttr}
     data-cta={dataCta}
     disabled={disabled}
   >

@@ -6,6 +6,16 @@ export interface FeatureRow {
   values: Array<boolean | string>; // one per plan
 }
 
+export interface Props {
+  plans?: string[];
+  features?: FeatureRow[];
+  caption?: string;
+  eyebrow?: string;
+  compact?: boolean;
+  wide?: boolean;
+  showHead?: boolean;
+}
+
 const {
   plans = [],
   features = [],
@@ -14,21 +24,33 @@ const {
   compact = false,
   wide = false,
   showHead = true, // allow page to own the section heading
-} = Astro.props as {
-  plans?: string[];
-  features?: FeatureRow[];
-  caption?: string;
-  eyebrow?: string;
-  compact?: boolean;
-  wide?: boolean;
-  showHead?: boolean;
-};
+} = Astro.props as Props;
 
-const classes = `cmatrix${compact ? " cmatrix--compact" : ""}${wide ? " cmatrix--wide" : ""}`;
-const sr = (txt: string) => `<span class="sr-only">${txt}</span>`;
+const cmatrixClasses =
+  "cmatrix" +
+  (compact ? " cmatrix--compact" : "") +
+  (wide ? " cmatrix--wide" : "");
+
+// Normalized plan labels (keep length, avoid undefined in ARIA/labels)
+const planLabels = Array.isArray(plans)
+  ? plans.map((plan, index) => {
+      if (typeof plan === "string") {
+        const trimmed = plan.trim();
+        return trimmed.length > 0 ? trimmed : `Plan ${index + 1}`;
+      }
+      return `Plan ${index + 1}`;
+    })
+  : [];
+
+// Scroll region label – ties back to caption
+const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
 ---
 
-<section class={classes} aria-label="Plan comparison" data-section="comparison-matrix">
+<section
+  class={cmatrixClasses}
+  aria-label="Plan comparison"
+  data-section="comparison-matrix"
+>
   <div class="container">
     {showHead && (
       <header class="cmatrix__head">
@@ -37,57 +59,106 @@ const sr = (txt: string) => `<span class="sr-only">${txt}</span>`;
       </header>
     )}
 
-    <!-- Framed, scrollable region on small screens -->
-    <div class="cmatrix__wrap" role="region" aria-label="Scrollable comparison table" tabindex="0">
+    {/* Framed, scrollable region on small screens */}
+    <div
+      class="cmatrix__wrap"
+      role="region"
+      aria-label={scrollRegionLabel}
+      tabindex="0"
+    >
       <table class="cmatrix__table">
         <caption class="sr-only">{caption}</caption>
 
-        <!-- Column model: lock first column; remaining plan columns divide evenly -->
+        {/* Column model: first column = feature; remaining plan columns divide evenly */}
         <colgroup>
           <col class="cmatrix__col--feat" />
-          {plans.map(() => <col class="cmatrix__col--plan" />)}
+          {planLabels.map(() => (
+            <col class="cmatrix__col--plan" />
+          ))}
         </colgroup>
 
         <thead>
           <tr>
-            <th scope="col" class="cmatrix__featcol">Feature</th>
-            {plans.map((p) => (
-              <th scope="col" class="cmatrix__plancol">{p}</th>
+            <th scope="col" class="cmatrix__featcol">
+              Feature
+            </th>
+            {planLabels.map((planLabel) => (
+              <th scope="col" class="cmatrix__plancol">
+                {planLabel}
+              </th>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {features.map((row) => (
-            <tr>
-              <th scope="row" class="cmatrix__feat">{row.label}</th>
-              {row.values.map((v, i) => (
-                <td class="cmatrix__cell" data-plan={plans[i] ?? `plan-${i + 1}`}>
-                  {
-                    typeof v === "boolean"
-                      ? (
-                        v
-                          ? (
-                            <span class="cmatrix__check" aria-label={`Included in ${plans[i]}`}>
-                              <svg viewBox="0 0 20 20" aria-hidden="true">
-                                <path d="M7.5 13.2 4.8 10.6l-1.3 1.3 4 4 9-9-1.3-1.3-7.7 7.7z" />
-                              </svg>
-                            </span>
-                          )
-                          : (
-                            <span class="cmatrix__cross" aria-label={`Not included in ${plans[i]}`}>
-                              <svg viewBox="0 0 20 20" aria-hidden="true">
-                                <path d="M5.6 4.9 4.9 5.6l4.4 4.4-4.4 4.4.7.7 4.4-4.4 4.4 4.4.7-.7-4.4-4.4 4.4-4.4-.7-.7-4.4 4.4-4.4-4.4z" />
-                              </svg>
-                            </span>
-                          )
-                      )
-                      : <span class="cmatrix__text">{String(v)}</span>
+          {features.map((row) => {
+            const featureLabel =
+              typeof row.label === "string" && row.label.trim().length > 0
+                ? row.label.trim()
+                : "Feature";
+
+            return (
+              <tr>
+                <th scope="row" class="cmatrix__feat">
+                  {featureLabel}
+                </th>
+
+                {/* Drive cells by plans so header and body stay aligned */}
+                {planLabels.map((planLabel, index) => {
+                  const value = row.values?.[index];
+
+                  if (typeof value === "boolean") {
+                    const ariaPlanName = planLabel;
+                    const cellLabel = value
+                      ? `Included in ${ariaPlanName}`
+                      : `Not included in ${ariaPlanName}`;
+
+                    return (
+                      <td
+                        class="cmatrix__cell"
+                        data-plan={planLabel}
+                      >
+                        {value ? (
+                          <span class="cmatrix__check" aria-label={cellLabel}>
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                              <path d="M7.5 13.2 4.8 10.6l-1.3 1.3 4 4 9-9-1.3-1.3-7.7 7.7z" />
+                            </svg>
+                          </span>
+                        ) : (
+                          <span class="cmatrix__cross" aria-label={cellLabel}>
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                              <path d="M5.6 4.9 4.9 5.6l4.4 4.4-4.4 4.4.7.7 4.4-4.4 4.4 4.4.7-.7-4.4-4.4 4.4-4.4-.7-.7-4.4 4.4-4.4-4.4z" />
+                            </svg>
+                          </span>
+                        )}
+                      </td>
+                    );
                   }
-                </td>
-              ))}
-            </tr>
-          ))}
+
+                  // Graceful handling for missing / non-boolean string-like values
+                  if (value === null || value === undefined || value === "") {
+                    return (
+                      <td
+                        class="cmatrix__cell"
+                        data-plan={planLabel}
+                      ></td>
+                    );
+                  }
+
+                  return (
+                    <td
+                      class="cmatrix__cell"
+                      data-plan={planLabel}
+                    >
+                      <span class="cmatrix__text">
+                        {String(value)}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

@@ -8,10 +8,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run lint:blog:ia && astro build",
     "preview": "astro preview",
     "typecheck": "tsc --noEmit",
-    "gen:blog-data": "tsx scripts/generateBlogData.ts"
+    "gen:blog-data": "tsx scripts/generateBlogData.ts",
+    "lint:blog:ia": "tsx scripts/validate-blog-ia.ts"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +30,7 @@
     "@astrojs/tailwind": "^6.0.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "astro": "^5.15.1",
+    "astro": "^5.16.0",
     "autoprefixer": "^10.4.21",
     "fast-glob": "^3.3.3",
     "globby": "^15.0.0",

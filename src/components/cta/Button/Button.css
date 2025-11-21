@@ -3,23 +3,25 @@
 
 /* Base */
 .btn {
-  --_bg: var(--color-primary, #2563eb);
+  --_bg: var(--color-primary);
   --_bg-hover: color-mix(in oklab, var(--_bg) 92%, white);
-  --_fg: var(--color-on-primary, #fff);
+  --_fg: var(--color-on-primary);
   --_bd: transparent;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding-inline: 1rem;
+  gap: var(--space-2);
+  padding-inline: var(--space-4);
   min-height: 44px; /* a11y target */
   line-height: 1;
-  font: 600 var(--fs-base, 1rem) / 1 var(--font-sans, ui-sans-serif);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-base);
   color: var(--_fg);
   background: var(--_bg);
   border: 1px solid var(--_bd);
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--radius-md);
   text-decoration: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -34,7 +36,7 @@
 .btn .btn__inner {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .btn .btn__label {
@@ -53,7 +55,7 @@
 .btn:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
+    color-mix(in oklab, var(--color-primary) 35%, white);
 }
 
 /* Disabled state */
@@ -66,55 +68,58 @@
 
 /* Variants */
 .btn-primary {
-  --_bg: var(--color-primary, #2563eb);
-  --_fg: var(--color-on-primary, #fff);
+  --_bg: var(--color-primary);
+  --_fg: var(--color-on-primary);
   --_bd: color-mix(in oklab, var(--_bg) 35%, transparent);
 }
 
 .btn-accent {
-  --_bg: var(--color-accent, #22c55e);
-  --_fg: var(--color-on-accent, #0b1b26);
+  --_bg: var(--color-accent);
+  --_fg: var(--color-on-accent);
   --_bd: color-mix(in oklab, var(--_bg) 35%, transparent);
 }
 
 .btn-ghost {
   --_bg: color-mix(
     in oklab,
-    var(--color-background, #fff) 96%,
-    var(--color-primary, #2563eb)
+    var(--color-background) 96%,
+    var(--color-primary)
   );
-  --_fg: var(--color-primary, #2563eb);
-  --_bd: color-mix(in oklab, var(--color-primary, #2563eb) 30%, transparent);
+  --_fg: var(--color-primary);
+  --_bd: color-mix(in oklab, var(--color-primary) 30%, transparent);
 }
 
 .btn-link {
   --_bg: transparent;
-  --_fg: var(--color-primary, #2563eb);
+  --_fg: var(--color-primary);
   --_bd: transparent;
   padding-inline: 0;
   border: 0;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
 .btn-link:hover {
   text-decoration-thickness: 2px;
 }
 
 /* Sizes */
 .btn-sm {
-  padding-inline: 0.75rem;
+  padding-inline: var(--space-3);
   min-height: 38px;
-  font-size: var(--fs-sm, 0.875rem);
+  font-size: var(--fs-sm);
 }
+
 .btn-md {
-  padding-inline: 1rem;
+  padding-inline: var(--space-4);
   min-height: 44px;
-  font-size: var(--fs-base, 1rem);
+  font-size: var(--fs-base);
 }
+
 .btn-lg {
-  padding-inline: 1.25rem;
+  padding-inline: var(--space-5);
   min-height: 52px;
-  font-size: var(--fs-lg, 1.125rem);
+  font-size: var(--fs-lg);
 }
 
 /* Block on narrow viewports */
@@ -125,8 +130,8 @@
 /* Icon slots: ensure square hit area */
 .btn :where([slot="icon-left"], [slot="icon-right"]) {
   display: inline-flex;
-  width: 1.125em;
-  height: 1.125em;
+  inline-size: 1.125em;
+  block-size: 1.125em;
   line-height: 1;
 }
 
@@ -143,25 +148,27 @@
   }
 }
 
-/* Responsive density bumps via breakpoints (Fix Plan 62) */
+/* Responsive density bumps via breakpoints */
 /* md ≥768px */
 @media (min-width: 768px) {
   .btn-sm {
     min-height: 40px;
   }
+
   .btn-md {
     min-height: 46px;
   }
+
   .btn-lg {
     min-height: 54px;
-    padding-inline: 1.5rem;
+    padding-inline: calc(var(--space-5) + var(--space-1));
   }
 }
 
 /* lg ≥1024px */
 @media (min-width: 1024px) {
   .btn {
-    font-size: max(var(--fs-base, 1rem), 0.98rem);
+    font-size: max(var(--fs-base), 0.98rem);
   }
 }
 

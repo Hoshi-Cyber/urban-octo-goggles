@@ -1,26 +1,28 @@
-/* StatStrip — compact, readable, zero-JS, token-driven */
+/* StatStrip — responsive metrics strip, zero-JS, token-driven */
 /* Matches src/components/metrics/StatStrip/index.astro */
 
-/* Outer card */
+/* Outer surface */
 .statstrip {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
-  padding-block: clamp(var(--space-5), 3vw, var(--space-7));
-  padding-inline: clamp(var(--space-4), 3vw, var(--space-6));
   box-shadow: var(--shadow-sm);
 }
 
-/* Compact variant for tighter layouts */
-.statstrip--compact {
-  padding-block: clamp(var(--space-4), 2.4vw, var(--space-5));
-  padding-inline: clamp(var(--space-3), 2vw, var(--space-4));
-}
-
-/* Inner wrapper – sits on top of .container */
+/* Inner container: padding, width and vertical rhythm */
 .statstrip__inner {
+  margin-inline: auto;
+  max-width: var(--container-max);
+  padding-block: var(--space-5);
+  padding-inline: var(--container-px);
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--space-4), 2vw, var(--space-6));
+  gap: var(--space-4);
+}
+
+/* Compact variant for tighter layouts */
+.statstrip--compact .statstrip__inner {
+  padding-block: var(--space-4);
+  padding-inline: var(--space-4);
 }
 
 /* Header */
@@ -32,83 +34,128 @@
 
 .statstrip__eyebrow {
   margin: 0;
+  font-family: var(--font-sans);
   font-size: var(--fs-sm);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
 
-/* Hardened horizontal grid (mobile-first) */
+/* Stats list */
+/* Base: 2 columns (phones) for a 2x2 grid with 4 stats */
 .statstrip__list {
-  display: grid !important; /* defeat any leaked .flex/.block */
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap:
-    clamp(var(--space-4), 2.4vw, var(--space-6))
-    clamp(var(--space-5), 3vw, var(--space-7));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-6);
   list-style: none;
-  padding: 0 !important;
-  margin: 0 !important;
-  align-items: flex-start;
-  justify-items: flex-start;
+  padding: 0;
+  margin: 0;
+
+  /* Hard reset against global prose/ul width limits */
   width: 100%;
-  min-width: 0;
+  max-width: none;
 }
 
+/* Stat item */
 .statstrip__item {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
+  align-items: flex-start;
   text-align: left;
 }
 
-/* Value (1k+, 98%, etc.) */
+/* Value (e.g. 98%, 1k+ etc.) */
 .statstrip__value {
   font-family: var(--font-sans);
   font-weight: 700;
   line-height: 1.1;
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-2xl);
   color: var(--color-primary);
 }
 
 /* Label */
 .statstrip__label {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   line-height: 1.5;
   color: var(--color-muted);
-  max-width: 38ch;
+  max-width: 32ch;
 }
 
-/* sm ≥640px – keep 3 cols, slightly looser gaps */
+/* sm ≥640px – keep 2 columns, increase value size and center for balance */
 @media (min-width: 640px) {
-  .statstrip {
-    padding-block: clamp(var(--space-6), 3vw, var(--space-8));
-    padding-inline: clamp(var(--space-5), 3.2vw, var(--space-7));
+  .statstrip__inner {
+    padding-block: var(--space-6);
   }
 
   .statstrip__list {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap:
-      clamp(var(--space-5), 2.8vw, var(--space-7))
-      clamp(var(--space-6), 3.2vw, var(--space-8));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-8);
+  }
+
+  .statstrip__item {
+    align-items: center;
+    text-align: center;
+  }
+
+  .statstrip__value {
+    font-size: var(--fs-3xl);
+  }
+
+  .statstrip__label {
+    margin-inline: auto;
   }
 }
 
-/* lg ≥1024px – full 4-column spread with generous spacing */
+/* md ≥768px – still 2 columns (2x2 grid for 4 stats), slightly wider rhythm */
+@media (min-width: 768px) {
+  .statstrip__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-10);
+  }
+}
+
+/* lg ≥1024px – 4 columns for desktop, evenly spaced */
 @media (min-width: 1024px) {
   .statstrip__list {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap:
-      clamp(var(--space-6), 3vw, var(--space-8))
-      clamp(var(--space-7), 3.6vw, var(--space-10));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-8);
   }
 
   .statstrip__value {
     font-size: var(--fs-4xl);
   }
+
+  .statstrip__label {
+    font-size: var(--fs-sm);
+  }
 }
 
-/* Reduced motion */
+/* xl ≥1280px – more breathing room, premium feel */
+@media (min-width: 1280px) {
+  .statstrip__inner {
+    padding-block: var(--space-8);
+  }
+
+  .statstrip__list {
+    gap: var(--space-6) var(--space-10);
+  }
+}
+
+/* 2xl ≥1536px – keep layout stable, do not over-densify */
+@media (min-width: 1536px) {
+  .statstrip__inner {
+    padding-block: var(--space-8);
+  }
+}
+
+/* Reduced motion – defensive no-op if transitions are added elsewhere */
 @media (prefers-reduced-motion: reduce) {
-  .statstrip__item * {
-    transition: none;
+  .statstrip *,
+  .statstrip *::before,
+  .statstrip *::after {
+    transition: none !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

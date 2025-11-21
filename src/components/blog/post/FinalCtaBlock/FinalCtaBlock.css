@@ -1,0 +1,110 @@
+/*
+  src/components/blog/post/FinalCtaBlock/FinalCtaBlock.css
+
+  Bottom-of-article hard CTA:
+  - Mobile-first
+  - Token-driven
+  - No global resets
+  - Sized for use inside a .container (BlogPostLayout handles outer layout)
+*/
+
+.final-cta {
+  width: 100%;
+}
+
+/* Card container */
+
+.final-cta__inner {
+  max-width: 72ch;
+  margin-inline: auto;
+  padding: var(--space-5);
+
+  border-radius: var(--radius-xl);
+  background: color-mix(
+    in srgb,
+    var(--color-primary) 8%,
+    var(--color-surface)
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--color-primary) 24%, transparent);
+  box-shadow: var(--shadow-md);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Header */
+
+.final-cta__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.final-cta__eyebrow {
+  margin: 0;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.final-cta__title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+
+.final-cta__body {
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
+.final-cta__body > * + * {
+  margin-block-start: var(--space-2);
+}
+
+/* Actions */
+
+.final-cta__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.final-cta__primary,
+.final-cta__secondary {
+  /* rely on Button.css for core button styling */
+}
+
+/* Tablet+ */
+
+@media (min-width: 768px) {
+  .final-cta__inner {
+    padding: var(--space-6);
+    gap: var(--space-5);
+  }
+
+  .final-cta__title {
+    font-size: var(--fs-2xl);
+  }
+
+  .final-cta__actions {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}
+
+/* Desktop+ */
+
+@media (min-width: 1024px) {
+  .final-cta__inner {
+    padding-inline: var(--space-7);
+  }
+}

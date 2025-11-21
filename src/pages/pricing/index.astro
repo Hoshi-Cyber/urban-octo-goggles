@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../components/layout/BaseLayout.astro";
-import Breadcrumbs from "../../components/seo/Breadcrumbs/index.astro";
+import Hero from "../../components/sections/service/Hero/index.astro";
 import PricingTable from "../../components/plan/PricingTable/index.astro";
 import ComparisonMatrix from "../../components/plan/ComparisonMatrix/index.astro";
 import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
@@ -14,18 +14,26 @@ const description =
   "Transparent, one-time pricing for CV, cover letter and LinkedIn services. Pick a plan, get predictable outcomes.";
 const seo = { canonical: "/pricing/" };
 
-// Social proof
+// Social proof – outcome- and segment-focused (no logos)
 const trust = {
   eyebrow: "Trusted by operators and graduates",
-  rating: { value: 4.9, count: 200, label: "reviews" },
-  items: [
-    { logo: "/assets/logos/kra.svg", alt: "KRA" },
-    { logo: "/assets/logos/kepsa.svg", alt: "KEPSA" },
-    { logo: "/assets/logos/safaricom.svg", alt: "Safaricom" },
-    { logo: "/assets/logos/un.svg", alt: "United Nations" },
-    { logo: "/assets/logos/kpmg.svg", alt: "KPMG" },
-    { logo: "/assets/logos/equity.svg", alt: "Equity Bank" },
+  rating: {
+    score: 4.9,
+    count: 200,
+    label: "career documents",
+    since: 2020,
+  },
+  summary:
+    "Used by professionals in tax, telecom, banking, NGOs and development projects across Kenya.",
+  segments: [
+    { label: "Mid-career operators" },
+    { label: "Graduates starting out" },
+    { label: "Public sector & parastatals" },
+    { label: "NGO & UN assignments" },
+    { label: "Banking & finance" },
+    { label: "Tech & telecom" },
   ],
+  footnote: "Rating based on verified client feedback collected since 2020.",
 };
 
 // Key metrics
@@ -48,25 +56,30 @@ const features = [
 ---
 
 <BaseLayout {title} {description} {seo}>
-
-  <!-- Header -->
-  <section class="section" aria-label="Breadcrumbs and page header">
+  <!-- Hero -->
+  <section class="section" aria-labelledby="pricing-title">
     <div class="container">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Pricing" }]} />
-      <header class="page-header">
-        <h1 id="pricing-title" class="h1">Pricing</h1>
-        <p class="page-lead">
-          Pay once. Get a job-ready pack that wins interviews in Kenya’s market.
-          Clear deliverables. No lock-ins.
-        </p>
-      </header>
+      <Hero
+        eyebrow="One-time CV &amp; profile pricing"
+        title={title}
+        sub="Pay once for a complete CV, cover letter and LinkedIn pack built for Kenya’s job market. Clear deliverables, predictable timelines, no subscriptions."
+        meta={[
+          { label: "One-time professional fee per project" },
+          { label: "No hidden charges, upsells or lock-ins" },
+          { label: "Packages aligned to career stage and role seniority" },
+        ]}
+      />
     </div>
   </section>
 
   <!-- Trust -->
   <section class="section section--tight" aria-label="Trust">
     <div class="container">
-      <TrustBar items={trust.items} rating={trust.rating} eyebrow={trust.eyebrow} />
+      <TrustBar
+        variant="compact"
+        eyebrow={trust.eyebrow}
+        rating={trust.rating}
+      />
     </div>
   </section>
 
@@ -99,7 +112,9 @@ const features = [
       <h2 id="faq" class="h2">FAQs</h2>
       <FAQAccordion items={faqs} showHead={false} />
       <div class="text-center mt-8">
-        <a href="/contact/" class="btn btn-accent" data-cta="pricing:contact">Discuss Your Project</a>
+        <a href="/contact/" class="btn btn-accent" data-cta="pricing:contact">
+          Discuss Your Project
+        </a>
       </div>
     </div>
   </section>
@@ -117,37 +132,20 @@ const features = [
   </section>
 
   <style>
-    .section--tight { padding-block: clamp(1rem, 2vw, 1.75rem); }
+    .section--tight {
+      padding-block: clamp(var(--space-4), 2vw, var(--space-6));
+    }
+
     .sr-only {
       position: absolute !important;
-      width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    /* Page header */
-    .page-header { margin-top: var(--space-2, .5rem); }
-    .page-header .h1 { margin: 0 0 var(--space-2, .5rem); }
-    .page-lead{
-      margin: 0;
-      max-width: 68ch;
-      font-size: clamp(1rem, .35vw + 1rem, 1.125rem);
-      line-height: 1.55;
-      color: var(--color-muted, #374151);
-      background: color-mix(in oklab, var(--color-primary, #0B57D0) 3%, #fff);
-      border: 1px solid color-mix(in oklab, var(--color-primary, #0B57D0) 14%, transparent);
-      padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
-      border-radius: var(--radius-2xl, 16px);
-      box-shadow: var(--shadow-xs, 0 1px 1px rgba(17,24,39,.05));
-    }
-
-    @media (min-width: 1024px){
-      .page-header{
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: var(--space-3, .75rem);
-      }
-      .page-lead{ grid-column: 1 / -1; max-width: 60ch; }
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
   </style>
 </BaseLayout>

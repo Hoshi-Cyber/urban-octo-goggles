@@ -1,24 +1,30 @@
-/* src/components/blog/CategoryGrid/CategoryGrid.css */
-/* Unified card surface, visible keyline outline, responsive gaps/padding, single-line titles */
+/* src/components/blog/compose/CategoryGrid/CategoryGrid.css */
+/* Premium category grid: token-driven section, 1–2–4 responsive layout, equal-height cards */
 
-/* Section styling */
+/* Section wrapper */
 .catgrid {
   padding-block: var(--space-6);
-  background: color-mix(in oklab, var(--color-primary) 3%, #fff);
+  background: var(--color-background);
   border-block: 1px solid var(--color-border);
 }
+
 @media (min-width: 768px) {
   .catgrid {
     padding-block: var(--space-8);
   }
 }
 
-/* Header */
+/* Header – left-aligned, eyebrow directly above title */
 .catgrid__head {
-  display: grid;
-  gap: var(--space-2);
   margin-bottom: var(--space-4);
+  gap: var(--space-2);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
+
 .catgrid__eyebrow {
   margin: 0;
   font-size: var(--fs-sm);
@@ -26,65 +32,82 @@
   letter-spacing: 0.08em;
   color: var(--color-muted);
 }
+
 .catgrid__title {
   margin: 0;
   font-weight: 800;
   line-height: 1.15;
-  font-size: clamp(var(--fs-xl), 3.6vw, var(--fs-3xl));
+  font-size: clamp(var(--fs-xl), 3.2vw, var(--fs-3xl));
 }
 
-/* Grid list */
+/* Grid list – full-width; internal padding handles gutters */
 .cat-grid {
-  /* Fluid spacing and surfaces */
-  --grid-gap: clamp(var(--space-4), 1.2vw, var(--space-6));
-  --card-surface: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  /* neutral keylines so they contrast the section bg across variants */
-  --card-keyline: color-mix(in oklab, var(--color-text) 12%, #fff);
-  --card-hairline: color-mix(in oklab, var(--color-text) 8%, transparent);
+  --grid-gap: clamp(var(--space-4), 1.5vw, var(--space-6));
 
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--grid-gap); /* uniform row/column gap at all sizes */
   list-style: none;
   padding: 0;
   margin: 0;
 
-  /* NEW: ensure items stretch so rows equal the tallest card in the row */
+  /* horizontal gutters without constraining max-width */
+  padding-inline: var(--space-4);
+
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr)); /* 1-up on mobile */
+  gap: var(--grid-gap);
   align-items: stretch;
+  width: 100%;
 }
+
+/* ≥ tablet: 2 cards per row */
 @media (min-width: 640px) {
   .cat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ≥ desktop: 4 cards per row, spanning entire section width */
 @media (min-width: 1024px) {
   .cat-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-inline: var(--space-6);
   }
 }
 
-/* Variants: keep only border + icon tint distinct */
+/* Card variants: subtle border + icon tint only */
 .cat {
-  --card-br: var(--color-border);
+  --card-border-color: var(--color-border);
+  --card-icon-bg: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
+
   height: 100%;
-} /* NEW: li fills row height */
-.cat--a {
-  --card-br: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
-}
-.cat--b {
-  --card-br: color-mix(in oklab, var(--color-accent) 35%, var(--color-border));
-}
-.cat--c {
-  --card-br: color-mix(in oklab, var(--color-info) 35%, var(--color-border));
-}
-.cat--d {
-  --card-br: color-mix(in oklab, var(--color-success) 35%, var(--color-border));
 }
 
-/* Tile → vertical layout */
+/* ensure grid item stretches */
 .cat {
-  min-height: 5.75rem;
+  width: 100%;
 }
+
+.cat--a {
+  --card-border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+  --card-icon-bg: color-mix(in oklab, var(--color-primary) 16%, var(--color-surface));
+}
+
+.cat--b {
+  --card-border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-border));
+  --card-icon-bg: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+}
+
+.cat--c {
+  --card-border-color: color-mix(in oklab, var(--color-info) 40%, var(--color-border));
+  --card-icon-bg: color-mix(in oklab, var(--color-info) 16%, var(--color-surface));
+}
+
+.cat--d {
+  --card-border-color: color-mix(in oklab, var(--color-success) 40%, var(--color-border));
+  --card-icon-bg: color-mix(in oklab, var(--color-success) 16%, var(--color-surface));
+}
+
+/* Card link (full tile) */
+/* IMPORTANT: override global .card utility width/max-width so grid tracks are fully used */
 .cat__link {
   display: grid;
   grid-template-rows: auto 1fr auto; /* icon / body / chevron */
@@ -92,61 +115,46 @@
   align-items: start;
   gap: var(--space-3);
 
-  /* Fluid, generous card padding for large screens */
-  --card-pad: clamp(var(--space-4), 1.25vw + 0.5rem, var(--space-6));
-  padding: var(--card-pad);
+  padding: clamp(var(--space-4), 1.25vw + 0.5rem, var(--space-6));
+  height: 100%;
 
-  color: inherit;
-  text-decoration: none;
-  background: linear-gradient(var(--card-surface), #fff);
-
-  /* Visible thin outline (inner keyline + outer hairline) */
-  border: 1px solid transparent;
   border-radius: var(--radius-xl);
-  box-shadow:
-    inset 0 0 0 1px var(--card-keyline),
-    0 0 0 1px var(--card-hairline),
-    var(--shadow-sm);
+  border: 1px solid var(--card-border-color);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+
+  color: var(--color-text);
+  text-decoration: none;
+
+  /* force full-width within grid column, override .card defaults */
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  justify-self: stretch;
 
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
     border-color 0.15s ease,
+    background-color 0.15s ease,
     color 0.15s ease;
-  will-change: transform;
-  overflow: hidden; /* contain gradient and focus ring */
-  background-clip: padding-box; /* crisp edges */
-
-  /* NEW: card fills li so all tiles equalize in height */
-  height: 100%;
-}
-/* Slightly softer corners on very large screens to avoid tiles touching visually */
-@media (min-width: 1280px) {
-  .cat__link {
-    border-radius: calc(var(--radius-xl) + 2px);
-  }
 }
 
-/* Hover/focus: stronger outline, title + chevron tint, icon intensifies, no underline */
-.cat__link:hover,
+/* Hover / focus: lift and highlight while preserving contrast */
+.cat__link:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  background: color-mix(in oklab, var(--color-surface) 82%, var(--color-primary) 18%);
+}
+
+/* Strong visible focus ring for keyboard users */
 .cat__link:focus-visible {
-  transform: translateY(-2px) scale(0.985);
-  box-shadow:
-    inset 0 0 0 1px
-      color-mix(in oklab, var(--card-keyline) 85%, var(--card-keyline)),
-    0 0 0 2px color-mix(in oklab, var(--card-hairline) 65%, transparent),
-    var(--shadow-md);
-  text-decoration: none;
-}
-.cat__link:hover .cat__title,
-.cat__link:focus-visible .cat__title {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-.cat__link:hover .cat__chev,
-.cat__link:focus-visible .cat__chev {
-  transform: translateX(4px);
-  color: var(--color-primary);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
 }
 
 /* Icon block */
@@ -156,53 +164,31 @@
   border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
-  background: color-mix(in oklab, var(--color-primary) 10%, #fff);
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.06);
-  font-size: 1.5rem;
+  background: var(--card-icon-bg);
+  box-shadow: inset 0 0 0 1px var(--color-border);
   overflow: hidden;
-  transition: background-color 0.15s ease;
 }
-.cat--b .cat__icon {
-  background: color-mix(in oklab, var(--color-accent) 10%, #fff);
-}
-.cat--c .cat__icon {
-  background: color-mix(in oklab, var(--color-info) 10%, #fff);
-}
-.cat--d .cat__icon {
-  background: color-mix(in oklab, var(--color-success) 10%, #fff);
+
+.cat__icon svg,
+.cat__icon img {
+  display: block;
+  width: 1.7rem;
+  height: 1.7rem;
 }
 
 /* Icon intensifies on hover/focus */
-.cat--a .cat__link:hover .cat__icon,
-.cat--a .cat__link:focus-visible .cat__icon {
-  background: color-mix(in oklab, var(--color-primary) 18%, #fff);
-}
-.cat--b .cat__link:hover .cat__icon,
-.cat--b .cat__link:focus-visible .cat__icon {
-  background: color-mix(in oklab, var(--color-accent) 18%, #fff);
-}
-.cat--c .cat__link:hover .cat__icon,
-.cat--c .cat__link:focus-visible .cat__icon {
-  background: color-mix(in oklab, var(--color-info) 18%, #fff);
-}
-.cat--d .cat__link:hover .cat__icon,
-.cat--d .cat__link:focus-visible .cat__icon {
-  background: color-mix(in oklab, var(--color-success) 18%, #fff);
+.cat__link:hover .cat__icon,
+.cat__link:focus-visible .cat__icon {
+  background: color-mix(in oklab, var(--card-icon-bg) 80%, var(--color-primary) 20%);
 }
 
-.cat__icon img,
-.cat__icon svg {
-  width: 1.6rem;
-  height: 1.6rem;
-  display: block;
-}
-
-/* Body */
+/* Card body */
 .cat__body {
   display: grid;
   gap: 0.375rem;
-  min-height: 0; /* NEW: allow 1fr row to shrink properly */
+  min-height: 0; /* allow 1fr row to shrink properly */
 }
+
 .cat__title {
   margin: 0;
   font-weight: 700;
@@ -210,56 +196,59 @@
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* never wraps */
-  transition: color 0.15s ease;
+  text-overflow: ellipsis;
 }
+
 @media (min-width: 1024px) {
   .cat__title {
     font-size: var(--fs-xl);
   }
 }
+
 .cat__desc {
   margin: 0;
-  color: var(--color-muted);
   font-size: var(--fs-sm);
+  color: var(--color-muted);
 }
 
-/* Count — smaller and distinct */
+/* Count chip */
 .cat__count {
   margin-top: 0.125rem;
   display: inline-block;
-  font-size: clamp(10px, 0.75rem, var(--fs-xs));
+  font-size: var(--fs-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 2px var(--space-2);
+  padding-inline: var(--space-2);
+  padding-block: 2px;
   border-radius: var(--radius-lg);
-  background: var(--color-surface-elevated);
+  background: var(--color-background);
   border: 1px solid var(--color-border);
-  color: var(--color-text-muted, var(--color-text));
-  opacity: 0.9;
+  color: var(--color-muted);
 }
 
 /* Chevron */
 .cat__chev {
-  font-size: 1.125rem;
+  font-size: var(--fs-lg);
   line-height: 1;
   justify-self: end;
+  color: var(--color-muted);
   transition:
     transform 0.15s ease,
     color 0.15s ease;
-  color: var(--color-muted);
 }
+
 .cat__link:hover .cat__chev,
 .cat__link:focus-visible .cat__chev {
   transform: translateX(4px);
+  color: var(--color-primary);
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .cat__link,
   .cat__chev,
-  .cat__title,
-  .cat__icon {
+  .cat__icon,
+  .cat__title {
     transition: none;
   }
 }

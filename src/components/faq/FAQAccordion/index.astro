@@ -1,4 +1,8 @@
 ---
+// src/components/faq/FAQAccordion/index.astro
+
+import "./FAQAccordion.css";
+
 /**
  * FAQAccordion — mobile-first, token-driven, a11y-first
  * Props:
@@ -7,16 +11,21 @@
  *  sub?: string
  *  class?: string
  *  schema?: boolean
- *  showHead?: boolean   // render internal header; default true
+ *  showHead?: boolean
  */
-export interface QA { q: string; a: string }
+
+export interface QA {
+  q: string;
+  a: string;
+}
+
 export interface Props {
-  items: QA[]
-  title?: string
-  sub?: string
-  class?: string
-  schema?: boolean
-  showHead?: boolean
+  items: QA[];
+  title?: string;
+  sub?: string;
+  class?: string;
+  schema?: boolean;
+  showHead?: boolean;
 }
 
 const {
@@ -25,47 +34,100 @@ const {
   sub,
   class: className = "",
   schema = true,
-  showHead = true
-} = Astro.props as Props
+  showHead = true,
+} = Astro.props as Props;
 
 // Unique id per instance for safe event scoping
-const listId = `faq-${Math.random().toString(36).slice(2, 8)}`
+const listId = `faq-${Math.random().toString(36).slice(2, 8)}`;
 
-const faqSchema = schema
-  ? {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": items.map((it) => ({
-        "@type": "Question",
-        "name": it.q,
-        "acceptedAnswer": { "@type": "Answer", "text": it.a }
-      }))
-    }
-  : null
+// Derive schema-safe items (strip simple tags, drop empty Q/A)
+const schemaEntities =
+  schema && Array.isArray(items)
+    ? items
+        .filter(
+          (it) =>
+            typeof it.q === "string" &&
+            it.q.trim().length > 0 &&
+            typeof it.a === "string" &&
+            it.a.trim().length > 0,
+        )
+        .map((it) => {
+          const plain = it.a
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          return {
+            "@type": "Question",
+            name: it.q.trim(),
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: plain,
+            },
+          };
+        })
+    : [];
+
+const faqSchema =
+  schema && schemaEntities.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: schemaEntities,
+      }
+    : null;
 ---
-<section class={`section ${className}`.trim()} data-section="faq" aria-labelledby={showHead ? `${listId}-title` : undefined}>
+
+<section
+  class={`section ${className}`.trim()}
+  data-section="faq"
+  aria-labelledby={showHead ? `${listId}-title` : undefined}
+>
   <div class="container">
     {showHead && (
       <header class="faq__head">
-        <h2 id={`${listId}-title`} class="faq__title h2">{title}</h2>
+        <h2 id={`${listId}-title`} class="faq__title h2">
+          {title}
+        </h2>
         {sub && <p class="faq__sub text-muted">{sub}</p>}
       </header>
     )}
 
     <div class="faq__list" role="list" id={listId}>
-      {items.map((it, idx) => (
-        <details class="faq__item" role="listitem">
-          <summary class="faq__summary" aria-controls={`${listId}-a-${idx}`} aria-expanded="false">
-            <span class="faq__q">{it.q}</span>
-            <svg class="faq__chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-          </summary>
-          <div id={`${listId}-a-${idx}`} class="faq__a">
-            <p set:html={it.a}></p>
-          </div>
-        </details>
-      ))}
+      {items.map((it, idx) => {
+        const answerId = `${listId}-a-${idx}`;
+
+        return (
+          <details class="faq__item" role="listitem">
+            <summary
+              class="faq__summary"
+              aria-controls={answerId}
+              aria-expanded="false"
+            >
+              <span class="faq__q">{it.q}</span>
+              <svg
+                class="faq__chev"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </summary>
+            <div id={answerId} class="faq__a">
+              <p set:html={it.a}></p>
+            </div>
+          </details>
+        );
+      })}
     </div>
   </div>
 
@@ -75,40 +137,92 @@ const faqSchema = schema
     </script>
   )}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const root = document.getElementById(/* astro:sanitize */ {listId});
-      if (!root) return;
+  {items.length > 0 && (
+    <script>
+      {`
+        (() => {
+          const rootId = ${JSON.stringify(listId)};
+          const root = document.getElementById(/* astro:sanitize */ rootId);
+          if (!root) return;
 
-      const items = Array.from(root.querySelectorAll('details.faq__item'));
+          const items = Array.from(
+            root.querySelectorAll('details.faq__item')
+          );
+          if (!items.length) return;
 
-      const syncExpanded = () => {
-        for (const d of items) {
-          const s = d.querySelector('summary');
-          if (s) s.setAttribute('aria-expanded', String(d.open));
-        }
-      };
+          const summaries = items.map((d) =>
+            d.querySelector('summary')
+          );
 
-      const closeOthers = (current) => {
-        for (const d of items) {
-          if (d !== current && d.open) d.removeAttribute('open');
-        }
-      };
+          const syncExpanded = () => {
+            items.forEach((d, index) => {
+              const summary = summaries[index];
+              if (!summary) return;
+              summary.setAttribute('aria-expanded', String(d.open));
+            });
+          };
 
-      // Enforce single-open with per-item listeners
-      for (const d of items) {
-        d.addEventListener('toggle', () => {
-          if (d.open) closeOthers(d);
+          const openExclusive = (target) => {
+            items.forEach((d) => {
+              if (d === target) {
+                if (!d.open) {
+                  d.setAttribute('open', '');
+                }
+              } else if (d.open) {
+                d.removeAttribute('open');
+              }
+            });
+            syncExpanded();
+          };
+
+          const handleToggleIntent = (detailsEl) => {
+            if (!detailsEl) return;
+            const isOpening = !detailsEl.open;
+            if (isOpening) {
+              openExclusive(detailsEl);
+            } else {
+              // Closing currently open item – end with 0 open.
+              detailsEl.removeAttribute('open');
+              syncExpanded();
+            }
+          };
+
+          // Click interaction
+          root.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const summary = target.closest('summary.faq__summary');
+            if (!summary || !root.contains(summary)) return;
+
+            event.preventDefault();
+            const detailsEl = summary.parentElement;
+            if (!detailsEl || detailsEl.tagName !== 'DETAILS') return;
+
+            handleToggleIntent(detailsEl);
+          });
+
+          // Keyboard interaction (Enter / Space on summary)
+          root.addEventListener('keydown', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+
+            const summary = target.closest('summary.faq__summary');
+            if (!summary || !root.contains(summary)) return;
+
+            event.preventDefault();
+            const detailsEl = summary.parentElement;
+            if (!detailsEl || detailsEl.tagName !== 'DETAILS') return;
+
+            handleToggleIntent(detailsEl);
+          });
+
+          // Initial state sync (supports server-rendered [open])
           syncExpanded();
-        });
-      }
-
-      // Initial state sync (supports server-rendered [open])
-      syncExpanded();
-    });
-  </script>
+        })();
+      `}
+    </script>
+  )}
 </section>
-
-<style is:global>
-  @import "./FAQAccordion.css";
-</style>

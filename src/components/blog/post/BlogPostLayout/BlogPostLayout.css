@@ -1,0 +1,95 @@
+/* File: src/components/blog/post/BlogPostLayout/BlogPostLayout.css
+ *
+ * Fix Plan 205.2 – Consolidated single-post layout shell
+ *
+ * Role:
+ * - Own the full vertical rhythm and section boundaries for the single blog post.
+ * - Keep all spacing decisions here so BlogPost.astro and the route remain data-only.
+ */
+
+/* Root article wrapper */
+.blog-post-layout {
+  padding-block: var(--space-8);
+}
+
+/* Header stack: breadcrumbs, hero, cover, intro, key takeaways */
+.blog-post-layout__header {
+  padding-block-end: var(--space-6);
+}
+
+/* TOC region (optional) */
+.blog-post-layout__toc {
+  padding-block: var(--space-4);
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-muted) 12%, transparent);
+}
+
+/* Main body */
+.blog-post-layout__body {
+  padding-block: var(--space-6);
+}
+
+.blog-post-layout__body-inner {
+  display: block;
+}
+
+/* Constrain prose width for comfortable reading */
+.blog-post-layout__content {
+  max-width: 70ch;
+  margin-inline: auto;
+}
+
+/* Checklist section (implementation checklist) */
+.blog-post-layout__checklist {
+  padding-block: var(--space-6);
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--color-muted) 8%, transparent);
+}
+
+/* Inline offer (mid-article CTA) */
+.blog-post-layout__inline-offer {
+  padding-block: var(--space-6);
+}
+
+/* Social proof strip */
+.blog-post-layout__social-proof {
+  padding-block: var(--space-6);
+}
+
+/* FAQ block */
+.blog-post-layout__faq {
+  padding-block: var(--space-6);
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--color-muted) 8%, transparent);
+}
+
+/* Final CTA (bottom hard CTA) */
+.blog-post-layout__final-cta {
+  padding-block: var(--space-8);
+}
+
+/* Related articles strip */
+.blog-post-layout__related {
+  padding-block: var(--space-6);
+}
+
+/* Larger screens – tighten rhythm and widen reading width slightly */
+@media (min-width: 768px) {
+  .blog-post-layout {
+    padding-block: var(--space-10);
+  }
+
+  .blog-post-layout__body {
+    padding-block: var(--space-8);
+  }
+
+  .blog-post-layout__content {
+    max-width: 72ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .blog-post-layout__content {
+    max-width: 76ch;
+  }
+}

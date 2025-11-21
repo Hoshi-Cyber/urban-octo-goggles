@@ -1,12 +1,20 @@
 ---
-export interface Item { title: string; body: string; icon?: string }
-export interface Props {
-  items: Item[]
-  class?: string               // optional section class for themed backgrounds, etc.
+export interface Item {
+  title: string;
+  body: string;
+  icon?: string;
 }
-const { items = [], class: className = "" } = Astro.props
-import "./FeatureList.css"
+
+export interface Props {
+  items: Item[];
+  class?: string; // optional section class for themed backgrounds, etc.
+}
+
+const { items = [], class: className = "" } = Astro.props as Props;
+
+import "./FeatureList.css";
 ---
+
 <section
   class={`section ${className}`.trim()}
   data-section="service-features"

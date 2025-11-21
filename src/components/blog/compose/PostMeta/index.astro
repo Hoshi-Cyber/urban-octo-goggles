@@ -7,6 +7,10 @@ interface PostMetaProps {
   date?: DateLike;
   updated?: DateLike;
   author?: string;
+  /**
+   * Canonical author URL derived upstream from authorSlug,
+   * e.g. /about/editorial/<authorSlug>/ (Fix 195-B).
+   */
   authorUrl?: string;
   /**
    * Estimated reading time in whole minutes.

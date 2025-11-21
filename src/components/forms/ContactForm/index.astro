@@ -3,7 +3,7 @@
  * Props:
  *  action?: string                     // form endpoint (defaults to Formspree)
  *  method?: 'POST' | 'GET'             // default 'POST'
- *  whatsappHref?: string               // fallback rapid contact CTA
+ *  whatsappHref?: string               // retained for API compatibility (not rendered here)
  *  packageParam?: string               // query param name to capture (default 'package')
  *  showFile?: boolean                  // toggle CV upload field
  *  accept?: string                     // file accept list
@@ -48,9 +48,10 @@ import "./ContactForm.css";
   <input type="text" name="website" class="hp" tabindex="-1" aria-hidden="true" />
 
   <div class="contactform__grid">
+    <!-- Full name (required) -->
     <div class="field">
       <label for="cf-name" class="label">
-        Full Name <span class="req" aria-hidden="true">*</span>
+        Full name <span class="req" aria-hidden="true">*</span>
       </label>
       <input
         id="cf-name"
@@ -63,14 +64,15 @@ import "./ContactForm.css";
       />
     </div>
 
+    <!-- Email address (required) -->
     <div class="field">
       <label for="cf-email" class="label">
-        Email or Phone <span class="req" aria-hidden="true">*</span>
+        Email address <span class="req" aria-hidden="true">*</span>
       </label>
       <input
         id="cf-email"
         name="email"
-        type="text"
+        type="email"
         inputmode="email"
         autocomplete="email"
         required
@@ -79,34 +81,66 @@ import "./ContactForm.css";
       />
     </div>
 
+    <!-- Service needed (required) -->
     <div class="field">
-      <label for="cf-role" class="label">
-        Career Stage <span class="req" aria-hidden="true">*</span>
+      <label for="cf-service" class="label">
+        Service needed <span class="req" aria-hidden="true">*</span>
       </label>
-      <select id="cf-role" name="role" required class="select" aria-required="true">
-        <option value="">Select…</option>
-        <option value="student">Student/Intern</option>
-        <option value="entry">Entry-level</option>
-        <option value="mid">Mid-career</option>
-        <option value="senior">Senior/Executive</option>
+      <select
+        id="cf-service"
+        name="service"
+        required
+        class="select"
+        aria-required="true"
+      >
+        <option value="">Select service…</option>
+        <option value="new-cv">New CV</option>
+        <option value="cv-cover-letter">CV + Cover Letter</option>
+        <option value="cv-linkedin">CV + LinkedIn Profile</option>
+        <option value="other">Other (please specify in your message)</option>
       </select>
     </div>
 
-    <div class="field field--full">
-      <label for="cf-goals" class="label">What are your goals?</label>
-      <textarea
-        id="cf-goals"
-        name="goals"
-        rows="4"
-        class="textarea"
-        aria-describedby="cf-goals-help"
-      ></textarea>
-      <p id="cf-goals-help" class="help">Share target roles, industries, or deadlines.</p>
+    <!-- Country (optional; Kenya pinned at top) -->
+    <div class="field">
+      <label for="cf-country" class="label">
+        Country (optional)
+      </label>
+      <select
+        id="cf-country"
+        name="country"
+        class="select"
+      >
+        <option value="">Select country…</option>
+        <option value="Kenya">Kenya</option>
+        <option value="Other">Other (specify in your message)</option>
+      </select>
     </div>
 
+    <!-- Message (full width, primary context) -->
+    <div class="field field--full">
+      <label for="cf-message" class="label">
+        Message
+      </label>
+      <textarea
+        id="cf-message"
+        name="message"
+        rows="4"
+        class="textarea"
+        placeholder="Tell us about your current role, target role, and any deadlines."
+        aria-describedby="cf-message-help"
+      ></textarea>
+      <p id="cf-message-help" class="help">
+        Include any context that helps us understand your situation and timelines.
+      </p>
+    </div>
+
+    <!-- Optional CV upload -->
     {showFile && (
       <div class="field field--full">
-        <label for="cf-file" class="label">Upload your current CV (optional)</label>
+        <label for="cf-file" class="label">
+          Attach your current CV (optional)
+        </label>
         <input
           id="cf-file"
           name="file"
@@ -119,22 +153,22 @@ import "./ContactForm.css";
     )}
   </div>
 
+  <!-- capture package / context -->
   <input type="hidden" name={packageParam} value={pkg} />
+
+  <!-- IA microcopy under the form -->
+  <p class="help contactform__summary">
+    We’ll review your details and reply with a clear recommendation and next steps.
+  </p>
+  <p class="help contactform__privacy">
+    We only use your details to respond to your enquiry. No mailing lists, no spam.
+  </p>
 
   <div class="contactform__actions">
     <button type="submit" class="btn btn-primary" data-cta="contact-submit">
-      <span class="btn__inner"><span class="btn__label">Send Inquiry</span></span>
+      <span class="btn__inner">
+        <span class="btn__label">Send message</span>
+      </span>
     </button>
-
-    <a
-      href={whatsappHref}
-      class="btn btn-accent"
-      target="_blank"
-      rel="noopener"
-      data-cta="contact-whatsapp"
-      aria-label="Chat via WhatsApp"
-    >
-      <span class="btn__inner"><span class="btn__label">Chat via WhatsApp</span></span>
-    </a>
   </div>
 </form>

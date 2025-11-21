@@ -1,0 +1,53 @@
+/*
+  src/components/blog/post/ArticleHero/ArticleHero.css
+
+  Wrapper/layout for the post hero section.
+  - Mobile-first
+  - Token-driven
+  - Does not override PostHeader/PostMeta/PostUpdatedBadge internals.
+*/
+
+.article-hero {
+  width: 100%;
+}
+
+/* Meta row: PostMeta + optional soft CTA */
+
+.article-hero__metaRow {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+
+  /* align with PostHeader / PostMeta horizontal rhythm */
+  padding-inline: var(--space-4);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+
+  /* tighten space between header and meta row */
+  margin-block-start: calc(var(--space-1) * 0.5);
+}
+
+/* Soft CTA button – keeps to the left on mobile */
+
+.article-hero__cta {
+  margin-block-start: var(--space-1);
+}
+
+/* Tablet+ */
+
+@media (min-width: 768px) {
+  .article-hero__metaRow {
+    padding-inline: var(--space-6);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .article-hero__cta {
+    margin-block-start: 0;
+  }
+}

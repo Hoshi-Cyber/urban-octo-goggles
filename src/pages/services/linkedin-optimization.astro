@@ -1,5 +1,5 @@
 ---
-import ServicePage from "../../components/templates/ServicePage.astro";
+import ServicePage from "../../components/templates/ServicePage/index.astro";
 
 const title = "LinkedIn Profile Optimization";
 const description = "Boost your personal brand and visibility on LinkedIn.";
@@ -14,31 +14,61 @@ const hero = {
 };
 
 const features = [
-  { title: "Higher Search Visibility", body: "Role-relevant keywords and clean information architecture help you appear in more recruiter searches across Kenya." },
-  { title: "Compelling Brand Narrative", body: "A crisp headline and an About section that sell your value in one scroll, aligned to your target roles." },
-  { title: "Evidence-Led Experience", body: "Bullets rewritten to highlight outcomes and metrics—mirrored with your CV for consistency." },
-  { title: "Profile Polish", body: "Recommendations on banner, photo, skills, and Featured items that reinforce credibility." },
-  { title: "Kenya-Specific Signals", body: "Localization of titles, industry tags, employer naming, and language cues so you rank and resonate locally." },
-  { title: "Engagement & Outreach System", body: "Optimized ‘Open to Work’, custom URL, contactability, and a weekly activity plan to convert views into conversations." },
+  {
+    title: "Higher Search Visibility",
+    body: "Role-relevant keywords and clean information architecture help you appear in more recruiter searches across Kenya.",
+  },
+  {
+    title: "Compelling Brand Narrative",
+    body: "A crisp headline and an About section that sell your value in one scroll, aligned to your target roles.",
+  },
+  {
+    title: "Evidence-Led Experience",
+    body: "Bullets rewritten to highlight outcomes and metrics—mirrored with your CV for consistency.",
+  },
+  {
+    title: "Profile Polish",
+    body: "Recommendations on banner, photo, skills, and Featured items that reinforce credibility.",
+  },
+  {
+    title: "Kenya-Specific Signals",
+    body: "Localization of titles, industry tags, employer naming, and language cues so you rank and resonate locally.",
+  },
+  {
+    title: "Engagement & Outreach System",
+    body: "Optimized ‘Open to Work’, custom URL, contactability, and a weekly activity plan to convert views into conversations.",
+  },
 ];
 ---
 
 <ServicePage {title} {description} {hero} {features}>
   <h2>Why LinkedIn Optimization Matters</h2>
-  <p>In Kenya’s competitive market, an optimized LinkedIn profile acts as your digital ambassador. We refine your headline, summary, experience and skills to showcase your unique value.</p>
+  <p>
+    In Kenya’s competitive market, an optimized LinkedIn profile acts as your digital ambassador. We refine your
+    headline, summary, experience and skills to showcase your unique value and make you easier to discover.
+  </p>
 
   <h3>What’s Included</h3>
-  <ul>
-    <li>Headline and About section rewrites for search and impact.</li>
-    <li>Experience and skills optimization to reflect accomplishments.</li>
-    <li>Guidance on banner image and visual branding.</li>
-    <li>Keyword research to improve discoverability.</li>
+  <ul class="service-list service-list--included">
+    <li>Done-for-you headline and About section rewrites for search visibility and clear positioning.</li>
+    <li>Experience and skills optimisation that highlights outcomes, metrics, and role-relevant strengths.</li>
+    <li>Guided recommendations on banner, profile photo, Featured items, and endorsements to reinforce credibility.</li>
+    <li>Keyword and settings review (industry, location, “Open to Work”, URL) to improve discoverability.</li>
   </ul>
 
   <h3>Benefits</h3>
   <ul>
-    <li><strong>Improve visibility:</strong> Appear in more recruiter searches.</li>
-    <li><strong>Tell a cohesive story:</strong> Align your profile with your CV and cover letter.</li>
-    <li><strong>Attract opportunities:</strong> Encourage connection requests and interviews.</li>
+    <li>
+      <strong>More of the right views:</strong>
+      Your profile is tuned for recruiter and hiring manager searches in your target roles and locations.
+    </li>
+    <li>
+      <strong>Stronger personal brand:</strong>
+      Your headline, About, and Experience sections tell one cohesive story that aligns with your CV.
+    </li>
+    <li>
+      <strong>Higher-quality opportunities:</strong>
+      A clearer message and cleaner profile encourage more relevant connection requests and conversations.
+    </li>
   </ul>
 </ServicePage>

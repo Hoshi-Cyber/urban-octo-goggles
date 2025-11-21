@@ -4,12 +4,17 @@ export interface Stat {
   label: string;
 }
 
-const { stats = [], eyebrow = "By the numbers", compact = false } =
-  Astro.props as {
-    stats?: Stat[];
-    eyebrow?: string;
-    compact?: boolean;
-  };
+interface Props {
+  stats?: Stat[];
+  eyebrow?: string;
+  compact?: boolean;
+}
+
+const {
+  stats = [],
+  eyebrow = "By the numbers",
+  compact = false,
+} = Astro.props as Props;
 
 // Component stylesheet – handles all StatStrip visuals/layout.
 import "./StatStrip.css";
@@ -17,21 +22,21 @@ import "./StatStrip.css";
 
 <section
   class={`statstrip${compact ? " statstrip--compact" : ""}`}
-  aria-label="Key metrics"
+  aria-label={eyebrow || "Key metrics"}
   data-section="statstrip"
 >
-  <div class="container statstrip__inner">
-    <header class="statstrip__head">
-      <p class="statstrip__eyebrow">{eyebrow}</p>
-    </header>
+  <div class="statstrip__inner">
+    {eyebrow && (
+      <header class="statstrip__head">
+        <p class="statstrip__eyebrow">{eyebrow}</p>
+      </header>
+    )}
 
     {stats.length > 0 && (
       <ul class="statstrip__list" role="list">
         {stats.map(({ value, label }) => (
           <li class="statstrip__item">
-            <div class="statstrip__value" aria-label={`${value} ${label}`}>
-              {value}
-            </div>
+            <div class="statstrip__value">{value}</div>
             <div class="statstrip__label">{label}</div>
           </li>
         ))}

@@ -1,0 +1,45 @@
+---
+/*
+  src/components/blog/post/KeyTakeaways/index.astro
+
+  FP-205.5:
+  - Top-of-article “Key Takeaways” box, 3–5 bullets.
+  - Uses global tokens and spacing.
+  - No global resets; layout-only component.
+*/
+
+import "./KeyTakeaways.css";
+
+export interface KeyTakeawaysProps {
+  /** 3–5 concise bullet points */
+  items: string[];
+  /** Optional custom heading; defaults to "Key takeaways" */
+  title?: string;
+}
+
+const { items, title = "Key takeaways" } = Astro.props as KeyTakeawaysProps;
+
+const hasItems = Array.isArray(items) && items.length > 0;
+---
+
+{hasItems && (
+  <section class="key-takeaways" aria-labelledby="key-takeaways-title">
+    <div class="key-takeaways__inner">
+      <header class="key-takeaways__header">
+        <p class="key-takeaways__eyebrow">Summary</p>
+        <h2 id="key-takeaways-title" class="key-takeaways__title">
+          {title}
+        </h2>
+      </header>
+
+      <ul class="key-takeaways__list">
+        {items.map((item) => (
+          <li class="key-takeaways__item">
+            <span class="key-takeaways__bullet" aria-hidden="true">•</span>
+            <span class="key-takeaways__text">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

@@ -1,0 +1,62 @@
+---
+/*
+  src/components/blog/post/ChecklistSection/index.astro
+
+  FP-205.10:
+  - Named wrapper for the “Implementation checklist” section in a single blog post.
+  - Internally reuses the existing ui/Checklist component.
+*/
+
+import Checklist from "@/components/ui/Checklist";
+import "./ChecklistSection.css";
+
+interface ChecklistSectionProps {
+  /** Section title, e.g. “Implementation checklist” */
+  title?: string;
+  /** Optional short lead/description above the checklist */
+  leadHtml?: string;
+  /** Checklist items (labels only; all start unchecked by default) */
+  items: string[];
+}
+
+const {
+  title = "Implementation checklist",
+  leadHtml,
+  items,
+} = Astro.props as ChecklistSectionProps;
+
+const listItems =
+  Array.isArray(items) && items.length > 0
+    ? items.map((label) => ({ label }))
+    : [];
+---
+
+{listItems.length > 0 && (
+  <section
+    class="checklist-section"
+    aria-labelledby="checklist-section-title"
+  >
+    <div class="checklist-section__inner">
+      <header class="checklist-section__header">
+        <p class="checklist-section__eyebrow">
+          Action steps
+        </p>
+        <h2
+          id="checklist-section-title"
+          class="checklist-section__title"
+        >
+          {title}
+        </h2>
+
+        {leadHtml && (
+          <div
+            class="checklist-section__lead"
+            set:html={leadHtml}
+          />
+        )}
+      </header>
+
+      <Checklist items={listItems} />
+    </div>
+  </section>
+)}

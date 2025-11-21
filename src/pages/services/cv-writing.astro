@@ -1,5 +1,5 @@
 ---
-import ServicePage from "../../components/templates/ServicePage.astro";
+import ServicePage from "../../components/templates/ServicePage/index.astro";
 
 const title = "Professional CV Writing in Kenya";
 const description = "ATS-optimized CVs tailored to Kenyan roles.";
@@ -15,28 +15,49 @@ const hero = {
 };
 
 const features = [
-  { title: "ATS-Optimized Structure", body: "Clean, scannable formatting and the right keyword density to pass common applicant tracking systems." },
-  { title: "Kenya-Specific Targeting", body: "Language, role titles, and sector cues aligned to Kenyan employers and recruiters." },
-  { title: "Impact-Driven Story", body: "Achievements quantified with metrics to make your value obvious at a glance." },
+  {
+    title: "ATS-Optimized Structure",
+    body: "Clean, scannable formatting and the right keyword density to pass common applicant tracking systems.",
+  },
+  {
+    title: "Kenya-Specific Targeting",
+    body: "Language, role titles, and sector cues aligned to Kenyan employers and recruiters.",
+  },
+  {
+    title: "Impact-Driven Story",
+    body: "Achievements quantified with metrics to make your value obvious at a glance.",
+  },
 ];
 ---
 
 <ServicePage {title} {description} {hero} {features}>
   <h2>Why a Professional CV Matters</h2>
-  <p>Recruiters spend seconds skimming through CVs. Our writers make every word count by structuring your experience, skills and achievements in a way that passes ATS filters and appeals to human hiring managers.</p>
+  <p>
+    Recruiters spend seconds skimming through CVs. Our writers make every word count by structuring your
+    experience, skills and achievements in a way that passes ATS filters and appeals to human hiring managers.
+  </p>
 
   <h3>What’s Included</h3>
-  <ul>
-    <li>Comprehensive intake consultation to understand your goals and background.</li>
-    <li>Professionally written CV tailored to your industry and career stage.</li>
-    <li>Keyword optimization for Applicant Tracking Systems.</li>
-    <li>One revision to ensure your satisfaction.</li>
+  <ul class="service-list service-list--included">
+    <li>Comprehensive intake consultation or questionnaire to understand your goals and background.</li>
+    <li>Professionally written CV tailored to your industry, role level, and target employers.</li>
+    <li>ATS-aware formatting and keyword optimisation for common Applicant Tracking Systems.</li>
+    <li>Revision window to refine tone, clarity, and positioning after your review.</li>
   </ul>
 
   <h3>Benefits</h3>
   <ul>
-    <li><strong>Stand out:</strong> We highlight your achievements with quantified impact.</li>
-    <li><strong>Pass ATS:</strong> Optimized formatting and keywords for automated screening.</li>
-    <li><strong>Save time:</strong> Focus on applications while we craft your story.</li>
+    <li>
+      <strong>Stand out quickly:</strong>
+      Your achievements are quantified and prioritised so recruiters see your value in seconds.
+    </li>
+    <li>
+      <strong>Pass ATS screening:</strong>
+      Structuring and language are tuned for automated systems without sacrificing human readability.
+    </li>
+    <li>
+      <strong>Save time and energy:</strong>
+      You focus on targeted applications while we craft and refine the story behind your career.
+    </li>
   </ul>
 </ServicePage>

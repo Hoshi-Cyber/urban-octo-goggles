@@ -1,18 +1,13 @@
 /* SampleCard — /samples grid. Mobile-first, token-driven. */
-/* No @imports here. BaseLayout injects design tokens globally. */
+/* Uses global .card, .stack, .btn utilities – no new tokens. */
 
-/* Card shell */
 .samplecard {
-  background: var(--color-background);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-6);
   display: grid;
   gap: var(--space-4);
   transition:
     box-shadow 0.15s ease,
     transform 0.15s ease;
-  contain: content; /* performance */
+  contain: content;
 }
 
 .samplecard:hover {
@@ -31,120 +26,91 @@
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
 }
+
 .samplecard--compact .samplecard__media {
   margin: calc(var(--space-4) * -1) calc(var(--space-4) * -1) 0;
 }
+
 .samplecard__img {
   width: 100%;
   height: auto;
   display: block;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  background: var(--color-light, #f8fafc);
+  background: var(--color-light);
 }
 
-/* Header */
+/* Body & header */
+
+.samplecard__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .samplecard__head {
   display: grid;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
 }
+
 .samplecard__eyebrow {
   margin: 0;
   font-size: var(--fs-sm);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-muted);
 }
+
 .samplecard__title {
   margin: 0;
   color: var(--color-text);
 }
 
-/* Footer CTA (replaces inline Before/After content) */
-.samplecard__footer {
-  margin-top: auto; /* push footer to the bottom of the card */
-  display: flex;
-  align-items: center;
-}
-
-.samplecard__cta {
-  /* Fallback button styling in case global .btn/.btn-primary not present */
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  min-height: 44px; /* a11y touch target */
-  border: 0;
-  border-radius: var(--radius-md);
-  background: var(--color-primary, #0b57d0);
-  color: #fff;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.04));
-  transition:
-    background-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
-}
-
-.samplecard__cta:hover {
-  background: var(--color-primary-hover, #0a4cc0);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.samplecard__cta:active {
-  transform: translateY(0);
-}
-
-.samplecard__cta:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #0b57d0) 40%, #fff);
-  border-radius: var(--radius-md);
-}
-
-/* Focus */
-.samplecard:focus-within {
-  box-shadow: var(--shadow-md);
-}
-.samplecard a:focus-visible,
-.samplecard button:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* Clamp helpers (local so card works without global utilities) */
-.clamp-2 {
+.samplecard__title--clamp {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* sm ≥640px */
+.samplecard__subtitle {
+  margin: 0;
+}
+
+/* Footer / CTA */
+
+.samplecard__footer {
+  margin-top: auto; /* anchors CTA to card bottom via .stack flex column */
+}
+
+.samplecard__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Focus states – WCAG AA friendly */
+
+.samplecard__cta:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.samplecard:focus-within {
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive refinements */
+
 @media (min-width: 640px) {
-  .samplecard {
-    padding: var(--space-8);
-  }
-  .samplecard__media {
-    margin: calc(var(--space-8) * -1) calc(var(--space-8) * -1) 0;
-  }
   .samplecard--compact .samplecard__media {
     margin: calc(var(--space-4) * -1) calc(var(--space-4) * -1) 0;
   }
 }
 
-/* lg ≥1024px */
-@media (min-width: 1024px) {
-  /* keep card light */
-}
-
 /* Reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
   .samplecard,
   .samplecard__cta {

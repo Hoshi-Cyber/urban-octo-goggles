@@ -1,0 +1,111 @@
+---
+/**
+ * File: src/components/seo/Seo.astro
+ *
+ * Purpose (Fix Plan 205.1.5):
+ * - Centralise core SEO tags for pages (title, description, canonical).
+ * - Keep Open Graph / Twitter values aligned with the same meta fields
+ *   used by ArticleJsonLd (metaTitle/metaDescription, ogImage, canonical).
+ *
+ * Usage:
+ *   <Seo
+ *     slot="head"
+ *     title={metaTitle || title}
+ *     description={metaDescription || description}
+ *     canonicalUrl={canonicalAbs}
+ *     ogImage={ogImage}
+ *     ogType="article"
+ *     siteName={site?.siteName}
+ *     robots="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+ *     alternates={alternates}
+ *   />
+ */
+
+export interface SeoProps {
+  /** Meta/OG title – typically metaTitle || title */
+  title: string;
+  /** Meta/OG description – typically metaDescription || description */
+  description?: string;
+  /** Canonical URL (absolute) */
+  canonicalUrl?: string;
+  /** Open Graph type (default: "article" for blog posts) */
+  ogType?: string;
+  /** Primary OG/Twitter image URL */
+  ogImage?: string;
+  /** Site/brand name for og:site_name */
+  siteName?: string;
+  /** Robots policy string */
+  robots?: string;
+  /** Optional hreflang alternates */
+  alternates?: Array<{
+    hrefLang: string;
+    href: string;
+  }>;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogType = "article",
+  ogImage,
+  siteName,
+  robots = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
+  alternates = [],
+} = Astro.props as SeoProps;
+---
+
+<title>{title}</title>
+
+{description && (
+  <meta name="description" content={description} />
+)}
+
+{robots && (
+  <meta name="robots" content={robots} />
+)}
+
+{canonicalUrl && (
+  <link rel="canonical" href={canonicalUrl} />
+)}
+
+{/* hreflang alternates */}
+{alternates.map((alt) => (
+  <link
+    rel="alternate"
+    hreflang={alt.hrefLang}
+    href={alt.href}
+  />
+))}
+
+{/* Open Graph */}
+<meta property="og:title" content={title} />
+{description && (
+  <meta property="og:description" content={description} />
+)}
+{canonicalUrl && (
+  <meta property="og:url" content={canonicalUrl} />
+)}
+<meta property="og:type" content={ogType} />
+{siteName && (
+  <meta property="og:site_name" content={siteName} />
+)}
+{ogImage && (
+  <meta property="og:image" content={ogImage} />
+)}
+
+{/* Twitter */}
+<meta
+  name="twitter:card"
+  content={ogImage ? "summary_large_image" : "summary"}
+/>
+<meta name="twitter:title" content={title} />
+{description && (
+  <meta
+    name="twitter:description"
+    content={description}
+  />
+)}
+{ogImage && (
+  <meta name="twitter:image" content={ogImage} />
+)}

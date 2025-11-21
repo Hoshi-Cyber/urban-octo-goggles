@@ -1,0 +1,314 @@
+---
+/* File: src/components/blog/post/BlogPostLayout/index.astro
+ *
+ * Purpose:
+ * - Render the full single blog post layout for CVWriting.co.ke.
+ * - All data is provided via BlogPostLayoutProps from the route layer.
+ *
+ * Fix Plan 205.1:
+ * - Single source of truth for hero, intro, keyTakeaways, inlineOffer, socialProof,
+ *   FAQ, finalCta, checklist, and relatedArticles.
+ *
+ * Fix Plan 205.1.7:
+ * - socialProofItems, faqItems, and checklist are now fed via central data banks
+ *   (src/data/testimonials, src/data/faqs, src/data/checklists) resolved in the
+ *   route; this layout is purely presentational.
+ *
+ * Fix Plan 205.2:
+ * - Consolidate all core single-article IA into this layout.
+ * - BlogPost.astro acts as a thin adapter; routes construct BlogPostLayoutProps.
+ * - This component owns structure only and does not perform any data fetching.
+ */
+
+import type { AstroComponentFactory } from "astro";
+
+import Breadcrumbs from "@/components/blog/base/Breadcrumbs";
+import PostToc from "@/components/blog/compose/PostToc";
+import PostCover from "@/components/blog/compose/PostCover";
+import FAQAccordion from "@/components/faq/FAQAccordion";
+
+import ArticleHero from "@/components/blog/post/ArticleHero";
+import IntroBlock from "@/components/blog/post/IntroBlock";
+import KeyTakeaways from "@/components/blog/post/KeyTakeaways";
+import InlineOfferBlock from "@/components/blog/post/InlineOfferBlock";
+import SocialProofStrip from "@/components/blog/post/SocialProofStrip";
+import FinalCtaBlock from "@/components/blog/post/FinalCtaBlock";
+import RelatedArticles from "@/components/blog/post/RelatedArticles";
+import ChecklistSection from "@/components/blog/post/ChecklistSection";
+
+import "./BlogPostLayout.css";
+
+export type BreadcrumbItem = {
+  href: string;
+  label: string;
+};
+
+export type TocItem = {
+  id: string;
+  label: string;
+  level: number;
+  href?: string;
+};
+
+export type HeroImage = {
+  src: string;
+  alt: string;
+};
+
+export type HeroSoftCta = {
+  label: string;
+  href: string;
+  ctaId?: string;
+};
+
+export type InlineOffer = {
+  heading: string;
+  bullets: string[];
+  ctaLabel: string;
+  ctaHref: string;
+  trustNote?: string;
+  eyebrow?: string;
+};
+
+/**
+ * Shape used by both:
+ * - src/data/testimonials.ts (central bank)
+ * - BlogPostLayoutProps.socialProofItems
+ */
+export type SocialProofItem = {
+  quote: string;
+  author: string;
+  role?: string;
+  avatarSrc?: string;
+  rating?: number;
+  class?: string;
+};
+
+/**
+ * FAQ item structure:
+ * - Question in plain text.
+ * - Answer in sanitized HTML (pre-rendered at data/route layer).
+ */
+export type FaqItem = {
+  question: string;
+  answerHtml: string;
+};
+
+/**
+ * Final CTA block at bottom of article.
+ */
+export type FinalCta = {
+  heading: string;
+  bodyHtml: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+};
+
+export type RelatedArticle = {
+  title: string;
+  href: string;
+  category: string;
+  readingTimeMinutes?: number;
+  excerpt?: string;
+  dateISO?: string;
+};
+
+/**
+ * ChecklistConfig is the normalized structure consumed by ChecklistSection:
+ * - title/leadHtml control the framing.
+ * - items is a simple ordered list of implementation steps.
+ *
+ * Central bank helpers (getChecklistItems) are expected to return this shape.
+ */
+export type ChecklistConfig = {
+  title?: string;
+  leadHtml?: string;
+  items: string[];
+};
+
+export interface BlogPostLayoutProps {
+  breadcrumbs: BreadcrumbItem[];
+
+  // Hero / meta
+  category: string;
+  title: string;
+  heroTagline?: string;
+  publishedAt?: string;
+  updatedAt?: string;
+  readingTimeMinutes?: number;
+  authorName?: string;
+  authorUrl?: string;
+  heroImage?: HeroImage;
+  heroSoftCta?: HeroSoftCta;
+
+  // Content slices
+  introHtml?: string;
+  keyTakeaways?: string[];
+
+  // Table of contents
+  toc?: TocItem[];
+  showToc?: boolean;
+
+  // Body content
+  /**
+   * Optional explicit body renderer (e.g. MDX component).
+   * If omitted, the <slot /> content will be used.
+   */
+  Content?: AstroComponentFactory;
+
+  // Conversion & trust (resolved via central data banks at route layer)
+  inlineOffer?: InlineOffer;
+  socialProofItems?: SocialProofItem[];
+  faqItems?: FaqItem[];
+  finalCta?: FinalCta;
+  relatedArticles?: RelatedArticle[];
+
+  /**
+   * Implementation checklist:
+   * - Resolved from preset IDs via src/data/checklists in the route,
+   *   with optional legacy inline fallback.
+   */
+  checklist?: ChecklistConfig;
+}
+
+const {
+  breadcrumbs,
+  category,
+  title,
+  heroTagline,
+  publishedAt,
+  updatedAt,
+  readingTimeMinutes,
+  authorName,
+  authorUrl,
+  heroImage,
+  heroSoftCta,
+  introHtml,
+  keyTakeaways = [],
+  toc,
+  showToc = true,
+  Content,
+  inlineOffer,
+  socialProofItems,
+  faqItems,
+  finalCta,
+  relatedArticles,
+  checklist,
+} = Astro.props as BlogPostLayoutProps;
+---
+
+<article class="blog-post-layout page-gap-after">
+  <header class="blog-post-layout__header">
+    <div class="container">
+      <div class="stack stack--first-tight">
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <Breadcrumbs items={breadcrumbs} />
+        )}
+
+        <ArticleHero
+          category={category}
+          title={title}
+          heroTagline={heroTagline}
+          publishedAt={publishedAt}
+          updatedAt={updatedAt}
+          readingTimeMinutes={readingTimeMinutes}
+          authorName={authorName}
+          authorUrl={authorUrl}
+          softCta={heroSoftCta}
+        />
+
+        {heroImage && <PostCover src={heroImage.src} alt={heroImage.alt} />}
+
+        {introHtml && <IntroBlock introHtml={introHtml} />}
+
+        {keyTakeaways.length > 0 && <KeyTakeaways items={keyTakeaways} />}
+      </div>
+    </div>
+  </header>
+
+  {showToc && toc && toc.length > 0 && (
+    <section class="blog-post-layout__toc">
+      <div class="container">
+        <PostToc items={toc} />
+      </div>
+    </section>
+  )}
+
+  <section class="blog-post-layout__body">
+    <div class="container">
+      <div class="blog-post-layout__body-inner">
+        <div class="blog-post-layout__content prose">
+          {Content ? <Content /> : <slot />}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {checklist && checklist.items && checklist.items.length > 0 && (
+    <section class="blog-post-layout__checklist">
+      <div class="container">
+        <ChecklistSection
+          title={checklist.title}
+          leadHtml={checklist.leadHtml}
+          items={checklist.items}
+        />
+      </div>
+    </section>
+  )}
+
+  {inlineOffer && (
+    <section class="blog-post-layout__inline-offer">
+      <div class="container">
+        <InlineOfferBlock
+          heading={inlineOffer.heading}
+          bullets={inlineOffer.bullets}
+          ctaLabel={inlineOffer.ctaLabel}
+          ctaHref={inlineOffer.ctaHref}
+          trustNote={inlineOffer.trustNote}
+          eyebrow={inlineOffer.eyebrow}
+        />
+      </div>
+    </section>
+  )}
+
+  {socialProofItems && socialProofItems.length > 0 && (
+    <section class="blog-post-layout__social-proof">
+      <div class="container">
+        <SocialProofStrip items={socialProofItems} />
+      </div>
+    </section>
+  )}
+
+  {faqItems && faqItems.length > 0 && (
+    <section class="blog-post-layout__faq">
+      <div class="container">
+        <FAQAccordion items={faqItems} />
+      </div>
+    </section>
+  )}
+
+  {finalCta && (
+    <section class="blog-post-layout__final-cta">
+      <div class="container">
+        <FinalCtaBlock
+          heading={finalCta.heading}
+          bodyHtml={finalCta.bodyHtml}
+          primaryLabel={finalCta.primaryLabel}
+          primaryHref={finalCta.primaryHref}
+          secondaryLabel={finalCta.secondaryLabel}
+          secondaryHref={finalCta.secondaryHref}
+        />
+      </div>
+    </section>
+  )}
+
+  {relatedArticles && relatedArticles.length > 0 && (
+    <section class="blog-post-layout__related">
+      <div class="container">
+        <RelatedArticles items={relatedArticles} />
+      </div>
+    </section>
+  )}
+</article>

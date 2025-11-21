@@ -78,25 +78,23 @@ const webJsonLd = {
   <Hero {...hero} />
 
   <!-- Key metrics before features -->
-  <section class="section--tight" aria-label="Key metrics">
-    <!-- StatStrip owns its own .container internally -->
-    <StatStrip stats={stats} />
+  <section class="section" aria-label="Key metrics">
+    <div class="container">
+      <StatStrip stats={stats} />
+    </div>
   </section>
 
   <!-- Services/features -->
   <FeatureList {...features} />
 
   <!-- Pricing -->
-  <section class="section" aria-labelledby="pricing-title" id="pricing">
-    <div class="container">
-      <h2 id="pricing-title" class="h2">Transparent Pricing</h2>
-      <p>
-        Our packages deliver exceptional value without hidden fees. Choose the plan that fits your
-        goals.
-      </p>
-      <PricingTable showTitle={false} />
-    </div>
-  </section>
+<section class="section" aria-labelledby="pricing-title" id="pricing">
+  <div class="container">
+    <h2 id="pricing-title" class="h2">Transparent Pricing</h2>
+    <PricingTable showTitle={false} />
+  </div>
+</section>
+
 
   <!-- Social proof -->
   <TestimonialStrip {...testimonials} />
@@ -107,10 +105,4 @@ const webJsonLd = {
   <!-- SEO -->
   <StructuredData type="Organization" data={orgJsonLd} />
   <StructuredData type="WebSite" data={webJsonLd} />
-
-  <style>
-    .section--tight {
-      padding-block: clamp(1.25rem, 2vw, 2rem);
-    }
-  </style>
 </BaseLayout>

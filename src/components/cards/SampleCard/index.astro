@@ -10,44 +10,45 @@ export interface Media {
 
 export interface Props {
   title: string;
-  // kept for modal only (not rendered inside the card)
+  /**
+   * Kept in the contract for the /samples modal.
+   * Not rendered directly in the card – used by the grid controller + modal only.
+   */
   before: string;
   after: string;
   eyebrow?: string;
+  subtitle?: string;
   compact?: boolean;
   media?: Media | null;
-  ctaLabel?: string; // CTA text
+  ctaLabel?: string;
 }
 
 const {
   title,
-  before, // intentionally unused in-card
-  after,  // intentionally unused in-card
   eyebrow = "Sample",
+  subtitle,
   compact = false,
   media = null,
   ctaLabel = "View before / after",
 } = Astro.props as Props;
 
-const uid = `samplecard-${Math.random().toString(36).slice(2, 8)}`;
+const slug = title
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/(^-|-$)/g, "");
 
-// Fix Plan 95: static CSS import for Vite compatibility
+const titleId = `samplecard-${slug || "title"}`;
+
+// Fixed, static CSS asset import (Vite/Netlify friendly)
 import sampleCardCss from "./SampleCard.css?url";
 ---
 
-<style is:global>
-  @import "../../../styles/tokens.css";
-  @import "../../../styles/typography.css";
-  @import "../../../styles/utilities.css";
-  @import "../../../styles/breakpoints.css";
-</style>
 <link rel="stylesheet" href={sampleCardCss} />
 
 <article
-  class={`samplecard${compact ? " samplecard--compact" : ""}`}
+  class={`card samplecard${compact ? " samplecard--compact" : ""}`}
   data-section="samplecard"
-  aria-labelledby={`${uid}-title`}
-  role="group"
+  aria-labelledby={titleId}
 >
   {media?.src && (
     <figure class="samplecard__media">
@@ -63,20 +64,30 @@ import sampleCardCss from "./SampleCard.css?url";
     </figure>
   )}
 
-  <header class="samplecard__head">
-    <p class="samplecard__eyebrow">{eyebrow}</p>
-    <h3 id={`${uid}-title`} class="h3 samplecard__title clamp-2">{title}</h3>
-  </header>
+  <div class="samplecard__body stack">
+    <header class="samplecard__head">
+      {eyebrow && <p class="samplecard__eyebrow">{eyebrow}</p>}
 
-  <!-- Footer CTA only; modal shows the before/after -->
-  <div class="samplecard__footer">
-    <button
-      type="button"
-      class="samplecard__cta btn btn-primary"
-      aria-label={`View before and after for ${title}`}
-      data-cta="samplecard-open"
-    >
-      {ctaLabel}
-    </button>
+      <h3 id={titleId} class="h3 samplecard__title samplecard__title--clamp">
+        {title}
+      </h3>
+
+      {subtitle && (
+        <p class="samplecard__subtitle text-muted">
+          {subtitle}
+        </p>
+      )}
+    </header>
+
+    <footer class="samplecard__footer">
+      <button
+        type="button"
+        class="samplecard__cta btn btn-primary"
+        aria-label={`View before and after for ${title}`}
+        data-cta="samplecard-open"
+      >
+        {ctaLabel}
+      </button>
+    </footer>
   </div>
 </article>

@@ -1,119 +1,226 @@
-/* Steps component — compact, mobile-first, token-driven */
+/* src/components/common/Steps/Steps.css */
+/* Steps component – ordered flow, token-driven, mobile-first */
 
-/* Root */
+/* Root section */
 .steps {
+  padding-block: var(--space-10);
   color: var(--color-text);
   background: var(--color-background);
+}
+
+@media (min-width: 768px) {
+  .steps {
+    padding-block: var(--space-12);
+  }
+}
+
+/* Body – force full-width inside whatever wrapper it sits in */
+.steps__body {
+  width: 100%;
+  max-width: 100%;      /* override any stack/container max-width */
+  margin-inline: 0;     /* prevent auto-centering clamps */
+}
+
+/* Alignment variants */
+.steps--align-start .steps__head,
+.steps--align-start .steps__list {
+  text-align: left;
+  align-items: flex-start;
+  justify-items: stretch;
+}
+
+.steps--align-center .steps__head,
+.steps--align-center .steps__list {
+  text-align: center;
+  align-items: center;
+  justify-items: center;
 }
 
 /* Header */
 .steps__head {
   display: grid;
-  gap: var(--space-3, 0.75rem);
-  margin-bottom: var(--space-6, 1.5rem);
-}
-.steps__eyebrow {
-  color: var(--color-muted, #374151);
-  letter-spacing: 0.06em;
-}
-.steps__title {
-  margin: 0;
-  font-weight: 700;
-  line-height: 1.2;
-  font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem);
+  gap: var(--space-3);
 }
 
-/* List */
+.steps__eyebrow {
+  margin: 0;
+  color: var(--color-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: var(--fs-sm);
+}
+
+.steps__title {
+  margin: 0;
+}
+
+/* Grid */
 .steps__list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: var(--space-4, 1rem);
-  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  grid-template-columns: 1fr; /* 1-up mobile */
+  justify-items: stretch;     /* make items fill their cells */
+  width: 100%;
+  max-width: 100%;            /* ensure grid spans full body width */
 }
 
-/* Item (no large placeholder panel) */
+/* 2-up at small / medium */
+@media (min-width: 640px) {
+  .steps__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 4-up at large – modifiers cap effective columns for balance */
+@media (min-width: 1024px) {
+  .steps__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .steps__list.steps__list--cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .steps__list.steps__list--cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .steps__list.steps__list--cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .steps__list.steps__list--cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Cards */
 .steps__item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-3, 0.75rem);
-  align-items: start;
-  padding: var(--space-4, 1rem);
+  display: flex;
+  height: 100%;
+  width: 100%;      /* fill the grid track */
+  max-width: none;  /* override any global .card max-width */
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 14%, #e5e7eb);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 4%, #fff);
-  border-radius: var(--radius-lg, 0.75rem);
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 4%,
+    var(--color-surface)
+  );
+  box-shadow: var(--shadow-sm);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
     border-color 0.15s ease;
 }
+
+/* Hover/active – subtle, no layout shift */
 .steps__item:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
-}
-.steps__item:active {
-  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 26%,
+    var(--color-surface)
+  );
 }
 
-/* Number badge — small and secondary */
-.steps__badge {
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-  text-align: center;
-  border-radius: 9999px;
-  color: var(--color-primary, #0b57d0);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 12%, #fff);
-  border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
-  font-weight: 700;
-  font-size: 0.95rem;
-  flex: 0 0 auto;
+.steps__item:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Content */
+.steps__content {
+  display: grid;
+  gap: var(--space-3);
+  align-content: flex-start;
+}
+
+/* Kicker + title */
+.steps__kicker {
+  margin: 0;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
 .steps__itemTitle {
-  margin: 0 0 0.25rem;
+  margin: 0;
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: var(--fs-lg);
   line-height: 1.35;
   color: var(--color-text);
 }
-.steps__itemDesc {
+
+/* Summary and description */
+.steps__itemSummary {
   margin: 0;
-  color: var(--color-muted, #374151);
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-muted);
 }
 
-/* Focus */
-.steps a:focus-visible,
-.steps button:focus-visible,
-.steps__item:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
+.steps__itemDesc {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Roles block */
+.steps__roles {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.steps__role {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.steps__roleLabel {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.steps__roleList {
+  margin: 0;
+  padding-left: var(--space-4);
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.steps__roleItem {
+  margin: 0;
+}
+
+/* CTA */
+.steps__cta {
+  margin-top: var(--space-3);
+  justify-self: flex-start;
+}
+
+/* Focus visibility – card highlights when any child (e.g. CTA) is focused */
+.steps__item:focus-within {
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Breakpoints */
-@media (min-width: 640px) {
-  .steps__list {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (min-width: 768px) {
-  .steps__title {
-    font-size: clamp(1.35rem, 1vw + 1.1rem, 2rem);
-  }
-}
-@media (min-width: 1024px) {
-  .steps__list {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .steps__item {
     transition: none !important;
-    animation: none !important;
   }
 }

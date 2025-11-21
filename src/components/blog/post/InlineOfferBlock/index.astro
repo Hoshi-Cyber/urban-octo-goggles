@@ -1,0 +1,88 @@
+---
+/*
+  src/components/blog/post/InlineOfferBlock/index.astro
+
+  FP-205.6:
+  - Mid-article conversion block sized for a single blog post.
+  - Uses shared Button component (btn system) and token-driven layout.
+  - BlogPostLayout already wraps this in a .container; do NOT add another.
+*/
+
+import Button from "@/components/cta/Button";
+import "./InlineOfferBlock.css";
+
+export interface InlineOfferBlockProps {
+  heading: string;
+  bullets: string[];
+  ctaLabel: string;
+  ctaHref: string;
+  trustNote?: string;
+  eyebrow?: string;
+}
+
+const {
+  heading,
+  bullets,
+  ctaLabel,
+  ctaHref,
+  trustNote,
+  eyebrow = "Work with an expert",
+} = Astro.props as InlineOfferBlockProps;
+
+const hasBullets = Array.isArray(bullets) && bullets.length > 0;
+---
+
+<section
+  class="inline-offer"
+  aria-labelledby="inline-offer-title"
+>
+  <div class="inline-offer__inner">
+    <header class="inline-offer__header">
+      <p class="inline-offer__eyebrow">
+        {eyebrow}
+      </p>
+
+      <h2
+        id="inline-offer-title"
+        class="inline-offer__title"
+      >
+        {heading}
+      </h2>
+    </header>
+
+    {hasBullets && (
+      <ul class="inline-offer__list">
+        {bullets.map((item) => (
+          <li class="inline-offer__item">
+            <span
+              class="inline-offer__marker"
+              aria-hidden="true"
+            >
+              ✓
+            </span>
+            <span class="inline-offer__text">
+              {item}
+            </span>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <div class="inline-offer__footer">
+      <Button
+        label={ctaLabel}
+        href={ctaHref}
+        variant="primary"
+        size="md"
+        class="inline-offer__cta"
+        cta="inline-offer:primary"
+      />
+
+      {trustNote && (
+        <p class="inline-offer__trust">
+          {trustNote}
+        </p>
+      )}
+    </div>
+  </div>
+</section>

@@ -1,8 +1,17 @@
 ---
 /**
  * File: src/pages/blog/[category]/[slug].astro
+ *
  * Fix Plan 190 & 190.2: Wire compose components + MDX map (single-post),
  * ensure cover is correctly passed to BlogPost, and wire a visible comments slot.
+ *
+ * Fix Plan 195: normalized authorSlug model + safe OG image defaults.
+ *
+ * Fix Plan 205.1: Single Blog Post Layout – data, IA, SEO & migration closure.
+ * - Map full BlogPostLayoutProps from frontmatter + content, including:
+ *   heroTagline, heroSoftCta, heroImage, introHtml, keyTakeaways,
+ *   inlineOffer, socialProofItems, faqItems, finalCta, checklist, relatedArticles.
+ * - Align SEO/meta/OG/Twitter + JSON-LD via Seo + ArticleJsonLd components.
  */
 
 import type { CollectionEntry } from "astro:content";
@@ -12,6 +21,10 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/components/layout/BaseLayout.astro";
 import BlogPost from "@/components/blog/base/BlogPost.astro";
 import { mdxComponents } from "@/components/blog/compose/mdx";
+
+// SEO components
+import Seo from "@/components/seo/Seo.astro";
+import ArticleJsonLd from "@/components/seo/ArticleJsonLd/index.astro";
 
 import site from "@/site.config";
 
@@ -51,9 +64,17 @@ const date = new Date(entry.data.date);
 const updated = entry.data.updated ? new Date(entry.data.updated) : null;
 const readingTime = entry.data.readingTime ?? null;
 
-// Author data (flattened schema: author + optional authorUrl)
-const authorName = entry.data.author;
-const authorUrl: string | undefined = (entry.data as any).authorUrl ?? undefined;
+// Optional meta overrides from frontmatter
+const metaTitle: string | undefined = (entry.data as any).metaTitle ?? undefined;
+const metaDescription: string | undefined =
+  (entry.data as any).metaDescription ?? undefined;
+
+// Author data (Fix 195-A/B: flattened schema author + authorSlug; URL derived in layout)
+const authorName: string | undefined = entry.data.author as string | undefined;
+const authorSlug: string | undefined = (entry.data as any).authorSlug ?? undefined;
+
+const resolvedAuthorSlug = authorSlug ?? "mezame-editorial";
+const canonicalAuthorUrl = `/about/editorial/${resolvedAuthorSlug}/`;
 
 // Absolute site URL
 const siteUrl: string | undefined =
@@ -66,11 +87,13 @@ const canonicalAbs =
   (entry.data as any)?.canonical ||
   (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
 
-// Raw cover data from frontmatter (passed through to BlogPost)
+// ----- Hero / cover mapping (Fix 205.1 – heroImage as primary) -----
+
+// Raw cover data from frontmatter (legacy support; still passed through to BlogPost)
 const cover = (entry.data as any).cover;
 
-// Typed alias used for preload / JSON-LD image logic
-type CoverForMeta =
+// Typed alias used for hero image + preload / JSON-LD image logic
+type ImageForMeta =
   | {
       src:
         | string
@@ -85,7 +108,16 @@ type CoverForMeta =
     }
   | undefined;
 
-const coverForMeta = cover as CoverForMeta;
+// New hero image field (preferred); fallback to cover for older posts
+const heroImage = ((entry.data as any).heroImage ?? cover) as ImageForMeta;
+
+// Derive the hero image URL used by PostCover for LCP/JSON-LD/preload coherence
+const heroImageUrl: string | undefined =
+  typeof heroImage?.src === "string"
+    ? heroImage.src
+    : typeof heroImage?.src === "object"
+    ? heroImage.src.src
+    : undefined;
 
 // Optional alternates for hreflang (array of { hrefLang, href })
 type Alternate = { hrefLang: string; href: string };
@@ -140,7 +172,66 @@ const related = allPosts
   .slice(0, 6)
   .map((x) => x.post);
 
-// ---------- JSON-LD ----------
+// Deterministic RelatedArticle[] payload for layout (Fix 205.1.6)
+type RelatedArticle = {
+  title: string;
+  url: string;
+  category?: string;
+  readingTime?: number | null;
+  excerpt?: string;
+  date: Date;
+};
+
+const relatedArticles: RelatedArticle[] = related.map((post) => {
+  const cat = post.data.category ?? catFromPath(post);
+  const base = baseSlug(post);
+  const url = `/blog/${cat}/${base}/`;
+
+  return {
+    title: post.data.title,
+    url,
+    category: cat,
+    readingTime: (post.data as any).readingTime ?? null,
+    excerpt: post.data.description,
+    date: new Date(post.data.date),
+  };
+});
+
+// ---------- Layout props from frontmatter (Fix 205.1.2) ----------
+
+// Hero copy
+const heroTagline = (entry.data as any).heroTagline ?? null;
+const heroSoftCta = (entry.data as any).heroSoftCta ?? null;
+
+// Intro slice (HTML string or rich text pre-derived by MDX pipeline)
+const introHtml = (entry.data as any).introHtml ?? null;
+
+// Key takeaways – normalized to array when present
+const rawKeyTakeaways = (entry.data as any).keyTakeaways;
+const keyTakeaways =
+  Array.isArray(rawKeyTakeaways)
+    ? rawKeyTakeaways
+    : rawKeyTakeaways
+    ? [rawKeyTakeaways]
+    : null;
+
+// Inline offer block
+const inlineOffer = (entry.data as any).inlineOffer ?? null;
+
+// Social proof / testimonials
+const socialProofItems = (entry.data as any).socialProofItems ?? null;
+
+// FAQ entries
+const faqItems = (entry.data as any).faqItems ?? null;
+
+// Final CTA block
+const finalCta = (entry.data as any).finalCta ?? null;
+
+// Checklist (implementation steps) – can be list of strings or objects
+const checklist = (entry.data as any).checklist ?? null;
+
+// ---------- SEO + JSON-LD wiring (Fix 205.1.5) ----------
+
 const publisherName =
   (site && ((site as any).publisherName || (site as any).orgName)) ||
   new URL(siteUrl || Astro.url).hostname;
@@ -149,16 +240,6 @@ const publisherLogoUrl =
   (site && ((site as any).publisherLogo || (site as any).orgLogo)) ||
   undefined;
 
-// Flattened author JSON-LD using authorName + authorUrl
-const author =
-  authorName
-    ? {
-        "@type": "Person",
-        name: authorName,
-        ...(authorUrl ? { url: authorUrl } : {}),
-      }
-    : undefined;
-
 // Estimate wordCount if not provided: readingTime (min) * 200 wpm
 const wordCount =
   (entry.data as any).wordCount ??
@@ -166,77 +247,52 @@ const wordCount =
     ? Math.max(1, Math.round(readingTime * 200))
     : undefined);
 
-const jsonLd: Record<string, any> = {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: title,
-  description,
-  datePublished: date.toISOString(),
-  ...(updated ? { dateModified: updated.toISOString() } : {}),
-  inLanguage: "en",
-  mainEntityOfPage: canonicalAbs,
-  image:
-    (entry.data as any).ogImage ||
-    (typeof coverForMeta?.src === "string"
-      ? coverForMeta.src
-      : typeof coverForMeta?.src === "object"
-      ? coverForMeta.src.src
-      : undefined),
-  ...(author ? { author } : {}),
-  publisher: {
-    "@type": "Organization",
-    name: publisherName,
-    ...(publisherLogoUrl
-      ? {
-          logo: {
-            "@type": "ImageObject",
-            url: String(publisherLogoUrl),
-          },
-        }
-      : {}),
+// Resolved OG image (Fix 195-E / 205.1.5): ogImage > heroImage > site default
+const siteDefaultOg = "/assets/images/og/default-blog.webp";
+
+const ogImage: string | undefined =
+  (entry.data as any).ogImage ?? heroImageUrl ?? siteDefaultOg;
+
+// SEO meta title/description (prefer metaTitle/metaDescription when present)
+const seoTitle =
+  typeof metaTitle === "string" && metaTitle.trim().length > 0
+    ? metaTitle
+    : title;
+
+const seoDescription =
+  typeof metaDescription === "string" && metaDescription.trim().length > 0
+    ? metaDescription
+    : description;
+
+// Breadcrumbs array for ArticleJsonLd
+const breadcrumbs = [
+  {
+    name: "Home",
+    item: siteUrl ? new URL("/", siteUrl).toString() : "/",
+    position: 1,
   },
-  articleSection: categorySlug,
-  keywords: tags.join(", "),
-  ...(wordCount ? { wordCount } : {}),
-};
+  {
+    name: "Blog",
+    item: siteUrl ? new URL("/blog/", siteUrl).toString() : "/blog/",
+    position: 2,
+  },
+  {
+    name: (categorySlug || "").replaceAll("-", " "),
+    item: siteUrl
+      ? new URL(`/blog/${categorySlug}/`, siteUrl).toString()
+      : `/blog/${categorySlug}/`,
+    position: 3,
+  },
+  {
+    name: title,
+    item:
+      canonicalAbs ||
+      (siteUrl ? new URL(pathname, siteUrl).toString() : pathname),
+    position: 4,
+  },
+];
 
-// Breadcrumb JSON-LD (visible nav parity)
-const breadcrumbsLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: siteUrl ? new URL("/", siteUrl).toString() : "/",
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Blog",
-      item: siteUrl
-        ? new URL("/blog/", siteUrl).toString()
-        : "/blog/",
-    },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: (categorySlug || "").replaceAll("-", " "),
-      item: siteUrl
-        ? new URL(`/blog/${categorySlug}/`, siteUrl).toString()
-        : `/blog/${categorySlug}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 4,
-      name: title,
-      item: canonicalAbs || pathname,
-    },
-  ],
-};
-
-// Props for BlogPost component
+// Props for BlogPost component (now aligned with BlogPostLayoutProps)
 const layoutProps = {
   title,
   description,
@@ -245,57 +301,77 @@ const layoutProps = {
   date,
   updated,
   readingTime,
-  // Pass raw cover object directly from frontmatter (Fix Plan 190.2)
+  // Legacy hero image support
   cover,
+  // TOC + navigation
   tocHeadings,
   showTOC,
   prev,
   next,
   related,
-  // Fix Plan 192.2: wire author data into BlogPost/PostMeta
+  // Author wiring (Fix 195-B)
   author: authorName,
-  authorUrl,
+  authorSlug,
+  // Fix Plan 205.1 – extended layout props
+  heroTagline,
+  heroSoftCta,
+  heroImage,
+  introHtml,
+  keyTakeaways,
+  inlineOffer,
+  socialProofItems,
+  faqItems,
+  finalCta,
+  checklist,
+  relatedArticles,
 };
 ---
 <BaseLayout
   title={title}
   description={description}
   canonical={canonicalAbs}
-  seo={{ ogImage: (entry.data as any)?.ogImage }}
+  seo={{ ogImage }}
 >
-  <!-- Robots policy -->
-  <meta
+  {/* Core SEO + OG/Twitter */}
+  <Seo
     slot="head"
-    name="robots"
-    content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+    title={seoTitle}
+    description={seoDescription}
+    canonicalUrl={canonicalAbs}
+    ogType="article"
+    ogImage={ogImage}
+    siteName={(site as any)?.siteName}
+    robots="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+    alternates={alternates}
   />
 
-  <!-- Optional hreflang set when alternates provided -->
-  {alternates &&
-    alternates.map((alt) => (
-      <link
-        slot="head"
-        rel="alternate"
-        hreflang={alt.hrefLang}
-        href={alt.href}
-      />
-    ))}
+  {/* Structured data (BlogPosting + BreadcrumbList) */}
+  {canonicalAbs && (
+    <ArticleJsonLd
+      slot="head"
+      title={title}
+      metaTitle={metaTitle}
+      description={description}
+      metaDescription={metaDescription}
+      canonicalUrl={canonicalAbs}
+      datePublished={date}
+      dateModified={updated}
+      inLanguage="en"
+      imageUrl={heroImageUrl || ogImage}
+      authorName={authorName}
+      authorUrl={canonicalAuthorUrl}
+      publisherName={publisherName}
+      publisherLogoUrl={publisherLogoUrl}
+      category={categorySlug}
+      tags={tags}
+      wordCount={wordCount}
+      breadcrumbs={breadcrumbs}
+    />
+  )}
 
-  <!-- LCP image preload (only one) -->
+  {/* LCP image preload (hero-cover aligned with PostCover + JSON-LD) */}
   {(() => {
-    const fm = entry.data as any;
-    const href =
-      typeof coverForMeta?.src === "string"
-        ? coverForMeta.src
-        : typeof coverForMeta?.src === "object"
-        ? coverForMeta.src.src
-        : fm?.ogImage ?? null;
-
-    const srcset: string | undefined = Array.isArray(fm?.coverSrcset)
-      ? (fm.coverSrcset as string[]).join(", ")
-      : typeof fm?.coverSrcset === "string"
-      ? (fm.coverSrcset as string)
-      : undefined;
+    const href = heroImageUrl || ogImage || null;
 
     return href ? (
       <link
@@ -303,33 +379,13 @@ const layoutProps = {
         rel="preload"
         as="image"
         href={href}
-        {...(srcset ? { imagesrcset: srcset } : {})}
         imagesizes="(max-width: 768px) 100vw, 1200px"
         fetchpriority="high"
       />
     ) : null;
   })()}
 
-  <!-- Structured data -->
-  <script slot="head" type="application/ld+json">
-    {JSON.stringify(jsonLd)}
-  </script>
-  <script slot="head" type="application/ld+json">
-    {JSON.stringify(breadcrumbsLd)}
-  </script>
-
-  <!-- Article-specific Open Graph/Twitter (BaseLayout already sets url/image/title/description) -->
-  <meta slot="head" property="og:type" content="article" />
-  {site?.siteName && (
-    <meta
-      slot="head"
-      property="og:site_name"
-      content={(site as any).siteName}
-    />
-  )}
-  <meta slot="head" name="twitter:card" content="summary_large_image" />
-
-  <!-- Reading progress bar (island) -->
+  {/* Reading progress bar (island) */}
   <div
     id="read-progress"
     class="read-progress"

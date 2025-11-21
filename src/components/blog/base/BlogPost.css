@@ -1,5 +1,7 @@
 /* File: src/components/blog/base/BlogPost.css */
-/* FP-191: Balanced, compact single-post layout (layout only, no per-component overrides). */
+/* FP-191: Balanced, compact single-post layout (layout only, no per-component overrides).
+   FP-195-F: TOC de-emphasis, body typography and heading sizing.
+*/
 
 .post {
   /* Base article wrapper: single column, compact vertical rhythm */
@@ -51,32 +53,6 @@
   }
 }
 
-/* Cover */
-
-/* Constrain hero to reading width */
-.post__cover,
-.post__cover .container {
-  max-width: var(--container-max);
-  margin-inline: auto;
-}
-
-.post__cover img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 21 / 9;       /* shallower banner style */
-  max-height: 360px;          /* slightly shorter for more compact page */
-  object-fit: cover;          /* crop edges, keep focal point */
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-}
-
-.post__cover .caption {
-  margin-top: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--color-muted);
-}
-
 /* Lead paragraph (intro section) */
 
 .post__lead {
@@ -91,15 +67,15 @@
 /* TOC (layout wrapper only – visual styles live in PostToc / toc-details) */
 
 .post__toc {
-  padding: var(--space-4);
+  padding: var(--space-3);
   background: var(--color-surface);
   border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
   border-radius: var(--radius-lg);
-  max-width: 60rem;                 /* keep TOC column visually aligned with prose */
+  max-width: 50rem;               /* de-emphasised, narrower than full container */
   margin-inline: auto;
 }
 
-/* TOC Mobile Toggle (Fix Plan 185) */
+/* TOC Mobile Toggle (Fix Plan 185 + 195-F) */
 .toc-details {
   border: 1px solid color-mix(in oklab, var(--color-primary) 16%, transparent);
   border-radius: var(--radius-lg);
@@ -113,8 +89,9 @@
   cursor: pointer;
   list-style: none;
   font-weight: 600;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
   border-radius: var(--radius-md);
+  font-size: 0.95rem; /* slightly smaller than body to keep TOC visually secondary */
 }
 .toc-details > summary::-webkit-details-marker {
   display: none;
@@ -141,7 +118,21 @@
 }
 
 .post__body .prose {
+  max-width: 70ch;
   margin-inline: auto;
+  line-height: 1.7;
+}
+
+/* Heading sizing and spacing inside article body */
+
+.post__body .prose h2 {
+  font-size: 1.625rem; /* within 1.5–1.75rem */
+  margin-block: var(--space-4) var(--space-2);
+}
+
+.post__body .prose h3 {
+  font-size: 1.3rem; /* within 1.25–1.35rem */
+  margin-block: var(--space-3) var(--space-2);
 }
 
 /* Series (optional) */
@@ -245,7 +236,7 @@
 
 @media (min-width: 768px) {
   .post__toc {
-    padding: var(--space-6);
+    padding: var(--space-3);
   }
 
   .post__series,

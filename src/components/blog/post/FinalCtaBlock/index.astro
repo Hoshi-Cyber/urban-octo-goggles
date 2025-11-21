@@ -1,0 +1,80 @@
+---
+/*
+  src/components/blog/post/FinalCtaBlock/index.astro
+
+  FP-205.8:
+  - Bottom-of-article hard CTA block for single blog posts.
+  - Uses global Button component (.btn system) and token-driven layout.
+  - BlogPostLayout already wraps this in a .container; do NOT add another.
+*/
+
+import Button from "@/components/cta/Button";
+import "./FinalCtaBlock.css";
+
+export interface FinalCtaBlockProps {
+  heading: string;
+  bodyHtml: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const {
+  heading,
+  bodyHtml,
+  primaryLabel,
+  primaryHref,
+  secondaryLabel,
+  secondaryHref,
+} = Astro.props as FinalCtaBlockProps;
+
+const hasSecondary = Boolean(secondaryLabel && secondaryHref);
+---
+
+<section
+  class="final-cta"
+  aria-labelledby="final-cta-title"
+>
+  <div class="final-cta__inner">
+    <header class="final-cta__header">
+      <p class="final-cta__eyebrow">
+        Ready for the next step?
+      </p>
+
+      <h2
+        id="final-cta-title"
+        class="final-cta__title"
+      >
+        {heading}
+      </h2>
+
+      <div
+        class="final-cta__body"
+        set:html={bodyHtml}
+      />
+    </header>
+
+    <div class="final-cta__actions">
+      <Button
+        label={primaryLabel}
+        href={primaryHref}
+        variant="primary"
+        size="lg"
+        class="final-cta__primary"
+        cta="final-cta:primary"
+      />
+
+      {hasSecondary && (
+        <Button
+          label={secondaryLabel!}
+          href={secondaryHref!}
+          variant="accent"
+          size="lg"
+          class="final-cta__secondary"
+          cta="final-cta:secondary"
+        />
+      )}
+    </div>
+  </div>
+</section>

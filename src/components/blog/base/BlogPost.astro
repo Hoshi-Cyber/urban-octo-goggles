@@ -1,22 +1,33 @@
 ---
 /* File: src/components/blog/base/BlogPost.astro
-   Purpose: Orchestrate compose components for single-post layout.
-   FP-190: Use Breadcrumbs + PostHeader/Meta/Cover/TOC/Tags/Share/Nav/Related/LeadMagnet.
+   Purpose: Adapter that maps legacy single-post props into BlogPostLayoutProps
+   and appends legacy series/nav/related/lead-magnet/comments/author/inline-ad
+   sections outside the new BlogPostLayout.
+
+   FP-190 / FP-193 / FP-195 (legacy behaviour):
+   - AuthorSlug-based author URL, series handling, conditional cover rendering,
+     inline ad shell for CLS safety.
+
+   FP-205.2 / 205.1.2 / 205.1.6 / 205.1.7:
+   - Delegate core article layout (breadcrumbs, hero, cover, intro, TOC, body,
+     IA slices, conversion blocks, relatedArticles) to BlogPostLayout.
+   - Treat route-level heroImage, IA slices, and relatedArticles as canonical
+     and fall back to legacy fields only for backwards compatibility.
+   - Keep legacy outer blocks (tags/share, series, prev/next, RelatedCategories,
+     lead magnet, comments, author card, inline ad shell) here.
 */
-import type { ImageMetadata } from "astro";
+
 import "./BlogPost.css";
 
-import Breadcrumbs from "@/components/blog/base/Breadcrumbs/index.astro";
-
-import PostHeader from "@/components/blog/compose/PostHeader/index.astro";
-import PostMeta from "@/components/blog/compose/PostMeta/index.astro";
-import PostCover from "@/components/blog/compose/PostCover/index.astro";
-import PostToc from "@/components/blog/compose/PostToc/index.astro";
 import PostTags from "@/components/blog/compose/PostTags/index.astro";
 import PostShare from "@/components/blog/base/PostShare/index.astro";
 import PostNav from "@/components/blog/compose/PostNav/index.astro";
 import RelatedCategories from "@/components/blog/compose/RelatedCategories/index.astro";
 import LeadMagnetStrip from "@/components/blog/compose/LeadMagnetStrip/index.astro";
+
+import BlogPostLayout, {
+  type BlogPostLayoutProps,
+} from "@/components/blog/post/BlogPostLayout";
 
 export interface SeriesItem {
   title: string;
@@ -37,13 +48,16 @@ export interface Props {
   updated?: Date | null;
   readingTime?: number | null;
   author?: string;
-  authorUrl?: string;
+  /** Normalized slug used to derive /about/editorial/<authorSlug>/ */
+  authorSlug?: string;
   cover?: {
-    src: ImageMetadata | string;
+    /** String path per Fix 195-C (e.g. "/assets/images/blog/<category>/<slug>-hero.webp") */
+    src: string;
     alt?: string;
     width?: number;
     height?: number;
     caption?: string;
+    credit?: string;
     /** Optional advanced responsive sources provided via frontmatter */
     srcsetAvif?: string;
     srcsetWebp?: string;
@@ -66,6 +80,23 @@ export interface Props {
    * present either way for CLS safety.
    */
   showInlineAd?: boolean;
+
+  /**
+   * New BlogPostLayoutProps-driven fields from Fix Plan 205.1 / 205.1.7.
+   * Types are indexed from BlogPostLayoutProps to keep the adapter
+   * exactly in sync with the layout contract.
+   */
+  heroTagline?: BlogPostLayoutProps["heroTagline"];
+  heroSoftCta?: BlogPostLayoutProps["heroSoftCta"];
+  heroImage?: BlogPostLayoutProps["heroImage"];
+  introHtml?: BlogPostLayoutProps["introHtml"];
+  keyTakeaways?: BlogPostLayoutProps["keyTakeaways"];
+  inlineOffer?: BlogPostLayoutProps["inlineOffer"];
+  socialProofItems?: BlogPostLayoutProps["socialProofItems"];
+  faqItems?: BlogPostLayoutProps["faqItems"];
+  finalCta?: BlogPostLayoutProps["finalCta"];
+  checklist?: BlogPostLayoutProps["checklist"];
+  relatedArticles?: BlogPostLayoutProps["relatedArticles"];
 }
 
 const {
@@ -77,7 +108,7 @@ const {
   updated = null,
   readingTime = null,
   author,
-  authorUrl,
+  authorSlug,
   cover,
   canonical,
   tocHeadings = [],
@@ -87,12 +118,27 @@ const {
   related = null,
   series = null,
   showInlineAd = false,
+  heroTagline,
+  heroSoftCta,
+  heroImage: heroImageFromRoute,
+  introHtml,
+  keyTakeaways,
+  inlineOffer,
+  socialProofItems,
+  faqItems,
+  finalCta,
+  checklist,
+  relatedArticles: relatedArticlesFromRoute,
 } = Astro.props as Props;
 
 const categoryUrl = `/blog/${category}/`;
 const shareUrl = String(canonical || Astro.url);
 const hasDescription =
   typeof description === "string" && description.trim().length > 0;
+
+// Derive canonical author URL from normalized authorSlug (Fix 195-B)
+const resolvedAuthorSlug = authorSlug ?? "mezame-editorial";
+const authorUrl = `/about/editorial/${resolvedAuthorSlug}/`;
 
 // Series handling: only render when defined and non-empty.
 // Items with an explicit `index` are sorted ascending;
@@ -110,68 +156,140 @@ const sortedSeries: SeriesItem[] = hasSeries
       return 0; // both null -> keep relative order in stable sort
     })
   : [];
+
+// Conditional cover rendering: only when a non-empty src is present (Fix 195-D)
+const hasCover =
+  !!cover &&
+  typeof cover.src === "string" &&
+  cover.src.trim().length > 0;
+
+// Map legacy tocHeadings into BlogPostLayout TOC items
+const toc =
+  tocHeadings && tocHeadings.length > 0
+    ? tocHeadings.map((h) => ({
+        id: h.slug,
+        label: h.text,
+        level: h.depth,
+        href: `#${h.slug}`,
+      }))
+    : undefined;
+
+// Legacy related[] → RelatedArticle[] fallback mapping (205.1.6).
+// Canonical relatedArticles[] should be computed in the route via
+// src/lib/blog/related; this exists purely for backwards compatibility.
+const legacyRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
+  related && related.length > 0
+    ? related.map((item) => {
+        const slug = item.slug;
+        const rawCategory = item.data?.category ?? category;
+        const categorySlug =
+          typeof rawCategory === "string" && rawCategory.trim().length > 0
+            ? rawCategory
+            : undefined;
+
+        const baseSlug =
+          typeof slug === "string" && slug.includes("/")
+            ? slug.split("/").pop()!
+            : slug;
+
+        const href =
+          categorySlug != null
+            ? `/blog/${categorySlug}/${baseSlug}/`
+            : `/blog/${baseSlug}/`;
+
+        const readingTimeMinutes =
+          typeof item.data?.readingTime === "number"
+            ? item.data.readingTime
+            : undefined;
+
+        const dateISO =
+          item.data?.date != null
+            ? new Date(item.data.date).toISOString()
+            : undefined;
+
+        return {
+          title: item.data?.title ?? baseSlug,
+          href,
+          category: categorySlug ?? category,
+          readingTimeMinutes,
+          excerpt: item.data?.description ?? undefined,
+          dateISO,
+        };
+      })
+    : undefined;
+
+const hasRouteRelated =
+  Array.isArray(relatedArticlesFromRoute) &&
+  relatedArticlesFromRoute.length > 0;
+
+const resolvedRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
+  hasRouteRelated ? relatedArticlesFromRoute : legacyRelatedArticles;
+
+// Resolve heroImage: prefer route/frontmatter-mapped heroImage,
+// fall back to legacy cover → hero mapping.
+const heroImage: BlogPostLayoutProps["heroImage"] =
+  heroImageFromRoute ??
+  (hasCover
+    ? {
+        src: cover!.src,
+        alt: cover!.alt ?? title,
+        width: cover!.width,
+        height: cover!.height,
+      }
+    : undefined);
+
+// Build props for BlogPostLayout (205.2 adapter layer)
+const blogPostLayoutProps: BlogPostLayoutProps = {
+  breadcrumbs: [
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog/" },
+    { label: category, href: categoryUrl },
+    { label: title, href: Astro.url.pathname },
+  ],
+  category,
+  title,
+  heroTagline,
+  heroSoftCta,
+  publishedAt: date?.toISOString?.() ?? undefined,
+  updatedAt:
+    updated && updated instanceof Date ? updated.toISOString() : undefined,
+  readingTimeMinutes:
+    typeof readingTime === "number" ? readingTime : undefined,
+  authorName: author,
+  authorUrl,
+  heroImage,
+  introHtml,
+  keyTakeaways,
+  inlineOffer,
+  socialProofItems,
+  faqItems,
+  finalCta,
+  checklist,
+  toc,
+  showToc: showTOC && !!toc && toc.length > 0,
+  relatedArticles: resolvedRelatedArticles,
+};
 ---
 
-<!-- Pure article; wrapped by <BaseLayout> at route level -->
-<article
-  id="post-main"
-  class="post stack stack--first-tight page-gap-after"
-  role="article"
-  aria-labelledby="post-title"
-  itemscope
-  itemtype="https://schema.org/Article"
->
-  <!-- 0) Breadcrumbs (global blog breadcrumb system) -->
-  <section class="post__breadcrumbs container" aria-label="Breadcrumb">
-    <Breadcrumbs
-      items={[
-        { label: "Home", href: "/" },
-        { label: "Blog", href: "/blog/" },
-        { label: category, href: categoryUrl },
-        { label: title, current: true },
-      ]}
-    />
-  </section>
+<!--
+  FP-205.2: This component is now a thin adapter.
+  BlogPostLayout handles the core article IA (breadcrumbs, hero, cover, intro,
+  TOC, body, IA blocks, conversion, related).
+  This wrapper keeps legacy footer/meta/series/nav/related/lead-magnet/comments/
+  author/ad sections for backwards compatibility.
+-->
+<div class="post stack stack--first-tight page-gap-after">
+  <BlogPostLayout {...blogPostLayoutProps}>
+    <slot />
+  </BlogPostLayout>
 
-  <!-- 1) Header (eyebrow + H1) -->
-  <PostHeader id="post-title" {category} {title} categoryUrl={categoryUrl} />
+  <!-- Legacy footer: tags + share (kept for now outside BlogPostLayout) -->
+  <footer class="post__footer container">
+    {tags.length > 0 && <PostTags tags={tags} />}
+    <PostShare title={title} url={shareUrl} />
+  </footer>
 
-  <!-- 2) Meta row (date, reading time, updated, author) -->
-  <PostMeta {date} {readingTime} {updated} {author} {authorUrl} />
-
-  <!-- 3) Cover image (CLS-safe) -->
-  {cover && <PostCover {cover} />}
-
-  <!-- 4) Lead paragraph (optional introduction) -->
-  {hasDescription && (
-    <div class="post__lead container">
-      <p class="page-lead" itemprop="description">
-        {description}
-      </p>
-    </div>
-  )}
-
-  <!-- 5) TOC (compose component) -->
-  {showTOC && (
-    <div class="container">
-      <PostToc headings={tocHeadings} />
-    </div>
-  )}
-
-  <!-- 6) Article body (MDX content injected via default slot) -->
-  <section
-    class="post__body"
-    aria-label="Article content"
-    itemprop="articleBody"
-  >
-    <div class="container">
-      <div class="prose">
-        <slot />
-      </div>
-    </div>
-  </section>
-
-  <!-- 7) Series navigation (optional) -->
+  <!-- Series / nav / related posts (block) -->
   {hasSeries && sortedSeries.length > 0 && (
     <section
       class="post__series container"
@@ -191,23 +309,32 @@ const sortedSeries: SeriesItem[] = hasSeries
     </section>
   )}
 
-  <!-- 8) Author card container (named slot) -->
-  <section class="post__author container" aria-label="Article author">
-    <slot name="author" />
-  </section>
-
-  <!-- 9) Footer: tags + share -->
-  <footer class="post__footer container">
-    {tags.length > 0 && <PostTags tags={tags} />}
-    <PostShare title={title} url={shareUrl} />
-  </footer>
-
-  <!-- 10) Prev/Next navigation -->
   <nav class="post__nav container" aria-label="Post navigation">
     <PostNav {prev} {next} />
   </nav>
 
-  <!-- 11) Inline ad shell (optional, CLS-controlled) -->
+  {related && related.length > 0 && (
+    <section class="post__related container">
+      <RelatedCategories items={related} />
+    </section>
+  )}
+
+  <!-- Lead magnet strip (compose) -->
+  <section class="post__leadmagnet container">
+    <LeadMagnetStrip />
+  </section>
+
+  <!-- Comments (deferred slot) -->
+  <section class="post__comments container" aria-label="Comments">
+    <slot name="comments" />
+  </section>
+
+  <!-- Author card container (named slot, placed after footer stack) -->
+  <section class="post__author container" aria-label="Article author">
+    <slot name="author" />
+  </section>
+
+  <!-- Inline ad shell (optional, CLS-controlled; kept outside required footer order) -->
   <section
     class="ad-slot container"
     role="complementary"
@@ -222,21 +349,4 @@ const sortedSeries: SeriesItem[] = hasSeries
       {showInlineAd && <slot name="inline-ad" />}
     </div>
   </section>
-
-  <!-- 12) Related posts -->
-  {related && related.length > 0 && (
-    <section class="post__related container">
-      <RelatedCategories items={related} />
-    </section>
-  )}
-
-  <!-- 13) Lead magnet strip (compose) -->
-  <section class="post__leadmagnet container">
-    <LeadMagnetStrip />
-  </section>
-
-  <!-- 14) Comments (deferred slot) -->
-  <section class="post__comments container" aria-label="Comments">
-    <slot name="comments" />
-  </section>
-</article>
+</div>

@@ -5,99 +5,62 @@ import Pagination from "../../../components/blog/compose/Pagination/index.astro"
 import { getCollection } from "astro:content";
 
 /**
- * Global numbered SSG pagination for blog listing
- * - Renders /blog/page/2 ... /blog/page/N
- * - Page 1 remains /blog/ (handled by src/pages/blog/index.astro)
- * - Reuses PostFeedLatest and blog/Pagination components
+ * Blog pagination route:
+ * - Handles /blog/page/2, /blog/page/3, ... as a dynamic server-rendered route.
+ * - Page 1 is /blog/ (handled by src/pages/blog/index.astro).
  */
 
-// util: simple slugify (same behavior as blog index)
-const slugify = (s: string) =>
-  String(s || "uncategorized")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+// This tells Astro: no getStaticPaths, treat this as a server-rendered dynamic route.
+export const prerender = false;
 
-// Keep in sync with /src/pages/blog/index.astro (Fix Plan 149/150)
 const PER_PAGE = 8;
 
-export async function getStaticPaths() {
-  const all = await getCollection("blog", ({ data }) => !data.draft);
-
-  // Normalize, sort desc by date (same as /blog/index.astro)
-  const posts = all
-    .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
-    .map((p) => {
-      const postSlug = p.slug.split("/").pop()!;
-      const categorySlug = slugify(p.data.category ?? "uncategorized");
-      return {
-        title: p.data.title,
-        description: p.data.description,
-        href: `/blog/${categorySlug}/${postSlug}/`,
-        date: new Date(p.data.date),
-        author: p.data.author,
-        tags: p.data.tags ?? [],
-        cover:
-          typeof p.data.cover === "string"
-            ? p.data.cover
-            : (p.data.cover?.src ?? p.data.ogImage ?? null),
-        category: p.data.category,
-        readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
-      };
-    })
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  const featured = posts[0] ?? null;
-  const rest = featured ? posts.slice(1) : [];
-  const totalItems = rest.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
-
-  // Generate paths for 2..N (page 1 lives at /blog/)
-  const paths =
-    totalPages > 1
-      ? Array.from({ length: totalPages - 1 }, (_, i) => {
-          const page = i + 2; // start at 2
-          return { params: { page: String(page) } };
-        })
-      : [];
-
-  return paths;
-}
-
+// Load all non-draft posts
 const all = await getCollection("blog", ({ data }) => !data.draft);
 
-// Same normalization as in getStaticPaths (avoid drift)
-const normalized = all
+// Normalize to the shape used by PostFeedLatest
+const posts = all
   .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
-  .map((p) => {
-    const postSlug = p.slug.split("/").pop()!;
-    const categorySlug = slugify(p.data.category ?? "uncategorized");
+  .map((entry) => {
+    const data = entry.data as any;
     return {
-      title: p.data.title,
-      description: p.data.description,
-      href: `/blog/${categorySlug}/${postSlug}/`,
-      date: new Date(p.data.date),
-      author: p.data.author,
-      tags: p.data.tags ?? [],
+      title: data.title,
+      description: data.description,
+      // Use the collection slug directly (e.g. "cv-tips/2025-cv-format-...")
+      href: `/blog/${entry.slug}/`,
+      date: new Date(data.date),
+      author: data.author,
+      tags: data.tags ?? [],
       cover:
-        typeof p.data.cover === "string"
-          ? p.data.cover
-          : (p.data.cover?.src ?? p.data.ogImage ?? null),
-      category: p.data.category,
-      readingTime: p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
+        typeof data.cover === "string"
+          ? data.cover
+          : (data.cover?.src ?? data.ogImage ?? null),
+      category: data.category,
+      readingTime: data.readingTimeMinutes ?? data.readingTime ?? undefined,
     };
   })
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-const featured = normalized[0] ?? null;
-const rest = featured ? normalized.slice(1) : [];
+// Featured is the latest post; the rest are paginated
+const featured = posts[0] ?? null;
+const rest = featured ? posts.slice(1) : [];
 
+// Page param: /blog/page/2, /blog/page/3, ...
 const page = Number(Astro.params.page ?? 2);
+
+// Basic guard
+if (!Number.isFinite(page) || page < 2) {
+  throw new Error(`Invalid blog page number: ${Astro.params.page}`);
+}
+
 const totalItems = rest.length;
 const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
 
-// Slice this page’s items from the "rest" list
+if (page > totalPages) {
+  throw new Error(`Blog page ${page} does not exist (only ${totalPages} pages).`);
+}
+
+// Slice items for this page
 const start = (page - 1) * PER_PAGE;
 const end = start + PER_PAGE;
 const pageItems = rest.slice(start, end);
@@ -124,12 +87,18 @@ const relNext = page < totalPages ? `/blog/page/${page + 1}/` : null;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "url": canonical,
-  "name": `CV Writing Kenya — Blog (Page ${page})`,
+  url: canonical,
+  name: `CV Writing Kenya — Blog (Page ${page})`,
 };
 ---
 
-<BaseLayout title={`Blog — Page ${page}`} description={`Articles page ${page}`} {canonical} {relPrev} {relNext}>
+<BaseLayout
+  title={`Blog — Page ${page}`}
+  description={`Articles page ${page}`}
+  {canonical}
+  {relPrev}
+  {relNext}
+>
   <script type="application/ld+json">
     {JSON.stringify(jsonLd)}
   </script>
@@ -139,7 +108,7 @@ const jsonLd = {
 
     <PostFeedLatest
       posts={feedPosts}
-      pageSize={8}
+      pageSize={PER_PAGE}
       eyebrow={`Page ${page} of ${totalPages}`}
       title="Latest articles"
       moreHref="/blog/"

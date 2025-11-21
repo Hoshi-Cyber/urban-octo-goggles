@@ -1,0 +1,38 @@
+/*
+  src/components/blog/post/IntroBlock/IntroBlock.css
+
+  Introductory block for single blog posts.
+  - Mobile-first
+  - Token-driven
+  - No global resets
+*/
+
+.intro-block {
+  width: 100%;
+}
+
+/* Constrain width and align to reading column */
+.intro-block__inner {
+  max-width: 70ch;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* Intro text styling – slightly emphasised but still body scale */
+.intro-block__body {
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+/* Tighten spacing between paragraphs in the intro only */
+.intro-block__body > * + * {
+  margin-block-start: var(--space-2);
+}
+
+/* Tablet+ – align with broader page rhythm */
+@media (min-width: 768px) {
+  .intro-block__inner {
+    padding-inline: var(--space-6);
+  }
+}

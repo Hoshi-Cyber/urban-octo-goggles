@@ -1,0 +1,28 @@
+---
+/*
+  src/components/blog/post/IntroBlock/index.astro
+
+  FP-205.4:
+  - Dedicated intro wrapper for the first 150–250 words of the article.
+  - Uses global typography tokens and spacing.
+  - Does not apply .container (parent layout already does).
+*/
+
+import "./IntroBlock.css";
+
+export interface IntroBlockProps {
+  /**
+   * Sanitised HTML slice representing the article introduction.
+   * Typically the first 1–3 paragraphs.
+   */
+  introHtml: string;
+}
+
+const { introHtml } = Astro.props as IntroBlockProps;
+---
+
+<section class="intro-block" aria-label="Article introduction">
+  <div class="intro-block__inner">
+    <div class="intro-block__body" set:html={introHtml} />
+  </div>
+</section>

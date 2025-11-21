@@ -1,0 +1,487 @@
+---
+// src/pages/contact/index.astro
+
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import PageHeader from '../../components/sections/shared/PageHeader/index.astro';
+
+const title = 'Contact Us';
+const description =
+  'Contact cvwriting.co.ke for professional CV, LinkedIn, and cover letter services. Use the form or email us directly. Fast, professional support – no office visits required.';
+const seo = {
+  canonical: '/contact/',
+};
+---
+
+<BaseLayout title={title} description={description} seo={seo}>
+  <main id="main" class="page-contact">
+    <PageHeader
+      id="contact-page-title"
+      eyebrow="Support & enquiries"
+      title="Contact cvwriting.co.ke"
+      align="left"
+    />
+
+    <div class="container stack page-contact__inner">
+      <!-- Primary action – contact form (card-style, mobile-first) -->
+      <section
+        id="contact-form"
+        class="contact-form-section stack"
+        aria-labelledby="contact-form-heading"
+      >
+        <header class="stack contact-form-section__head">
+          <h2 id="contact-form-heading" class="section-title">
+            Send us an enquiry
+          </h2>
+          <p class="section-sub">
+            Tell us about your current role, target role, and any deadlines. We’ll review your
+            details and reply with a clear recommendation and next steps.
+          </p>
+        </header>
+
+        <form
+          class="contactform"
+          data-section="contactform"
+          name="contact"
+          action="https://formspree.io/f/mayvdvbg"
+          method="POST"
+          enctype="multipart/form-data"
+          autocomplete="on"
+        >
+          <!-- spam honeypot -->
+          <input type="text" name="website" class="hp" tabindex="-1" aria-hidden="true" />
+
+          <div class="contactform__grid">
+            <!-- Full name (required) -->
+            <div class="field">
+              <label for="cf-name" class="label">
+                Full name <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="cf-name"
+                name="name"
+                type="text"
+                required
+                autocomplete="name"
+                class="input"
+                aria-required="true"
+              />
+            </div>
+
+            <!-- Email address (required) -->
+            <div class="field">
+              <label for="cf-email" class="label">
+                Email address <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="cf-email"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                required
+                class="input"
+                aria-required="true"
+              />
+            </div>
+
+            <!-- Service needed (required) -->
+            <div class="field">
+              <label for="cf-service" class="label">
+                Service needed <span class="req" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="cf-service"
+                name="service"
+                required
+                class="select"
+                aria-required="true"
+              >
+                <option value="">Select service…</option>
+                <option value="new-cv">New CV</option>
+                <option value="cv-cover-letter">CV + Cover Letter</option>
+                <option value="cv-linkedin">CV + LinkedIn Profile</option>
+                <option value="other">Other (please specify in your message)</option>
+              </select>
+            </div>
+
+            <!-- Country (optional; Kenya highlighted) -->
+            <div class="field">
+              <label for="cf-country" class="label">
+                Country (optional)
+              </label>
+              <select id="cf-country" name="country" class="select">
+                <option value="">Select country…</option>
+                <option value="Kenya">Kenya</option>
+                <option value="Other">Other (specify in your message)</option>
+              </select>
+            </div>
+
+            <!-- Message (full width, primary context) -->
+            <div class="field field--full">
+              <label for="cf-message" class="label">
+                Message
+              </label>
+              <textarea
+                id="cf-message"
+                name="message"
+                rows="4"
+                class="textarea"
+                placeholder="Tell us about your current role, target role, and any deadlines."
+                aria-describedby="cf-message-help"
+              ></textarea>
+              <p id="cf-message-help" class="help">
+                Include any context that helps us understand your situation and timelines.
+              </p>
+            </div>
+
+            <!-- Optional CV upload -->
+            <div class="field field--full">
+              <label for="cf-file" class="label">
+                Attach your current CV (optional)
+              </label>
+              <input
+                id="cf-file"
+                name="file"
+                type="file"
+                class="file"
+                accept=".pdf,.doc,.docx,.rtf"
+              />
+              <p class="help">Accepted: PDF, DOC, DOCX, RTF.</p>
+            </div>
+          </div>
+
+          <!-- IA microcopy under the form -->
+          <p class="help contactform__summary">
+            We’ll review your details and reply with a clear recommendation and next steps.
+          </p>
+          <p class="help contactform__privacy">
+            We only use your details to respond to your enquiry. No mailing lists, no spam.
+          </p>
+
+          <div class="contactform__actions">
+            <button type="submit" class="btn btn-primary" data-cta="contact-submit">
+              <span class="btn__inner">
+                <span class="btn__label">Send message</span>
+              </span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Secondary contact option – direct email -->
+      <section class="contact-secondary" aria-labelledby="contact-email-heading">
+        <div class="contact-secondary__card">
+          <h2 id="contact-email-heading" class="section-title">
+            Email us directly
+          </h2>
+
+          <p class="contact-secondary__text">
+            Email our team with your CV and a brief note about what you need.
+          </p>
+
+          <div class="contact-secondary__actions">
+            <a
+              href="mailto:support@cvwriting.co.ke"
+              class="btn btn-ghost contact-secondary__email"
+            >
+              support@cvwriting.co.ke
+            </a>
+          </div>
+
+          <p class="contact-secondary__note text-muted">
+            This is the same inbox used for contact form submissions.
+          </p>
+        </div>
+      </section>
+
+      <!-- Expectations & boundaries – How we work -->
+      <section class="contact-how-we-work stack" aria-labelledby="contact-how-heading">
+        <h2 id="contact-how-heading" class="section-title">
+          How we work
+        </h2>
+        <ul>
+          <li>All consultations and deliveries are done online via email.</li>
+          <li>No physical meetings or walk-ins – this keeps our process fast and efficient.</li>
+          <li>
+            Once we understand your needs, we’ll confirm timelines and fees before starting any
+            work.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Micro-FAQ – hardcoded -->
+      <section class="contact-faq stack" aria-labelledby="contact-faq-heading">
+        <h2 id="contact-faq-heading" class="section-title">
+          Common questions
+        </h2>
+
+        <div class="stack">
+          <details>
+            <summary>How soon will I hear back after contacting you?</summary>
+            <p>
+              We reply to most enquiries within 24 hours on business days. During peak demand it may
+              take a bit longer, but we always respond.
+            </p>
+          </details>
+
+          <details>
+            <summary>Do you offer phone or WhatsApp consultations?</summary>
+            <p>
+              We primarily serve clients via email to keep communication structured and trackable.
+              Where necessary, we may schedule a short call after reviewing your brief.
+            </p>
+          </details>
+
+          <details>
+            <summary>Can we meet in person at an office?</summary>
+            <p>
+              We are a fully digital service. All work – including consultations, drafts, and
+              revisions – is handled online.
+            </p>
+          </details>
+
+          <details>
+            <summary>What happens after I send a message?</summary>
+            <p>
+              We review your information, ask any clarifying questions, and then share recommended
+              options, fees, and timelines. Once you confirm and make payment, we proceed with your
+              project.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Compliance & privacy note -->
+      <section class="contact-privacy-note stack" aria-label="Privacy notice">
+        <p class="text-muted">
+          We treat your CV and personal information as confidential. For more details, see our
+          {' '}
+          <a href="/privacy-policy">Privacy Policy</a>
+          .
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    /* Page-level layout using global tokens & utilities */
+
+    .page-contact {
+      padding-block: var(--space-4);
+    }
+
+    .page-contact__inner {
+      gap: var(--space-8);
+      padding-block: var(--space-4);
+    }
+
+    /* Form card shell – mobile-first */
+    .contact-form-section {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-5);
+      gap: var(--space-5);
+      /* ensure the form block hugs the left of the container */
+      max-width: 100%;
+    }
+
+    .contact-form-section__head {
+      gap: var(--space-2);
+    }
+
+    .contactform {
+      width: 100%;
+    }
+
+    .contactform .hp {
+      position: absolute !important;
+      left: -9999px !important;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .contactform__grid {
+      display: grid;
+      gap: var(--space-4);
+      margin-top: var(--space-2);
+    }
+
+    .field {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .field--full {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .req {
+      color: var(--color-error);
+    }
+
+    .input,
+    .select,
+    .textarea,
+    .file {
+      width: 100%;
+      font-size: var(--fs-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-surface-alt, var(--color-surface));
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-light);
+      padding-block: var(--space-2);
+      padding-inline: var(--space-3);
+      min-height: 44px;
+      transition:
+        border-color 150ms ease-out,
+        box-shadow 150ms ease-out,
+        background-color 150ms ease-out;
+    }
+
+    .textarea {
+      resize: vertical;
+    }
+
+    .input::placeholder,
+    .textarea::placeholder {
+      color: var(--color-muted);
+    }
+
+    .input:focus-visible,
+    .select:focus-visible,
+    .textarea:focus-visible,
+    .file:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    .help {
+      margin-top: var(--space-1);
+      font-size: var(--fs-sm);
+      color: var(--color-muted);
+    }
+
+    .contactform__summary {
+      margin-top: var(--space-4);
+    }
+
+    .contactform__privacy {
+      margin-top: var(--space-1);
+    }
+
+    .contactform__actions {
+      margin-top: var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--space-3);
+    }
+
+    /* Secondary contact – direct email strip */
+    .contact-secondary {
+      padding-block: var(--space-2);
+    }
+
+    .contact-secondary__card {
+      background-color: var(--color-surface-alt, var(--color-surface));
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-light);
+      border-left: 3px solid var(--color-primary);
+      padding: var(--space-3);
+      box-shadow: var(--shadow-xs, var(--shadow-sm));
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      max-width: 40rem;
+    }
+
+    .contact-secondary__text {
+      margin: 0;
+      color: var(--color-muted);
+      font-size: var(--fs-base);
+    }
+
+    .contact-secondary__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .contact-secondary__email {
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .contact-secondary__note {
+      margin-top: var(--space-1);
+      font-size: var(--fs-sm);
+    }
+
+    /* Responsive: page padding, form card + internal grid */
+
+    @media (min-width: 48rem) {
+      .page-contact {
+        padding-block: var(--space-6);
+      }
+
+      .page-contact__inner {
+        gap: var(--space-9);
+        padding-block: var(--space-5);
+      }
+
+      .contact-form-section {
+        padding: var(--space-6);
+        max-width: 44rem; /* constrain width but keep flush left within container */
+        margin-inline: 0;
+      }
+
+      .contactform__grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--space-4);
+      }
+
+      .field--full {
+        grid-column: 1 / -1;
+      }
+
+      .contact-secondary__card {
+        padding: var(--space-4);
+        max-width: 44rem;
+      }
+    }
+
+    @media (min-width: 64rem) {
+      .page-contact__inner {
+        gap: var(--space-10);
+        padding-block: var(--space-6);
+      }
+
+      .contact-form-section {
+        max-width: 48rem;
+        margin-inline: 0; /* left-aligned on large screens */
+        padding: var(--space-7);
+        box-shadow: var(--shadow-md);
+      }
+
+      .contactform__grid {
+        gap: var(--space-6);
+      }
+
+      .contact-secondary__card {
+        padding: var(--space-5);
+        max-width: 48rem;
+      }
+    }
+  </style>
+</BaseLayout>

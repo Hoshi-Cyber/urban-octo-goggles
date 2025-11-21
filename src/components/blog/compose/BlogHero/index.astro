@@ -1,23 +1,25 @@
 ---
-// File: src/components/blog/compose/BlogHero/index.astro
-/**
- * BlogHero — mobile-first hero with dual CTAs.
- * FP-148.1: remove badge/statline, show image in full.
- * FP-155: BaseLayout links global CSS once; component stays local-only.
- * FP-158: no inner horizontal gutters; block padding only; grid >= lg when media exists.
- */
+// BlogHero — mobile-first hero with dual CTAs and optional cover.
+// Grid only at lg+ AND only when media is present.
 
-export interface Cover { src: string; alt?: string; width?: number; height?: number }
+import css from "./BlogHero.css?url";
+
+export interface Cover {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
+
 export interface Props {
-  title: string
-  sub?: string
-  primaryHref?: string
-  primaryLabel?: string
-  secondaryHref?: string
-  secondaryLabel?: string
-  cover?: Cover | null
-  /** FP-158: default false to avoid nested containers/gutters */
-  contained?: boolean
+  title: string;
+  sub?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  cover?: Cover | null;
+  contained?: boolean;
 }
 
 const {
@@ -29,15 +31,28 @@ const {
   secondaryLabel = "Read Latest",
   cover = null,
   contained = false,
-} = Astro.props as Props
+} = Astro.props as Props;
 
-// Local component CSS only
-import css from "./BlogHero.css?url"
+const titleId = "bloghero-title";
+const hasDek = sub.trim().length > 0;
+const dekId = hasDek ? "bloghero-dek" : undefined;
 
-const titleId = "bloghero-title"
-/** Grid should only activate at lg if media exists */
-const hasMedia = Boolean(cover?.src)
+// Media presence
+const hasMedia = Boolean(cover?.src);
+
+// Alt text hygiene: hide purely decorative / placeholder-like images
+const rawAlt = (cover?.alt ?? "").trim();
+const normalizedAlt = rawAlt.toLowerCase();
+const isPlaceholderAlt =
+  !normalizedAlt ||
+  normalizedAlt === "blog hero" ||
+  normalizedAlt === "blog cover";
+const hasDescriptiveAlt = Boolean(normalizedAlt) && !isPlaceholderAlt;
+
+const imgAlt = hasDescriptiveAlt ? rawAlt : "";
+const figureAriaHidden = hasDescriptiveAlt ? undefined : "true";
 ---
+
 <link rel="stylesheet" href={css} />
 
 <section
@@ -47,49 +62,58 @@ const hasMedia = Boolean(cover?.src)
   data-has-media={String(hasMedia)}
   aria-labelledby={titleId}
 >
-  {/*
-    FP-158:
-    - Do NOT add an inner .container here; rely on page-level container for gutters.
-    - Single column by default; grid only at lg when media exists.
-    - CTAs stack on mobile; row from sm+ (handled in CSS).
-  */}
-  <div class:list={[
-    "bloghero__grid",
-    hasMedia ? "has-media" : "no-media",
-    contained ? "is-contained" : "is-uncontained",
-  ]}>
-    <div class="bloghero__copy">
-      <h1 id={titleId} class="bloghero__title h1">{title}</h1>
-      {sub && <p id="bloghero-dek" class="bloghero__sub">{sub}</p>}
+  <div
+    class:list={[
+      "container",
+      "bloghero__grid",
+      hasMedia ? "has-media" : "no-media",
+      contained ? "is-contained" : "is-uncontained",
+    ]}
+  >
+    <div class="bloghero__copy stack">
+      <h1 id={titleId} class="bloghero__title section-title h1">
+        {title}
+      </h1>
+
+      {hasDek && (
+        <p id="bloghero-dek" class="bloghero__sub">
+          {sub}
+        </p>
+      )}
 
       <div class="bloghero__ctas">
-        <a
-          href={primaryHref}
-          class="btn btn-primary"
-          data-cta="bloghero-primary"
-          aria-describedby={sub ? "bloghero-dek" : undefined}
-        >
-          {primaryLabel}
-        </a>
-        <a
-          href={secondaryHref}
-          class="btn btn-accent"
-          data-cta="bloghero-secondary"
-          aria-describedby={sub ? "bloghero-dek" : undefined}
-        >
-          {secondaryLabel}
-        </a>
+        {primaryHref && primaryLabel && (
+          <a
+            href={primaryHref}
+            class="btn btn-primary"
+            data-cta="bloghero-primary"
+            aria-describedby={dekId}
+          >
+            {primaryLabel}
+          </a>
+        )}
+
+        {secondaryHref && secondaryLabel && (
+          <a
+            href={secondaryHref}
+            class="btn btn-accent"
+            data-cta="bloghero-secondary"
+            aria-describedby={dekId}
+          >
+            {secondaryLabel}
+          </a>
+        )}
       </div>
     </div>
 
     {hasMedia && (
-      <figure class="bloghero__media" aria-hidden="true">
+      <figure class="bloghero__media" aria-hidden={figureAriaHidden}>
         <img
           src={cover!.src}
-          alt={cover!.alt ?? ""}
+          alt={imgAlt}
           width={cover!.width ?? 960}
           height={cover!.height ?? 720}
-          loading="eager"
+          loading="lazy"
           decoding="async"
         />
       </figure>

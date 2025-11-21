@@ -26,23 +26,36 @@ const { title, description, seo, filters, items } = samples;
   <!-- Grid -->
   <section class="container mt-8" aria-label="Before & After Samples">
     <h2 class="sr-only">Before & After Samples</h2>
-    <p class="text-muted mb-4">
-      We remove all identifying details. These samples show how we transform content to highlight impact.
+
+    <!-- Privacy / transformation note with compact, single-row typography -->
+    <p
+      class="text-xs sm:text-sm md:text-[0.9rem] text-muted mb-4 leading-snug md:whitespace-nowrap"
+    >
+      We remove all identifying details. These samples show how we transform content
+      to highlight impact.
     </p>
 
     <!-- 1 → 2 (sm) → 3 (lg) → 4 (xl+) -->
-    <div id="samples-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
-      {items.map((it) => (
+    <div
+      id="samples-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
+    >
+      {items.map((it, index) => (
         <div
           class="sample-item"
           role="button"
           tabindex="0"
+          data-index={index}
           data-level={it.level}
           data-industry={it.industry}
           data-title={it.title}
           data-before={it.before}
           data-after={it.after}
-          data-media={it.media ? JSON.stringify({ src: it.media.src, alt: it.media.alt ?? it.title }) : ""}
+          data-media={
+            it.media
+              ? JSON.stringify({ src: it.media.src, alt: it.media.alt ?? it.title })
+              : ""
+          }
           aria-label={`Preview ${it.title}`}
         >
           <SampleCard
@@ -54,6 +67,40 @@ const { title, description, seo, filters, items } = samples;
         </div>
       ))}
     </div>
+
+    <p id="samples-empty" class="text-muted mt-4 hidden">
+      We don&apos;t yet have a published sample for this combination. Try another
+      level or industry.
+    </p>
+
+    <!-- Client-side pagination controls -->
+    <nav
+      id="samples-pagination"
+      class="mt-6 flex items-center justify-between text-sm"
+      aria-label="Samples pagination"
+    >
+      <button
+        type="button"
+        class="btn btn-ghost px-0"
+        data-page-control="prev"
+        aria-label="Previous page"
+        disabled
+      >
+        ‹ Prev
+      </button>
+      <p id="samples-page-label" class="text-muted">
+        Page 1 of 1
+      </p>
+      <button
+        type="button"
+        class="btn btn-ghost px-0"
+        data-page-control="next"
+        aria-label="Next page"
+        disabled
+      >
+        Next ›
+      </button>
+    </nav>
   </section>
 
   <!-- Modal -->
@@ -69,11 +116,27 @@ const { title, description, seo, filters, items } = samples;
     />
   </section>
 
-  <!-- Controller: filtering + modal -->
+  <!-- Controller: filtering + modal + pagination -->
   <script is:inline>
     (() => {
       const grid = document.getElementById('samples-grid');
-      if (!grid) return;
+      const emptyState = document.getElementById('samples-empty');
+      const pagination = document.getElementById('samples-pagination');
+      const prevBtn = pagination?.querySelector('[data-page-control="prev"]');
+      const nextBtn = pagination?.querySelector('[data-page-control="next"]');
+      const pageLabel = document.getElementById('samples-page-label');
+
+      if (!grid || !pagination || !prevBtn || !nextBtn || !pageLabel) return;
+
+      const items = Array.from(grid.querySelectorAll('.sample-item'));
+      const pageSize = 8;
+
+      const state = {
+        level: '',
+        industry: '',
+        query: '',
+        currentPage: 1,
+      };
 
       const modal = document.querySelector('.spm');
       const modalTitle = modal?.querySelector('.spm__title');
@@ -81,39 +144,154 @@ const { title, description, seo, filters, items } = samples;
       const modalImg = modal?.querySelector('.spm__media img') || null;
       const mediaFigure = modal?.querySelector('.spm__media');
 
-      // Filtering
-      document.addEventListener('samples:filter', (e) => {
-        const { level, industry, query } = e.detail || {};
-        const q = (query || '').toLowerCase().trim();
+      // Helper: render text as paragraph or bullet list based on line breaks
+      const setBlockContent = (blockEl, text) => {
+        const trimmed = (text || '').trim();
 
-        grid.querySelectorAll('.sample-item').forEach((el) => {
+        if (!trimmed.includes('\n')) {
+          blockEl.textContent = trimmed;
+          return;
+        }
+
+        const lines = trimmed
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        if (!lines.length) {
+          blockEl.textContent = '';
+          return;
+        }
+
+        const ul = document.createElement('ul');
+        ul.className = 'spm__list';
+
+        for (const line of lines) {
+          const li = document.createElement('li');
+          li.textContent = line;
+          ul.appendChild(li);
+        }
+
+        blockEl.innerHTML = '';
+        blockEl.appendChild(ul);
+      };
+
+      const applyState = () => {
+        const q = state.query.toLowerCase().trim();
+
+        // First pass: decide which items match filters
+        const matching = [];
+
+        items.forEach((el) => {
           const lv = el.getAttribute('data-level') || '';
           const ind = el.getAttribute('data-industry') || '';
           const title = (el.getAttribute('data-title') || '').toLowerCase();
           const before = (el.getAttribute('data-before') || '').toLowerCase();
           const after = (el.getAttribute('data-after') || '').toLowerCase();
 
-          const hitLevel = !level || lv === level;
-          const hitInd   = !industry || ind === industry;
-          const hitQ     = !q || title.includes(q) || before.includes(q) || after.includes(q);
+          const hitLevel = !state.level || lv === state.level;
+          const hitInd = !state.industry || ind === state.industry;
+          const hitQ = !q || title.includes(q) || before.includes(q) || after.includes(q);
 
-          el.style.display = (hitLevel && hitInd && hitQ) ? '' : 'none';
+          const visibleByFilter = hitLevel && hitInd && hitQ;
+          if (visibleByFilter) matching.push(el);
         });
-      }, { passive: true });
+
+        const totalMatches = matching.length;
+        const totalPages = totalMatches > 0 ? Math.ceil(matching.length / pageSize) : 1;
+
+        // Clamp currentPage
+        if (state.currentPage > totalPages) state.currentPage = totalPages;
+        if (state.currentPage < 1) state.currentPage = 1;
+
+        const start = (state.currentPage - 1) * pageSize;
+        const end = start + pageSize;
+
+        // Second pass: show only items in current page slice
+        items.forEach((el) => {
+          el.style.display = 'none';
+        });
+
+        matching.slice(start, end).forEach((el) => {
+          el.style.display = '';
+        });
+
+        // Empty state + pagination visibility
+        if (emptyState) {
+          if (totalMatches === 0) {
+            emptyState.classList.remove('hidden');
+            pagination.setAttribute('hidden', 'true');
+          } else {
+            emptyState.classList.add('hidden');
+            pagination.removeAttribute('hidden');
+          }
+        }
+
+        // Update pagination controls
+        pageLabel.textContent =
+          totalMatches === 0
+            ? 'No results'
+            : `Page ${state.currentPage} of ${totalPages}`;
+
+        prevBtn.disabled = state.currentPage <= 1 || totalMatches === 0;
+        nextBtn.disabled = state.currentPage >= totalPages || totalMatches === 0;
+      };
+
+      // Initial render
+      applyState();
+
+      // Filtering
+      document.addEventListener(
+        'samples:filter',
+        (e) => {
+          const { level, industry, query } = e.detail || {};
+          state.level = level || '';
+          state.industry = industry || '';
+          state.query = query || '';
+          state.currentPage = 1; // reset on filter change
+          applyState();
+        },
+        { passive: true },
+      );
+
+      // Pagination controls
+      prevBtn.addEventListener('click', () => {
+        if (prevBtn.disabled) return;
+        state.currentPage -= 1;
+        applyState();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (nextBtn.disabled) return;
+        state.currentPage += 1;
+        applyState();
+      });
+
+      // Keyboard support for pagination buttons (Space / Enter trigger click)
+      [prevBtn, nextBtn].forEach((btn) => {
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            btn.click();
+          }
+        });
+      });
 
       // Modal open
       const openModal = (el) => {
         if (!modal) return;
         const title = el.getAttribute('data-title') || 'Preview';
         const before = el.getAttribute('data-before') || '';
-        const after  = el.getAttribute('data-after') || '';
+        const after = el.getAttribute('data-after') || '';
         let media = null;
-        try { media = JSON.parse(el.getAttribute('data-media') || "null"); } catch {}
+        try {
+          media = JSON.parse(el.getAttribute('data-media') || 'null');
+        } catch {}
 
         if (modalTitle) modalTitle.textContent = title;
         if (modalBlocks && modalBlocks.length >= 2) {
-          modalBlocks[0].textContent = before;
-          modalBlocks[1].textContent = after;
+          setBlockContent(modalBlocks[0], before);
+          setBlockContent(modalBlocks[1], after);
         }
 
         if (media && modalImg && mediaFigure) {
@@ -129,22 +307,33 @@ const { title, description, seo, filters, items } = samples;
       };
 
       // Click anywhere on card OR the CTA button
-      grid.addEventListener('click', (e) => {
-        const cta = e.target.closest('.samplecard__cta');
-        const card = cta ? cta.closest('.sample-item') : e.target.closest('.sample-item');
-        if (cta) e.preventDefault();
-        if (card) openModal(card);
-      }, { passive: false });
+      grid.addEventListener(
+        'click',
+        (e) => {
+          const cta = e.target.closest('.samplecard__cta');
+          const card = cta ? cta.closest('.sample-item') : e.target.closest('.sample-item');
+          if (cta) e.preventDefault();
+          if (card) openModal(card);
+        },
+        { passive: false },
+      );
 
       // Keyboard open (Enter/Space) on card or CTA
       grid.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
         const targetItem = e.target.closest('.sample-item');
-        if (targetItem) { e.preventDefault(); openModal(targetItem); return; }
+        if (targetItem) {
+          e.preventDefault();
+          openModal(targetItem);
+          return;
+        }
         const cta = e.target.closest('.samplecard__cta');
         if (cta) {
           const wrapper = cta.closest('.sample-item');
-          if (wrapper) { e.preventDefault(); openModal(wrapper); }
+          if (wrapper) {
+            e.preventDefault();
+            openModal(wrapper);
+          }
         }
       });
     })();

@@ -1,0 +1,171 @@
+---
+/**
+ * File: src/components/seo/ArticleJsonLd/index.astro
+ *
+ * Purpose (Fix Plan 205.1.5):
+ * - Centralise BlogPosting + BreadcrumbList JSON-LD for single blog posts.
+ * - Keep JSON-LD values aligned with meta/OG (metaTitle/metaDescription, heroImage, canonical, etc.).
+ *
+ * Usage:
+ *   <ArticleJsonLd
+ *     slot="head"
+ *     title={title}
+ *     metaTitle={metaTitle}
+ *     description={description}
+ *     metaDescription={metaDescription}
+ *     canonicalUrl={canonicalAbs}
+ *     datePublished={date}
+ *     dateModified={updated}
+ *     inLanguage="en"
+ *     imageUrl={heroImageUrl || ogImage}
+ *     authorName={authorName}
+ *     authorUrl={canonicalAuthorUrl}
+ *     publisherName={publisherName}
+ *     publisherLogoUrl={publisherLogoUrl}
+ *     category={categorySlug}
+ *     tags={tags}
+ *     wordCount={wordCount}
+ *     breadcrumbs={[
+ *       { name: "Home", item: siteUrl ? new URL("/", siteUrl).toString() : "/" },
+ *       { name: "Blog", item: siteUrl ? new URL("/blog/", siteUrl).toString() : "/blog/" },
+ *       { name: categoryLabel, item: siteUrl ? new URL(`/blog/${categorySlug}/`, siteUrl).toString() : `/blog/${categorySlug}/` },
+ *       { name: title, item: canonicalAbs || pathname },
+ *     ]}
+ *   />
+ */
+
+export interface ArticleJsonLdProps {
+  title: string;
+  metaTitle?: string;
+  description: string;
+  metaDescription?: string;
+  canonicalUrl: string;
+  datePublished: Date | string;
+  dateModified?: Date | string | null;
+  inLanguage?: string;
+  imageUrl?: string;
+  authorName?: string;
+  authorUrl?: string;
+  publisherName: string;
+  publisherLogoUrl?: string;
+  category?: string;
+  tags?: string[];
+  wordCount?: number;
+  breadcrumbs?: Array<{
+    name: string;
+    item: string;
+    position?: number;
+  }>;
+}
+
+const {
+  title,
+  metaTitle,
+  description,
+  metaDescription,
+  canonicalUrl,
+  datePublished,
+  dateModified = null,
+  inLanguage = "en",
+  imageUrl,
+  authorName,
+  authorUrl,
+  publisherName,
+  publisherLogoUrl,
+  category,
+  tags = [],
+  wordCount,
+  breadcrumbs = [],
+} = Astro.props as ArticleJsonLdProps;
+
+// Resolve headline/description from meta fields first (spec 7.1).
+const headline =
+  typeof metaTitle === "string" && metaTitle.trim().length > 0
+    ? metaTitle
+    : title;
+
+const desc =
+  typeof metaDescription === "string" && metaDescription.trim().length > 0
+    ? metaDescription
+    : description;
+
+// Normalise dates to ISO strings.
+const publishedIso =
+  typeof datePublished === "string"
+    ? datePublished
+    : datePublished?.toISOString?.();
+
+const modifiedIso =
+  dateModified == null
+    ? publishedIso
+    : typeof dateModified === "string"
+    ? dateModified
+    : dateModified?.toISOString?.();
+
+// Build BlogPosting JSON-LD.
+const articleJsonLd: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline,
+  description: desc,
+  datePublished: publishedIso,
+  ...(modifiedIso ? { dateModified: modifiedIso } : {}),
+  inLanguage,
+  mainEntityOfPage: canonicalUrl,
+  ...(imageUrl ? { image: imageUrl } : {}),
+  ...(authorName
+    ? {
+        author: {
+          "@type": "Person",
+          name: authorName,
+          ...(authorUrl ? { url: authorUrl } : {}),
+        },
+      }
+    : {}),
+  publisher: {
+    "@type": "Organization",
+    name: publisherName,
+    ...(publisherLogoUrl
+      ? {
+          logo: {
+            "@type": "ImageObject",
+            url: String(publisherLogoUrl),
+          },
+        }
+      : {}),
+  },
+  ...(category ? { articleSection: category } : {}),
+  ...(tags.length > 0 ? { keywords: tags.join(", ") } : {}),
+  ...(typeof wordCount === "number" && wordCount > 0
+    ? { wordCount }
+    : {}),
+};
+
+// Optional BreadcrumbList JSON-LD.
+const breadcrumbJsonLd =
+  breadcrumbs && breadcrumbs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbs.map((item, index) => ({
+          "@type": "ListItem",
+          position:
+            typeof item.position === "number"
+              ? item.position
+              : index + 1,
+          name: item.name,
+          item: item.item,
+        })),
+      }
+    : null;
+---
+
+<script type="application/ld+json">
+  {JSON.stringify(articleJsonLd)}
+</script>
+
+{breadcrumbJsonLd && (
+  <script type="application/ld+json">
+    {JSON.stringify(breadcrumbJsonLd)}
+  </script>
+)}

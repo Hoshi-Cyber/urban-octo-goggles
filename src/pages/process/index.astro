@@ -1,46 +1,147 @@
 ---
 // src/pages/process/index.astro
 import BaseLayout from "../../components/layout/BaseLayout.astro";
+import ServiceHero from "../../components/sections/service/Hero/index.astro";
 import Steps from "../../components/common/Steps/index.astro";
 import DeliverablesList from "../../components/lists/DeliverablesList/index.astro";
 import TimelineList from "../../components/timeline/TimelineList/index.astro";
-import TeaserGrid from "../../components/blog/compose/TeaserGrid/index.astro";
+import PostFeedLatest from "../../components/blog/compose/PostFeedLatest/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
-// import TrustBar from "../../components/socialproof/TrustBar/index.astro";
+import TrustBar from "../../components/socialproof/TrustBar/index.astro";
+import { getCollection } from "astro:content";
 
 import processPage from "../../data/pages/process";
 
-const { title, description, seo, intro, steps, deliverables, timeline, cta } =
+const { title, description, seo, hero, steps, deliverables, timeline, cta } =
   processPage;
 
-// Populate when blog wiring is ready. Rendering is unconditional so the section is visible.
-const latest3 = [
-  // Example posts to verify layout; replace with real data or remove.
-  // {
-  //   title: "CV format that passes ATS in Kenya (2025)",
-  //   slug: "cv-format-kenya-2025",
-  //   excerpt: "A concise structure that beats screening bots and pleases hiring managers.",
-  //   category: "CV & Cover Letter Tips",
-  //   thumbnail: "/images/blog/cv-format-2025.jpg",
-  //   author: "Editorial Team",
-  //   date: "2025-10-10",
-  //   readingTime: 6,
-  // },
-];
+const PLACEHOLDER = "/assets/images/placeholder/blog-hero.webp";
+
+const slugify = (s: string) =>
+  String(s || "uncategorized")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+const isBad = (v: unknown) =>
+  v === null ||
+  v === undefined ||
+  (typeof v === "string" &&
+    (!v.trim() || v.includes("undefined") || v.includes("null")));
+
+// Load all non-draft blog posts
+const blogAll = await getCollection("blog", ({ data }) => !data.draft);
+
+// Normalise posts into the shape PostFeedLatest expects
+const blogPosts = blogAll
+  .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
+  .map((p) => {
+    const postSlug = p.slug.split("/").pop()!;
+    const categorySlug = slugify(p.data.category ?? "uncategorized");
+
+    let coverSrc: string | null = null;
+    const cover = (p.data as any).cover;
+    const ogImage = (p.data as any).ogImage;
+
+    if (cover && typeof cover === "object" && typeof cover.src === "string") {
+      coverSrc = cover.src;
+    } else if (typeof cover === "string") {
+      coverSrc = cover;
+    } else if (typeof ogImage === "string") {
+      coverSrc = ogImage;
+    }
+
+    if (isBad(coverSrc)) coverSrc = PLACEHOLDER;
+
+    return {
+      url: `/blog/${categorySlug}/${postSlug}/`,
+      frontmatter: {
+        title: p.data.title,
+        description: p.data.description,
+        date: new Date(p.data.date),
+        readingTime:
+          (p.data as any).readingTimeMinutes ??
+          p.data.readingTime ??
+          undefined,
+        category: p.data.category ?? "Uncategorized",
+        cover: coverSrc ? { src: coverSrc, alt: p.data.title } : undefined,
+      },
+    };
+  })
+  .filter((p) => !isBad(p.frontmatter.cover?.src))
+  .sort(
+    (a, b) =>
+      (b.frontmatter.date as Date).getTime() -
+      (a.frontmatter.date as Date).getTime(),
+  );
+
+// -------------------------
+// Process-page article selection
+// -------------------------
+//
+// Goal (using only existing frontmatter):
+// 1) Relevance: only categories that support the CV/process journey.
+// 2) Freshness: newest first.
+// 3) Ensure at least one CV-format/ATS article if available.
+// 4) Limit to 4 posts.
+//
+
+const PROCESS_CATEGORIES = ["cv-tips", "career-growth", "linkedin"] as const;
+
+const getCategory = (cat: unknown): string =>
+  String(cat || "").toLowerCase().trim();
+
+// Filter to relevant categories only (exclude e.g. kenya-market)
+const relevantPosts = blogPosts.filter((post) =>
+  PROCESS_CATEGORIES.includes(getCategory(post.frontmatter.category) as any),
+);
+
+// Within relevant posts, ensure we pull at least one cv-tips article if any exist
+const cvTipsPosts = relevantPosts.filter(
+  (post) => getCategory(post.frontmatter.category) === "cv-tips",
+);
+
+let processLatestPosts = [] as typeof blogPosts;
+
+if (cvTipsPosts.length > 0) {
+  // blogPosts are already sorted by date desc, so first cv-tips is the freshest
+  const featuredCvTips = cvTipsPosts[0];
+
+  // Keep order (date desc), but ensure featuredCvTips is first
+  const remaining = relevantPosts.filter((p) => p !== featuredCvTips);
+
+  processLatestPosts = [featuredCvTips, ...remaining].slice(0, 4);
+} else {
+  // If no cv-tips articles yet, just take the top 4 relevant ones by date
+  processLatestPosts = relevantPosts.slice(0, 4);
+}
+
 const showTrust = false;
 ---
 
 <BaseLayout {title} {description} {seo}>
-  <!-- Header -->
-  <section class="container py-8">
-    <h1>How We Work</h1>
-    <p>{intro}</p>
-  </section>
+  <!-- Process hero -->
+  <ServiceHero
+    title={hero.title}
+    sub={hero.sub}
+    eyebrow={hero.eyebrow}
+    actions={hero.actions}
+    meta={hero.meta}
+  />
 
-  <!-- Process stepper (component applies its own .container) -->
-  <section aria-label="Process steps" class="mt-8">
-    <h2 class="sr-only">Our Process</h2>
-    <Steps steps={steps} />
+  <!-- Step-by-step process -->
+  <section
+    class="container mt-12"
+    aria-label="Step-by-step CV writing process"
+  >
+    <Steps
+      title={steps.title ?? "How your CV project runs"}
+      eyebrow={steps.eyebrow ?? "Step-by-step"}
+      steps={steps.items}
+      align="start"
+      columns={4}
+    />
   </section>
 
   <!-- Proof strip (enable when you have real items) -->
@@ -66,14 +167,18 @@ const showTrust = false;
     </div>
   </section>
 
-  <!-- Blog teaser (always render; TeaserGrid handles empty state) -->
+  <!-- Latest Articles – curated for process relevance -->
   <section class="container mt-12" aria-label="Latest articles">
-    <TeaserGrid
+    <PostFeedLatest
+      posts={processLatestPosts}
+      pageSize={4}
       eyebrow="From the blog"
       title="Latest articles"
-      posts={latest3}
       moreHref="/blog/"
       moreLabel="View all"
+      moreAriaLabel="View all blog posts"
+      ctaClass="pfl__viewAll"
+      clientLoadMore={false}
     />
   </section>
 

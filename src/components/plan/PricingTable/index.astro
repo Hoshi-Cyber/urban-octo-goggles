@@ -1,35 +1,22 @@
 ---
-import defaultPricing from "../../../data/pricing.json"
-
-/**
- * PricingTable — mobile-first, brand-consistent
- * Props:
- *  items?: Array<{
- *    id: string; name: string; description?: string;
- *    priceRange: string; features: string[]; ctaLabel: string;
- *    highlight?: boolean;
- *  }>
- *  title?: string
- *  subtitle?: string
- *  class?: string
- *  showTitle?: boolean   // NEW: allow page to own the section heading
- */
+import defaultPricing from "../../../data/pricing.json";
 
 export interface Plan {
-  id: string
-  name: string
-  description?: string
-  priceRange: string
-  features: string[]
-  ctaLabel: string
-  highlight?: boolean
+  id: string;
+  name: string;
+  description?: string;
+  priceRange: string;
+  features: string[];
+  ctaLabel: string;
+  highlight?: boolean;
 }
+
 export interface Props {
-  items?: Plan[]
-  title?: string
-  subtitle?: string
-  class?: string
-  showTitle?: boolean
+  items?: Plan[];
+  title?: string;
+  subtitle?: string;
+  class?: string;
+  showTitle?: boolean;
 }
 
 const {
@@ -37,13 +24,12 @@ const {
   title = "Choose Your Package",
   subtitle = "Transparent, one-time pricing for every career stage.",
   class: className = "",
-  showTitle = true
-} = Astro.props as Props
+  showTitle = true,
+} = Astro.props as Props;
 
-const pricing: Plan[] = items ?? (defaultPricing as Plan[])
+const pricing: Plan[] = items ?? (defaultPricing as Plan[]);
 
-// Move CSS import into frontmatter to avoid leaking text into DOM
-import "./PricingTable.css"
+import "./PricingTable.css";
 ---
 
 <section
@@ -58,22 +44,29 @@ import "./PricingTable.css"
     </header>
   )}
 
-  <!-- Grid now controlled by CSS for 1→2→3 columns and equal-height cards -->
   <div class="pricing__grid">
     {pricing.map((plan) => (
       <article
-        class={`pricing__card card ${plan.highlight ? "is-highlight" : ""}`}
+        class={`pricing__card card ${plan.highlight ? "is-highlight" : ""}`.trim()}
         aria-labelledby={`plan-${plan.id}-title`}
       >
         <header class="pricing__cardHead">
-          <h3 id={`plan-${plan.id}-title`} class="pricing__planName">{plan.name}</h3>
-          {plan.description && <p class="pricing__planDesc text-muted">{plan.description}</p>}
+          <h3 id={`plan-${plan.id}-title`} class="pricing__planName">
+            {plan.name}
+          </h3>
+          {plan.description && (
+            <p class="pricing__planDesc text-muted">{plan.description}</p>
+          )}
           <p class="pricing__price">
-            <span class="sr-only">Price range:</span>{plan.priceRange}
+            <span class="sr-only">Price range:</span>
+            {plan.priceRange}
           </p>
         </header>
 
-        <ul class="pricing__features" aria-label={`${plan.name} features`}>
+        <ul
+          class="pricing__features"
+          aria-label={`${plan.name} features`}
+        >
           {plan.features.map((feat) => (
             <li class="pricing__feature">{feat}</li>
           ))}
@@ -86,7 +79,9 @@ import "./PricingTable.css"
             data-cta={`pricing-${plan.id}-cta`}
             aria-label={`Select ${plan.name} package`}
           >
-            <span class="btn__inner"><span class="btn__label">{plan.ctaLabel}</span></span>
+            <span class="btn__inner">
+              <span class="btn__label">{plan.ctaLabel}</span>
+            </span>
           </a>
         </div>
       </article>

@@ -1,7 +1,9 @@
 ---
-/** File: src/components/layout/BaseLayout.astro
-    Fix Plan 187: Robust canonical resolver + unified usage
-*/
+/** 
+ * File: src/components/layout/BaseLayout.astro
+ * Fix Plan 187: Robust canonical resolver + unified usage
+ * Fix Plan 204: OG image + dimensions + Twitter image support
+ */
 
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
@@ -14,8 +16,12 @@ import globalCssUrl from "../../styles/index.css?url";
 export interface SEO {
   canonical?: string;
   ogImage?: string;
+  ogImageWidth?: string;
+  ogImageHeight?: string;
+  twitterImage?: string;
   [key: string]: any;
 }
+
 export interface Props {
   title?: string;
   description?: string;
@@ -108,17 +114,35 @@ function absOrRel(href: string | null): string | null {
 const prevHref = absOrRel(relPrev);
 const nextHref = absOrRel(relNext);
 
-// OG image
-const ogImageIn = (seo as any)?.ogImage as unknown;
-const ogImage = isDev
-  ? (typeof ogImageIn === "string" && ogImageIn.trim()
-      ? ogImageIn.trim()
-      : "/assets/logos/logo-square-512.png")
-  : toAbsolute(
-      (typeof ogImageIn === "string" && ogImageIn.trim()
-        ? ogImageIn.trim()
-        : "/assets/logos/logo-square-512.png")
-    );
+// OG / Twitter images (Fix Plan 204)
+const seoAny = seo as any;
+
+// Base OG image path, defaulting to logo-square when not provided
+const ogImageIn = seoAny?.ogImage as unknown;
+const rawOgImage =
+  typeof ogImageIn === "string" && ogImageIn.trim()
+    ? ogImageIn.trim()
+    : "/assets/logos/logo-square-512.png";
+
+const ogImage = isDev ? rawOgImage : toAbsolute(rawOgImage);
+
+// Optional, overridable dimensions (used especially for /blog OG)
+const ogImageWidth: string =
+  typeof seoAny?.ogImageWidth === "string" && seoAny.ogImageWidth.trim()
+    ? seoAny.ogImageWidth.trim()
+    : "1200";
+const ogImageHeight: string =
+  typeof seoAny?.ogImageHeight === "string" && seoAny.ogImageHeight.trim()
+    ? seoAny.ogImageHeight.trim()
+    : "630";
+
+// Twitter image (defaults to OG image if not explicitly set)
+const twitterImageIn = seoAny?.twitterImage as unknown;
+const rawTwitterImage =
+  typeof twitterImageIn === "string" && twitterImageIn.trim()
+    ? twitterImageIn.trim()
+    : rawOgImage;
+const twitterImage = isDev ? rawTwitterImage : toAbsolute(rawTwitterImage);
 
 // IDs
 const ga4Id: string | undefined =
@@ -143,14 +167,32 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <link rel="stylesheet" href={globalCssUrl} />
 
     <!-- Hints -->
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://www.googletagmanager.com"
+      crossorigin
+    />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
     <!-- Favicons -->
     <link rel="icon" href="/assets/logos/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logos/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/logos/favicon-16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/logos/apple-touch-icon-180.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/logos/favicon-32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/logos/favicon-16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/logos/apple-touch-icon-180.png"
+    />
 
     <!-- Open Graph -->
     <meta property="og:site_name" content="CV Writing Kenya" />
@@ -159,6 +201,14 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={pageCanonical} />
     <meta property="og:image" content={ogImage} />
+    {ogImageWidth && <meta property="og:image:width" content={ogImageWidth} />}
+    {ogImageHeight && (
+      <meta property="og:image:height" content={ogImageHeight} />
+    )}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={twitterImage} />
 
     <!-- Surface GA4 ID for client-side analytics bootstrap -->
     {ga4Id && <meta name="x-ga4-id" content={ga4Id} />}
@@ -173,7 +223,8 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
           src={"https://www.googletagmanager.com/ns.html?id=" + gtmId}
           height="0"
           width="0"
-          style="display:none;visibility:hidden">
+          style="display:none;visibility:hidden"
+        >
         </iframe>
       </noscript>
     )}

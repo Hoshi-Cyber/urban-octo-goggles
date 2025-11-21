@@ -1,0 +1,141 @@
+/*
+  src/components/blog/post/InlineOfferBlock/InlineOfferBlock.css
+
+  Mid-article offer card:
+  - Mobile-first
+  - Token-driven (spacing, color, radius, shadow)
+  - No global resets
+  - Visually lighter than LeadMagnetStrip but clearly a CTA block.
+*/
+
+.inline-offer {
+  width: 100%;
+}
+
+/* Card container */
+
+.inline-offer__inner {
+  max-width: 70ch;
+  margin-inline: auto;
+  padding: var(--space-4);
+
+  border-radius: var(--radius-xl);
+  background: color-mix(
+    in srgb,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--color-primary) 18%, transparent);
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Header */
+
+.inline-offer__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.inline-offer__eyebrow {
+  margin: 0;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.inline-offer__title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+/* Bullet list */
+
+.inline-offer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.inline-offer__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.inline-offer__marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  margin-top: 0.15rem;
+}
+
+.inline-offer__text {
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* Footer: CTA + trust note */
+
+.inline-offer__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-start: var(--space-1);
+}
+
+.inline-offer__cta {
+  align-self: flex-start;
+}
+
+.inline-offer__trust {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* Tablet+ */
+
+@media (min-width: 768px) {
+  .inline-offer__inner {
+    padding: var(--space-5);
+    gap: var(--space-4);
+  }
+
+  .inline-offer__title {
+    font-size: var(--fs-xl);
+  }
+
+  .inline-offer__footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .inline-offer__trust {
+    max-width: 32rem;
+    text-align: right;
+  }
+}

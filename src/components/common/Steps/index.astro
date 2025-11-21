@@ -1,22 +1,44 @@
 ---
-/** Steps — mobile-first, brand-consistent, token-driven
- *  Props:
- *    title?: string
- *    eyebrow?: string
- *    steps: Array<{ title: string; description: string; icon?: string; ctaHref?: string; ctaLabel?: string }>
- *    align?: 'start' | 'center'
- *    columns?: 1 | 2 | 3 | 4
- *    class?: string
+/**
+ * Steps – ordered process list, token-driven, mobile-first
+ *
+ * Props:
+ *  - title?: string
+ *  - eyebrow?: string
+ *  - steps: Step[]
+ *  - align?: "start" | "center"
+ *  - columns?: 1 | 2 | 3 | 4  (max columns at lg+; auto-capped by step count)
+ *  - class?: string
  */
+
 import "./Steps.css";
 
 export interface Step {
   title: string;
+  /**
+   * Primary body copy used across generic Steps usage.
+   */
   description: string;
   icon?: string;
   ctaHref?: string;
   ctaLabel?: string;
+
+  /**
+   * Optional focused one-line summary for premium layouts.
+   */
+  summary?: string;
+
+  /**
+   * Optional bullet list – what we (Hoshi / writer) do in this step.
+   */
+  weDo?: string[];
+
+  /**
+   * Optional bullet list – what the client does in this step.
+   */
+  youDo?: string[];
 }
+
 export interface Props {
   title?: string;
   eyebrow?: string;
@@ -27,7 +49,7 @@ export interface Props {
 }
 
 const {
-  title = "Our Process",
+  title: incomingTitle,
   eyebrow,
   steps = [],
   align = "start",
@@ -35,40 +57,129 @@ const {
   class: className = "",
 } = Astro.props as Props;
 
-const alignClass = align === "center" ? "text-center items-center" : "text-start items-start";
-const gridColsLg =
-  columns === 1
-    ? "lg:grid-cols-1"
-    : columns === 2
-    ? "lg:grid-cols-2"
-    : columns === 3
-    ? "lg:grid-cols-3"
-    : "lg:grid-cols-4";
+// Fallback title if none is provided
+const title = incomingTitle ?? "Our Process";
+const hasTitle = Boolean(title);
+
+// Alignment modifier
+const alignmentClass =
+  align === "center" ? "steps--align-center" : "steps--align-start";
+
+// Clamp columns between 1 and 4, then cap at step count so lg rows stay full
+const safeColumns =
+  typeof columns === "number" && columns >= 1 && columns <= 4 ? columns : 4;
+
+const maxColumnsForData =
+  steps.length > 0 ? Math.min(safeColumns, steps.length) : safeColumns;
+
+const columnsClass = `steps__list--cols-${maxColumnsForData}`;
 ---
 
-<section class={`steps container py-10 xs:py-12 md:py-16 lg:py-20 ${className}`} data-section="steps">
-  <header class={`steps__head ${alignClass} mb-6 md:mb-8`}>
-    {eyebrow && <p class="steps__eyebrow text-xs uppercase tracking-wide text-muted">{eyebrow}</p>}
-    {title && <h2 class="steps__title" id="steps-title">{title}</h2>}
-  </header>
+<section
+  class={`steps ${alignmentClass} ${className}`.trim()}
+  data-section="steps"
+  aria-labelledby={hasTitle ? "steps-title" : undefined}
+  aria-label={hasTitle ? undefined : "Process steps"}
+>
+  <div class="steps__body stack">
+    <header class="steps__head section-head">
+      {eyebrow && (
+        <p class="steps__eyebrow section-sub">
+          {eyebrow}
+        </p>
+      )}
 
-  <!-- Ordered list improves semantics for step flows -->
-  <ol class={`steps__list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${gridColsLg} gap-6`} aria-labelledby="steps-title">
-    {steps.map((step, index) => (
-      <li class="steps__item" value={index + 1}>
-        <span class="steps__badge" aria-label={`Step ${index + 1}`}>{index + 1}</span>
+      {title && (
+        <h2 class="steps__title section-title" id="steps-title">
+          {title}
+        </h2>
+      )}
+    </header>
 
-        <div class="steps__content">
-          <h3 class="steps__itemTitle">{step.title}</h3>
-          <p class="steps__itemDesc text-muted">{step.description}</p>
+    {steps.length > 0 && (
+      <ol
+        class={`steps__list ${columnsClass}`.trim()}
+        aria-describedby={hasTitle ? "steps-title" : undefined}
+      >
+        {steps.map((step, index) => (
+          <li
+            class="steps__item card"
+            value={index + 1}
+            aria-label={`Step ${index + 1}: ${step.title}`}
+          >
+            <div class="steps__content">
+              <p class="steps__kicker">
+                {`STEP ${index + 1}`}
+              </p>
 
-          {step.ctaHref && step.ctaLabel && (
-            <a href={step.ctaHref} class="btn btn-primary mt-4" data-cta={`steps-${index + 1}-cta`}>
-              {step.ctaLabel}
-            </a>
-          )}
-        </div>
-      </li>
-    ))}
-  </ol>
+              <h3 class="steps__itemTitle">
+                {step.title}
+              </h3>
+
+              {step.summary && (
+                <p class="steps__itemSummary">
+                  {step.summary}
+                </p>
+              )}
+
+              {step.description && (
+                <p class="steps__itemDesc">
+                  {step.description}
+                </p>
+              )}
+
+              {(step.weDo && step.weDo.length > 0) ||
+              (step.youDo && step.youDo.length > 0) ? (
+                <dl class="steps__roles">
+                  {step.weDo && step.weDo.length > 0 && (
+                    <div class="steps__role">
+                      <dt class="steps__roleLabel">
+                        What we do
+                      </dt>
+                      <dd>
+                        <ul class="steps__roleList">
+                          {step.weDo.map((item) => (
+                            <li class="steps__roleItem">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  )}
+
+                  {step.youDo && step.youDo.length > 0 && (
+                    <div class="steps__role">
+                      <dt class="steps__roleLabel">
+                        What you do
+                      </dt>
+                      <dd>
+                        <ul class="steps__roleList">
+                          {step.youDo.map((item) => (
+                            <li class="steps__roleItem">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              ) : null}
+
+              {step.ctaHref && step.ctaLabel && (
+                <a
+                  href={step.ctaHref}
+                  class="btn btn-primary steps__cta"
+                  data-cta={`steps-${index + 1}-cta`}
+                >
+                  {step.ctaLabel}
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
 </section>

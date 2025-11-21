@@ -1,173 +1,187 @@
-/* LeadCaptureBanner — mobile-first, brand-token driven
-   Balanced two-column on desktop, single column on mobile.
-   No client JS. */
+/* LeadCaptureBanner – mobile-first CTA band, token-driven, zero JS */
+/* Matches src/components/cta/LeadCaptureBanner/index.astro */
 
-/* ===== Band (full-bleed) ===== */
+/* ===== Band (full-bleed background) ===== */
+
 [data-section="lead-cta"] {
-  color: var(--color-on-primary, #fff);
-  padding-block: var(--space-8, 2rem);
-  background:
-    radial-gradient(
-        1200px 480px at 0% 100%,
-        color-mix(in oklab, #fff 10%, transparent) 0%,
-        transparent 60%
-      )
-      no-repeat,
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--color-primary, #2563eb) 96%, #0000) 0%,
-      color-mix(in oklab, var(--color-primary, #2563eb) 92%, #0000) 100%
-    ),
-    var(--color-primary, #2563eb);
+  padding-block: var(--space-8);
+  background: var(--color-light);
 }
 
-/* ===== Inner card (increase contrast) ===== */
+/* ===== Inner card ===== */
+
 .lead {
   position: relative;
-  border-radius: var(--radius-2xl, 1.25rem);
-  padding: var(--space-6, 1.5rem);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
+  margin-inline: auto;
+  max-width: var(--container-max);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-
-  /* stronger separation from band for readability */
-  background: color-mix(in oklab, var(--color-primary, #2563eb) 2%, #0b3ea9);
-  background: color-mix(
-    in oklab,
-    #fff 0%,
-    var(--color-primary, #2563eb)
-  ); /* fallback */
-  backdrop-filter: saturate(120%) blur(4px);
-  border: 1px solid color-mix(in oklab, #fff 22%, transparent);
 }
 
-/* Top accent bar */
+/* Top accent bar for subtle brand emphasis */
 .lead::before {
   content: "";
   position: absolute;
-  inset-inline: 0;
+  inset-inline: var(--space-6);
   top: 0;
-  block-size: 4px;
+  height: 3px;
+  border-radius: var(--radius-md);
   background: linear-gradient(
     90deg,
-    var(--color-primary, #2563eb),
-    var(--color-accent, #16a34a),
-    var(--color-primary, #2563eb)
+    var(--color-primary),
+    var(--color-accent),
+    var(--color-primary)
   );
 }
 
-/* Decorative art to fill right-side space on wide screens, softened */
-.lead::after {
-  content: "";
-  position: absolute;
-  inset: -25% -6% -25% auto;
-  inline-size: 42%;
-  opacity: 0.1; /* was .18 → reduce washout */
-  background:
-    radial-gradient(
-      42% 42% at 60% 40%,
-      color-mix(in oklab, #fff 12%, transparent) 0%,
-      transparent 70%
-    ),
-    conic-gradient(
-      from 180deg,
-      color-mix(in oklab, var(--color-primary, #2563eb) 14%, transparent) 0 25%,
-      transparent 25% 50%,
-      color-mix(in oklab, var(--color-accent, #16a34a) 10%, transparent) 50% 75%,
-      transparent 75% 100%
-    );
-  filter: blur(2px);
-  pointer-events: none;
-}
+/* ===== Layout ===== */
 
-/* ===== Layout grid ===== */
 .lead__inner {
-  display: grid;
-  gap: var(--space-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-/* Desktop: 2-column, body + actions */
-@media (min-width: 1024px) {
-  .lead__inner {
-    grid-template-columns: 1.6fr 1fr;
-    align-items: center;
-    gap: var(--space-6, 1.5rem);
-    padding-inline: var(--space-2, 0.5rem);
-  }
-  .lead__body {
-    grid-column: 1;
-  }
-  .lead__actions {
-    grid-column: 2;
-    justify-content: end;
-  }
+/* Body copy */
+.lead__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-/* ===== Typography (explicit light-on-dark) ===== */
-.lead__title {
-  margin: 0;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  font-size: clamp(1.25rem, 1.1rem + 1.4vw, 1.875rem);
-  color: var(--color-on-primary, #fff);
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
-}
-
-.lead__sub {
-  margin: 0.375rem 0 0;
-  max-inline-size: 60ch;
-  color: color-mix(
-    in oklab,
-    var(--color-on-primary, #fff) 92%,
-    #000
-  ); /* brighter */
-  font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.0625rem);
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-}
-
-/* ===== Actions ===== */
+/* Actions – stacked on mobile, full-width CTA */
 .lead__actions {
-  display: grid;
-  grid-auto-flow: row;
-  gap: var(--space-3, 0.75rem);
-  justify-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
 }
 
 .lead .btn {
+  inline-size: 100%;
   min-height: 44px;
-  border-radius: var(--radius-lg, 0.75rem);
-  inline-size: 100%; /* block on mobile */
+  border-radius: var(--radius-lg);
 }
 
+/* Accent CTA colour while reusing global .btn styles */
 .lead .btn.btn-primary {
-  background: var(--color-accent, #16a34a);
-  color: var(--color-on-accent, #fff);
+  background-color: var(--color-accent);
+  color: var(--color-text-on-accent, #fff);
 }
-.lead .btn.btn-primary:hover,
-.lead .btn.btn-primary:focus {
-  filter: brightness(0.95);
+
+/* ===== Typography ===== */
+
+.lead__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-2xl);
+  line-height: 1.2;
+  color: var(--color-text);
 }
+
+.lead__sub {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--color-muted);
+  max-width: 52ch;
+}
+
+/* ===== sm ≥ 640px – tighten spacing, inline CTA where possible ===== */
 
 @media (min-width: 640px) {
-  .lead__actions {
-    grid-auto-flow: column;
+  [data-section="lead-cta"] {
+    padding-block: var(--space-10);
   }
+
+  .lead {
+    padding: var(--space-6) var(--space-7);
+  }
+
+  .lead__title {
+    font-size: var(--fs-3xl);
+  }
+
+  .lead__actions {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
   .lead .btn {
     inline-size: auto;
-  } /* inline on tablet+ */
+  }
+}
+
+/* ===== md ≥ 768px – switch to two-column layout ===== */
+
+@media (min-width: 768px) {
+  .lead__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  .lead__actions {
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  .lead__sub {
+    max-width: 60ch;
+  }
+}
+
+/* ===== lg ≥ 1024px – more breathing room, stronger heading ===== */
+
+@media (min-width: 1024px) {
+  .lead {
+    padding: var(--space-7) var(--space-8);
+  }
+
+  .lead__title {
+    font-size: var(--fs-4xl);
+  }
+}
+
+/* ===== xl ≥ 1280px – keep density controlled ===== */
+
+@media (min-width: 1280px) {
+  [data-section="lead-cta"] {
+    padding-block: var(--space-12);
+  }
+
+  .lead__inner {
+    gap: var(--space-6);
+  }
+}
+
+/* ===== 2xl ≥ 1536px – no extra density, just stable layout ===== */
+
+@media (min-width: 1536px) {
+  .lead {
+    max-width: calc(var(--container-max) - 2 * var(--space-4));
+  }
 }
 
 /* ===== Focus visibility ===== */
+
 .lead :where(a, button):focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, #fff 70%, var(--color-accent, #16a34a));
-  border-radius: 0.5rem;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px var(--color-light);
+  border-radius: var(--radius-md);
 }
 
 /* ===== Reduced motion ===== */
+
 @media (prefers-reduced-motion: reduce) {
-  .lead::after {
-    display: none;
+  .lead {
+    scroll-behavior: auto;
   }
 }

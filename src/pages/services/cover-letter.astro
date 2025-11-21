@@ -1,5 +1,5 @@
 ---
-import ServicePage from "../../components/templates/ServicePage.astro";
+import ServicePage from "../../components/templates/ServicePage/index.astro";
 
 const title = "Cover Letter Writing in Kenya";
 const description = "Persuasive cover letters that connect your experience to the role.";
@@ -14,30 +14,61 @@ const hero = {
 };
 
 const features = [
-  { title: "Role-Specific Narrative", body: "We align your achievements to the target job and address the hiring manager’s needs in clear, concise language." },
-  { title: "ATS-Aware Keywords", body: "We mirror relevant terminology from Kenyan job descriptions so screening systems recognize your fit." },
-  { title: "Professional Tone", body: "A formal yet engaging voice with clean structure: compelling open, evidence-rich body, confident close." },
-  { title: "Consistent Personal Brand", body: "Tone and messaging match your CV and LinkedIn so your story is cohesive across channels." },
-  { title: "Kenya-Specific Context", body: "We reflect local norms, titles, and sector nuances so your letter sounds native to the Kenyan market." },
-  { title: "Evidence & Impact Proof", body: "We translate duties into outcomes with metrics and examples that show clear business value." },
+  {
+    title: "Role-Specific Narrative",
+    body: "We align your achievements to the target job and address the hiring manager’s needs in clear, concise language.",
+  },
+  {
+    title: "ATS-Aware Keywords",
+    body: "We mirror relevant terminology from Kenyan job descriptions so screening systems recognize your fit.",
+  },
+  {
+    title: "Professional Tone",
+    body: "A formal yet engaging voice with clean structure: compelling open, evidence-rich body, confident close.",
+  },
+  {
+    title: "Consistent Personal Brand",
+    body: "Tone and messaging match your CV and LinkedIn so your story is cohesive across channels.",
+  },
+  {
+    title: "Kenya-Specific Context",
+    body: "We reflect local norms, titles, and sector nuances so your letter sounds native to the Kenyan market.",
+  },
+  {
+    title: "Evidence & Impact Proof",
+    body: "We translate duties into outcomes with metrics and examples that show clear business value.",
+  },
 ];
 ---
 
 <ServicePage {title} {description} {hero} {features}>
   <h2>Make Your First Impression Count</h2>
-  <p>A compelling cover letter bridges the gap between your CV and the job description. We craft letters that speak directly to hiring managers, highlighting your relevant skills and motivations.</p>
+  <p>
+    A compelling cover letter bridges the gap between your CV and the job description. We craft letters
+    that speak directly to hiring managers, highlighting your relevant skills and motivations.
+  </p>
 
   <h3>What’s Included</h3>
-  <ul>
-    <li>Tailored cover letter for one specific role or target industry.</li>
-    <li>Strategically structured introduction, body and closing statements.</li>
-    <li>Integration of keywords and narrative to complement your CV.</li>
+  <ul class="service-list service-list--included">
+    <li>Professionally written cover letter tailored to your target role.</li>
+    <li>Clear, recruiter-friendly structure that highlights your key wins.</li>
+    <li>ATS-aware formatting where applicable.</li>
+    <li>7-day revision window for tone and clarity tweaks.</li>
   </ul>
 
   <h3>Benefits</h3>
   <ul>
-    <li><strong>Personalized messaging:</strong> Tell your story in a way that resonates with employers.</li>
-    <li><strong>Professional tone:</strong> Maintain a formal yet engaging voice.</li>
-    <li><strong>Consistent branding:</strong> Aligns with your CV and LinkedIn profile.</li>
+    <li>
+      <strong>Stronger first impression:</strong>
+      Your cover letter makes sense at a glance and feels tailored, not generic.
+    </li>
+    <li>
+      <strong>Clear positioning:</strong>
+      We connect your experience to the role so hiring managers see “fit” quickly.
+    </li>
+    <li>
+      <strong>Confidence when applying:</strong>
+      You stop second-guessing your cover letter and focus on targeting the right roles.
+    </li>
   </ul>
 </ServicePage>

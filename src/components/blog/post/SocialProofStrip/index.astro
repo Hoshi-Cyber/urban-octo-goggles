@@ -1,0 +1,71 @@
+---
+/*
+  src/components/blog/post/SocialProofStrip/index.astro
+
+  FP-205.7:
+  - Slim testimonial / trust strip for use within a single blog post.
+  - Internally reuses the shared TestimonialCard component.
+  - Kept visually lighter than the full TestimonialStrip section.
+*/
+
+import TestimonialCard from "@/components/common/TestimonialCard";
+import "./SocialProofStrip.css";
+
+export interface SocialProofItem {
+  quote: string;
+  author: string;
+  role?: string;
+  avatarSrc?: string;
+  rating?: number;
+  /** Optional extra class for a given card (e.g. highlight) */
+  class?: string;
+}
+
+export interface SocialProofStripProps {
+  items: SocialProofItem[];
+  title?: string;
+  eyebrow?: string;
+}
+
+const {
+  items,
+  title = "Clients we’ve helped",
+  eyebrow = "Social proof",
+} = Astro.props as SocialProofStripProps;
+
+const hasItems = Array.isArray(items) && items.length > 0;
+---
+
+{hasItems && (
+  <section
+    class="social-proof-strip"
+    aria-labelledby="social-proof-title"
+  >
+    <div class="social-proof-strip__inner">
+      <header class="social-proof-strip__header">
+        <p class="social-proof-strip__eyebrow">
+          {eyebrow}
+        </p>
+        <h2
+          id="social-proof-title"
+          class="social-proof-strip__title"
+        >
+          {title}
+        </h2>
+      </header>
+
+      <div class="social-proof-strip__grid">
+        {items.map((item) => (
+          <TestimonialCard
+            quote={item.quote}
+            author={item.author}
+            role={item.role}
+            avatarSrc={item.avatarSrc}
+            rating={item.rating}
+            class={`social-proof-strip__card ${item.class ?? ""}`.trim()}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+)}

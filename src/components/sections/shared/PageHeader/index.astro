@@ -1,0 +1,43 @@
+---
+import './PageHeader.css';
+
+export interface Props {
+  /** Required main page title (h1). */
+  title: string;
+  /** Optional small label above the title, e.g. section name. */
+  eyebrow?: string;
+  /** Text alignment for the header content. Defaults to "left". */
+  align?: 'left' | 'center';
+  /** Optional id for the h1 element (used by aria-labelledby). */
+  id?: string;
+}
+
+const {
+  title,
+  eyebrow,
+  align = 'left',
+  id,
+} = Astro.props;
+
+const headingId = id ?? 'page-header-title';
+const isCentered = align === 'center';
+---
+
+<header
+  class={`page-header${isCentered ? ' page-header--center' : ''}`}
+  aria-labelledby={headingId}
+>
+  <div class="page-header__inner container">
+    <div class="page-header__content">
+      {eyebrow && (
+        <p class="page-header__eyebrow">
+          {eyebrow}
+        </p>
+      )}
+
+      <h1 id={headingId} class="page-header__title section-title">
+        {title}
+      </h1>
+    </div>
+  </div>
+</header>

@@ -1,28 +1,56 @@
-/* TrustBar — low-height, fast, accessible
-   Uses design tokens and breakpoint rhythm.  */
+/* TrustBar — outcome- and segment-focused social proof 
+   Uses global tokens and breakpoint rhythm. */
 
+/* Root band */
 .trustbar {
+  font-family: var(--font-sans);
   background: var(--color-light);
   border-radius: var(--radius-xl);
   padding: var(--space-6) var(--space-4);
   box-shadow: var(--shadow-sm);
+  color: var(--color-text);
 }
 
+/* Compact: visually inline / transparent wrapper (used on Pricing) */
 .trustbar--compact {
-  padding: var(--space-4) var(--space-3);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
+/* Inner layout */
 .trustbar__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
-/* Head */
+/* Compact: tight, inline-style inner block */
+.trustbar--compact .trustbar__inner {
+  gap: var(--space-2);
+  max-width: 36rem;
+  align-items: flex-start;
+}
+
+/* Column wrappers for layout control */
+.trustbar__left,
+.trustbar__right {
+  width: 100%;
+}
+
+/* Head (eyebrow + rating) */
 .trustbar__head {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+/* Compact: visually hide eyebrow; rating becomes the hero */
+.trustbar--compact .trustbar__head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
 }
 
 .trustbar__eyebrow {
@@ -33,118 +61,235 @@
   color: var(--color-muted);
 }
 
+/* Hide eyebrow visually in compact variant for a cleaner pill-only look */
+.trustbar--compact .trustbar__eyebrow {
+  display: none;
+}
+
+/* Rating pill */
 .trustbar__rating {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-3);
-  background: var(--color-background);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
   padding: var(--space-2) var(--space-4);
-  white-space: nowrap;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Compact: premium pill treatment */
+.trustbar--compact .trustbar__rating {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-5);
+  gap: var(--space-2);
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--color-surface) 92%,
+    var(--color-accent) 8%
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--color-accent) 35%, transparent);
+  box-shadow: var(--shadow-xs, var(--shadow-sm));
 }
 
 .trustbar__stars {
-  font-size: 1rem;
+  font-size: var(--fs-base);
   line-height: 1;
   color: var(--color-accent);
   letter-spacing: 0.15em;
 }
+
+/* Compact: slightly subtler stars to let the score dominate */
+.trustbar--compact .trustbar__stars {
+  font-size: var(--fs-sm);
+  letter-spacing: 0.12em;
+}
+
 .trustbar__score {
   font-size: var(--fs-lg);
+  font-weight: 600;
   color: var(--color-text);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
 }
+
+/* Compact: elevate the numeric score */
+.trustbar--compact .trustbar__score {
+  font-size: var(--fs-xl, var(--fs-lg));
+}
+
+.trustbar__score-max {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
 .trustbar__meta {
   margin-left: var(--space-2);
   font-size: var(--fs-sm);
   color: var(--color-muted);
 }
 
-/* Logos: HARDENED to resist global overrides */
-.trustbar__logos {
-  display: grid !important; /* beat .flex/.block leaks */
-  grid-auto-flow: row;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: var(--space-6) var(--space-8);
-  align-items: center;
-  justify-items: center;
-  list-style: none;
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100%;
-  min-width: 0;
+/* Compact: quieter, supporting meta line inside the pill */
+.trustbar--compact .trustbar__meta {
+  margin-left: var(--space-1);
+  font-size: var(--fs-xs, var(--fs-sm));
+  color: var(--color-muted-strong, var(--color-muted));
 }
 
-.trustbar__item {
+/* Body (summary + segments + footnote) */
+.trustbar__body {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.trustbar--compact .trustbar__body {
+  gap: var(--space-3);
+}
+
+.trustbar__summary {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--color-muted-strong, var(--color-muted));
+  max-width: 50rem;
+}
+
+/* Segments row (replaces logos) */
+.trustbar__segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.trustbar__segment-chip {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0; /* defeat global li margins */
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(in srgb, var(--color-border, var(--color-muted)) 80%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-surface) 88%,
+    var(--color-light) 12%
+  );
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  text-align: center;
 }
 
-.trustbar__item img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-height: 28px;
-  filter: grayscale(100%);
+.trustbar--compact .trustbar__segment-chip {
+  padding: var(--space-1) var(--space-2);
+}
+
+/* “+N more” chip */
+.trustbar__segment-chip--more {
   opacity: 0.8;
-  transition:
-    filter 0.2s ease,
-    opacity 0.2s ease,
-    transform 0.2s ease;
 }
 
-.trustbar__item a {
-  outline: none;
+/* Footnote */
+.trustbar__footnote {
+  margin: 0;
+  font-size: var(--fs-xs, var(--fs-sm));
+  line-height: 1.4;
+  color: var(--color-muted);
 }
 
-.trustbar__item a:hover img,
-.trustbar__item a:focus img {
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
-.trustbar__item a:focus-visible img {
-  transform: scale(1.02);
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--color-primary) 30%, transparent);
-  border-radius: var(--radius-md);
-}
-
-/* sm ≥640px */
+/* sm ≥640px — tighten and prep for columns */
 @media (min-width: 640px) {
   .trustbar {
     padding: var(--space-8);
   }
 
+  .trustbar--compact {
+    padding: 0;
+  }
+
+  .trustbar__inner {
+    gap: var(--space-6);
+  }
+
+  .trustbar--compact .trustbar__inner {
+    gap: var(--space-2);
+  }
+
   .trustbar__head {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: var(--space-4);
   }
 
-  .trustbar__logos {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  .trustbar--compact .trustbar__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
   }
-  .trustbar__item img {
-    max-height: 34px;
+
+  .trustbar__summary {
+    font-size: var(--fs-base);
+  }
+
+  .trustbar__segments {
+    gap: var(--space-3);
+  }
+
+  .trustbar--compact .trustbar__segments {
+    gap: var(--space-2);
   }
 }
 
-/* lg ≥1024px */
+/* lg ≥1024px — default two-column layout; compact stays inline */
 @media (min-width: 1024px) {
-  .trustbar__logos {
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  .trustbar__inner {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-8);
   }
-  .trustbar__item img {
-    max-height: 40px;
-  }
-}
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .trustbar__item img {
-    transition: none;
+  .trustbar__left {
+    flex: 0 0 40%;
+    max-width: 40%;
+    min-width: 0;
+  }
+
+  .trustbar__right {
+    flex: 0 0 55%;
+    max-width: 55%;
+    min-width: 0;
+  }
+
+  /* Compact: keep as a single inline block aligned to the left column */
+  .trustbar--compact .trustbar__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--space-2);
+    max-width: 36rem;
+  }
+
+  .trustbar--compact .trustbar__left {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+
+  .trustbar__body {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .trustbar__summary {
+    max-width: 32rem;
   }
 }

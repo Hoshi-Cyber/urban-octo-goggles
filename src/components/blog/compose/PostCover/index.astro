@@ -1,25 +1,29 @@
 ---
 // src/components/blog/compose/PostCover/index.astro
-// Fix Plan 190.2 – normalise cover prop (string | ImageMetadata) and
-// render a CLS-safe hero image card.
+// Fix Plan 190.2 / 193 / 195 – normalise cover prop (string path)
+// and render a CLS-safe, responsive hero image card with AVIF/WebP support.
 
 import css from "./PostCover.css?url";
 
-type CoverSrc =
-  | string
-  | {
-      src: string;
-      width?: number;
-      height?: number;
-    };
-
 interface CoverData {
-  src: CoverSrc;
+  /** String path per Fix 195-C (e.g. "/assets/images/blog/<category>/<slug>-hero.webp") */
+  src: string;
   alt?: string;
   width?: number;
   height?: number;
   caption?: string;
   credit?: string;
+  /**
+   * Optional responsive sources for modern formats.
+   * Example: "/assets/...-480.avif 480w, /assets/...-768.avif 768w, /assets/...-1200.avif 1200w"
+   */
+  srcsetAvif?: string;
+  srcsetWebp?: string;
+  /**
+   * Optional sizes attribute override.
+   * Default: "(max-width: 768px) 100vw, 1200px"
+   */
+  sizes?: string;
 }
 
 interface PostCoverProps {
@@ -32,25 +36,20 @@ interface PostCoverProps {
 
 const { cover, title = "" } = Astro.props as PostCoverProps;
 
-const isMeta = cover && typeof cover.src !== "string";
+// Normalised: treat cover.src strictly as a string path (Fix 195-D)
+const imgSrc: string = typeof cover.src === "string" ? cover.src : "";
 
-let imgSrc: string | undefined;
-let imgWidth: number | undefined;
-let imgHeight: number | undefined;
-
-if (isMeta) {
-  const meta = cover.src as { src: string; width?: number; height?: number };
-  imgSrc = meta.src;
-  imgWidth = meta.width ?? cover.width;
-  imgHeight = meta.height ?? cover.height;
-} else {
-  imgSrc = cover.src as string;
-  imgWidth = cover.width;
-  imgHeight = cover.height;
-}
+// Width/height are taken from cover; if missing, the browser will infer.
+const imgWidth: number | undefined = cover.width;
+const imgHeight: number | undefined = cover.height;
 
 const imgAlt = cover.alt || title || "";
 const hasCaption = Boolean(cover.caption || cover.credit);
+
+// Responsive format sources and sizes
+const srcsetAvif = cover.srcsetAvif;
+const srcsetWebp = cover.srcsetWebp;
+const sizesAttr = cover.sizes || "(max-width: 768px) 100vw, 1200px";
 ---
 <link rel="stylesheet" href={css} />
 
@@ -61,18 +60,28 @@ const hasCaption = Boolean(cover.caption || cover.credit);
     itemscope
     itemtype="https://schema.org/ImageObject"
   >
-    <img
-      src={imgSrc}
-      alt={imgAlt}
-      width={imgWidth}
-      height={imgHeight}
-      loading="lazy"
-      decoding="async"
-      itemprop="url"
-    />
+    <picture>
+      {srcsetAvif && (
+        <source srcset={srcsetAvif} sizes={sizesAttr} type="image/avif" />
+      )}
+      {srcsetWebp && (
+        <source srcset={srcsetWebp} sizes={sizesAttr} type="image/webp" />
+      )}
+      <img
+        src={imgSrc}
+        alt={imgAlt}
+        width={imgWidth}
+        height={imgHeight}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        itemprop="url"
+        sizes={sizesAttr}
+      />
+    </picture>
 
     {hasCaption && (
-      <figcaption class="caption">
+      <figcaption class="postCover__caption">
         {cover.caption && (
           <span class="postCover__captionText">{cover.caption}</span>
         )}

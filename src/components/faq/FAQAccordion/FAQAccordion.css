@@ -1,42 +1,46 @@
+/* src/components/faq/FAQAccordion/FAQAccordion.css */
 /* FAQAccordion — compact, token-driven, masonry ≥1024px */
 
 [data-section="faq"] {
-  padding-block: var(--space-10, 2.5rem);
-  background: var(--color-background, #fff);
+  padding-block: var(--space-10);
+  background: var(--color-background);
 }
 
 /* Header (only rendered when showHead=true) */
 .faq__head {
   display: grid;
-  gap: var(--space-2, 0.5rem);
-  margin-bottom: var(--space-4, 1rem);
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
   text-align: left;
 }
+
 .faq__title {
   margin: 0;
   line-height: 1.2;
 }
+
 .faq__sub {
   margin: 0;
-  color: var(--color-muted, #374151);
+  color: var(--color-muted);
 }
 
 /* List */
 .faq__list {
   display: grid;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-3);
   align-items: start;
 }
 
 /* Item */
 .faq__item {
   display: block;
-  border-radius: var(--radius-lg, 12px);
+  border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 18%, transparent);
-  box-shadow: var(--shadow-xs, 0 1px 1px rgba(17, 24, 39, 0.05));
+    color-mix(in oklab, var(--color-primary) 18%, transparent);
+  box-shadow: var(--shadow-xs);
   overflow: hidden;
-  background: #fff;
+  background: var(--color-surface);
+  font-family: var(--font-sans);
 }
 
 /* Summary row */
@@ -44,30 +48,28 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin: 0;
   list-style: none;
   cursor: pointer;
   font: inherit;
-  color: var(--color-text, #111827);
+  color: var(--color-text);
   background: transparent;
 }
+
 .faq__summary::-webkit-details-marker {
   display: none;
 }
+
 .faq__summary:hover {
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 8%, #fff);
-  border-color: color-mix(
-    in oklab,
-    var(--color-primary, #0b57d0) 24%,
-    transparent
-  );
+  background: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface));
 }
 
 /* Question text */
 .faq__q {
   font-weight: 600;
-  font-size: var(--fs-base, 1rem);
+  font-size: var(--fs-base);
   line-height: 1.35;
 }
 
@@ -76,37 +78,49 @@
   transition: transform 0.2s ease;
   color: color-mix(
     in oklab,
-    var(--color-text, #111827) 80%,
-    var(--color-primary, #0b57d0)
+    var(--color-text) 80%,
+    var(--color-primary)
   );
 }
 
 /* Answer — smaller type, pro styling, brand-accent */
 .faq__a {
-  padding: 0 var(--space-4, 1rem) var(--space-4, 1rem);
-  color: var(--color-muted, #374151);
+  padding: 0 var(--space-4) var(--space-4);
+  color: var(--color-muted);
   font-size: clamp(0.92rem, 0.9rem + 0.2vw, 0.98rem);
   line-height: 1.6;
   border-left: 3px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 3%, #fff);
+    color-mix(in oklab, var(--color-primary) 22%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 3%,
+    var(--color-surface)
+  );
 }
+
 .faq__a :where(p, ul, ol) {
   margin-block: 0.35rem;
 }
+
 .faq__a :where(ul, ol) {
   padding-left: 1.25rem;
 }
+
 .faq__a :where(li) {
   margin-block: 0.15rem;
 }
 
 /* Open state */
 .faq__item[open] .faq__summary {
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 6%, #fff);
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
   border-bottom: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
+    color-mix(in oklab, var(--color-primary) 22%, transparent);
 }
+
 .faq__item[open] .faq__chev {
   transform: rotate(180deg);
 }
@@ -115,31 +129,31 @@
 .faq__summary:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #0b57d0) 35%, #fff);
-  border-radius: var(--radius-md, 8px);
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  border-radius: var(--radius-md);
 }
 
-/* ≥1024px: switch to masonry columns to prevent cross-column ghost space */
+/* ≥1024px: masonry columns to prevent cross-column ghost space */
 @media (min-width: 1024px) {
   [data-section="faq"] {
-    padding-block: var(--space-12, 3rem);
+    padding-block: var(--space-12);
   }
+
   .faq__head {
-    margin-bottom: var(--space-5, 1.25rem);
+    margin-bottom: var(--space-5);
   }
 
   .faq__list {
-    /* remove grid columns; use masonry columns instead */
     display: block;
     column-count: 2;
-    column-gap: var(--space-5, 1.25rem);
+    column-gap: var(--space-5);
   }
 
   .faq__item {
     break-inside: avoid;
     display: block;
     width: 100%;
-    margin-bottom: var(--space-3, 0.75rem);
+    margin-bottom: var(--space-3);
   }
 }
 

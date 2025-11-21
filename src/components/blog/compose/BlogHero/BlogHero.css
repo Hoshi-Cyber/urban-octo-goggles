@@ -1,18 +1,24 @@
-/* BlogHero — mobile-first, token-driven (FP-158)
-   - No inner horizontal gutters; page/container owns side padding
-   - Block padding only on the section
-   - Single column by default; grid >= lg when media exists */
+/* BlogHero — mobile-first, token-driven hero (FP-158-compliant)
+   - Block padding only (no inner gutters)
+   - Single column by default
+   - Grid ≥ lg only when media exists
+*/
 
 /* Section rhythm */
 .bloghero {
   padding-block: clamp(var(--space-8), 3vw, var(--space-12));
 }
 
-/* Grid wrapper: single column by default; activates at lg only if media exists */
+/* Slightly tighter top/bottom padding on very small screens */
+@media (max-width: 480px) {
+  .bloghero {
+    padding-block: var(--space-6);
+  }
+}
+
+/* Grid wrapper: single column by default; .container handles width & gutters */
 .bloghero__grid {
   display: block;
-  max-width: 72rem;
-  margin-inline: auto;
 }
 
 /* Enable two-column grid only when a media pane is present */
@@ -25,25 +31,22 @@
   }
 }
 
-/* Copy column */
+/* Copy column – spacing is handled by .stack; keep optional width constraint */
 .bloghero__copy {
-  display: grid;
-  gap: var(--space-4);
+  max-width: 42rem;
 }
 
 /* Title and deck */
 .bloghero__title {
   margin: 0 0 var(--space-2);
-  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-5xl));
-  line-height: 1.1;
-  font-weight: 800;
   color: var(--color-text);
 }
+
 .bloghero__sub {
   margin: 0 0 var(--space-6);
   color: var(--color-muted);
   max-width: 60ch;
-  font-size: clamp(1rem, 1.1vw + 0.6rem, var(--fs-xl));
+  font-size: clamp(var(--fs-base), 1.1vw + 0.6rem, var(--fs-xl));
 }
 
 /* CTAs: stack on mobile, row from sm+ */
@@ -52,42 +55,57 @@
   grid-auto-flow: row;
   gap: var(--space-3);
 }
-.bloghero__ctas .btn { width: 100%; }
+
+.bloghero__ctas .btn {
+  width: 100%;
+}
 
 @media (min-width: 640px) {
   .bloghero__ctas {
     grid-auto-flow: column;
-    justify-content: start;
+    justify-content: flex-start;
   }
-  .bloghero__ctas .btn { width: auto; }
+
+  .bloghero__ctas .btn {
+    width: auto;
+  }
 }
 
-/* Media: show image in full (no cropping) */
+/* Media: image shown in full (no cropping) */
 .bloghero__media {
-  margin: 0;
+  margin-top: clamp(var(--space-4), 4vw, var(--space-8)); /* vertical gap when stacked */
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--color-primary) 10%, #0b1220),
-    #0b1220
+    color-mix(in oklab, var(--color-primary) 16%, var(--color-surface)),
+    var(--color-background)
   );
 }
+
+/* When in 2-column grid (lg+), let grid gap control spacing */
+@media (min-width: 1024px) {
+  .bloghero__grid.has-media .bloghero__media {
+    margin-top: 0;
+  }
+}
+
 .bloghero__media img {
   display: block;
   width: 100%;
-  height: auto;            /* keep intrinsic ratio */
-  object-fit: contain;     /* no crop */
+  height: auto;           /* preserve intrinsic ratio */
+  object-fit: contain;    /* no crop */
   object-position: center;
 }
 
-/* Decorative fallback when no cover is provided */
+/* Decorative fallback rings (if used in future) */
 .bloghero__fallback {
   position: relative;
   width: 100%;
   height: 100%;
 }
+
 .ring {
   position: absolute;
   inset: auto auto 8% 75%;
@@ -99,6 +117,7 @@
     color-mix(in oklab, var(--color-primary) 25%, transparent);
   opacity: 0.9;
 }
+
 .ring--sm {
   inset: auto auto 12% 78%;
   width: 16%;
@@ -107,14 +126,9 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .bloghero__ctas { transition: none; }
   .bloghero__media,
   .ring {
     transition: none;
     animation: none;
   }
 }
-
-/* Removed with FP-158:
-   - Any padding-inline on wrapper elements (gutters now belong to the page container)
-   - tablet/laptop two-column grid when no media exists */

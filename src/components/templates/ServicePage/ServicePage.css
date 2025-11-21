@@ -1,0 +1,610 @@
+/* ServicePage template – page-level layout
+   Mobile-first, token-driven, template-scoped */
+
+.servicePage {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+}
+
+/* Sections – compact, aligned to global rhythm */
+.servicePage .section {
+  padding-block: clamp(var(--space-6), 3vw, var(--space-10));
+}
+
+.servicePage .section--tight {
+  padding-block: clamp(var(--space-4), 2.5vw, var(--space-8));
+}
+
+/* Balanced section spacing – slightly tighter top to reduce hero/body gap */
+.servicePage .section.section--balanced {
+  padding-top: clamp(var(--space-4), 2.4vw, var(--space-8));
+  padding-bottom: clamp(var(--space-6), 3vw, var(--space-10));
+}
+
+/* Optional hero modifier
+   Add class "section--hero" to the hero section in markup when desired */
+.servicePage .section--hero {
+  background:
+    color-mix(in oklab, var(--color-surface) 94%, var(--color-text) 6%);
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  padding-top: clamp(var(--space-6), 3vw, var(--space-10));
+  padding-bottom: clamp(var(--space-4), 2vw, var(--space-6));
+}
+
+/* Container – respect global container tokens */
+.servicePage .container {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+/* Hero stack + typography
+   Uses global .h1 + .page-lead for type; this just refines layout */
+.servicePage .flow {
+  display: grid;
+  gap: clamp(var(--space-3), 1.4vw, var(--space-4));
+}
+
+/* Eyebrow – distinct but subtle */
+.servicePage .eyebrow {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+/* Hero title – controlled width and spacing */
+.servicePage .servicePage__title {
+  max-width: 26ch;
+  margin: 0 0 var(--space-2);
+}
+
+/* Lead – constrained width for better readability */
+.servicePage .page-lead {
+  max-width: 60ch;
+}
+
+.servicePage .sub {
+  margin: 0;
+}
+
+/* Hero CTA row – compact but readable */
+.servicePage .cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+/* Main + aside grid */
+.servicePage .grid {
+  display: grid;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+/* Two columns from md upwards */
+@media (min-width: 768px) {
+  .servicePage .grid {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+}
+
+/* Slightly more breathing room on larger screens */
+@media (min-width: 1024px) {
+  .servicePage .grid {
+    gap: var(--space-8);
+  }
+}
+
+/* Main content – rely on .prose for typography, just constrain width */
+.servicePage .content.prose {
+  max-width: 72ch;
+}
+
+/* Heading hierarchy inside service content */
+.servicePage .content.prose h2 {
+  margin-top: clamp(var(--space-6), 3vw, var(--space-8));
+  margin-bottom: var(--space-2);
+}
+
+.servicePage .content.prose h3 {
+  margin-top: clamp(var(--space-4), 2vw, var(--space-6));
+  margin-bottom: var(--space-2);
+}
+
+/* Ensure aside column plays well with sticky behaviour */
+.servicePage .aside {
+  align-self: flex-start;
+}
+
+/* Aside card – default (mobile / small tablet) non-sticky */
+.servicePage .aside .aside-card {
+  position: static;
+  top: auto;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 10%, transparent);
+  box-shadow: var(--shadow-md);
+  overflow: hidden; /* for accent bar */
+}
+
+/* Desktop & large tablet – sticky pricing card */
+@media (min-width: 1024px) {
+  .servicePage .aside .aside-card {
+    position: sticky !important;
+    top: clamp(var(--space-8), 8vh, var(--space-12));
+    z-index: 1;
+  }
+}
+
+/* Accent bar at top of aside card */
+.servicePage .aside .aside-card::before {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 100%;
+  background:
+    color-mix(in oklab, var(--color-text) 12%, transparent);
+  margin-bottom: var(--space-4);
+}
+
+/* Slightly tighter on very small screens */
+@media (max-width: 479px) {
+  .servicePage .aside .aside-card {
+    padding: var(--space-4);
+  }
+}
+
+.servicePage .aside-eyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.servicePage .card-title {
+  margin: 0 0 var(--space-2);
+}
+
+.servicePage .card-sub {
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Aside CTA column – compact, full-width buttons */
+.servicePage .cta-col {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* Premium service list (“What’s Included”) */
+.servicePage .content.prose .service-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1); /* tighter vertical spacing */
+}
+
+.servicePage .content.prose .service-list--included li {
+  position: relative;
+  padding-left: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.servicePage .content.prose .service-list--included li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.6em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+/* Benefits grid (currently unused but kept for future use) */
+.servicePage .content.prose .benefits__grid {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .servicePage .content.prose .benefits__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.servicePage .content.prose .benefit-item {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+}
+
+.servicePage .content.prose .benefit-item h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-base);
+}
+
+.servicePage .content.prose .benefit-item p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Features section */
+.servicePage .features {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+@media (min-width: 768px) {
+  .servicePage .features {
+    gap: var(--space-6);
+  }
+}
+
+.servicePage .feature {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 8%, transparent);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out;
+}
+
+.servicePage .feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color:
+    color-mix(in oklab, var(--color-primary) 40%, transparent);
+}
+
+.servicePage .feature-title {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+}
+
+.servicePage .feature-body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* ================================
+   New hooks: Trust strip
+   ================================ */
+
+/* Place directly below hero as a separate band */
+.servicePage .trust-strip {
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-text) 8%, transparent);
+  background: var(--color-surface);
+  padding-block: clamp(var(--space-3), 1.6vw, var(--space-4));
+}
+
+.servicePage .trust-strip__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.servicePage .trust-strip__label {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.servicePage .trust-strip__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.servicePage .trust-strip__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+/* Optional logo hook */
+.servicePage .trust-strip__logo {
+  height: 1.5rem;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ================================
+   New hooks: How-it-works row
+   ================================ */
+
+.servicePage .how-it-works {
+  padding-block: clamp(var(--space-4), 2.4vw, var(--space-6));
+}
+
+.servicePage .how-it-works__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+.servicePage .how-it-works__heading {
+  margin: 0 0 var(--space-3);
+}
+
+.servicePage .how-it-works__grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .servicePage .how-it-works__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+.servicePage .how-it-works__step {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.servicePage .how-it-works__step-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-2);
+  padding-block: var(--space-1);
+  border-radius: var(--radius-full, 999px);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  background:
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  margin-bottom: var(--space-2);
+}
+
+.servicePage .how-it-works__step-title {
+  margin: 0 0 var(--space-1);
+}
+
+.servicePage .how-it-works__step-body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* ================================
+   New hooks: Testimonial + metrics
+   ================================ */
+
+.servicePage .testimonial {
+  margin-block: clamp(var(--space-4), 2.4vw, var(--space-6));
+}
+
+.servicePage .testimonial--card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 8%, transparent);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+}
+
+.servicePage .testimonial__quote {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.servicePage .testimonial__quote::before,
+.servicePage .testimonial__quote::after {
+  content: "“";
+  position: absolute;
+  opacity: 0;
+}
+
+/* Meta row: name, role, location */
+.servicePage .testimonial__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.servicePage .testimonial__name {
+  font-weight: 600;
+}
+
+.servicePage .testimonial__role {
+  opacity: 0.9;
+}
+
+/* Metrics panel */
+.servicePage .metrics-panel {
+  margin-block: clamp(var(--space-4), 2.4vw, var(--space-5));
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background:
+    color-mix(in oklab, var(--color-surface) 94%, var(--color-text) 6%);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 10%, transparent);
+}
+
+.servicePage .metrics-panel__title {
+  margin: 0 0 var(--space-3);
+}
+
+.servicePage .metrics-panel__items {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .servicePage .metrics-panel__items {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.servicePage .metrics-panel__item {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.servicePage .metrics-panel__value {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+}
+
+.servicePage .metrics-panel__label {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+/* ================================
+   New hooks: FAQ accordion
+   ================================ */
+
+.servicePage .faq {
+  margin-block: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.servicePage .faq__heading {
+  margin: 0 0 var(--space-3);
+}
+
+.servicePage .faq__list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.servicePage .faq__item {
+  border-radius: var(--radius-lg);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 8%, transparent);
+  background: var(--color-surface);
+}
+
+/* Question row – clickable target; JS/markup will handle the actual button/summary element */
+.servicePage .faq__question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+}
+
+.servicePage .faq__question-text {
+  margin: 0;
+  font-weight: 500;
+}
+
+.servicePage .faq__icon {
+  flex: 0 0 auto;
+  font-size: var(--fs-lg);
+  line-height: 1;
+}
+
+/* Answer area */
+.servicePage .faq__answer {
+  padding-inline: var(--space-4);
+  padding-bottom: var(--space-3);
+  padding-top: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  display: none;
+}
+
+/* Simple state toggle hook via data attribute */
+.servicePage .faq__item[data-open="true"] .faq__answer {
+  display: block;
+}
+
+/* ================================
+   New hooks: Mobile-only sticky CTA bar
+   ================================ */
+
+.servicePage .mobile-cta-bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 20;
+  background: var(--color-surface);
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-text) 10%, transparent);
+  padding: var(--space-3) var(--container-px);
+  display: none; /* default off – enabled on mobile via media query */
+}
+
+.servicePage .mobile-cta-bar__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.servicePage .mobile-cta-bar__label {
+  flex: 1 1 auto;
+  font-size: var(--fs-sm);
+}
+
+.servicePage .mobile-cta-bar__actions {
+  flex: 0 0 auto;
+}
+
+/* Only show on small screens; hide when viewport is wide enough for sidebar + header CTAs to be persistent */
+@media (max-width: 767px) {
+  .servicePage .mobile-cta-bar {
+    display: block;
+  }
+
+  body {
+    padding-bottom: calc(var(--space-10)); /* avoid content hidden behind bar */
+  }
+}
+
+/* Reduced motion – no extra animation here; rely on global button transitions */
+@media (prefers-reduced-motion: reduce) {
+  .servicePage .aside .aside-card,
+  .servicePage .feature {
+    scroll-behavior: auto;
+  }
+}
