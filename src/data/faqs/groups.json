@@ -1,0 +1,50 @@
+{
+  "getting-started": {
+    "id": "getting-started",
+    "title": "Getting started",
+    "itemIds": [
+      "who-we-serve",
+      "what-to-provide-to-get-started"
+    ]
+  },
+  "pricing-payment": {
+    "id": "pricing-payment",
+    "title": "Pricing & payment",
+    "itemIds": [
+      "payment-methods",
+      "refunds-policy"
+    ]
+  },
+  "process-timelines": {
+    "id": "process-timelines",
+    "title": "Process & timelines",
+    "itemIds": [
+      "process-main-steps",
+      "delayed-feedback"
+    ]
+  },
+  "revisions-guarantees": {
+    "id": "revisions-guarantees",
+    "title": "Revisions & guarantees",
+    "itemIds": [
+      "revisions-included",
+      "job-guarantee"
+    ]
+  },
+  "cv-formats-ats": {
+    "id": "cv-formats-ats",
+    "title": "CV formats & ATS",
+    "itemIds": [
+      "cv-file-formats",
+      "ats-friendly"
+    ]
+  },
+  "data-privacy": {
+    "id": "data-privacy",
+    "title": "Data & privacy",
+    "itemIds": [
+      "data-handling",
+      "data-retention"
+    ]
+  }
+}

@@ -1,0 +1,267 @@
+---
+// src/components/sections/testimonials/TestimonialsGridSection/index.astro
+
+import "./TestimonialsGridSection.css";
+
+import TestimonialsFilterBar from "../../../filters/TestimonialsFilterBar/index.astro";
+import TestimonialCard from "../../../common/TestimonialCard/index.astro";
+import Button from "../../../cta/Button/index.astro";
+
+type Testimonial = {
+  id: string | number;
+  quote: string;
+  author: string;
+  role?: string;
+  avatarSrc?: string;
+  rating?: number;
+  highlight?: boolean;
+  careerLevel?: string | null;
+  serviceType?: string | null;
+};
+
+interface TestimonialsGridSectionProps {
+  filters: {
+    careerLevels: string[];
+    serviceTypes: string[];
+  };
+  testimonials: Testimonial[];
+  initialLimit?: number;
+}
+
+const {
+  filters,
+  testimonials = [],
+  // Show 8 cards by default for a 4×2 desktop grid
+  initialLimit = 8,
+} = Astro.props as TestimonialsGridSectionProps;
+
+// Normalise filters: remove "all"/"All" because the bar renders its own "All" pills
+const careerLevels =
+  filters?.careerLevels?.filter(
+    (lvl) => lvl.toLowerCase() !== "all"
+  ) ?? [];
+
+const serviceTypes =
+  filters?.serviceTypes?.filter(
+    (svc) => svc.toLowerCase() !== "all"
+  ) ?? [];
+
+// For a11y: internal heading for aria-labelledby
+const headingId =
+  "testimonials-grid-section-" +
+  Math.random().toString(36).slice(2, 8);
+
+// Clamp initial limit defensively
+const safeInitialLimit =
+  Number.isFinite(initialLimit) && initialLimit > 0
+    ? initialLimit
+    : 8;
+---
+
+<section
+  id="testimonials-filter-grid"
+  class="section testimonials-grid-section py-10 xs:py-12 md:py-16"
+  aria-labelledby={headingId}
+  data-section="testimonials-grid-section"
+  data-initial-limit={safeInitialLimit}
+>
+  <div class="section-inner container stack">
+    <!-- Section header: title + intro, left-aligned, compact -->
+    <header class="testimonials-grid-section__head section-head">
+      <h2 id={headingId} class="section-title">
+        Filter testimonials
+      </h2>
+      <p class="section-intro">
+        Choose career level and service type to see the most relevant client stories.
+      </p>
+    </header>
+
+    <!-- Filter bar -->
+    <section
+      class="testimonials-grid-section__controls"
+      aria-label="Filter testimonials by career level and service type"
+    >
+      <TestimonialsFilterBar
+        levels={careerLevels}
+        services={serviceTypes}
+      />
+    </section>
+
+    <!-- Results grid -->
+    <div
+      class="testimonials-grid-section__grid"
+      data-grid
+    >
+      {testimonials.map((t) => (
+        <div
+          class="testimonials-grid-section__item"
+          data-testimonial-item
+          data-level={t.careerLevel || ""}
+          data-service={t.serviceType || ""}
+        >
+          <TestimonialCard
+            quote={t.quote}
+            author={t.author}
+            role={t.role}
+            avatarSrc={t.avatarSrc}
+            rating={t.rating}
+            highlight={t.highlight}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Actions row: Load more + compact meta line -->
+    <div class="testimonials-grid-section__actions">
+      <p
+        class="testimonials-grid-section__summary"
+        aria-live="polite"
+        data-summary
+      >
+        {testimonials.length === 0
+          ? "No testimonials available yet."
+          : `Showing ${Math.min(
+              safeInitialLimit,
+              testimonials.length
+            )} of ${testimonials.length} testimonial${
+              testimonials.length === 1 ? "" : "s"
+            }.`}
+      </p>
+
+      {testimonials.length > safeInitialLimit && (
+        <Button
+          label="Load more testimonials"
+          variant="primary"
+          size="md"
+          block={false}
+          class="testimonials-grid-section__load-more"
+          cta="testimonials-load-more"
+        />
+      )}
+    </div>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const root = document.currentScript.closest(
+        ".testimonials-grid-section"
+      );
+      if (!root) return;
+
+      const items = Array.from(
+        root.querySelectorAll("[data-testimonial-item]")
+      );
+      const summaryEl = root.querySelector("[data-summary]");
+      const loadMoreBtn = root.querySelector(
+        ".testimonials-grid-section__load-more"
+      );
+
+      const initialLimitAttr =
+        root.getAttribute("data-initial-limit");
+      const baseStep =
+        Number(initialLimitAttr) > 0
+          ? Number(initialLimitAttr)
+          : 8;
+
+      const state = {
+        level: null,
+        service: null,
+        limit: baseStep,
+      };
+
+      const matchesFilters = (item) => {
+        const itemLevel = (
+          item.getAttribute("data-level") || ""
+        ).toLowerCase();
+        const itemService = (
+          item.getAttribute("data-service") || ""
+        ).toLowerCase();
+
+        const level = state.level
+          ? String(state.level).toLowerCase()
+          : null;
+        const service = state.service
+          ? String(state.service).toLowerCase()
+          : null;
+
+        const levelMatches =
+          !level ||
+          level === "all" ||
+          itemLevel === level;
+
+        const serviceMatches =
+          !service ||
+          service === "all" ||
+          itemService === service;
+
+        return levelMatches && serviceMatches;
+      };
+
+      const apply = () => {
+        let visible = 0;
+        let totalMatching = 0;
+
+        items.forEach((item) => {
+          const matches = matchesFilters(item);
+
+          if (!matches) {
+            item.hidden = true;
+            item.setAttribute("data-hidden", "true");
+            return;
+          }
+
+          totalMatching++;
+
+          if (visible < state.limit) {
+            item.hidden = false;
+            item.removeAttribute("data-hidden");
+            visible++;
+          } else {
+            item.hidden = true;
+            item.setAttribute("data-hidden", "true");
+          }
+        });
+
+        // Update summary text
+        if (summaryEl) {
+          if (totalMatching === 0) {
+            summaryEl.textContent =
+              "No testimonials match the selected filters.";
+          } else {
+            summaryEl.textContent =
+              `Showing ${visible} of ${totalMatching} testimonial` +
+              (totalMatching === 1 ? "" : "s") +
+              ".";
+          }
+        }
+
+        // Update load-more visibility/state
+        if (loadMoreBtn) {
+          const canShowMore = totalMatching > state.limit;
+          loadMoreBtn.hidden = !canShowMore;
+          loadMoreBtn.disabled = !canShowMore;
+        }
+      };
+
+      // React to filter bar events (from TestimonialsFilterBar)
+      root.addEventListener("testimonials:filter", (event) => {
+        const detail = event.detail || {};
+        state.level =
+          detail.level === undefined ? null : detail.level;
+        state.service =
+          detail.service === undefined ? null : detail.service;
+        apply();
+      });
+
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener("click", () => {
+          state.limit += baseStep;
+          apply();
+        });
+      }
+
+      // Initial render (8 cards by default)
+      apply();
+    })();
+  </script>
+</section>

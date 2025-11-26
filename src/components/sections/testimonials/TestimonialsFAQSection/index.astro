@@ -1,0 +1,68 @@
+---
+import "./TestimonialsFAQSection.css";
+import FAQAccordion from "../../../faq/FAQAccordion/index.astro";
+
+interface FAQItemInput {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+interface TestimonialsFAQSectionProps {
+  items?: FAQItemInput[];
+  title?: string;
+  sub?: string;
+  headingLevel?: "h2" | "h3"; // currently delegated to FAQAccordion (h2)
+}
+
+const defaultItems: FAQItemInput[] = [
+  {
+    id: "authenticity",
+    question: "Are your testimonials real?",
+    answer:
+      "Yes. Every testimonial is from a real client who consented to share their feedback after working with cvwriting.co.ke.",
+  },
+  {
+    id: "anonymisation",
+    question: "How do you anonymise sensitive details?",
+    answer:
+      "We mask names, employers, locations, and any sensitive personal data unless the client explicitly approves full visibility.",
+  },
+  {
+    id: "cv-samples",
+    question: "Do you share CVs as samples?",
+    answer:
+      "Only with explicit written permission. No personal CV is ever reused, resold, or published as a sample without the client’s consent.",
+  },
+  {
+    id: "industries",
+    question: "Do your testimonials cover my industry?",
+    answer:
+      "Our clients span more than 40 industries and career levels. On the testimonials page you can filter results by career level and service type to see the most relevant stories.",
+  },
+];
+
+const {
+  items = defaultItems,
+  title = "FAQ: Testimonials & Data",
+  sub = "What to know about authenticity, privacy, and how we use feedback.",
+  headingLevel = "h2",
+} = Astro.props as TestimonialsFAQSectionProps;
+
+// Note: FAQAccordion currently always renders its heading as <h2> via .section-title.
+// headingLevel is accepted for future extension but not overridden here.
+---
+
+<section
+  class="testimonials-faq-section section"
+  aria-label="FAQ about testimonials and data protection"
+  data-section="testimonials-faq"
+>
+  <FAQAccordion
+    items={items}
+    title={title}
+    sub={sub}
+    schema={true}
+    class="faq-accordion--testimonials"
+  />
+</section>

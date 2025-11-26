@@ -1,7 +1,12 @@
 ---
 /**
- * StickyAsideCard — mobile-first sticky helper for service pages
- * Single-CTA version
+ * StickyAsideCard — mobile-first sticky helper for service/support pages
+ * Single-CTA container; CTA itself is optional.
+ *
+ * Responsibility:
+ * - Provide a soft, sticky card wrapper.
+ * - Do NOT enforce full-width buttons or heavy CTA styling; that is handled
+ *   by the shared Button component and any contextual wrapper classes.
  */
 import Button from "../../cta/Button/index.astro";
 import "./StickyAsideCard.css"; // ensure bundling
@@ -10,10 +15,12 @@ export interface Props {
   eyebrow?: string;
   title: string;
   sub?: string;
-  primaryHref: string;
-  primaryLabel: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  primaryVariant?: "primary" | "accent" | "ghost";
+  size?: "sm" | "md";
   ctaId?: string;
-  top?: string;     // CSS length; default 6rem
+  top?: string; // CSS length; default 6rem
   class?: string;
 }
 
@@ -23,35 +30,40 @@ const {
   sub,
   primaryHref,
   primaryLabel,
+  primaryVariant = "accent",
+  size = "sm",
   ctaId = "aside:primary",
   top = "6rem",
-  class: className = ""
+  class: className = "",
 } = Astro.props as Props;
+
+const hasPrimaryCta = Boolean(primaryHref && primaryLabel);
 ---
 
 <aside
   class={`saside ${className}`.trim()}
   data-aside="sticky-card"
   style={`--stick-top:${top}`}
-  aria-labelledby="aside-title"
 >
   <div class="saside__card">
     <header class="saside__head">
       {eyebrow && <p class="saside__eyebrow">{eyebrow}</p>}
-      <h3 id="aside-title" class="saside__title">{title}</h3>
+      <h3 class="saside__title">{title}</h3>
       {sub && <p class="saside__sub">{sub}</p>}
     </header>
 
-    <div class="saside__actions">
-      <Button
-        href={primaryHref}
-        variant="accent"
-        size="sm"
-        cta={ctaId}
-        ariaLabel={primaryLabel}
-        class="saside__btn"
-        label={primaryLabel}
-      />
-    </div>
+    {hasPrimaryCta && (
+      <div class="saside__actions">
+        <Button
+          href={primaryHref}
+          variant={primaryVariant}
+          size={size}
+          cta={ctaId}
+          ariaLabel={primaryLabel}
+          class="saside__btn"
+          label={primaryLabel}
+        />
+      </div>
+    )}
   </div>
 </aside>

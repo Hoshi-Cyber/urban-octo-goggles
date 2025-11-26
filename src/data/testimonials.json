@@ -40,5 +40,103 @@
       "author": "Faith A.",
       "role": "HR Generalist"
     }
+  ],
+  "pageTestimonials": [
+    {
+      "id": "t1",
+      "headline": "From 3 months of silence to 3 interviews in 2 weeks",
+      "quote": "After updating my CV and LinkedIn profile with CVWriting.co.ke, I started getting interview invitations within two weeks. The new CV finally reflected the roles I was targeting.",
+      "name": "Grace M.",
+      "level": "Mid-level",
+      "role": "Project Manager",
+      "sector": "NGO",
+      "location": "Nairobi",
+      "services": ["CV + LinkedIn"],
+      "outcomes": ["More interviews"]
+    },
+    {
+      "id": "t2",
+      "headline": "Promotion to Senior Officer within one review cycle",
+      "quote": "The CV and cover letter rework helped me clearly show my impact over the last three years. It made the promotion conversation much easier.",
+      "name": "Daniel K.",
+      "level": "Mid-level",
+      "role": "Finance Officer",
+      "sector": "Banking",
+      "location": "Nairobi",
+      "services": ["CV + Cover Letter"],
+      "outcomes": ["Promotion"]
+    },
+    {
+      "id": "t3",
+      "headline": "Breaking into a new industry after a career switch",
+      "quote": "I was moving from customer service into a tech support role. The CVWriting.co.ke team reframed my experience in a way that clicked with recruiters.",
+      "name": "S. A.",
+      "level": "Early career",
+      "role": "Customer Support \u2192 Tech Support",
+      "sector": "Technology",
+      "location": "Kenya & remote",
+      "services": ["CV only"],
+      "outcomes": ["Industry switch"]
+    },
+    {
+      "id": "t4",
+      "headline": "Landing an international role with a sharper senior CV",
+      "quote": "I had strong experience but my CV still read like a local role. The rewrite positioned me as a regional expert and helped me secure an offer with an international company.",
+      "name": "Martin L.",
+      "level": "Senior",
+      "role": "Senior Operations Specialist",
+      "sector": "Logistics",
+      "location": "Nairobi \u2192 Dubai",
+      "services": ["CV + LinkedIn"],
+      "outcomes": ["International offer", "Salary increase"]
+    },
+    {
+      "id": "t5",
+      "headline": "First job offer within a month of graduation",
+      "quote": "As a fresh graduate I didn\u2019t know how to turn my projects and internships into a convincing CV. The team organised everything clearly and I got my first offer in under a month.",
+      "name": "Joyce N.",
+      "level": "Entry-level",
+      "role": "Graduate Trainee",
+      "sector": "Manufacturing",
+      "location": "Thika",
+      "services": ["CV + Cover Letter"],
+      "outcomes": ["First job offer"]
+    },
+    {
+      "id": "t6",
+      "headline": "Board-ready profile for executive opportunities",
+      "quote": "They helped me condense 15+ years into a crisp, strategic CV that speaks to boards and investors, not just HR. The new profile has already opened higher-level conversations.",
+      "name": "P. K.",
+      "level": "Executive",
+      "role": "Chief Financial Officer",
+      "sector": "Financial Services",
+      "location": "Nairobi",
+      "services": ["Executive CV", "LinkedIn refresh"],
+      "outcomes": ["Stronger executive positioning", "Board interviews"]
+    },
+    {
+      "id": "t7",
+      "headline": "Confident return to work after a career break",
+      "quote": "After a long break I worried my CV would be ignored. CVWriting.co.ke framed my break honestly but focused on skills and impact. I received multiple callbacks within a few weeks.",
+      "name": "Linda A.",
+      "level": "Mid-level",
+      "role": "HR Business Partner",
+      "sector": "FMCG",
+      "location": "Nairobi",
+      "services": ["CV + LinkedIn"],
+      "outcomes": ["Return-to-work interviews", "Renewed confidence"]
+    },
+    {
+      "id": "t8",
+      "headline": "Clear public sector achievements led to promotion",
+      "quote": "Public sector work is hard to quantify, but they helped me highlight measurable outcomes and leadership contributions. This was a key document in my successful promotion.",
+      "name": "George O.",
+      "level": "Senior",
+      "role": "Principal Officer",
+      "sector": "Public Sector",
+      "location": "Kenya",
+      "services": ["CV only"],
+      "outcomes": ["Promotion", "Stronger internal brand"]
+    }
   ]
 }

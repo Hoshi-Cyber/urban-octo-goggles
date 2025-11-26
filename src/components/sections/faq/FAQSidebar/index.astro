@@ -1,0 +1,114 @@
+---
+import StickyAsideCard from "../../../aside/StickyAsideCard/index.astro";
+import "./FAQSidebar.css";
+
+export type FAQSidebarCtaVariant = "primary" | "ghost";
+
+export interface FAQSidebarCta {
+  label: string;
+  href: string;
+  variant?: FAQSidebarCtaVariant;
+  dataCta?: string;
+}
+
+export interface FAQSidebarCard {
+  title: string;
+  body?: string;
+  list?: string[];
+  ctas?: FAQSidebarCta[];
+}
+
+export interface Props {
+  cards: FAQSidebarCard[];
+  ariaLabel?: string;
+  stickTop?: string; // optional override for sticky offset, defaults to StickyAsideCard default
+}
+
+const {
+  cards = [],
+  ariaLabel = "Support and resources",
+  stickTop,
+} = Astro.props as Props;
+
+type NormalizedCard = FAQSidebarCard & {
+  primaryCta?: FAQSidebarCta;
+  secondaryCtas: FAQSidebarCta[];
+};
+
+const normalizedCards: NormalizedCard[] = (cards || []).map((card) => {
+  const ctas = card.ctas ?? [];
+
+  // Only treat CTAs explicitly marked as "primary" as primary.
+  // Ghost-only cards (e.g. "See our work") should not get a strong primary button.
+  const primary = ctas.find((cta) => cta.variant === "primary");
+  const secondary = ctas.filter((cta) => cta !== primary);
+
+  return {
+    ...card,
+    primaryCta: primary,
+    secondaryCtas: secondary,
+  };
+});
+---
+
+{normalizedCards.length > 0 && (
+  <aside class="faq-sidebar stack" aria-label={ariaLabel}>
+    {normalizedCards.map((card) => {
+      const hasList = Array.isArray(card.list) && card.list.length > 0;
+      const hasSecondary = card.secondaryCtas.length > 0;
+      const top = stickTop ?? "6rem";
+
+      return (
+        <div class="faq-sidebar__item">
+          {card.primaryCta ? (
+            <StickyAsideCard
+              title={card.title}
+              sub={card.body}
+              primaryHref={card.primaryCta.href}
+              primaryLabel={card.primaryCta.label}
+              ctaId={card.primaryCta.dataCta}
+              top={top}
+              class="faq-sidebar__saside"
+            />
+          ) : (
+            <StickyAsideCard
+              title={card.title}
+              sub={card.body}
+              top={top}
+              class="faq-sidebar__saside"
+            />
+          )}
+
+          {(hasList || hasSecondary) && (
+            <div class="faq-sidebar__meta">
+              {hasList && (
+                <ul class="faq-sidebar__list">
+                  {card.list!.map((item) => (
+                    <li class="faq-sidebar__list-item">{item}</li>
+                  ))}
+                </ul>
+              )}
+
+              {hasSecondary && (
+                <div class="faq-sidebar__extra-ctas">
+                  {card.secondaryCtas.map((cta) => (
+                    <a
+                      href={cta.href}
+                      role="button"
+                      class={`btn ${
+                        cta.variant === "primary" ? "btn-primary" : "btn-ghost"
+                      } faq-sidebar__btn`}
+                      data-cta={cta.dataCta}
+                    >
+                      {cta.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </aside>
+)}

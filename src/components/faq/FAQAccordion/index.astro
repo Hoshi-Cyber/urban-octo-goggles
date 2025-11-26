@@ -1,26 +1,33 @@
 ---
-// src/components/faq/FAQAccordion/index.astro
-
 import "./FAQAccordion.css";
 
 /**
- * FAQAccordion — mobile-first, token-driven, a11y-first
- * Props:
- *  items: Array<{ q: string; a: string }>
+ * FAQAccordion — premium, a11y-first, single-active accordion
+ *
+ * Suggested props:
+ *  items: Array<{ id: string; question: string; answer: string }>
+ *
+ * Backwards-compatible props (legacy):
+ *  items: Array<{ q?: string; a?: string }>
+ *
+ * Optional:
  *  title?: string
  *  sub?: string
  *  class?: string
- *  schema?: boolean
- *  showHead?: boolean
+ *  schema?: boolean          // emit FAQPage JSON-LD (default: true)
+ *  showHead?: boolean        // render section heading (default: true)
  */
 
-export interface QA {
-  q: string;
-  a: string;
+export interface FAQItemInput {
+  id?: string;
+  question?: string;
+  answer?: string;
+  q?: string;
+  a?: string;
 }
 
 export interface Props {
-  items: QA[];
+  items: FAQItemInput[];
   title?: string;
   sub?: string;
   class?: string;
@@ -37,35 +44,60 @@ const {
   showHead = true,
 } = Astro.props as Props;
 
-// Unique id per instance for safe event scoping
-const listId = `faq-${Math.random().toString(36).slice(2, 8)}`;
+// Unique id per instance for headings / JS root
+const instanceId = `faq-acc-${Math.random().toString(36).slice(2, 8)}`;
 
-// Derive schema-safe items (strip simple tags, drop empty Q/A)
+// Normalise items and drop empties
+type NormalisedItem = {
+  id: string;
+  question: string;
+  answerHtml: string;
+};
+
+const normalisedItems: NormalisedItem[] = (Array.isArray(items) ? items : [])
+  .map((raw, index) => {
+    const question =
+      (typeof raw.question === "string" && raw.question.trim()) ||
+      (typeof raw.q === "string" && raw.q.trim()) ||
+      "";
+    const answerHtml =
+      (typeof raw.answer === "string" && raw.answer.trim()) ||
+      (typeof raw.a === "string" && raw.a.trim()) ||
+      "";
+
+    if (!question || !answerHtml) return null;
+
+    const baseId =
+      typeof raw.id === "string" && raw.id.trim().length > 0
+        ? raw.id.trim()
+        : `${instanceId}-item-${index + 1}`;
+
+    return {
+      id: baseId,
+      question,
+      answerHtml,
+    };
+  })
+  .filter(Boolean) as NormalisedItem[];
+
+// Structured data (FAQPage)
 const schemaEntities =
-  schema && Array.isArray(items)
-    ? items
-        .filter(
-          (it) =>
-            typeof it.q === "string" &&
-            it.q.trim().length > 0 &&
-            typeof it.a === "string" &&
-            it.a.trim().length > 0,
-        )
-        .map((it) => {
-          const plain = it.a
-            .replace(/<[^>]+>/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
+  schema && normalisedItems.length > 0
+    ? normalisedItems.map((it) => {
+        const plain = it.answerHtml
+          .replace(/<[^>]+>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
 
-          return {
-            "@type": "Question",
-            name: it.q.trim(),
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: plain,
-            },
-          };
-        })
+        return {
+          "@type": "Question",
+          name: it.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: plain,
+          },
+        };
+      })
     : [];
 
 const faqSchema =
@@ -79,51 +111,73 @@ const faqSchema =
 ---
 
 <section
-  class={`section ${className}`.trim()}
-  data-section="faq"
-  aria-labelledby={showHead ? `${listId}-title` : undefined}
+  class={`faq-accordion section ${className}`.trim()}
+  data-component="faq-accordion"
+  aria-labelledby={showHead ? `${instanceId}-title` : undefined}
 >
   <div class="container">
     {showHead && (
-      <header class="faq__head">
-        <h2 id={`${listId}-title`} class="faq__title h2">
+      <header class="faq-accordion__head section-head stack">
+        <h2 id={`${instanceId}-title`} class="section-title">
           {title}
         </h2>
-        {sub && <p class="faq__sub text-muted">{sub}</p>}
+        {sub && <p class="section-sub text-muted">{sub}</p>}
       </header>
     )}
 
-    <div class="faq__list" role="list" id={listId}>
-      {items.map((it, idx) => {
-        const answerId = `${listId}-a-${idx}`;
+    <div
+      class="faq-accordion__list"
+      role="list"
+      data-faq-instance={instanceId}
+    >
+      {normalisedItems.map((item) => {
+        const summaryId = `${item.id}-summary`;
+        const panelId = `${item.id}-panel`;
 
         return (
-          <details class="faq__item" role="listitem">
+          <details
+            class="faq-accordion__item card"
+            role="listitem"
+            data-faq-item-id={item.id}
+          >
             <summary
-              class="faq__summary"
-              aria-controls={answerId}
+              id={summaryId}
+              class="faq-accordion__summary"
+              aria-controls={panelId}
               aria-expanded="false"
             >
-              <span class="faq__q">{it.q}</span>
-              <svg
-                class="faq__chev"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
+              <span class="faq-accordion__q">
+                {item.question}
+              </span>
+              <span
+                class="faq-accordion__icon"
                 aria-hidden="true"
-                focusable="false"
               >
-                <path
-                  d="M6 9l6 6 6-6"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
+                <svg
+                  class="faq-accordion__chevron"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  focusable="false"
+                >
+                  <path
+                    d="M6 9l6 6 6-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
             </summary>
-            <div id={answerId} class="faq__a">
-              <p set:html={it.a}></p>
+            <div
+              id={panelId}
+              class="faq-accordion__panel prose"
+              role="region"
+              aria-labelledby={summaryId}
+            >
+              <div set:html={item.answerHtml}></div>
             </div>
           </details>
         );
@@ -137,90 +191,105 @@ const faqSchema =
     </script>
   )}
 
-  {items.length > 0 && (
+  {normalisedItems.length > 0 && (
     <script>
       {`
         (() => {
-          const rootId = ${JSON.stringify(listId)};
-          const root = document.getElementById(/* astro:sanitize */ rootId);
-          if (!root) return;
+          const ROOT_SELECTOR = '[data-faq-instance="${instanceId}"]';
 
-          const items = Array.from(
-            root.querySelectorAll('details.faq__item')
-          );
-          if (!items.length) return;
+          const init = () => {
+            const root = document.querySelector(ROOT_SELECTOR);
+            if (!root) return;
 
-          const summaries = items.map((d) =>
-            d.querySelector('summary')
-          );
+            const items = Array.from(
+              root.querySelectorAll('details.faq-accordion__item')
+            );
+            if (!items.length) return;
 
-          const syncExpanded = () => {
-            items.forEach((d, index) => {
-              const summary = summaries[index];
-              if (!summary) return;
-              summary.setAttribute('aria-expanded', String(d.open));
-            });
-          };
+            const summaries = items.map((details) =>
+              details.querySelector('.faq-accordion__summary')
+            );
 
-          const openExclusive = (target) => {
-            items.forEach((d) => {
-              if (d === target) {
-                if (!d.open) {
-                  d.setAttribute('open', '');
+            const syncExpanded = () => {
+              items.forEach((details, index) => {
+                const summary = summaries[index];
+                if (!summary) return;
+                summary.setAttribute(
+                  'aria-expanded',
+                  String(details.hasAttribute('open'))
+                );
+              });
+            };
+
+            const openExclusive = (target) => {
+              items.forEach((details) => {
+                if (details === target) {
+                  details.setAttribute('open', '');
+                } else if (details.hasAttribute('open')) {
+                  details.removeAttribute('open');
                 }
-              } else if (d.open) {
-                d.removeAttribute('open');
-              }
-            });
-            syncExpanded();
-          };
+              });
+              syncExpanded();
+            };
 
-          const handleToggleIntent = (detailsEl) => {
-            if (!detailsEl) return;
-            const isOpening = !detailsEl.open;
-            if (isOpening) {
-              openExclusive(detailsEl);
+            const handleToggleIntent = (details) => {
+              if (!details) return;
+              const willOpen = !details.hasAttribute('open');
+
+              if (willOpen) {
+                openExclusive(details);
+              } else {
+                details.removeAttribute('open');
+                syncExpanded();
+              }
+            };
+
+            // Click interaction
+            root.addEventListener('click', (event) => {
+              const target = event.target;
+              if (!target || !(target instanceof Element)) return;
+
+              const summary = target.closest('.faq-accordion__summary');
+              if (!summary || !root.contains(summary)) return;
+
+              event.preventDefault();
+              const details = summary.closest('details.faq-accordion__item');
+              if (!details) return;
+
+              handleToggleIntent(details);
+            });
+
+            // Keyboard interaction: Enter / Space on summary
+            root.addEventListener('keydown', (event) => {
+              const target = event.target;
+              if (!target || !(target instanceof Element)) return;
+
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+
+              const summary = target.closest('.faq-accordion__summary');
+              if (!summary || !root.contains(summary)) return;
+
+              event.preventDefault();
+              const details = summary.closest('details.faq-accordion__item');
+              if (!details) return;
+
+              handleToggleIntent(details);
+            });
+
+            // Ensure only one item is open if any were pre-opened
+            const initiallyOpen = items.filter((d) => d.hasAttribute('open'));
+            if (initiallyOpen.length > 1) {
+              openExclusive(initiallyOpen[0]);
             } else {
-              // Closing currently open item – end with 0 open.
-              detailsEl.removeAttribute('open');
               syncExpanded();
             }
           };
 
-          // Click interaction
-          root.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!(target instanceof Element)) return;
-
-            const summary = target.closest('summary.faq__summary');
-            if (!summary || !root.contains(summary)) return;
-
-            event.preventDefault();
-            const detailsEl = summary.parentElement;
-            if (!detailsEl || detailsEl.tagName !== 'DETAILS') return;
-
-            handleToggleIntent(detailsEl);
-          });
-
-          // Keyboard interaction (Enter / Space on summary)
-          root.addEventListener('keydown', (event) => {
-            const target = event.target;
-            if (!(target instanceof Element)) return;
-
-            if (event.key !== 'Enter' && event.key !== ' ') return;
-
-            const summary = target.closest('summary.faq__summary');
-            if (!summary || !root.contains(summary)) return;
-
-            event.preventDefault();
-            const detailsEl = summary.parentElement;
-            if (!detailsEl || detailsEl.tagName !== 'DETAILS') return;
-
-            handleToggleIntent(detailsEl);
-          });
-
-          // Initial state sync (supports server-rendered [open])
-          syncExpanded();
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init, { once: true });
+          } else {
+            init();
+          }
         })();
       `}
     </script>

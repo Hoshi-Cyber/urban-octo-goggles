@@ -1,0 +1,105 @@
+---
+// src/components/sections/about/AboutNextStepsSection/index.astro
+import "./AboutNextStepsSection.css";
+import LeadCaptureBanner from "../../../cta/LeadCaptureBanner/index.astro";
+
+export interface NextStepLink {
+  key: "pricing" | "services" | "samples" | "contact" | string;
+  label: string;
+  description: string;
+  href: string;
+}
+
+export interface AboutNextStepsSectionProps {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  links: NextStepLink[];
+  showLeadCapture?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  eyebrow,
+  title,
+  intro,
+  links,
+  showLeadCapture = false,
+  headingLevel = "h2",
+} = Astro.props as AboutNextStepsSectionProps;
+
+type HeadingTag = "h2" | "h3";
+const Heading = headingLevel as HeadingTag;
+
+const sectionId =
+  "about-next-steps-" +
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+---
+
+<section
+  class="about-next-steps"
+  aria-labelledby={sectionId}
+  data-section="about-next-steps"
+>
+  <div class="container about-next-steps__inner stack">
+    <header class="about-next-steps__header section-head">
+      {eyebrow && (
+        <p class="about-next-steps__eyebrow section-sub">
+          {eyebrow}
+        </p>
+      )}
+
+      <Heading id={sectionId} class="section-title">
+        {title}
+      </Heading>
+
+      {intro && (
+        <p class="about-next-steps__intro section-sub">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    <div class="about-next-steps__content stack">
+      {links && links.length > 0 && (
+        <nav
+          class="about-next-steps__nav"
+          aria-label="Next steps after reading about this page"
+        >
+          <ul class="about-next-steps__links">
+            {links.map((link) => (
+              <li class="about-next-steps__links-item">
+                <a
+                  href={link.href}
+                  class="about-next-steps__link-card"
+                  data-next-step-key={link.key}
+                >
+                  <span class="about-next-steps__link-label">
+                    {link.label}
+                  </span>
+                  <span class="about-next-steps__link-description">
+                    {link.description}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      {showLeadCapture && (
+        <div class="about-next-steps__cta card">
+          <LeadCaptureBanner
+            title="Ready to move your CV forward?"
+            sub="Share your context and target roles and we’ll reply with clear, practical next steps – no pushy sales scripts."
+            primaryHref="/contact/"
+            primaryLabel="Talk to the team"
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</section>

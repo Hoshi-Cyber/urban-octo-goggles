@@ -1,0 +1,82 @@
+---
+import Button from "@/components/cta/Button/index.astro";
+import "./ServiceDetailSection.css";
+
+export interface Props {
+  id: string;
+  title: string;
+  intro?: string;
+  whatYouGet?: string[];
+  bestFor?: string[];
+  href: string;
+  ctaLabel: string;
+  ctaVariant?: "primary" | "ghost";
+}
+
+const {
+  id,
+  title,
+  intro,
+  whatYouGet = [],
+  bestFor = [],
+  href,
+  ctaLabel,
+  ctaVariant = "primary",
+} = Astro.props as Props;
+---
+
+<section
+  class="section stack service-detail"
+  id={id}
+  aria-labelledby={`${id}-title`}
+>
+  <div class="container">
+    <!-- Component header: H2 using global H2 styling -->
+    <header class="service-detail__head stack">
+      <h2
+        id={`${id}-title`}
+        class="section-title fs-h2 lh-tight text-left"
+      >
+        {title}
+      </h2>
+
+      {intro && (
+        <p class="section-intro fs-base text-left">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    <!-- Body: 1 col mobile, 2 cols md+ -->
+    <div class="service-detail__body">
+      <div class="service-detail__column">
+        <!-- Column header: H3 using global H3 styling -->
+        <h3 class="service-detail__subheading h3">
+          What you get
+        </h3>
+        <ul class="service-detail__list">
+          {whatYouGet.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <div class="service-detail__column">
+        <!-- Column header: H3 using global H3 styling -->
+        <h3 class="service-detail__subheading h3">
+          Best for
+        </h3>
+        <ul class="service-detail__list">
+          {bestFor.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <div class="service-detail__cta mt-4">
+          <Button
+            href={href}
+            label={ctaLabel}
+            variant={ctaVariant}
+            size="md"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

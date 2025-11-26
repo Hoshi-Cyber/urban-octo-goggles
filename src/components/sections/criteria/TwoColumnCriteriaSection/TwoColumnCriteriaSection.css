@@ -1,0 +1,96 @@
+/* Two-column criteria / fit section
+   Shares layout and visual chrome with ServiceDetailSection.
+*/
+
+.criteria-section {
+  padding-block: var(--space-8);
+  margin-block: var(--space-8);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 97%,
+    var(--color-text) 3%
+  );
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-text) 4%, transparent);
+}
+
+/* Header: H2 + intro stacked, full-width inside container */
+.criteria-section__head {
+  max-width: 100%;
+}
+
+.criteria-section__head .section-intro {
+  margin-top: 0;
+  max-width: 100%;
+}
+
+/* Body: 1 column on mobile → 2 columns on md+ */
+.criteria-section__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .criteria-section__body {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Columns styled as balanced cards with top accent line */
+.criteria-section__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg, 0.75rem);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  box-shadow: var(
+    --shadow-xs,
+    0 6px 18px rgba(15, 23, 42, 0.04)
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top accent bar, aligned with other premium cards */
+.criteria-section__column::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-accent) 80%, var(--color-primary))
+  );
+  opacity: 0.9;
+}
+
+/* Subheadings use global H3 scale via .h3 utility */
+.criteria-section__subheading {
+  margin: 0;
+}
+
+/* Lists: compact, readable bullets */
+.criteria-section__list {
+  list-style: disc;
+  padding-left: 1rem;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--color-muted-strong, var(--color-text));
+}
+
+.criteria-section__list li {
+  max-width: 60ch;
+}

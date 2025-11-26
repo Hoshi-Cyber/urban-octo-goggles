@@ -1,0 +1,87 @@
+---
+import "./BrandPillarsStrip.css";
+
+export interface BrandPillar {
+  label: string;
+  description: string;
+}
+
+export interface Props {
+  /**
+   * Optional section heading. If omitted, a generic "Brand principles" title is used.
+   */
+  title?: string;
+  /**
+   * Optional lead-in text to explain the strip in context.
+   */
+  intro?: string;
+  /**
+   * Brand pillars to render.
+   */
+  pillars: BrandPillar[];
+  /**
+   * Controls heading level for the section title.
+   * Defaults to "h2"; set to "h3" when nested under an existing h2.
+   */
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  title,
+  intro,
+  pillars = [],
+  headingLevel = "h2",
+} = Astro.props as Props;
+
+const hasPillars = Array.isArray(pillars) && pillars.length > 0;
+const resolvedTitle = title ?? "Brand principles";
+const hasHeader = Boolean(resolvedTitle || intro);
+
+// Unique id per instance for aria-labelledby
+const instanceId = `brand-pillars-${Math.random().toString(36).slice(2, 8)}`;
+const headingId = hasHeader ? `${instanceId}-title` : undefined;
+
+// Dynamic heading element
+const Heading = headingLevel === "h3" ? "h3" : "h2";
+---
+
+<section
+  class="brand-pillars section"
+  aria-labelledby={headingId}
+>
+  <div class="container stack brand-pillars__inner">
+    {hasHeader && (
+      <header class="section-head brand-pillars__head stack">
+        <Heading id={headingId} class="section-title">
+          {resolvedTitle}
+        </Heading>
+        {intro && (
+          <p class="section-sub text-muted brand-pillars__intro">
+            {intro}
+          </p>
+        )}
+      </header>
+    )}
+
+    {hasPillars && (
+      <div
+        class="brand-pillars__grid"
+        role="list"
+      >
+        {pillars.map((pillar) => (
+          <article
+            class="card brand-pillars__item"
+            role="listitem"
+          >
+            <h3 class="brand-pillars__label h3">
+              {pillar.label}
+            </h3>
+            <p class="brand-pillars__description">
+              {pillar.description}
+            </p>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

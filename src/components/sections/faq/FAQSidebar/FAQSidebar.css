@@ -1,0 +1,71 @@
+/* FAQSidebar – stacked StickyAsideCard wrapper for FAQ/help pages
+   Uses tokenized spacing, colors, and typography only. */
+
+/* Sidebar wrapper – give breathing room from SEO text block above */
+.faq-sidebar {
+  /* .stack from globals already handles vertical rhythm */
+  margin-top: var(--space-5);
+}
+
+/* Each logical card + its meta content */
+.faq-sidebar__item {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Tuning for StickyAsideCard when used in FAQ sidebar */
+.faq-sidebar__saside {
+  /* Moderate padding, calm appearance (container bg handled in StickyAsideCard) */
+  padding: var(--space-3);
+}
+
+/* Optional meta content (bullets + secondary CTAs) under each StickyAsideCard */
+.faq-sidebar__meta {
+  padding-inline: var(--space-1);
+}
+
+/* Bullet list for extra context */
+.faq-sidebar__list {
+  margin: 0;
+  padding-left: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  display: grid;
+  gap: var(--space-1);
+  list-style: disc outside; /* force bullets even if global reset removes them */
+}
+
+.faq-sidebar__list-item {
+  margin: 0;
+}
+
+/* Secondary CTAs below each card */
+.faq-sidebar__extra-ctas {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+/* Sidebar buttons – intrinsic width, compact, non–full-width */
+.faq-sidebar__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: var(--space-3);
+  width: auto;
+  min-width: 0;
+  text-align: center;
+}
+
+/* From tablet/desktop upwards, subtly right-align CTA groups */
+@media (min-width: 48rem) {
+  .faq-sidebar__extra-ctas {
+    justify-content: flex-end;
+  }
+}
+
+/* No special breakpoint rules needed for stickiness;
+   StickyAsideCard handles position: sticky at lg+. */

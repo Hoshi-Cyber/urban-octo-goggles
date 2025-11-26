@@ -1,0 +1,170 @@
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+@import "../../../../styles/utilities.css";
+@import "../../../../styles/breakpoints.css";
+@import "../../../../styles/sections.css";
+
+/* Root section – subtle premium surface */
+.testimonials-case-studies-section {
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 94%,
+    var(--color-primary-soft, var(--color-primary, #2563eb)) 6%
+  );
+  color: var(--color-text);
+}
+
+/* Slightly tighter stack between header and grid */
+.testimonials-case-studies-section__inner {
+  gap: var(--space-5, 1.25rem);
+}
+
+/* Header: force full-width, stacked, left-aligned title + intro */
+.testimonials-case-studies-section .testimonials-case-studies-section__head {
+  /* override global .section-head flex row behaviour */
+  display: block;
+  text-align: left;
+  width: 100%;
+}
+
+.testimonials-case-studies-section__title {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  /* h2 typography comes from .section-title / typography.css */
+}
+
+.testimonials-case-studies-section__intro {
+  margin: 0;
+  margin-top: var(--space-2, 0.5rem);
+  width: 100%;
+  text-align: left;
+  font-size: var(--fs-sm, 0.95rem);
+  color: var(--color-muted, #6b7280);
+}
+
+/* Grid – slightly reduced top offset for a tighter layout */
+.testimonials-case-studies-section__grid {
+  margin-top: var(--space-2, 0.5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5, 1.25rem);
+}
+
+/* Card (preserved styling) */
+.testimonials-case-studies-section__card {
+  position: relative;
+  padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem)
+    var(--space-4, 1rem);
+  border-radius: var(--radius-lg, 1rem);
+  border: 1px solid
+    var(--color-border-soft, var(--color-border-1));
+  background: var(--color-surface, #ffffff);
+  box-shadow: var(--shadow-md, 0 18px 45px rgba(15, 23, 42, 0.06));
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+  overflow: hidden;
+}
+
+/* Premium top accent bar (unchanged) */
+.testimonials-case-studies-section__card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-soft, var(--color-primary, #2563eb)),
+    color-mix(
+      in oklab,
+      var(--color-primary-strong, var(--color-primary, #2563eb)) 80%,
+      var(--color-accent, #0ea5e9)
+    )
+  );
+}
+
+/* Case label */
+.testimonials-case-studies-section__case-label {
+  margin: 0;
+  font-size: var(--fs-xs, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted, #6b7280);
+}
+
+/* Card body layout */
+.testimonials-case-studies-section__body {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+/* Rows */
+.testimonials-case-studies-section__row {
+  display: grid;
+  gap: var(--space-1, 0.25rem);
+}
+
+/* Distinct, bold section labels */
+.testimonials-case-studies-section__subheading {
+  margin: 0;
+  font-size: var(--fs-xs, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-strong, #0f172a);
+}
+
+/* Content text */
+.testimonials-case-studies-section__text {
+  margin: 0;
+  font-size: var(--fs-sm, 0.95rem);
+  line-height: 1.6;
+  color: var(--color-text, #111827);
+}
+
+/* Outcome row: visually elevated, clean + premium */
+.testimonials-case-studies-section__row--outcome {
+  margin-top: var(--space-1, 0.25rem);
+  padding: var(--space-3, 0.75rem);
+  border-radius: var(--radius-md, 0.75rem);
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #2563eb)) 10%,
+    var(--color-surface, #ffffff) 90%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #2563eb)) 40%,
+      transparent 60%
+    );
+}
+
+.testimonials-case-studies-section__text--outcome {
+  font-weight: 500;
+}
+
+/* Breakpoints */
+@media (min-width: 640px) {
+  .testimonials-case-studies-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonials-case-studies-section__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-case-studies-section *,
+  .testimonials-case-studies-section *::before,
+  .testimonials-case-studies-section *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

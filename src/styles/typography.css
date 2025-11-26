@@ -1,18 +1,21 @@
-/* src/styles/base/typography.css */
-/* Semantic typography scale – mobile-first, token-driven */
-
-/* Headings
-   - Use design tokens for font-size
-   - Balanced wrapping for multi-line headings
-   - Tight line-height for hierarchy, looser for lower levels
+/* src/styles/typography.css */
+/* Semantic typography scale – mobile-first, token-driven
+   Updated for CVWriting.co.ke – Brand Style Guide v1.0
 */
+
+/* ==========================================================================
+   Headings
+   - Use design tokens for font-size
+   - Deep Green for hierarchy (primary brand colour)
+   - Balanced wrapping for multi-line headings
+   ========================================================================== */
 
 h1,
 .h1 {
-  font-size: var(--fs-3xl);
+  font-size: var(--fs-3xl);       /* Page title / primary heading */
   line-height: 1.2;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--color-primary);
   margin-top: 0;
   margin-bottom: var(--space-4);
   text-wrap: balance;
@@ -21,10 +24,10 @@ h1,
 
 h2,
 .h2 {
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-2xl);       /* Section heading */
   line-height: 1.3;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-primary);
   margin-top: var(--space-6);
   margin-bottom: var(--space-4);
   text-wrap: balance;
@@ -33,27 +36,82 @@ h2,
 
 h3,
 .h3 {
-  font-size: var(--fs-xl);
+  font-size: var(--fs-xl);        /* Subsection heading */
   line-height: 1.4;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-primary);
   margin-top: var(--space-6);
   margin-bottom: var(--space-3);
   text-wrap: balance;
 }
 
-/* Body copy */
+h4,
+.h4 {
+  font-size: var(--fs-lg);        /* Supporting heading / card titles */
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  text-wrap: balance;
+}
+
+/* Semantic heading helpers */
+
+.heading-display {
+  /* Hero / marketing headline */
+  font-size: var(--fs-4xl);
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 0;
+  margin-bottom: var(--space-5);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+.heading-page-title {
+  /* Page-level title, can be used on top-level templates */
+  font-size: var(--fs-3xl);
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 0;
+  margin-bottom: var(--space-5);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+.heading-section-title {
+  /* Section headings for major blocks */
+  font-size: var(--fs-2xl);
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Body copy
+   ========================================================================== */
 
 p {
   font-size: var(--fs-base);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-text); /* Neutral 600 – primary body colour */
   margin-top: 0;
   margin-bottom: var(--space-4);
   max-width: 70ch;
 }
 
-/* Lists */
+/* Prose / long-form modifiers can layer on top via prose.css */
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
 
 ul,
 ol {
@@ -67,23 +125,55 @@ li {
   margin-bottom: var(--space-2);
 }
 
-/* Emphasis */
+/* ==========================================================================
+   Emphasis
+   ========================================================================== */
 
 strong {
   font-weight: 600;
   color: var(--color-text);
 }
 
-/* Desktop refinements – typography stays token-based, only spacing tweaks */
+/* ==========================================================================
+   Labels & microcopy
+   ========================================================================== */
+
+/* Medium label – field labels, small UI headings */
+.label-md {
+  font-size: var(--fs-sm); /* ~14–15px */
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--color-neutral-600);
+}
+
+/* Small label – tags, chips, meta info */
+.label-sm {
+  font-size: var(--fs-xs); /* ~13px */
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--color-neutral-600);
+}
+
+/* Optional helper for all-caps labels */
+.label-sm.label-caps {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ==========================================================================
+   Desktop refinements – spacing only (sizes stay token-based)
+   ========================================================================== */
 
 @media (min-width: 1024px) {
   h1,
-  .h1 {
+  .h1,
+  .heading-page-title {
     margin-bottom: var(--space-5);
   }
 
   h2,
-  .h2 {
+  .h2,
+  .heading-section-title {
     margin-top: var(--space-7);
   }
 

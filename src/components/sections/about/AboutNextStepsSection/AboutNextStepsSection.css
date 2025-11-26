@@ -1,0 +1,239 @@
+/* src/components/sections/about/AboutNextStepsSection/AboutNextStepsSection.css */
+
+.about-next-steps {
+  padding-block: var(--space-8);
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(in oklab, var(--color-primary) 8%, #ffffff),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(in oklab, var(--color-accent) 7%, #ffffff),
+      transparent 55%
+    ),
+    var(--color-light-alt);
+}
+
+@media (min-width: 768px) {
+  .about-next-steps {
+    padding-block: var(--space-10);
+  }
+}
+
+.about-next-steps__inner {
+  align-items: flex-start;
+}
+
+/* Header – left aligned, intro full-width */
+
+.about-next-steps__header {
+  width: 100%;
+  max-width: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+/* Override global section-head grid so title + intro stay stacked */
+.about-next-steps .section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-next-steps__eyebrow {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0.9;
+}
+
+.about-next-steps__intro {
+  margin: 0;
+  color: var(--color-muted);
+  max-width: none; /* intro spans full section width */
+}
+
+/* Content stack */
+
+.about-next-steps__content {
+  width: 100%;
+}
+
+/* Next steps grid */
+
+.about-next-steps__nav {
+  width: 100%;
+}
+
+.about-next-steps__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr); /* 1 column mobile */
+}
+
+/* 2 columns on small / medium viewports */
+@media (min-width: 640px) {
+  .about-next-steps__links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+/* 4 columns on desktop */
+@media (min-width: 1024px) {
+  .about-next-steps__links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+.about-next-steps__links-item {
+  min-width: 0;
+}
+
+/* Card styling */
+
+.about-next-steps__link-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-surface) 85%, #ffffff),
+    color-mix(in oklab, var(--color-light) 85%, #ffffff)
+  );
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  text-decoration: none;
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+  transition:
+    box-shadow 0.18s ease-out,
+    transform 0.18s ease-out,
+    border-color 0.18s ease-out,
+    background-color 0.18s ease-out;
+}
+
+.about-next-steps__link-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary))
+  );
+}
+
+/* Optional subtle tint per key for extra contrast */
+.about-next-steps__link-card[data-next-step-key="pricing"] {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-light) 90%, #ffffff),
+    color-mix(in oklab, var(--color-primary) 6%, var(--color-surface))
+  );
+}
+
+.about-next-steps__link-card[data-next-step-key="services"] {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-surface) 90%, #ffffff),
+    color-mix(in oklab, var(--color-accent) 6%, var(--color-surface))
+  );
+}
+
+.about-next-steps__link-card[data-next-step-key="samples"] {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-surface) 92%, #ffffff),
+    color-mix(in oklab, var(--color-primary) 4%, var(--color-light))
+  );
+}
+
+.about-next-steps__link-card[data-next-step-key="contact"] {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-light) 92%, #ffffff),
+    color-mix(in oklab, var(--color-accent) 4%, var(--color-light))
+  );
+}
+
+.about-next-steps__link-label {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.about-next-steps__link-description {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Hover + focus states */
+
+.about-next-steps__link-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--color-primary) 40%, #e5e7eb);
+}
+
+.about-next-steps__link-card:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline-offset: 3px;
+}
+
+/* LeadCapture CTA – compact horizontal card */
+
+.about-next-steps__cta {
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: linear-gradient(
+    120deg,
+    color-mix(in oklab, var(--color-primary) 22%, #ffffff),
+    color-mix(in oklab, var(--color-primary) 16%, var(--color-accent))
+  );
+  color: #ffffff;
+  border-radius: var(--radius-xl);
+  border: none; /* remove outline/border from the card wrapper */
+}
+
+/* Ensure inner LeadCaptureBanner respects horizontal layout */
+.about-next-steps__cta > * {
+  width: 100%;
+}
+
+@media (max-width: 639px) {
+  .about-next-steps__cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-next-steps__link-card {
+    transition: none;
+    transform: none;
+  }
+}

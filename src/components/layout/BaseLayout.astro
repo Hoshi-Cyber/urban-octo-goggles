@@ -7,7 +7,7 @@
 
 import MainNav from "./Nav/index.astro";
 import Footer from "./Footer/index.astro";
-import CookieBanner from "../CookieBanner/index.astro";
+// CookieBanner intentionally not imported while banner is disabled
 import siteConfig from "@/site.config";
 
 // Global CSS emitted URL (fixes CSS 404 from hardcoded public path)
@@ -244,12 +244,15 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     </main>
 
     <Footer />
-    <CookieBanner />
+    {/*
+      CookieBanner temporarily disabled during local development.
+      Re-enable by importing CookieBanner above and inserting:
+      <CookieBanner />
+    */}
 
-    <!-- Consent-mode analytics bootstrap (bundled; no /src/* HTTP fetch) -->
+    <!-- Analytics bootstrap only; cookie-banner wiring disabled for now -->
     <script type="module">
       import "@/lib/analytics.ts";
-      import "@/scripts/consent-banner.ts"; // side-effects only
     </script>
   </body>
 </html>

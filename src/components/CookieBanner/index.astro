@@ -1,38 +1,187 @@
-// File: src/components/CookieBanner/index.astro
-/** CookieBanner — CLS-safe consent banner; no per-component JS import.
- *  FP-187 5.d: Consent script is bundled once at the layout; do not import here.
- */
+---
 import "./CookieBanner.css";
+
+type ConsentStatus = "accepted" | "declined" | "pending";
+
+interface ConsentConfig {
+  storageKey: string;
+  version: number;
+}
+
+/**
+ * Versioned consent config – bump version if the consent model changes
+ * and you want to re-ask users.
+ */
+const consentConfig: ConsentConfig = {
+  storageKey: "cvw_cookie_consent_v1",
+  version: 1,
+};
 ---
 
-<!-- Reserve spacer: sits in normal flow so fixed banner doesn’t cause CLS -->
-<div id="cookie-banner-reserve" class="cb__reserve" aria-hidden="true"></div>
-
-<!-- Bottom-fixed banner -->
-<div
+<section
   id="cookie-banner"
-  class="cb"
+  class="cookie-banner"
   role="dialog"
   aria-modal="false"
+  aria-label="Cookie preferences"
   aria-live="polite"
-  aria-label="Cookie consent"
-  hidden
-  data-cb
+  data-cookie-banner
 >
-  <div class="cb__inner container">
-    <div class="cb__content">
-      <h2 class="cb__title">We use cookies</h2>
-      <p class="cb__text">
-        We use analytics cookies to measure what works and improve the site. You can accept or keep analytics off.
-        Change this any time from <a class="cb__link" href="/privacy">Privacy</a>.
+  <div class="cookie-banner__inner card stack" data-cookie-banner-card>
+    <div class="cookie-banner__body">
+      <h2 class="cookie-banner__title">Privacy & cookies</h2>
+      <p class="cookie-banner__text text-muted">
+        We use essential cookies to run this site and optional analytics cookies to improve it.
+        You can accept or decline analytics at any time. Your choice will be remembered on this
+        device.
+      </p>
+      <p class="cookie-banner__meta text-muted">
+        For full details, see our
+        {' '}
+        <a href="/privacy-policy" class="cookie-banner__link">Privacy Policy</a>.
       </p>
     </div>
 
-    <div class="cb__actions">
-      <button class="btn btn-primary" id="cb-accept" data-cta="cookies-accept">Accept analytics</button>
-      <button class="btn" id="cb-decline" data-cta="cookies-decline">Decline</button>
+    <div class="cookie-banner__actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-cookie-accept
+        data-cta="cookies-accept"
+      >
+        Accept analytics
+      </button>
+      <button
+        type="button"
+        class="btn"
+        data-cookie-decline
+        data-cta="cookies-decline"
+      >
+        Decline
+      </button>
     </div>
-  </div>
-</div>
 
-<!-- FP-187 5.d: No script tag here. Consent logic is loaded globally by the layout. -->
+    <p id="cookie-banner-status" class="sr-only" aria-hidden="true">
+      Cookie preferences banner. Use the buttons to accept or decline analytics cookies.
+    </p>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var STORAGE_KEY = {{ JSON.stringify(consentConfig.storageKey) }};
+    var STATUS_ACCEPTED = "accepted";
+    var STATUS_DECLINED = "declined";
+    var STATUS_PENDING = "pending";
+
+    function safeStorage() {
+      try {
+        if (typeof window === "undefined") return null;
+        if (!("localStorage" in window)) return null;
+        return window.localStorage;
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    function getStatus() {
+      var store = safeStorage();
+      if (!store) return STATUS_PENDING;
+      try {
+        var raw = store.getItem(STORAGE_KEY);
+        if (!raw) return STATUS_PENDING;
+        var parsed = JSON.parse(raw);
+        if (
+          parsed &&
+          (parsed.status === STATUS_ACCEPTED ||
+            parsed.status === STATUS_DECLINED)
+        ) {
+          return parsed.status;
+        }
+      } catch (_e) {}
+      return STATUS_PENDING;
+    }
+
+    function setStatus(status) {
+      var store = safeStorage();
+      if (!store) return;
+      try {
+        store.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            status: status,
+            updatedAt: new Date().toISOString(),
+          })
+        );
+      } catch (_e) {}
+    }
+
+    function getBanner() {
+      if (typeof document === "undefined") return null;
+      return document.querySelector("[data-cookie-banner]");
+    }
+
+    function showBanner() {
+      var banner = getBanner();
+      if (!banner) return;
+      banner.removeAttribute("hidden");
+      banner.classList.add("cookie-banner--visible");
+    }
+
+    function hideBanner() {
+      var banner = getBanner();
+      if (!banner) return;
+      banner.setAttribute("hidden", "true");
+      banner.classList.remove("cookie-banner--visible");
+    }
+
+    function init() {
+      var banner = getBanner();
+      if (!banner) return;
+
+      // Default: visible when JS is disabled.
+      // When JS is enabled, decide based on stored status.
+      banner.setAttribute("hidden", "true");
+
+      var status = getStatus();
+      if (status === STATUS_PENDING) {
+        showBanner();
+      }
+
+      var acceptBtn = banner.querySelector("[data-cookie-accept]");
+      var declineBtn = banner.querySelector("[data-cookie-decline]");
+
+      if (acceptBtn) {
+        acceptBtn.addEventListener("click", function () {
+          setStatus(STATUS_ACCEPTED);
+          hideBanner();
+        });
+      }
+
+      if (declineBtn) {
+        declineBtn.addEventListener("click", function () {
+          setStatus(STATUS_DECLINED);
+          hideBanner();
+        });
+      }
+
+      // Hook for "Manage Cookies" in footer (or elsewhere).
+      window.openCookieBanner = function () {
+        showBanner();
+      };
+    }
+
+    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      // Astro usually injects this near the end of <body> anyway,
+      // but we guard for safety.
+      if (
+        document.readyState === "interactive" ||
+        document.readyState === "complete"
+      ) {
+        init();
+      } else {
+        document.addEventListener("DOMContentLoaded", init, { once: true });
+      }
+    }
+  })();
+</script>

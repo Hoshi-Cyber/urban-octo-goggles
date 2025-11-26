@@ -1,0 +1,73 @@
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+@import "../../../../styles/utilities.css";
+@import "../../../../styles/breakpoints.css";
+@import "../../../../styles/sections.css";
+
+/* Root wrapper: premium, lightly contrasted surface for this FAQ block */
+.testimonials-faq-section {
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 94%,
+    var(--color-primary-soft, var(--color-primary, #2563eb)) 6%
+  );
+  color: var(--color-text);
+  padding-block: var(--space-8, 2rem);
+}
+
+/* Tighten FAQ accordion spacing when used in testimonials context */
+.testimonials-faq-section .faq-accordion {
+  padding-block: 0;
+}
+
+/* Testimonials-specific header refinement:
+   - Title left-aligned, full width
+   - Intro (sub) stacked immediately below, full width
+   - Maintain .section-title typography from typography.css */
+.testimonials-faq-section .faq-accordion--testimonials .faq-accordion__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--space-2, 0.5rem);
+  width: 100%;
+}
+
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__title {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  /* Typography comes from .section-title */
+}
+
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__sub {
+  margin: 0;
+  margin-top: var(--space-2, 0.5rem);
+  width: 100%;
+  text-align: left;
+  font-size: var(--fs-sm, 0.95rem);
+  color: var(--color-muted, #6b7280);
+}
+
+/* Slightly tighten the gap between header and list for a compact, premium layout */
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__list {
+  margin-top: var(--space-4, 1rem);
+}
+
+/* Ensure the two-column layout from FAQAccordion is preserved.
+   We DO NOT override .faq-accordion__list grid behavior here:
+   it already handles 1 column on mobile and 2 columns from 768px+. */
+
+/* Reduced motion guard (defensive, though core transitions live in FAQAccordion.css) */
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-faq-section * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

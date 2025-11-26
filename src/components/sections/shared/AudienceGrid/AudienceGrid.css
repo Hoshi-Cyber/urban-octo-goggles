@@ -1,0 +1,206 @@
+/* AudienceGrid – reusable "Who we serve" grid
+   - Uses global tokens & utilities only
+   - Layout: 1-col → 2-col (sm/md) → 4-col (lg+)
+   - Premium, compact, high-contrast treatment
+*/
+
+.audience-grid {
+  padding-block: var(--space-6);
+  background: color-mix(
+    in oklab,
+    var(--color-background) 90%,
+    var(--color-primary) 10%
+  );
+}
+
+@media (min-width: 1024px) {
+  .audience-grid {
+    padding-block: var(--space-8);
+  }
+}
+
+.audience-grid__inner {
+  align-items: stretch;
+}
+
+/* Header – left-aligned, stacked */
+
+.audience-grid__head {
+  margin-bottom: var(--space-5);
+  text-align: left;
+  display: block;
+}
+
+.audience-grid__head .section-title {
+  margin: 0 0 var(--space-2);
+}
+
+/* Intro should span the full section width */
+.audience-grid__intro {
+  margin: 0;
+  max-width: none;
+}
+
+/* Grid layout
+   - 1 column on mobile
+   - 2 columns on small/medium
+   - 4 columns on large+
+*/
+
+.audience-grid__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .audience-grid__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .audience-grid__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Cards */
+
+.audience-grid__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-surface) 92%, var(--color-primary) 8%),
+      var(--color-surface)
+    );
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  border: 1px solid
+    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+  overflow: hidden;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out,
+    background 150ms ease-out;
+}
+
+/* Accent strip */
+
+.audience-grid__card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
+}
+
+/* Hover / focus within (no JS) */
+
+@media (hover: hover) {
+  .audience-grid__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 35%,
+      var(--color-light) 65%
+    );
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--color-surface) 88%, var(--color-primary) 12%),
+        var(--color-surface)
+      );
+  }
+}
+
+.audience-grid__card:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 3px color-mix(in oklab, var(--color-primary) 65%, #ffffff);
+}
+
+/* Card heading – rely on global .h3 scale, slightly reduced */
+
+.audience-grid__card-title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-md);
+}
+
+@media (min-width: 768px) {
+  .audience-grid__card-title {
+    font-size: var(--fs-lg);
+  }
+}
+
+/* Card body – bullet-style paragraphs for clear separation */
+
+.audience-grid__card-body {
+  flex: 1 1 auto;
+}
+
+.audience-grid__card-text {
+  position: relative;
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* Bullet marker */
+.audience-grid__card-text::before {
+  content: "•";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.45em;
+  font-size: 0.75em;
+  color: var(--color-primary);
+}
+
+/* Vertical rhythm between statements */
+.audience-grid__card-text + .audience-grid__card-text {
+  margin-top: var(--space-1);
+}
+
+.audience-grid__card-text:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Footer / CTA – visually separated paragraph block */
+
+.audience-grid__card-footer {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+}
+
+.audience-grid__link {
+  /* Rely on .btn + .btn-accent for contrast, hover, focus */
+  white-space: nowrap;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .audience-grid__card {
+    transition: none;
+    transform: none;
+  }
+}

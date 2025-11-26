@@ -1,0 +1,152 @@
+/* FAQ page layout – main FAQ content + sidebar column */
+
+.page-faq__inner {
+  /* spacing between header, quick nav, layout and support strip */
+  gap: var(--space-6);
+}
+
+.page-faq__layout {
+  display: grid;
+  gap: var(--space-8);
+  margin-top: var(--space-6);
+}
+
+/* Main column */
+.page-faq__main {
+  min-width: 0; /* prevent overflow in grid */
+}
+
+/* Sidebar wrapper */
+.page-faq__sidebar {
+  min-width: 0;
+}
+
+/* Desktop: two-column layout with sidebar */
+@media (min-width: 1024px) {
+  .page-faq__layout {
+    grid-template-columns: minmax(0, 2.5fr) minmax(0, 1.2fr);
+    align-items: flex-start;
+  }
+
+  .page-faq__sidebar {
+    margin-top: var(--space-5);
+  }
+}
+
+/* SEO overview block – premium, responsive, SEO-focused */
+
+.faq-section--seo {
+  margin-top: var(--space-8);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);              /* Neutral 10 */
+  border: 1px solid var(--color-neutral-100);    /* Neutral border */
+  box-shadow: var(--shadow-md);
+}
+
+/* header inside SEO section */
+.faq-section--seo .faq-section__head {
+  margin-bottom: var(--space-4);
+}
+
+/* BODY: stack copy on top, cards below – simpler, less cramped */
+.faq-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* copy paragraphs */
+.faq-section__copy p + p {
+  margin-top: var(--space-3);
+}
+
+/* wrapper for key pages card grid */
+.faq-seo-links-wrapper {
+  border-radius: var(--radius-lg);
+  background: var(--color-background);           /* White */
+  padding: var(--space-4);
+  border: 1px solid var(--color-neutral-100);
+}
+
+/* small label above cards */
+.faq-seo-links__title {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+  color: var(--color-muted);
+}
+
+/* cards grid */
+.faq-seo-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr); /* 1 column mobile */
+}
+
+/* individual card */
+.faq-seo-links li {
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  border: 1px solid var(--color-neutral-100);
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* card title link */
+.faq-seo-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-primary);                    /* Deep Green link */
+}
+
+/* card description */
+.faq-seo-links p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* hover/focus states */
+.faq-seo-links a:hover,
+.faq-seo-links a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Card hover – brand-consistent Deep Green emphasis */
+@media (hover: hover) {
+  .faq-seo-links li:hover {
+    border-color: var(--color-primary);
+    background-color: color-mix(
+      in oklab,
+      var(--color-primary) 4%,
+      var(--color-background)
+    );
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Layout refinements for larger screens: cards in 2-column grid only (never 3) */
+@media (min-width: 640px) {
+  .faq-seo-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

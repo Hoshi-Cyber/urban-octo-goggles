@@ -25,7 +25,7 @@
   font-size: clamp(var(--fs-xl), 2.6vw, var(--fs-3xl));
   line-height: 1.25;
   letter-spacing: -0.01em;
-  color: var(--color-text);
+  color: var(--color-primary); /* Deep Green for prose section headings */
   text-wrap: balance;
 }
 
@@ -34,7 +34,7 @@
   font-weight: 700;
   font-size: clamp(var(--fs-lg), 2.2vw, var(--fs-2xl));
   line-height: 1.3;
-  color: var(--color-text);
+  color: var(--color-primary); /* Deep Green for subsection headings */
   text-wrap: balance;
 }
 
@@ -44,7 +44,7 @@
   margin: 0;
   margin-bottom: var(--space-4);
   line-height: 1.75;
-  color: var(--color-muted);
+  color: var(--color-text); /* Primary body colour (Neutral 600) */
 }
 
 /* Lists */
@@ -64,7 +64,8 @@
 .prose blockquote {
   margin: var(--space-4) 0;
   padding-left: var(--space-3);
-  border-left: 3px solid color-mix(in oklab, var(--color-primary) 10%, #e5e7eb);
+  border-left: 3px solid
+    color-mix(in oklab, var(--color-primary) 10%, var(--color-neutral-100));
   color: var(--color-muted);
   font-style: italic;
 }
@@ -85,7 +86,11 @@
 .prose a:focus-visible {
   text-decoration: none !important;
   color: var(--color-primary-hover);
-  background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
   box-shadow: var(--shadow-xs);
   outline: none;
 }
@@ -109,7 +114,11 @@
   line-height: 1.6;
   padding: 0 0.25em;
   border-radius: var(--radius-sm);
-  background-color: color-mix(in oklab, var(--color-light) 70%, #ffffff);
+  background-color: color-mix(
+    in oklab,
+    var(--color-light) 70%,
+    var(--color-background)
+  );
 }
 
 /* Code blocks */

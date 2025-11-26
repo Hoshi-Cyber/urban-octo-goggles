@@ -1,0 +1,80 @@
+---
+import "./TestimonialsOutcomeSection.css";
+
+import StatStrip from "../../../metrics/StatStrip/index.astro";
+import Checklist from "../../../ui/Checklist/index.astro";
+
+interface StatItem {
+  value: string | number;
+  label: string;
+}
+
+interface TestimonialsOutcomeSectionProps {
+  eyebrow?: string; // kept for backwards compatibility, not rendered
+  title?: string;
+  intro?: string;
+  stats: StatItem[];
+  reasons: string[];
+  headingLevel?: "h2" | "h3"; // ignored, we always render an h2
+}
+
+const {
+  eyebrow, // intentionally unused in UI
+  title,
+  intro,
+  stats = [],
+  reasons = [],
+} = Astro.props as TestimonialsOutcomeSectionProps;
+
+// Always use an <h2> for this section title
+const headingId =
+  "testimonials-outcome-section-" +
+  Math.random().toString(36).slice(2, 8);
+
+const ariaLabelFallback = "Outcomes our clients report";
+---
+
+<section
+  class="testimonials-outcome-section py-10 xs:py-12 md:py-16"
+  aria-labelledby={title ? headingId : undefined}
+  aria-label={title ? undefined : ariaLabelFallback}
+  data-section="testimonials-outcome"
+>
+  <div class="container stack testimonials-outcome-section__inner">
+    {title && (
+      <header class="testimonials-outcome-section__head">
+        <h2
+          id={headingId}
+          class="section-title testimonials-outcome-section__title"
+        >
+          {title}
+        </h2>
+
+        {intro && (
+          <p class="testimonials-outcome-section__intro">
+            {intro}
+          </p>
+        )}
+      </header>
+    )}
+
+    <div class="testimonials-outcome-section__body">
+      {stats.length > 0 && (
+        <div class="testimonials-outcome-section__metrics">
+          <StatStrip stats={stats} compact={true} />
+        </div>
+      )}
+
+      {reasons.length > 0 && (
+        <div class="testimonials-outcome-section__reasons">
+          <Checklist
+            items={reasons.map((reason) => ({
+              label: reason,
+              checked: true,
+            }))}
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</section>

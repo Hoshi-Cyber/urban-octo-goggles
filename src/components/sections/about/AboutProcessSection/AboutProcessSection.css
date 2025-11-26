@@ -1,0 +1,144 @@
+.about-process {
+  padding-block: var(--space-8);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-primary) 4%, var(--color-light-alt)),
+    var(--color-light-alt)
+  );
+}
+
+@media (min-width: 768px) {
+  .about-process {
+    padding-block: var(--space-10);
+  }
+}
+
+.about-process__inner {
+  align-items: flex-start;
+}
+
+/* Header – force left alignment for this section only */
+.about-process .section-head.about-process__head {
+  text-align: left;
+}
+
+.about-process__head {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ensure children (h2 + intro) are left-aligned */
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-radius: var(--radius-xl);
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 4%,
+    var(--color-surface)
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: var(--space-5);
+}
+
+.about-process__title {
+  margin: 0;
+  text-align: left;       /* override any global centering on .section-title */
+}
+
+.about-process__intro {
+  margin: 0;
+  color: var(--color-muted);
+  max-width: none;        /* intro spans full section width */
+  text-align: left;       /* override any global centering */
+}
+
+/* Grid layout */
+
+.about-process__grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* Mobile: stacked – steps then principles */
+
+.about-process__steps {
+  min-width: 0;
+}
+
+/* Override generic Steps styling when embedded in AboutProcessSection */
+.about-process__steps .steps {
+  padding-block: 0;
+  background: transparent;
+}
+
+.about-process__steps .steps__body {
+  max-width: 100%;
+}
+
+.about-process__steps .steps__list {
+  margin-top: var(--space-4);
+}
+
+/* Principles card */
+
+.about-process__principles {
+  min-width: 0;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--color-surface);
+  border-top: 3px solid
+    color-mix(in oklab, var(--color-primary) 20%, var(--color-surface));
+}
+
+.about-process__principles-title {
+  margin: 0;
+}
+
+.about-process__principles-intro {
+  margin: 0;
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  max-width: 34rem;
+}
+
+.about-process__principles-list {
+  margin: var(--space-4) 0 0;
+  padding-left: var(--space-6);
+  list-style: disc;
+}
+
+.about-process__principle {
+  margin-bottom: var(--space-2);
+}
+
+.about-process__principle-label {
+  margin: 0;
+  font-weight: 600;
+  font-size: var(--fs-base);
+  color: var(--color-text);
+}
+
+.about-process__principle-description {
+  margin: var(--space-1) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Tablet+ two-column split */
+
+@media (min-width: 768px) {
+  .about-process__grid {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .about-process__principles {
+    position: sticky;
+    top: var(--space-8);
+  }
+}

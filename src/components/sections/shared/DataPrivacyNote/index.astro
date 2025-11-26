@@ -1,0 +1,40 @@
+---
+import "./DataPrivacyNote.css";
+
+interface DataPrivacyNoteProps {
+  heading?: string;
+  bullets?: string[];
+}
+
+const {
+  heading = "How we protect your data",
+  bullets = [
+    "Testimonials and samples are only published with consent.",
+    "Identifying details are masked where needed.",
+    "CVs are never published publicly without explicit permission.",
+  ],
+} = Astro.props as DataPrivacyNoteProps;
+---
+
+<section
+  class="data-privacy-note"
+  aria-label="Data protection notice"
+>
+  <div class="container">
+    <div class="data-privacy-note__inner card stack">
+      <h2 class="data-privacy-note__heading">
+        {heading}
+      </h2>
+
+      <ul class="data-privacy-note__list">
+        {bullets.map((item) => (
+          <li class="data-privacy-note__item">
+            <p class="data-privacy-note__text">
+              {item}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

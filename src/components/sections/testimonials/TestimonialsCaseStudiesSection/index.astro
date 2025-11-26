@@ -1,0 +1,103 @@
+---
+import "./TestimonialsCaseStudiesSection.css";
+
+interface CaseStudyItem {
+  challenge: string;
+  action: string;
+  outcome: string;
+}
+
+interface TestimonialsCaseStudiesSectionProps {
+  // Eyebrow kept in props for compatibility but not rendered
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  items: CaseStudyItem[];
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  eyebrow, // intentionally unused
+  title,
+  intro,
+  items = [],
+  headingLevel = "h2",
+} = Astro.props as TestimonialsCaseStudiesSectionProps;
+
+// Enforce h2 as primary semantic heading, fallback to h3 only if explicitly requested
+const HeadingTag = headingLevel === "h3" ? "h3" : "h2";
+
+const headingId =
+  "testimonials-case-studies-" +
+  Math.random().toString(36).slice(2, 8);
+---
+
+<section
+  class="testimonials-case-studies-section py-10 xs:py-12 md:py-16"
+  aria-labelledby={headingId}
+  data-section="testimonials-case-studies"
+>
+  <div class="container stack testimonials-case-studies-section__inner">
+    <header class="testimonials-case-studies-section__head section-head">
+      <HeadingTag
+        id={headingId}
+        class="section-title testimonials-case-studies-section__title"
+      >
+        {title}
+      </HeadingTag>
+
+      {intro && (
+        <p class="testimonials-case-studies-section__intro">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    {items.length > 0 && (
+      <div
+        class="testimonials-case-studies-section__grid"
+        role="list"
+      >
+        {items.map((item, index) => (
+          <article
+            class="testimonials-case-studies-section__card card"
+            role="listitem"
+          >
+            <p class="testimonials-case-studies-section__case-label">
+              Case study {index + 1}
+            </p>
+
+            <div class="testimonials-case-studies-section__body">
+              <div class="testimonials-case-studies-section__row">
+                <p class="testimonials-case-studies-section__subheading">
+                  Challenge
+                </p>
+                <p class="testimonials-case-studies-section__text">
+                  {item.challenge}
+                </p>
+              </div>
+
+              <div class="testimonials-case-studies-section__row">
+                <p class="testimonials-case-studies-section__subheading">
+                  What we did
+                </p>
+                <p class="testimonials-case-studies-section__text">
+                  {item.action}
+                </p>
+              </div>
+
+              <div class="testimonials-case-studies-section__row testimonials-case-studies-section__row--outcome">
+                <p class="testimonials-case-studies-section__subheading">
+                  Outcome
+                </p>
+                <p class="testimonials-case-studies-section__text testimonials-case-studies-section__text--outcome">
+                  {item.outcome}
+                </p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

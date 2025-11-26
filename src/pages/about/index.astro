@@ -1,0 +1,333 @@
+---
+// src/pages/about/index.astro
+
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import PageHeader from "../../components/sections/shared/PageHeader/index.astro";
+import TrustBar from "../../components/socialproof/TrustBar/index.astro";
+import StatStrip from "../../components/metrics/StatStrip/index.astro";
+import AudienceGrid from "../../components/sections/shared/AudienceGrid/index.astro";
+import BrandPillarsStrip from "../../components/sections/shared/BrandPillarsStrip/index.astro";
+import BrandSnapshot from "../../components/sections/shared/BrandSnapshot/index.astro";
+
+import AboutProcessSection from "../../components/sections/about/AboutProcessSection/index.astro";
+import AboutSpecialisationsSection from "../../components/sections/about/AboutSpecialisationsSection/index.astro";
+import AboutNextStepsSection from "../../components/sections/about/AboutNextStepsSection/index.astro";
+
+const title = "About cvwriting.co.ke";
+const description =
+  "About cvwriting.co.ke – professional CV, cover letter, and LinkedIn profile specialists for Kenya and beyond. Learn who we serve, how we work, and what makes our CV writing service different in the Kenyan and international job market.";
+const seo = { canonical: "/about/" };
+
+// Brand-level social proof (reuse from Pricing, with copy tuned to About)
+const trust = {
+  eyebrow: "Trusted by professionals across Kenya and beyond",
+  rating: {
+    score: 4.9,
+    count: 200,
+    label: "career documents delivered",
+    since: 2020,
+  },
+  summary:
+    "Used by professionals in banking, NGOs, telecoms, public sector, and regional projects who need clear, credible CVs and career documents.",
+  segments: [
+    { label: "Mid-career operators" },
+    { label: "Graduates starting out" },
+    { label: "Senior specialists & leaders" },
+    { label: "Public sector & parastatals" },
+    { label: "NGO & UN assignments" },
+    { label: "Regional & international roles" },
+  ],
+  footnote: "Rating based on verified client feedback collected since 2020.",
+};
+
+// Key brand metrics
+const stats = [
+  { value: "1k+", label: "CVs & documents delivered" },
+  { value: "98%", label: "ATS screening pass rate (self-reported)" },
+  { value: "95%", label: "Client satisfaction" },
+  { value: "72h", label: "Typical draft turnaround" },
+];
+
+// Brand pillars for BrandPillarsStrip
+const brandPillars = [
+  {
+    label: "Specialised in CVs and career communication",
+    description:
+      "We focus on CVs, cover letters, LinkedIn profiles, and supporting documents – not generic or unrelated writing.",
+  },
+  {
+    label: "Rooted in Kenya’s job market realities",
+    description:
+      "Our work is grounded in how recruitment actually happens across public sector, parastatals, private companies, NGOs, and regional projects.",
+  },
+  {
+    label: "Guided by evidence-based CV and ATS best practices",
+    description:
+      "We follow clear, tested principles for structure, content, and formatting so your documents work for both ATS tools and human reviewers.",
+  },
+  {
+    label: "Confidential and professional handling of data",
+    description:
+      "Your CV and personal information are treated as confidential and used only to deliver the services you request.",
+  },
+];
+
+// Audience data for AudienceGrid
+const audiences = [
+  {
+    title: "Students & recent graduates",
+    body: [
+      "First-time job seekers and recent graduates who need a clear, credible CV for internships, entry-level roles, or graduate programmes – even if their experience feels limited.",
+      "We focus on your education, early experience, and potential, and align your CV with the roles you are targeting.",
+    ],
+  },
+  {
+    title: "Mid-career professionals",
+    body: [
+      "Professionals with a few years of experience who are ready for a step up, a new industry, or a move into a more specialised role.",
+      "We help you reposition your experience, highlight achievements, and match your CV to the job descriptions you are actually applying for.",
+    ],
+  },
+  {
+    title: "Senior specialists & leaders",
+    body: [
+      "Senior professionals, specialists, and managers who need a CV that reflects their responsibilities, scope, and impact without becoming bloated or unfocused.",
+      "We structure complex experience into a clear narrative that speaks to high-responsibility roles in Kenya or abroad.",
+    ],
+  },
+  {
+    title: "Public sector, NGOs & international roles",
+    body: [
+      "Candidates targeting roles in government, parastatals, NGOs, UN agencies, or regional and international organisations.",
+      "We align your documents with formal requirements while still showcasing real outcomes and on-the-ground experience.",
+    ],
+  },
+];
+
+// BrandSnapshot content
+const brandSnapshotBody = [
+  "cvwriting.co.ke is a focused CV and career document brand. We specialise in CVs, cover letters, LinkedIn profiles, and supporting documents that help professionals in Kenya and the region communicate their experience with clarity and confidence.",
+  "Our work is Kenya-first but globally aware. We understand the realities of local recruitment – from public sector and parastatals to private sector and NGOs – while also aligning your documents with UK, EU, and US-style expectations where needed.",
+];
+
+const brandSnapshotHighlights = {
+  label: "At a glance",
+  items: [
+    "Specialised exclusively in CVs, cover letters, LinkedIn profiles, and career documents.",
+    "Kenya-first perspective with formats and content tuned for regional and international roles.",
+    "Email-first, documented process so every decision and draft is easy to track and revisit.",
+  ],
+};
+
+// How we work – AboutProcessSection data
+const processSteps = [
+  {
+    label: "Enquiry and brief",
+    description:
+      "You share your current CV (if you have one), target roles, and any key concerns or goals.",
+  },
+  {
+    label: "Package recommendation and confirmation",
+    description:
+      "We recommend the most suitable package based on your career stage and goals, then confirm scope, fees, and timelines.",
+  },
+  {
+    label: "Payment and intake form",
+    description:
+      "Once you confirm, you complete a short intake form and make payment so we can start work.",
+  },
+  {
+    label: "Draft creation",
+    description:
+      "We prepare a draft CV (and other documents if included) aligned to your target roles and share it with you by email.",
+  },
+  {
+    label: "Review and revisions",
+    description:
+      "You review, ask questions, and request refinements within the agreed revision window.",
+  },
+  {
+    label: "Final delivery",
+    description:
+      "You receive your final documents in editable DOCX format and ready-to-send PDF.",
+  },
+];
+
+const processPrinciples = [
+  {
+    label: "Clarity over buzzwords and generic claims.",
+  },
+  {
+    label: "Evidence and measurable outcomes over vague responsibilities.",
+  },
+  {
+    label: "ATS-aware structure that remains easy for humans to scan.",
+  },
+  {
+    label: "Respect for your time, deadlines, and constraints.",
+  },
+  {
+    label: "Confidential handling of your personal and professional data.",
+  },
+];
+
+// What we specialise in – AboutSpecialisationsSection data
+const specialisations = [
+  {
+    key: "cv",
+    title: "CV / résumé writing",
+    summary:
+      "Professionally written CVs tailored to your career level and target roles, combining Kenya’s job market realities with globally recognised structure and formatting, including UK, EU, and US-style expectations where relevant.",
+    href: "/services/cv-writing/",
+    linkLabel: "Learn more about our CV writing services",
+  },
+  {
+    key: "coverLetter",
+    title: "Cover letter writing",
+    summary:
+      "Concise, targeted cover letters that connect your CV to specific opportunities, positioning your motivations and fit for the role without repeating your CV line by line.",
+    href: "/services/cover-letter/",
+    linkLabel: "Explore cover letter services",
+  },
+  {
+    key: "linkedin",
+    title: "LinkedIn profile optimisation",
+    summary:
+      "LinkedIn profiles that support and reinforce your CV. We refine your headline, About section, experience entries, and skills so recruiters see a consistent, credible story.",
+    href: "/services/linkedin-optimization/",
+    linkLabel: "View LinkedIn optimisation services",
+  },
+  {
+    key: "supportingDocs",
+    title: "Supporting career documents",
+    summary:
+      "Support for statements of purpose, motivation letters, and other role-specific documents, anchored to your actual experience and crafted to match formal requirements.",
+    href: "/services/",
+    linkLabel: "View supporting document options",
+  },
+];
+
+// Where to go next – AboutNextStepsSection data
+const nextStepLinks = [
+  {
+    key: "pricing",
+    label: "View CV writing packages",
+    description: "See one-time pricing for CV, cover letter, and LinkedIn services.",
+    href: "/pricing/",
+  },
+  {
+    key: "services",
+    label: "Learn more about our services",
+    description: "Explore what each service includes and how it works.",
+    href: "/services/",
+  },
+  {
+    key: "samples",
+    label: "See anonymised CV samples",
+    description: "Review real CV structures and layouts with personal details removed.",
+    href: "/samples/",
+  },
+  {
+    key: "contact",
+    label: "Talk to us about your situation",
+    description: "Share your context and get a recommendation on the best way forward.",
+    href: "/contact/",
+  },
+];
+---
+
+<BaseLayout {title} {description} {seo}>
+  <main id="main" class="page-about">
+    {/* 1) Hero / Page header */}
+    <PageHeader
+      id="about-page-title"
+      eyebrow="About cvwriting.co.ke"
+      title="Professional CV & career document specialists"
+      align="left"
+    >
+      <p class="page-about__intro">
+        cvwriting.co.ke is a specialised CV, cover letter, and LinkedIn profile service
+        built for Kenya’s job market and globally relevant standards. We help you present
+        your experience clearly, credibly, and in a way that speaks to your target roles
+        – in Kenya or beyond.
+      </p>
+      <ul class="page-about__meta">
+        <li>Kenya-first CV expertise, globally relevant formats.</li>
+        <li>ATS-aware structure and content that still reads naturally.</li>
+        <li>Clear process from enquiry to final documents.</li>
+      </ul>
+    </PageHeader>
+
+    <div class="container stack page-about__inner">
+      {/* 2) Trust + metrics – brand-level social proof */}
+      <section
+        id="about-trust"
+        class="section section--tight page-about__section page-about__section--trust"
+        aria-label="Brand trust and track record"
+      >
+        <div class="stack">
+          <TrustBar
+            variant="compact"
+            eyebrow={trust.eyebrow}
+            rating={trust.rating}
+          />
+          <StatStrip stats={stats} />
+        </div>
+      </section>
+
+      {/* 3) Brand snapshot – reusable BrandSnapshot component */}
+      <BrandSnapshot
+        eyebrow="Brand snapshot"
+        title="Who we are as a brand"
+        intro="A focused CV and career document brand built in Kenya, aligned with the standards of regional and international job markets."
+        body={brandSnapshotBody}
+        highlights={brandSnapshotHighlights}
+        headingLevel="h2"
+        variant="default"
+      />
+
+      {/* 4) Brand principles – BrandPillarsStrip */}
+      <BrandPillarsStrip
+        title="What defines cvwriting.co.ke"
+        intro="These brand principles guide how we write, position, and deliver every CV and career document."
+        headingLevel="h2"
+        pillars={brandPillars}
+      />
+
+      {/* 5) Who we serve – AudienceGrid */}
+      <AudienceGrid
+        title="Who we serve"
+        intro="We support clients at different career stages who want structured, outcome-focused CVs tailored to their next step."
+        headingLevel="h2"
+        audiences={audiences}
+      />
+
+      {/* 6) How we work – process & principles (AboutProcessSection) */}
+      <AboutProcessSection
+        eyebrow="How we work"
+        title="How our process works"
+        intro="A structured, email-first process designed to keep everything clear, documented, and on track."
+        steps={processSteps}
+        principles={processPrinciples}
+        headingLevel="h2"
+      />
+
+      {/* 7) What we specialise in – service scope (AboutSpecialisationsSection) */}
+      <AboutSpecialisationsSection
+        title="What we specialise in"
+        intro="Focused services designed to cover your core career communication needs."
+        items={specialisations}
+        headingLevel="h2"
+      />
+
+      {/* 8) Where to go next – navigation & CTA (AboutNextStepsSection) */}
+      <AboutNextStepsSection
+        title="Where to go next"
+        intro="Here’s how to act on what you’ve just read."
+        links={nextStepLinks}
+        showLeadCapture={true}
+        headingLevel="h2"
+      />
+    </div>
+  </main>
+</BaseLayout>

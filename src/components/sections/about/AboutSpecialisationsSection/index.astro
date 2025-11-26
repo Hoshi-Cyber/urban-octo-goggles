@@ -1,0 +1,115 @@
+---
+import "./AboutSpecialisationsSection.css";
+
+export interface SpecialisationItem {
+  key: "cv" | "coverLetter" | "linkedin" | "supportingDocs";
+  title: string;
+  summary: string;
+  href: string;
+  linkLabel?: string;
+}
+
+export interface AboutSpecialisationsSectionProps {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  items: SpecialisationItem[];
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  eyebrow,
+  title,
+  intro,
+  items,
+  headingLevel = "h2",
+} = Astro.props as AboutSpecialisationsSectionProps;
+
+type HeadingTag = "h2" | "h3";
+
+const Heading = headingLevel as HeadingTag;
+
+const sectionId =
+  "about-specialisations-" +
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+
+// Short, context-aware CTA labels per specialisation
+const getCtaLabel = (item: SpecialisationItem): string => {
+  switch (item.key) {
+    case "cv":
+      return "CV services";
+    case "coverLetter":
+      return "Cover letters";
+    case "linkedin":
+      return "LinkedIn help";
+    case "supportingDocs":
+      return "View options";
+    default:
+      return "View details";
+  }
+};
+---
+
+<section
+  class="about-specialisations"
+  aria-labelledby={sectionId}
+  data-section="about-specialisations"
+>
+  <div class="container about-specialisations__inner stack">
+    <header class="about-specialisations__header section-head">
+      {eyebrow && (
+        <p class="about-specialisations__eyebrow section-sub">
+          {eyebrow}
+        </p>
+      )}
+
+      <Heading id={sectionId} class="section-title">
+        {title}
+      </Heading>
+
+      {intro && (
+        <p class="about-specialisations__intro section-sub">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    {items && items.length > 0 && (
+      <ul
+        class="about-specialisations__grid grid"
+        aria-label="Key service specialisations"
+      >
+        {items.map((item) => (
+          <li class="about-specialisations__grid-item">
+            <article
+              class="about-specialisations__card card stack"
+              data-specialisation-key={item.key}
+            >
+              <h3 class="about-specialisations__card-title h3">
+                {item.title}
+              </h3>
+
+              <div class="about-specialisations__card-body prose">
+                <p class="about-specialisations__card-summary">
+                  {item.summary}
+                </p>
+              </div>
+
+              <div class="about-specialisations__card-footer">
+                <a
+                  href={item.href}
+                  class="btn btn-primary about-specialisations__card-btn"
+                >
+                  {getCtaLabel(item)}
+                </a>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>

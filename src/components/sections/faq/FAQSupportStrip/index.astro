@@ -1,0 +1,55 @@
+---
+import "./FAQSupportStrip.css";
+
+export interface CtaConfig {
+  label: string;
+  href: string;
+  dataCta?: string;
+}
+
+export interface Props {
+  title: string;
+  copy: string;
+  primaryCta: CtaConfig;
+  secondaryCta?: CtaConfig;
+}
+
+const { title, copy, primaryCta, secondaryCta } = Astro.props as Props;
+
+const headingId = "faq-support-strip-title";
+---
+
+<section class="faq-support-strip" aria-labelledby={headingId}>
+  <div class="faq-support-strip__inner container">
+    <div class="faq-support-strip__content stack">
+      <h2 id={headingId} class="section-title faq-support-strip__title">
+        {title}
+      </h2>
+      <p class="faq-support-strip__copy text-muted">
+        {copy}
+      </p>
+    </div>
+
+    <div class="faq-support-strip__actions">
+      <a
+        href={primaryCta.href}
+        role="button"
+        class="btn btn-primary faq-support-strip__btn"
+        data-cta={primaryCta.dataCta}
+      >
+        {primaryCta.label}
+      </a>
+
+      {secondaryCta && (
+        <a
+          href={secondaryCta.href}
+          role="button"
+          class="btn btn-ghost faq-support-strip__btn faq-support-strip__btn--secondary"
+          data-cta={secondaryCta.dataCta}
+        >
+          {secondaryCta.label}
+        </a>
+      )}
+    </div>
+  </div>
+</section>

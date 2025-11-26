@@ -1,0 +1,114 @@
+@import "../tokens.css";
+@import "../typography.css";
+@import "../utilities.css";
+@import "../breakpoints.css";
+@import "../sections.css";
+
+/* Final CTA / Next steps – premium band */
+.testimonials-next-steps {
+  padding-block: var(--space-10);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary) 8%
+  );
+}
+
+.testimonials-next-steps__inner {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* Header: left-aligned, stacked title + intro using global section styles */
+.testimonials-next-steps__head {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.testimonials-next-steps__title {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  /* Typography comes from .section-title in sections.css / typography.css */
+}
+
+.testimonials-next-steps__intro {
+  margin: 0;
+  width: 100%;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Grid: 1 / 2 / 4 layout */
+.testimonials-next-steps__grid {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .testimonials-next-steps__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonials-next-steps__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* Card styling – clean, premium tiles */
+.testimonials-next-steps__card {
+  height: 100%;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-neutral-100);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Subtle top accent for visual continuity with other sections */
+.testimonials-next-steps__card::before {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 48px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
+}
+
+/* Card text */
+.testimonials-next-steps__card-title {
+  margin: 0;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.testimonials-next-steps__card-body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* Card CTA */
+.testimonials-next-steps__card-link {
+  margin-top: auto;
+  align-self: flex-start;
+}

@@ -1,4 +1,4 @@
-/* src/styles/base/utilities.css */
+/* src/styles/utilities.css */
 /* Utility classes for buttons, cards, CTAs, and common visual helpers */
 
 /* -------------------------- */
@@ -36,16 +36,16 @@
     transform 0.18s ease-out;
 }
 
-/* Primary button */
+/* Primary button – Deep Green */
 .btn-primary {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary);       /* Deep Green 500 */
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-primary-hover); /* Deep Green 600 */
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -56,31 +56,33 @@
   transform: translateY(0);
 }
 
-/* Accent / success button */
+/* Accent button – Gold */
 .btn-accent {
-  background-color: var(--color-accent);
+  background-color: var(--color-accent);        /* Gold 500 */
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-accent:hover {
-  background-color: #166c2f;
+  background-color: var(--color-gold-600);      /* Gold 600 – darker hover */
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .btn-accent:active {
-  background-color: #166c2f;
+  background-color: var(--color-gold-600);
   box-shadow: var(--shadow-xs);
   transform: translateY(0);
 }
 
 /* Focus-visible: accessible outline for keyboard users */
 .btn:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px #ffffff, 0 0 0 4px color-mix(in oklab, var(--color-primary) 70%, #ffffff);
+  box-shadow:
+    0 0 0 1px var(--color-neutral-0),
+    0 0 0 4px var(--color-focus-ring);
 }
 
 /* Disabled / loading states */
@@ -97,11 +99,11 @@
 /* -------------------------- */
 
 .card {
-  background-color: var(--color-surface);
+  background-color: var(--color-surface);       /* Neutral 10 */
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: var(--space-6);
-  border: 1px solid rgba(17, 24, 39, 0.04);
+  border: 1px solid var(--color-neutral-100);   /* Neutral border */
 }
 
 /* -------------------------- */
@@ -117,20 +119,20 @@
   padding: var(--space-4);
   border-radius: var(--radius-lg);
 
-  background-color: var(--color-light);
+  background-color: var(--color-light);         /* Neutral 50 */
   box-shadow: var(--shadow-xs);
 }
 
 .stat-badge .number {
   font-size: var(--fs-3xl);
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-primary);                  /* Deep Green */
   line-height: 1.1;
 }
 
 .stat-badge .label {
   font-size: var(--fs-base);
-  color: var(--color-muted);
+  color: var(--color-muted);                    /* Neutral 400 */
   margin-top: var(--space-2);
 }
 

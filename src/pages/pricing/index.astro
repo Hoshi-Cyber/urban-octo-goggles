@@ -7,12 +7,17 @@ import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
 import TrustBar from "../../components/socialproof/TrustBar/index.astro";
 import StatStrip from "../../components/metrics/StatStrip/index.astro";
-import faqs from "../../data/faqs/pricing";
+import { getPricingFaqs } from "../../data/faqs";
 
 const title = "Pricing";
 const description =
   "Transparent, one-time pricing for CV, cover letter and LinkedIn services. Pick a plan, get predictable outcomes.";
 const seo = { canonical: "/pricing/" };
+
+type FaqItem = {
+  q: string;
+  a: string;
+};
 
 // Social proof – outcome- and segment-focused (no logos)
 const trust = {
@@ -53,10 +58,31 @@ const features = [
   { label: "Turnaround time", values: ["3 Days", "3 Days", "3 Days"] },
   { label: "Priority support", values: [false, true, true] },
 ];
+
+// Load pricing FAQs from shared data layer (Fix Plan 207)
+const resolvedPricingFaqs = getPricingFaqs();
+
+// Flatten topQuestions + grouped items into a single ordered list, de-duplicated by id
+const rawPricingFaqItems = [
+  ...resolvedPricingFaqs.topQuestions,
+  ...resolvedPricingFaqs.groups.flatMap((group) => group.items),
+];
+
+const seenFaqIds = new Set<string>();
+const pricingFaqItems: FaqItem[] = [];
+
+for (const item of rawPricingFaqItems) {
+  if (seenFaqIds.has(item.id)) continue;
+  seenFaqIds.add(item.id);
+  pricingFaqItems.push({
+    q: item.question,
+    a: item.answer,
+  });
+}
 ---
 
 <BaseLayout {title} {description} {seo}>
-  <!-- Hero -->
+  {/* Hero */}
   <section class="section" aria-labelledby="pricing-title">
     <div class="container">
       <Hero
@@ -72,7 +98,7 @@ const features = [
     </div>
   </section>
 
-  <!-- Trust -->
+  {/* Trust */}
   <section class="section section--tight" aria-label="Trust">
     <div class="container">
       <TrustBar
@@ -83,14 +109,14 @@ const features = [
     </div>
   </section>
 
-  <!-- Metrics -->
+  {/* Metrics */}
   <section class="section section--tight" aria-label="Key metrics">
     <div class="container">
       <StatStrip stats={stats} />
     </div>
   </section>
 
-  <!-- Plans -->
+  {/* Plans */}
   <section class="section" aria-labelledby="plans">
     <div class="container">
       <h2 id="plans" class="sr-only">Plans</h2>
@@ -98,7 +124,7 @@ const features = [
     </div>
   </section>
 
-  <!-- Comparison -->
+  {/* Comparison */}
   <section class="section section--tight" aria-labelledby="compare">
     <div class="container">
       <h2 id="compare" class="h2">Compare what’s included</h2>
@@ -106,11 +132,11 @@ const features = [
     </div>
   </section>
 
-  <!-- FAQs -->
+  {/* FAQs – powered by shared FAQ data layer */}
   <section class="section section--tight" aria-labelledby="faq">
     <div class="container">
       <h2 id="faq" class="h2">FAQs</h2>
-      <FAQAccordion items={faqs} showHead={false} />
+      <FAQAccordion items={pricingFaqItems} showHead={false} />
       <div class="text-center mt-8">
         <a href="/contact/" class="btn btn-accent" data-cta="pricing:contact">
           Discuss Your Project
@@ -119,7 +145,7 @@ const features = [
     </div>
   </section>
 
-  <!-- Bottom CTA -->
+  {/* Bottom CTA */}
   <section class="section section--tight">
     <div class="container">
       <LeadCaptureBanner

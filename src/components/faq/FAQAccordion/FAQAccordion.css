@@ -1,165 +1,188 @@
-/* src/components/faq/FAQAccordion/FAQAccordion.css */
-/* FAQAccordion — compact, token-driven, masonry ≥1024px */
+/* FAQAccordion – premium, two-column, single-active accordion
+   Uses existing tokens & utilities: .section, .container, .card, .prose
+*/
 
-[data-section="faq"] {
-  padding-block: var(--space-10);
-  background: var(--color-background);
+.faq-accordion {
+  padding-block: var(--space-6);
 }
 
-/* Header (only rendered when showHead=true) */
-.faq__head {
-  display: grid;
-  gap: var(--space-2);
+.faq-accordion__head {
   margin-bottom: var(--space-4);
-  text-align: left;
 }
 
-.faq__title {
-  margin: 0;
-  line-height: 1.2;
-}
-
-.faq__sub {
-  margin: 0;
-  color: var(--color-muted);
-}
-
-/* List */
-.faq__list {
+/* 1 column on mobile, 2 columns from md up */
+.faq-accordion__list {
   display: grid;
-  gap: var(--space-3);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: flex-start;
 }
 
-/* Item */
-.faq__item {
-  display: block;
+@media (min-width: 768px) {
+  .faq-accordion__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Each FAQ item as a refined card */
+.faq-accordion__item {
+  position: relative;
+  padding: 0; /* override .card padding – we control inner spacing */
   border-radius: var(--radius-lg);
-  border: 1px solid
-    color-mix(in oklab, var(--color-primary) 18%, transparent);
-  box-shadow: var(--shadow-xs);
+  border: 1px solid rgba(17, 24, 39, 0.04);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--color-background);
   overflow: hidden;
-  background: var(--color-surface);
   font-family: var(--font-sans);
+  transition:
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+/* Accent bar on the left – subtle brand colour cue */
+.faq-accordion__item::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--space-2);
+  inset-inline-start: var(--space-2);
+  width: 3px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-primary) 40%, #e5e7eb);
+  opacity: 0;
+  transform: scaleY(0.7);
+  transform-origin: top;
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
 }
 
 /* Summary row */
-.faq__summary {
+.faq-accordion__summary {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   margin: 0;
-  list-style: none;
   cursor: pointer;
-  font: inherit;
+  list-style: none;
   color: var(--color-text);
-  background: transparent;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-light);
 }
 
-.faq__summary::-webkit-details-marker {
+/* Hide default marker */
+.faq-accordion__summary::-webkit-details-marker {
   display: none;
 }
 
-.faq__summary:hover {
-  background: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface));
-}
-
 /* Question text */
-.faq__q {
+.faq-accordion__q {
   font-weight: 600;
   font-size: var(--fs-base);
-  line-height: 1.35;
+  line-height: 1.4;
+}
+
+/* Icon wrapper */
+.faq-accordion__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-start: var(--space-1);
 }
 
 /* Chevron */
-.faq__chev {
-  transition: transform 0.2s ease;
-  color: color-mix(
-    in oklab,
-    var(--color-text) 80%,
-    var(--color-primary)
-  );
-}
-
-/* Answer — smaller type, pro styling, brand-accent */
-.faq__a {
-  padding: 0 var(--space-4) var(--space-4);
+.faq-accordion__chevron {
+  transition:
+    transform 160ms ease-out,
+    color 160ms ease-out;
   color: var(--color-muted);
-  font-size: clamp(0.92rem, 0.9rem + 0.2vw, 0.98rem);
-  line-height: 1.6;
-  border-left: 3px solid
-    color-mix(in oklab, var(--color-primary) 22%, transparent);
-  background: color-mix(
-    in oklab,
-    var(--color-primary) 3%,
-    var(--color-surface)
-  );
 }
 
-.faq__a :where(p, ul, ol) {
+/* Answer panel */
+.faq-accordion__panel {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  background: var(--color-background);
+  color: var(--color-muted);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
+}
+
+/* Prose spacing */
+.faq-accordion__panel :where(p, ul, ol) {
   margin-block: 0.35rem;
 }
 
-.faq__a :where(ul, ol) {
-  padding-left: 1.25rem;
-}
-
-.faq__a :where(li) {
-  margin-block: 0.15rem;
+.faq-accordion__panel :where(ul, ol) {
+  padding-inline-start: 1.25rem;
 }
 
 /* Open state */
-.faq__item[open] .faq__summary {
-  background: color-mix(
+.faq-accordion__item[open] .faq-accordion__summary {
+  background: color-mix(in oklab, var(--color-primary) 3%, var(--color-surface));
+  border-bottom-color: color-mix(
     in oklab,
-    var(--color-primary) 6%,
-    var(--color-surface)
+    var(--color-primary) 12%,
+    var(--color-light)
   );
-  border-bottom: 1px solid
-    color-mix(in oklab, var(--color-primary) 22%, transparent);
 }
 
-.faq__item[open] .faq__chev {
+.faq-accordion__item[open] {
+  border-color: color-mix(in oklab, var(--color-primary) 8%, rgba(17, 24, 39, 0.06));
+}
+
+.faq-accordion__item[open]::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.faq-accordion__item[open] .faq-accordion__chevron {
   transform: rotate(180deg);
+  color: var(--color-primary);
 }
 
-/* Focus */
-.faq__summary:focus-visible {
+.faq-accordion__item[open] .faq-accordion__panel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover / focus states */
+@media (hover: hover) {
+  .faq-accordion__summary:hover {
+    background: color-mix(in oklab, var(--color-primary) 3%, var(--color-surface));
+  }
+}
+
+.faq-accordion__summary:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+    color-mix(in oklab, var(--color-primary) 65%, #ffffff);
   border-radius: var(--radius-md);
 }
 
-/* ≥1024px: masonry columns to prevent cross-column ghost space */
+/* Section spacing on larger screens */
 @media (min-width: 1024px) {
-  [data-section="faq"] {
-    padding-block: var(--space-12);
+  .faq-accordion {
+    padding-block: var(--space-8);
   }
 
-  .faq__head {
+  .faq-accordion__head {
     margin-bottom: var(--space-5);
-  }
-
-  .faq__list {
-    display: block;
-    column-count: 2;
-    column-gap: var(--space-5);
-  }
-
-  .faq__item {
-    break-inside: avoid;
-    display: block;
-    width: 100%;
-    margin-bottom: var(--space-3);
   }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .faq__chev {
+  .faq-accordion__chevron,
+  .faq-accordion__panel,
+  .faq-accordion__item::before {
     transition: none;
   }
 }

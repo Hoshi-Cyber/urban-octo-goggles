@@ -1,0 +1,192 @@
+@import "../tokens.css";
+@import "../typography.css";
+@import "../utilities.css";
+@import "../breakpoints.css";
+@import "../sections.css";
+
+/* Page-specific styles for /services/ */
+
+/* Popular combinations header:
+   intro stacked directly under H2, full-width, left-aligned */
+.service-bundles__head {
+  max-width: 100%;
+}
+
+.service-bundles__head .section-intro {
+  margin-top: var(--space-2);
+  max-width: 100%;
+  text-align: left;
+}
+
+/* Reduce vertical gap between header and grid inside this section */
+.service-bundles .container.stack {
+  gap: var(--space-2);
+}
+
+/* Popular combinations grid: 1 / 2 / 4 layout */
+.service-bundles__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: 0; /* minimise extra space below header */
+}
+
+@media (min-width: 768px) {
+  .service-bundles__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-bundles__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Popular combination cards – aligned with ServiceDetailSection cards */
+.service-bundles__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg, 0.75rem);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  box-shadow: var(
+    --shadow-xs,
+    0 6px 18px rgba(15, 23, 42, 0.04)
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top accent line, same treatment as ServiceDetailSection columns */
+.service-bundles__card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-accent) 80%, var(--color-primary))
+  );
+  opacity: 0.9;
+}
+
+/* Card title and body */
+.service-bundles__card-title {
+  margin: 0;
+  font-size: var(--fs-h5);
+  line-height: var(--lh-tight);
+}
+
+.service-bundles__card-body {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted-strong, var(--color-text));
+}
+
+/* Ensure button uses actual button styling and sits at the bottom */
+.service-bundles__card-link {
+  margin-top: auto;
+}
+
+/* -----------------------------
+   "Who our services are best suited for"
+   Header + intro full-width, grid below
+   ----------------------------- */
+
+/* Make header span full width, grid sit below it */
+.service-fit__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "fit-head fit-head"
+    "fit-grid fit-grid";
+  row-gap: var(--space-6);
+}
+
+/* Header (H2 + intro) occupies both columns */
+.service-fit__inner .section-head {
+  grid-area: fit-head;
+  max-width: 100%;
+}
+
+/* Intro stacked under H2, full-width, left-aligned */
+.service-fit__inner .section-head .section-intro {
+  max-width: 100%;
+  text-align: left;
+}
+
+/* Two-column list grid remains as its own block below */
+.service-fit__grid {
+  grid-area: fit-grid;
+}
+
+/* -----------------------------
+   "What clients report after working with us"
+   Ensure H2 + intro stack, full-width, left-aligned
+   ----------------------------- */
+
+.service-outcomes .section-head {
+  max-width: 100%;
+  display: block; /* override any flex/grid layout from global .section-head */
+}
+
+.service-outcomes .section-head .section-title {
+  max-width: 100%;
+  text-align: left;
+}
+
+.service-outcomes .section-head .section-intro {
+  max-width: 100%;
+  text-align: left;
+  margin-top: var(--space-2);
+}
+
+/* -----------------------------
+   Final CTA – stacked header, responsive actions
+   ----------------------------- */
+
+/* One row above, two rows below the final CTA section */
+.service-final-cta {
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.service-final-cta .section-head {
+  max-width: 100%;
+  display: block;
+}
+
+.service-final-cta .section-head .section-title {
+  max-width: 100%;
+  text-align: left;
+}
+
+.service-final-cta .section-head .section-intro {
+  max-width: 100%;
+  text-align: left;
+  margin-top: var(--space-2);
+}
+
+/* Buttons horizontal on larger screens, stacked on small */
+.service-final-cta__actions {
+  display: flex;
+  flex-direction: column; /* stacked by default (mobile-first) */
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .service-final-cta__actions {
+    flex-direction: row; /* horizontal layout on md+ */
+  }
+}
+
+::contentReference[oaicite:0]{index=0}

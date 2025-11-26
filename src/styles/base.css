@@ -48,7 +48,7 @@ a:hover {
 a:focus-visible {
   color: var(--color-primary-hover);
   text-decoration: none;
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -72,7 +72,7 @@ a:focus-visible {
 .skip-link:focus-visible {
   top: var(--space-2);
   z-index: 1000;
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000000);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -90,7 +90,7 @@ button {
 }
 
 button:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 

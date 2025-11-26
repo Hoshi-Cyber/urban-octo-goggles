@@ -1,0 +1,95 @@
+---
+import "./AudienceGrid.css";
+
+export interface Audience {
+  title: string;
+  body: string[];
+  href?: string;
+  hrefLabel?: string;
+}
+
+export interface Props {
+  title?: string;
+  intro?: string;
+  audiences: Audience[];
+  /**
+   * Controls the heading level for the section title.
+   * Defaults to "h2"; set to "h3" if the page already has an h2 parent.
+   */
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  title,
+  intro,
+  audiences = [],
+  headingLevel = "h2",
+} = Astro.props as Props;
+
+const hasHeader = Boolean(title || intro);
+const hasAudiences = Array.isArray(audiences) && audiences.length > 0;
+
+// Unique id per instance for aria-labelledby
+const instanceId = `audience-grid-${Math.random().toString(36).slice(2, 8)}`;
+const headingId = hasHeader ? `${instanceId}-title` : undefined;
+
+// Simple dynamic heading element
+const Heading = headingLevel === "h3" ? "h3" : "h2";
+---
+
+<section
+  class="audience-grid section"
+  aria-labelledby={headingId}
+>
+  <div class="container stack audience-grid__inner">
+    {hasHeader && (
+      <header class="section-head audience-grid__head stack">
+        <Heading id={headingId} class="section-title">
+          {title}
+        </Heading>
+        {intro && (
+          <p class="section-sub text-muted audience-grid__intro">
+            {intro}
+          </p>
+        )}
+      </header>
+    )}
+
+    {hasAudiences && (
+      <div
+        class="audience-grid__grid"
+        role="list"
+      >
+        {audiences.map((audience) => (
+          <article
+            class="card audience-grid__card"
+            role="listitem"
+          >
+            <h3 class="audience-grid__card-title h3">
+              {audience.title}
+            </h3>
+
+            <div class="audience-grid__card-body">
+              {audience.body.map((line) => (
+                <p class="audience-grid__card-text">
+                  {line}
+                </p>
+              ))}
+            </div>
+
+            {audience.href && (
+              <div class="audience-grid__card-footer">
+                <a
+                  href={audience.href}
+                  class="btn btn-accent audience-grid__link"
+                >
+                  {audience.hrefLabel ?? "Learn more"}
+                </a>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

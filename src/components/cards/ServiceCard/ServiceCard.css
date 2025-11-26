@@ -1,0 +1,93 @@
+/* src/components/cards/ServiceCard/ServiceCard.css
+   Mobile-first, token-driven service summary card.
+   Relies on global spacing, color, radius, and shadow tokens. */
+
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-text) 4%
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  box-shadow: var(--shadow-sm);
+
+  min-height: 100%;
+  overflow: hidden; /* allow top accent line to clip cleanly */
+  transition:
+    box-shadow 0.18s ease-out,
+    transform 0.12s ease-out,
+    border-color 0.18s ease-out,
+    background-color 0.18s ease-out;
+}
+
+/* Horizontal accent line at the top of the card
+   Borrowed from AboutSpecialisations card treatment */
+.service-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-accent) 80%, var(--color-primary))
+  );
+  opacity: 0.9;
+}
+
+/* Elevation + subtle lift on hover/focus */
+.service-card:hover,
+.service-card:focus-within {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 22%,
+    var(--color-text) 4%
+  );
+}
+
+/* Header block */
+.service-card__header {
+  margin: 0;
+}
+
+/* Title: uses global fs-h4 + lh-tight utilities in markup */
+.service-card__title {
+  margin: 0;
+  color: var(--color-text);
+}
+
+/* Body: readable measure, muted tone */
+.service-card__body {
+  margin: 0;
+  color: var(--color-muted);
+  max-width: 60ch;
+}
+
+/* CTA row anchored to the bottom of the card stack */
+.service-card__cta {
+  margin-top: auto;
+}
+
+/* Responsive density tuning */
+@media (min-width: 768px) {
+  .service-card {
+    padding: var(--space-5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-card {
+    padding: var(--space-6);
+  }
+}

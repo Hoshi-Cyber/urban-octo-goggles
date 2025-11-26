@@ -1,0 +1,161 @@
+---
+import "./TestimonialsFilterBar.css";
+import { slug } from "@/utils/slug";
+
+interface TestimonialsFilterBarProps {
+  levels: string[];
+  services: string[];
+  activeLevel?: string | null;
+  activeService?: string | null;
+}
+
+const {
+  levels = [],
+  services = [],
+  activeLevel = null,
+  activeService = null,
+} = Astro.props as TestimonialsFilterBarProps;
+---
+
+<section
+  class="testimonials-filterbar"
+  data-section="testimonials-filter"
+  aria-label="Filter testimonials by career level and service type"
+>
+  <div class="testimonials-filterbar__inner">
+    <div
+      class="testimonials-filterbar__controls"
+      role="group"
+      aria-label="Testimonial filters"
+    >
+      <!-- Career level pills -->
+      <div
+        class="testimonials-filterbar__group"
+        aria-label="Career level"
+      >
+        <p class="testimonials-filterbar__eyebrow">
+          Career level
+        </p>
+        <div
+          class="testimonials-filterbar__pills"
+          role="toolbar"
+          aria-label="Career level options"
+        >
+          <button
+            type="button"
+            class="pill"
+            data-role="level"
+            data-value=""
+            aria-pressed={(activeLevel === null || activeLevel === "") ? "true" : "false"}
+          >
+            All
+          </button>
+          {levels.map((lvl) => (
+            <button
+              type="button"
+              class="pill"
+              data-role="level"
+              data-value={lvl}
+              data-slug={slug(lvl)}
+              aria-pressed={activeLevel === lvl ? "true" : "false"}
+            >
+              {lvl}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Service type pills -->
+      <div
+        class="testimonials-filterbar__group"
+        aria-label="Service type"
+      >
+        <p class="testimonials-filterbar__eyebrow">
+          Service type
+        </p>
+        <div
+          class="testimonials-filterbar__pills"
+          role="toolbar"
+          aria-label="Service type options"
+        >
+          <button
+            type="button"
+            class="pill"
+            data-role="service"
+            data-value=""
+            aria-pressed={(activeService === null || activeService === "") ? "true" : "false"}
+          >
+            All
+          </button>
+          {services.map((svc) => (
+            <button
+              type="button"
+              class="pill"
+              data-role="service"
+              data-value={svc}
+              data-slug={slug(svc)}
+              aria-pressed={activeService === svc ? "true" : "false"}
+            >
+              {svc}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tiny, framework-free controller -->
+  <script is:inline>
+    (() => {
+      const root = document.currentScript.closest('.testimonials-filterbar');
+      if (!root) return;
+
+      const getPressed = (role) =>
+        root.querySelector(
+          `button.pill[data-role="${role}"][aria-pressed="true"]`
+        );
+
+      const state = {
+        level: getPressed('level')?.getAttribute('data-value') || null,
+        service: getPressed('service')?.getAttribute('data-value') || null,
+      };
+
+      const emit = () => {
+        root.dispatchEvent(
+          new CustomEvent('testimonials:filter', {
+            bubbles: true,
+            detail: {
+              level: state.level || null,
+              service: state.service || null,
+            },
+          })
+        );
+      };
+
+      const setPressed = (role, target) => {
+        root
+          .querySelectorAll(`button.pill[data-role="${role}"]`)
+          .forEach((btn) => btn.setAttribute('aria-pressed', 'false'));
+        target.setAttribute('aria-pressed', 'true');
+      };
+
+      root.addEventListener(
+        'click',
+        (event) => {
+          const btn = event.target.closest('button.pill');
+          if (!btn || !root.contains(btn)) return;
+
+          const role = btn.getAttribute('data-role');
+          if (role !== 'level' && role !== 'service') return;
+
+          setPressed(role, btn);
+          const value = btn.getAttribute('data-value') || '';
+          state[role] = value === '' ? null : value;
+
+          emit();
+        },
+        { passive: true }
+      );
+    })();
+  </script>
+</section>

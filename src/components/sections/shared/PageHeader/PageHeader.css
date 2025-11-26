@@ -14,24 +14,24 @@
 .page-header__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1); /* visually tight stack using global spacing token */
+  gap: var(--space-1); /* tight stack using global spacing token */
   max-width: 44rem;
 }
 
-/* Eyebrow / label */
+/* Eyebrow / label – deliberately smaller than the h1 */
 .page-header__eyebrow {
   margin: 0;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs); /* 13px – below body and well below h1 */
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--color-muted);
 }
 
-/* Title */
+/* Title – use global section-title scale for full typography compliance */
 .page-header__title {
   margin: 0;
-  font-size: var(--fs-3xl);
+  /* no font-size here – .section-title handles size + clamp */
 }
 
 /* Center-aligned variant */
@@ -44,7 +44,7 @@
   text-align: center;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments – spacing only; typography is handled globally */
 @media (min-width: 48rem) {
   .page-header {
     padding-block: var(--space-8);
@@ -52,10 +52,6 @@
 
   .page-header__content {
     max-width: 48rem;
-  }
-
-  .page-header__title {
-    font-size: var(--fs-4xl);
   }
 }
 

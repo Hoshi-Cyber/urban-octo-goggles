@@ -1,0 +1,13 @@
+{
+  "slug": "pricing",
+  "topItemIds": [
+    "pricing-packages-cost",
+    "payment-methods",
+    "refunds-policy",
+    "revisions-included"
+  ],
+  "groupIds": [
+    "pricing-payment",
+    "revisions-guarantees"
+  ]
+}

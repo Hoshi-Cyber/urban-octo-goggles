@@ -2,10 +2,29 @@
   "social": [
     {
       "icon": "linkedin",
+      "name": "LinkedIn",
       "href": "https://www.linkedin.com/company/cvwriting-ke"
     },
-    { "icon": "x-twitter", "href": "https://twitter.com/cvwritingke" },
-    { "icon": "facebook", "href": "https://facebook.com/cvwritingke" }
+    {
+      "icon": "x-twitter",
+      "name": "X (Twitter)",
+      "href": "https://twitter.com/cvwritingke"
+    },
+    {
+      "icon": "facebook",
+      "name": "Facebook",
+      "href": "https://facebook.com/cvwritingke"
+    },
+    {
+      "icon": "email",
+      "name": "Email",
+      "href": "mailto:hello@cvwriting.co.ke"
+    },
+    {
+      "icon": "whatsapp",
+      "name": "WhatsApp",
+      "href": "https://wa.me/254712345678"
+    }
   ],
   "columns": [
     {
@@ -20,33 +39,36 @@
       ]
     },
     {
+      "title": "Resources",
+      "links": [
+        { "label": "Blog", "href": "/blog/" },
+        { "label": "CV Samples", "href": "/samples/" },
+        { "label": "FAQs", "href": "/faq/" }
+      ]
+    },
+    {
       "title": "Company",
       "links": [
         { "label": "About", "href": "/about/" },
         { "label": "Process", "href": "/process/" },
         { "label": "Testimonials", "href": "/testimonials/" },
-        { "label": "Samples", "href": "/samples/" },
-        { "label": "FAQs", "href": "/faq/" }
+        { "label": "Contact", "href": "/contact/" }
       ]
     },
     {
-      "title": "Contact",
+      "title": "Legal Policies",
       "links": [
-        { "label": "Email", "href": "mailto:hello@cvwriting.co.ke" },
-        { "label": "Phone", "href": "tel:+254712345678" },
-        { "label": "WhatsApp", "href": "https://wa.me/254712345678" },
-        { "label": "Contact Form", "href": "/contact/" }
-      ]
-    },
-    {
-      "title": "Legal",
-      "links": [
-        { "label": "Privacy Policy", "href": "/privacy-policy" },
-        { "label": "Terms of Service", "href": "/terms" },
-        { "label": "Manage Cookies", "href": "/manage-cookies/" },
+        { "label": "Privacy Policy", "href": "/legal/privacy/" },
+        { "label": "Terms of Service", "href": "/legal/terms/" },
+        { "label": "Cookies & Preferences", "href": "/legal/cookies/" },
+        { "label": "Refunds & Revisions", "href": "/legal/refunds-revisions/" },
         { "label": "Sitemap", "href": "/sitemap.xml" }
       ]
     }
   ],
-  "bottom": []
+  "bottom": [
+    { "label": "Privacy Policy", "href": "/legal/privacy/" },
+    { "label": "Terms", "href": "/legal/terms/" },
+    { "label": "Cookies & Preferences", "href": "/legal/cookies/" }
+  ]
 }

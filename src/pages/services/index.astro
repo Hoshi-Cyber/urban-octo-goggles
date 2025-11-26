@@ -1,0 +1,328 @@
+---
+import "../../styles/pages/services.css";
+
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import StatStrip from "../../components/metrics/StatStrip/index.astro";
+import Button from "../../components/cta/Button/index.astro";
+import TestimonialStrip from "../../components/sections/shared/TestimonialStrip/index.astro";
+import Hero from "../../components/sections/service/Hero/index.astro";
+import ServiceCard from "../../components/cards/ServiceCard/index.astro";
+import ServiceDetailSection from "../../components/sections/service/ServiceDetailSection/index.astro";
+import TwoColumnCriteriaSection from "../../components/sections/criteria/TwoColumnCriteriaSection/index.astro";
+
+// Optional page-level stylesheet (create src/styles/pages/services.css)
+
+const title = "CV & Career Branding Services in Kenya";
+const description =
+  "Professional CV, cover letter, and LinkedIn profile services for professionals in Kenya and the diaspora.";
+
+const hero = {
+  eyebrow: "Pick the right level of support for your next move",
+  image: "/assets/images/hero.png",
+  alt: "CV, cover letter, and LinkedIn interface illustration",
+  actions: [
+    { label: "View packages & pricing", href: "/pricing/" },
+    { label: "Talk to us about your CV", href: "/contact/" },
+  ],
+};
+
+const stats = [
+  {
+    value: "1,200+",
+    label: "CVs written and reviewed since 2023.",
+  },
+  {
+    value: "82%+",
+    label:
+      "report more interview invitations within 4–6 weeks after an upgrade.",
+  },
+  {
+    value: "65%+",
+    label:
+      "secure promotions, job offers, or successful role changes within 12 months.",
+  },
+  {
+    value: "70%+",
+    label: "of new work comes from repeat clients or direct referrals.",
+  },
+];
+
+const popularCombos = [
+  {
+    title: "Job application bundle (CV + cover letter)",
+    body: "Perfect when you are actively applying to specific roles and want a consistent story across CV and cover letter.",
+    href: "/pricing/#cv-cover-letter-bundles",
+    ctaLabel: "See bundles on pricing",
+  },
+  {
+    title: "Career branding bundle (CV + LinkedIn)",
+    body: "Best when you are changing roles, industries, or locations and need your CV and LinkedIn to tell one story.",
+    href: "/pricing/#cv-linkedin-bundles",
+    ctaLabel: "View branding bundles",
+  },
+  {
+    title: "Full upgrade (CV + cover letter + LinkedIn)",
+    body: "For major moves such as relocation, senior promotions, or competitive international opportunities.",
+    href: "/pricing/#cv-full-upgrade-bundles",
+    ctaLabel: "Explore full upgrade",
+  },
+];
+
+// Core service cards for "Our core services" section
+const coreServices = [
+  {
+    title: "Professional CV writing",
+    body:
+      "ATS-aware CVs that highlight your achievements and match the roles you’re targeting in Kenya, the region, or global markets.",
+    href: "/cv-writing/",
+    ctaLabel: "Learn about CV writing",
+  },
+  {
+    title: "Cover letter writing",
+    body:
+      "Role-specific cover letters that connect your experience to the job description and speak directly to hiring managers.",
+    href: "/cover-letter/",
+    ctaLabel: "Learn about cover letters",
+  },
+  {
+    title: "LinkedIn profile optimisation",
+    body:
+      "Profile rewrites that improve your visibility in recruiter searches and align with your CV’s tone and direction.",
+    href: "/linkedin-optimization/",
+    ctaLabel: "Learn about LinkedIn",
+  },
+];
+---
+
+<BaseLayout {title} {description}>
+  <!-- 1. Service hero -->
+  <Hero
+    title={title}
+    sub={description}
+    eyebrow={hero.eyebrow}
+    image={hero.image}
+    alt={hero.alt}
+    actions={hero.actions}
+  />
+
+  <!-- 2. Service overview strip -->
+  <section class="section stack" aria-labelledby="services-overview-title">
+    <div class="container">
+      <h2
+        id="services-overview-title"
+        class="fs-h2 lh-tight text-left max-w-full"
+      >
+        Our core services
+      </h2>
+      <p class="fs-base text-left mt-2 max-w-full">
+        Choose the level of support that fits your current move. Each service is
+        delivered by the same expert team, following a proven, structured
+        process.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2a. Service overview cards -->
+  <section
+    class="section stack service-overview"
+    aria-label="Overview of core services"
+  >
+    <div class="container">
+      <div
+        class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8"
+      >
+        {coreServices.map((service) => (
+          <ServiceCard
+            title={service.title}
+            body={service.body}
+            href={service.href}
+            ctaLabel={service.ctaLabel}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Core service sections (lightweight anchors pointing to deep pages) -->
+  <ServiceDetailSection
+    id="cv-writing"
+    title="Professional CV writing"
+    intro="Ideal if you want a CV that passes ATS checks, tells a clear story, and positions you for roles in Kenya, the region, or remote markets."
+    whatYouGet={[
+      "ATS-aware CV layout tailored to your target roles and geography.",
+      "Achievements rewritten with metrics and clear outcomes.",
+      "Language tuned to Kenyan and regional job descriptions.",
+      "Editable Word + final PDF export.",
+    ]}
+    bestFor={[
+      "Early-career and mid-level professionals needing a stronger baseline CV.",
+      "Experienced hires aiming for bigger roles or cross-sector moves.",
+      "Diaspora Kenyans applying back into the local market.",
+    ]}
+    href="/cv-writing/"
+    ctaLabel="View full CV writing service"
+    ctaVariant="primary"
+  />
+
+  <ServiceDetailSection
+    id="cover-letter"
+    title="Cover letter writing & tailoring"
+    intro="For roles where a cover letter is required or strongly recommended, and you need a clear, role-specific narrative that complements your CV."
+    whatYouGet={[
+      "Role-specific cover letter aligned to a real job description.",
+      "Opening, body, and close structured for clarity and impact.",
+      "Tone and language matched to your CV and LinkedIn profile.",
+    ]}
+    bestFor={[
+      "Competitive roles with many qualified applicants.",
+      "Applications where motivation, fit, and story matter as much as experience.",
+    ]}
+    href="/cover-letter/"
+    ctaLabel="View full cover letter service"
+    ctaVariant="primary"
+  />
+
+  <ServiceDetailSection
+    id="linkedin-optimisation"
+    title="LinkedIn profile optimisation"
+    intro="For professionals who want a LinkedIn profile that supports job applications, inbound recruiter messages, and a stronger personal brand."
+    whatYouGet={[
+      "Updated headline, About, and Experience sections aligned with your target roles.",
+      "Guidance on banner, photo, skills, and featured content.",
+      "Recommendations for using LinkedIn search and outreach strategically.",
+    ]}
+    bestFor={[
+      "Professionals who want more relevant profile views and connection requests.",
+      "Those using LinkedIn as a primary job search or networking channel.",
+    ]}
+    href="/linkedin-optimization/"
+    ctaLabel="View full LinkedIn service"
+    ctaVariant="primary"
+  />
+
+  <!-- 4. Popular combinations / bundles -->
+  <section
+    class="section stack service-bundles"
+    aria-labelledby="service-bundles-title"
+  >
+    <div class="container stack">
+      <header class="service-bundles__head stack">
+        <h2
+          id="service-bundles-title"
+          class="section-title fs-h2 lh-tight text-left"
+        >
+          Popular combinations
+        </h2>
+        <p class="section-intro fs-base text-left">
+          Many clients combine services for a complete upgrade—choose the mix
+          that fits your move, then confirm details on the pricing page.
+        </p>
+      </header>
+
+      <div class="service-bundles__grid">
+        {popularCombos.map((combo) => (
+          <article class="service-bundles__card">
+            <h3 class="service-bundles__card-title">{combo.title}</h3>
+            <p class="service-bundles__card-body">{combo.body}</p>
+            <Button
+              href={combo.href}
+              label={combo.ctaLabel}
+              variant="ghost"
+              size="md"
+              class="service-bundles__card-link"
+            />
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Who we work with -->
+  <TwoColumnCriteriaSection
+    id="service-fit"
+    title="Who our services are best suited for"
+    intro="Clear fit saves both you and our team time. Here’s when our services tend to create the most value."
+    leftHeading="Ideal clients"
+    rightHeading="When we may not be a fit"
+    leftItems={[
+      "Students, fresh graduates, and early-career professionals starting out.",
+      "Mid-level professionals aiming for growth roles or sector moves.",
+      "Senior managers and specialists preparing for strategic or leadership roles.",
+      "Diaspora Kenyans applying back into Kenyan or regional roles.",
+    ]}
+    rightItems={[
+      "Requests to fabricate experience or qualifications.",
+      "Unrealistic timelines with no flexibility for quality work.",
+      "Situations where the client is not ready to provide basic career information.",
+    ]}
+  />
+
+  <!-- 6. Outcome metrics -->
+  <section
+    class="section stack service-outcomes"
+    aria-labelledby="service-outcomes-title"
+  >
+    <div class="container stack">
+      <header class="section-head">
+        <h2
+          id="service-outcomes-title"
+          class="section-title fs-h2 lh-tight text-left max-w-full"
+        >
+          What clients report after working with us
+        </h2>
+        <p class="section-intro fs-base text-left max-w-full mt-2">
+          Outcomes vary by role, sector, and effort—but across projects, this is
+          what we see most often.
+        </p>
+      </header>
+
+      <StatStrip stats={stats} compact={true} />
+    </div>
+  </section>
+
+  <!-- 7. Inline social proof (data note removed) -->
+  <section
+    class="section stack service-social-proof"
+    aria-label="Client feedback and data handling"
+  >
+    <div class="container stack">
+      <TestimonialStrip />
+    </div>
+  </section>
+
+  <!-- 8. Final CTA -->
+  <section
+    class="section stack service-final-cta"
+    aria-labelledby="service-final-cta-title"
+  >
+    <div class="container stack">
+      <header class="section-head">
+        <h2
+          id="service-final-cta-title"
+          class="section-title fs-h2 lh-tight text-left max-w-full"
+        >
+          Ready to start your upgrade?
+        </h2>
+        <p class="section-intro fs-base text-left max-w-full mt-2">
+          Send us your current CV and a short note about your target roles or
+          locations. We’ll confirm the right package and next steps.
+        </p>
+      </header>
+
+      <div class="service-final-cta__actions">
+        <Button
+          href="/pricing/"
+          label="View packages & pricing"
+          variant="primary"
+          size="md"
+        />
+        <Button
+          href="/contact/"
+          label="Talk to us about your CV"
+          variant="ghost"
+          size="md"
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,72 @@
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+@import "../../../../styles/utilities.css";
+@import "../../../../styles/breakpoints.css";
+@import "../../../../styles/sections.css";
+
+/* Root section */
+.data-privacy-note {
+  background: var(--surface-subtle, #f9fafb);
+  color: var(--color-text);
+}
+
+/* Container uses global .container from sections.css/breakpoints.css */
+
+.data-privacy-note .container {
+  display: block;
+}
+
+/* Inner card */
+.data-privacy-note__inner {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem);
+  gap: var(--space-3, 0.75rem);
+}
+
+/* Heading */
+.data-privacy-note__heading {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 0.4vw + 1rem, 1.25rem);
+}
+
+/* List */
+.data-privacy-note__list {
+  margin: 0;
+  padding-left: var(--space-4, 1rem);
+  display: grid;
+  gap: var(--space-2, 0.5rem);
+}
+
+.data-privacy-note__item {
+  list-style: disc;
+}
+
+/* Bullet text */
+.data-privacy-note__text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm, 0.95rem);
+  line-height: 1.6;
+  color: var(--color-muted, #4b5563);
+}
+
+/* Slightly tighten layout on wider viewports */
+@media (min-width: 768px) {
+  .data-privacy-note__inner {
+    padding: var(--space-6, 1.5rem) var(--space-6, 1.5rem);
+    gap: var(--space-3, 0.75rem);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .data-privacy-note *,
+  .data-privacy-note *::before,
+  .data-privacy-note *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

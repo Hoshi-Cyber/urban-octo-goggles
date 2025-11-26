@@ -18,24 +18,37 @@
 
 /* Social — balanced across sizes */
 .footer__head {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
+  gap: var(--space-2, 0.5rem);
   margin-bottom: var(--space-6, 1.5rem);
 }
+
+.footer__socialLabel {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-muted, #6b7280);
+}
+
 .footer__social {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.625rem 0.75rem;
 }
+
 @media (min-width: 768px) {
   .footer__head {
-    justify-content: start;
+    justify-content: flex-start;
   }
   .footer__social {
-    justify-content: start;
+    justify-content: flex-start;
   }
 }
+
 .sociallink {
   --_size: 2.25rem;
   --_fg: var(--color-muted, #6b7280);
@@ -55,33 +68,38 @@
   background: var(--_bg);
   border: 1px solid var(--_bd);
   transition:
-    color 0.15s ease,
-    background-color 0.15s ease,
     border-color 0.15s ease,
     box-shadow 0.15s ease,
     transform 0.06s ease;
 }
+
+/* Hover: keep neutral background, no blue fill – tooltip comes from title="" */
 .sociallink:hover,
 .sociallink:focus-visible {
-  color: #fff;
-  background: var(--color-primary, #2563eb);
+  color: var(--_fg);
+  background: var(--_bg); /* no blue */
   border-color: color-mix(
     in oklab,
-    var(--color-primary, #2563eb) 35%,
+    var(--color-text, #111827) 20%,
     transparent
   );
+  box-shadow: 0 0 0 2px
+    color-mix(in oklab, var(--color-text, #111827) 6%, transparent);
 }
+
 .sociallink:active {
   transform: translateY(1px);
 }
+
 .sociallink:focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
 }
+
+/* External SVG icons (img) inside circular buttons */
 .sociallink__icon {
   width: 1rem;
   height: 1rem;
+  display: block;
 }
 
 /* Columns */

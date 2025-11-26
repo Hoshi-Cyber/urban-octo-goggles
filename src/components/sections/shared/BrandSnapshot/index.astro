@@ -1,0 +1,97 @@
+---
+// src/components/sections/shared/BrandSnapshot/index.astro
+import "./BrandSnapshot.css";
+
+export interface BrandSnapshotHighlights {
+  label?: string;
+  items: string[];
+}
+
+export interface Props {
+  title: string;
+  intro?: string;
+  body: string[]; // 1–3 paragraphs
+  highlights?: BrandSnapshotHighlights;
+  headingLevel?: "h2" | "h3";
+  variant?: "default" | "compact";
+}
+
+const {
+  title,
+  intro,
+  body = [],
+  highlights,
+  headingLevel = "h2",
+  variant = "default",
+} = Astro.props as Props;
+
+const HeadingTag = headingLevel === "h3" ? "h3" : "h2";
+
+const hasBody = Array.isArray(body) && body.length > 0;
+const hasHighlights =
+  !!highlights && Array.isArray(highlights.items) && highlights.items.length > 0;
+
+const makeSlug = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "") || "brand-snapshot";
+
+const headingId = `brand-snapshot-${makeSlug(title)}`;
+---
+
+<section
+  class={`brand-snapshot section brand-snapshot--${variant}`.trim()}
+  aria-labelledby={headingId}
+>
+  <div class="container brand-snapshot__inner stack">
+    <header class="section-head brand-snapshot__head stack">
+      <HeadingTag id={headingId} class="section-title">
+        {title}
+      </HeadingTag>
+
+      {intro && (
+        <p class="section-sub brand-snapshot__intro">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    <div class="brand-snapshot__card card">
+      {hasBody && (
+        <div class="brand-snapshot__col brand-snapshot__col--body">
+          <div class="brand-snapshot__body prose">
+            {body.map((paragraph) => (
+              <p class="brand-snapshot__paragraph">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasHighlights && (
+        <aside
+          class="brand-snapshot__col brand-snapshot__col--highlights"
+          aria-label={highlights.label ?? "Key brand highlights"}
+        >
+          <div class="brand-snapshot__highlights stack">
+            {highlights?.label && (
+              <h3 class="h3 brand-snapshot__highlights-title">
+                {highlights.label}
+              </h3>
+            )}
+
+            <ul class="brand-snapshot__highlights-list">
+              {highlights.items.map((item) => (
+                <li class="brand-snapshot__highlights-item">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+</section>

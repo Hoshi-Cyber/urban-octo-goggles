@@ -1,0 +1,167 @@
+/* src/components/sections/shared/BrandSnapshot/BrandSnapshot.css */
+
+/* BrandSnapshot – brand narrative + highlight strip
+   - Uses global tokens & utilities only
+   - Layout: 1-col → 2-col card grid
+*/
+
+.brand-snapshot {
+  padding-block: var(--space-6);
+  background: color-mix(
+    in oklab,
+    var(--color-background) 94%,
+    var(--color-primary) 6%
+  );
+}
+
+@media (min-width: 1024px) {
+  .brand-snapshot {
+    padding-block: var(--space-8);
+  }
+}
+
+.brand-snapshot__inner {
+  align-items: stretch;
+}
+
+/* Header – H2 + intro stacked and left-aligned (mirrors AudienceGrid) */
+
+.brand-snapshot__head {
+  text-align: left;
+  margin-bottom: var(--space-4);
+  display: block; /* force stacked layout, intro spans full width */
+}
+
+.brand-snapshot__head .section-title {
+  margin: 0 0 var(--space-2);
+}
+
+.brand-snapshot__intro {
+  margin: 0;
+  max-width: none; /* intro spans full container width */
+}
+
+/* Main card */
+
+.brand-snapshot__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%),
+      var(--color-surface)
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-snapshot__card::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  inset-block-start: var(--space-3);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
+}
+
+@media (min-width: 768px) {
+  .brand-snapshot__card {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr);
+    padding: var(--space-5);
+  }
+}
+
+/* Columns */
+
+.brand-snapshot__col {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .brand-snapshot__col--body {
+    padding-inline-end: var(--space-5);
+    border-inline-end: 1px solid
+      color-mix(in oklab, var(--color-light) 85%, var(--color-primary) 15%);
+  }
+
+  .brand-snapshot__col--highlights {
+    padding-inline-start: var(--space-5);
+  }
+}
+
+/* Body copy – normal paragraphs with clear vertical gap */
+
+.brand-snapshot__body {
+  margin: 0;
+}
+
+.brand-snapshot__body p {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  color: var(--color-text);
+  text-indent: 0; /* ensure no paragraph indent */
+}
+
+.brand-snapshot__body p + p {
+  margin-top: var(--space-3); /* vertical gap between paragraphs */
+}
+
+/* Highlights – bullets in a neat column */
+
+.brand-snapshot__highlights {
+  align-items: flex-start;
+}
+
+.brand-snapshot__highlights-title {
+  margin: 0 0 var(--space-2);
+}
+
+.brand-snapshot__highlights-list {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  list-style: disc;
+}
+
+.brand-snapshot__highlights-item {
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.brand-snapshot__highlights-item + .brand-snapshot__highlights-item {
+  margin-top: 0.5rem;
+}
+
+/* Compact variant – slightly tighter padding */
+
+.brand-snapshot--compact .brand-snapshot__card {
+  padding: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .brand-snapshot--compact .brand-snapshot__card {
+    padding: var(--space-4);
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-snapshot__card {
+    transition: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,90 @@
+/* FAQQuickNav – pill-style in-page section navigation
+   Uses global tokens & utilities only. */
+
+.faq-quicknav {
+  margin-block: var(--space-2) var(--space-4);
+  /* bg-light class already provides a soft band background */
+}
+
+.faq-quicknav__inner {
+  /* container class already sets max-width and horizontal padding */
+  padding-block: var(--space-2);
+}
+
+/* Mobile-first: horizontal scrollable pill row */
+.faq-quicknav__list {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0 var(--space-1); /* keep last pill comfortably inside band */
+  list-style: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.faq-quicknav__item {
+  flex: 0 0 auto;
+}
+
+/* Pill styling built on top of .btn, but visually softer than primary buttons */
+.faq-quicknav__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-2);
+  padding-block: var(--space-1);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs); /* slightly smaller for a lighter feel */
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Base chip style – understated, premium */
+.faq-quicknav__pill.btn {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-light);
+  box-shadow: none;
+  text-transform: none;
+}
+
+/* Hover & focus – blue chip with white text */
+.faq-quicknav__pill:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary, #ffffff);
+}
+
+.faq-quicknav__pill:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* md+: allow wrapping and remove horizontal scrollbars */
+@media (min-width: 768px) {
+  .faq-quicknav__list {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+/* lg+: keep wrap, just tighten padding/alignment so chips don't feel ad-hoc */
+@media (min-width: 1024px) {
+  .faq-quicknav__list {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding-inline: 0;
+  }
+
+  .faq-quicknav__item {
+    flex: 0 0 auto;
+  }
+
+  .faq-quicknav__pill {
+    width: auto; /* no forced full-width pills – prevents cramped text */
+  }
+}

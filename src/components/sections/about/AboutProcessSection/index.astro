@@ -1,0 +1,124 @@
+---
+import "./AboutProcessSection.css";
+import StepsComponent, {
+  type Step as StepsStep,
+} from "../../../common/Steps/index.astro";
+
+export interface ProcessStep {
+  label: string;
+  description: string;
+}
+
+export interface ProcessPrinciple {
+  label: string;
+  description?: string;
+}
+
+export interface AboutProcessSectionProps {
+  title: string;
+  intro?: string;
+  steps: ProcessStep[];
+  principles?: ProcessPrinciple[];
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  title,
+  intro,
+  steps,
+  principles = [],
+  headingLevel = "h2",
+} = Astro.props as AboutProcessSectionProps;
+
+type HeadingTag = "h2" | "h3";
+const Heading = headingLevel as HeadingTag;
+
+// Map local ProcessStep → shared Steps.Step for reuse
+const mappedSteps: StepsStep[] = (steps ?? []).map((step) => ({
+  title: step.label,
+  description: step.description,
+  // Keep Steps focused: no CTAs, bullets here – purely experience-focused
+  summary: undefined,
+  weDo: undefined,
+  youDo: undefined,
+  icon: undefined,
+  ctaHref: undefined,
+  ctaLabel: undefined,
+}));
+
+const sectionId =
+  "about-process-" +
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+---
+
+<section
+  class="about-process"
+  aria-labelledby={sectionId}
+  data-section="about-process"
+>
+  <header class="section-head about-process__head stack">
+    <Heading
+      id={sectionId}
+      class={`section-title ${headingLevel === "h2" ? "h2" : "h3"} about-process__title`}
+    >
+      {title}
+    </Heading>
+
+    {intro && (
+      <p class="about-process__intro section-sub">
+        {intro}
+      </p>
+    )}
+  </header>
+
+  <div class="container about-process__inner stack">
+    <div class="about-process__grid">
+      <div class="about-process__steps stack">
+        {mappedSteps.length > 0 && (
+          <StepsComponent
+            steps={mappedSteps}
+            align="start"
+            columns={2}
+            class="about-process__steps-block"
+          />
+        )}
+      </div>
+
+      {principles.length > 0 && (
+        <aside
+          class="about-process__principles card stack"
+          aria-label="Guiding principles for how we work"
+        >
+          <h3 class="about-process__principles-title h3">
+            What guides our work
+          </h3>
+
+          <p class="about-process__principles-intro">
+            Every CV, cover letter, and LinkedIn profile we deliver follows a
+            clear, evidence-driven approach that protects your time, your goals,
+            and your data.
+          </p>
+
+          <ul class="about-process__principles-list">
+            {principles.map((principle) => (
+              <li class="about-process__principle">
+                <p class="about-process__principle-label">
+                  {principle.label}
+                </p>
+
+                {principle.description && (
+                  <p class="about-process__principle-description">
+                    {principle.description}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+    </div>
+  </div>
+</section>

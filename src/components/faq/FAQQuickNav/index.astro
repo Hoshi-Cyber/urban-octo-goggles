@@ -1,0 +1,31 @@
+---
+import "./FAQQuickNav.css";
+
+export interface FAQQuickNavItem {
+  href: string;
+  label: string;
+}
+
+export interface Props {
+  items: FAQQuickNavItem[];
+  ariaLabel?: string;
+}
+
+const { items = [], ariaLabel = "FAQ sections" } = Astro.props as Props;
+---
+
+{items.length > 0 && (
+  <nav class="faq-quicknav bg-light" aria-label={ariaLabel}>
+    <div class="faq-quicknav__inner container">
+      <ul class="faq-quicknav__list" role="list">
+        {items.map((item) => (
+          <li class="faq-quicknav__item">
+            <a href={item.href} class="btn faq-quicknav__pill">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}

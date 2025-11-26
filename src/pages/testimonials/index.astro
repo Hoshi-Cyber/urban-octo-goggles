@@ -1,0 +1,460 @@
+---
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import PageHeader from "../../components/sections/shared/PageHeader/index.astro";
+
+// New reusable components
+import TestimonialsGridSection from "../../components/sections/testimonials/TestimonialsGridSection/index.astro";
+import TestimonialsCaseStudiesSection from "../../components/sections/testimonials/TestimonialsCaseStudiesSection/index.astro";
+import TestimonialsOutcomeSection from "../../components/sections/testimonials/TestimonialsOutcomeSection/index.astro";
+import DataPrivacyNote from "../../components/sections/shared/DataPrivacyNote/index.astro";
+import TestimonialsFAQSection from "../../components/sections/testimonials/TestimonialsFAQSection/index.astro";
+import "../../styles/pages/testimonials.css";
+
+// Hero stats + CTA components
+import StatStrip from "../../components/metrics/StatStrip/index.astro";
+import Button from "../../components/cta/Button/index.astro";
+
+// Import testimonials data from JSON
+import testimonialsData from "../../data/testimonials.json";
+
+const title = "Client results & testimonials";
+const description =
+  "Read real client testimonials from professionals in Kenya and abroad who used CVWriting.co.ke for CV, cover letter, and LinkedIn upgrades. See how their interviews, offers, and career outcomes improved.";
+
+const seo = {
+  canonical: "/testimonials/",
+};
+
+const heroIntro =
+  "See real results from professionals in Kenya and abroad who partnered with CVWriting.co.ke to upgrade their CVs, cover letters, and LinkedIn profiles. Some details are anonymised for confidentiality.";
+
+// Types for JSON structure
+type PageTestimonial = {
+  id: string;
+  headline: string;
+  quote: string;
+  name: string;
+  level: string;
+  role: string;
+  sector?: string;
+  location?: string;
+  services: string[];
+  outcomes?: string[];
+};
+
+type TestimonialsJson = {
+  items: {
+    quote: string;
+    author: string;
+    role: string;
+  }[];
+  pageTestimonials: PageTestimonial[];
+};
+
+// Extract page-level testimonials from JSON
+const { pageTestimonials } = testimonialsData as TestimonialsJson;
+
+// Mapping helpers to align with TestimonialsGridSection filter contract
+const mapCareerLevel = (level: string) => {
+  const normalized = level.toLowerCase();
+  if (normalized.includes("student") || normalized.includes("graduate")) return "student";
+  if (normalized.includes("early")) return "early";
+  if (normalized.includes("entry")) return "early";
+  if (normalized.includes("mid")) return "mid";
+  if (normalized.includes("senior") || normalized.includes("executive")) return "senior";
+  return "";
+};
+
+const mapServiceType = (services: string[]) => {
+  const joined = services.join(" ").toLowerCase();
+  if (joined.includes("linkedin")) return "cv_plus_linkedin";
+  if (joined.includes("cover")) return "cv_plus_cover";
+  if (joined.includes("executive")) return "executive_cv";
+  return "cv";
+};
+
+const testimonialsFilters = {
+  careerLevels: ["student", "early", "mid", "senior"],
+  serviceTypes: ["cv", "cv_plus_cover", "cv_plus_linkedin", "executive_cv", "full_branding"],
+};
+
+const testimonialsForGrid = pageTestimonials.map((t) => ({
+  id: t.id,
+  quote: t.quote,
+  author: t.name,
+  role: `${t.level} ${t.role}`,
+  careerLevel: mapCareerLevel(t.level),
+  serviceType: mapServiceType(t.services),
+}));
+
+// Case study items for TestimonialsCaseStudiesSection
+const caseStudyItems = [
+  {
+    challenge:
+      "Strong experience in NGO work but a CV focused on tasks instead of outcomes, broad applications across NGOs with no clear focus, and three months of applications with no interview invitations.",
+    action:
+      "Reframed responsibilities into clear impact bullets, aligned language to target NGO job descriptions, and updated the LinkedIn headline and About section to match target roles.",
+    outcome:
+      "Secured 3 interview invitations within 4 weeks of using the new CV and LinkedIn profile.",
+  },
+  {
+    challenge:
+      "Client wanted to move from customer service into a technical support role, but their CV did not highlight transferable skills and struggled to convince recruiters outside the current industry.",
+    action:
+      "Mapped customer service experience to troubleshooting and problem-solving skills, highlighted systems and tools already used, and positioned the profile for junior tech roles with clear growth potential.",
+    outcome:
+      "Shortlisted for multiple entry-level tech support roles and gained momentum in the career switch.",
+  },
+  {
+    challenge:
+      "Mid-level banking professional had strong performance reviews but a CV that read as a generic operations profile, making it difficult to compete for regional roles with higher responsibility and pay.",
+    action:
+      "Restructured the CV around key impact areas (cost savings, risk reduction, process improvement), added quantified achievements for each role, and aligned keywords with regional operations manager job descriptions.",
+    outcome:
+      "Invited to multiple regional operations manager interviews and secured an offer with a 25% salary increase.",
+  },
+  {
+    challenge:
+      "Senior public sector officer wanted to move into a multilateral organisation but their CV was heavily task-based, long, and full of internal jargon unfamiliar to international hiring panels.",
+    action:
+      "Condensed the CV from 7 to 4 pages, translated internal programme language into outcomes aligned to SDG and donor priorities, and created a tailored cover letter that clearly articulated international experience and stakeholder impact.",
+    outcome:
+      "Shortlisted for roles in two multilateral organisations and progressed to panel interview stage for a regional programme manager position.",
+  },
+];
+
+
+// Outcome metrics + reasons for TestimonialsOutcomeSection
+const outcomeStats = [
+  {
+    value: "82%+",
+    label:
+      "report more interview invitations within 4–6 weeks after an upgrade.",
+  },
+  {
+    value: "65%+",
+    label:
+      "secure promotions, job offers, or successful role changes within 12 months.",
+  },
+  {
+    value: "70%+",
+    label:
+      "of new work comes from repeat clients or direct referrals.",
+  },
+  {
+    value: "40+ sectors",
+    label:
+      "professionals served across banking, NGOs, government, tech, healthcare, and more.",
+  },
+];
+
+const outcomeReasons = [
+  "ATS-aware layouts that respect modern hiring systems.",
+  "Role- and industry-specific framing instead of generic CV copy.",
+  "Clear, concise language that highlights evidence and outcomes.",
+  "LinkedIn optimisation aligned with your target roles and geography.",
+];
+
+// JSON-LD structured data now uses pageTestimonials from JSON
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": "https://www.cvwriting.co.ke/#professional-service",
+  name: "CVWriting.co.ke",
+  url: "https://www.cvwriting.co.ke/",
+  description:
+    "Professional CV, cover letter, and LinkedIn profile writing services for professionals in Kenya and abroad.",
+  areaServed: {
+    "@type": "Country",
+    name: "Kenya",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    reviewCount: "120",
+  },
+  review: pageTestimonials.map((t) => ({
+    "@type": "Review",
+    name: t.headline,
+    reviewBody: t.quote,
+    author: {
+      "@type": "Person",
+      name: t.name,
+    },
+  })),
+};
+---
+
+<!-- Optional page-level stylesheet (create src/pages/testimonials/testimonials.css first) -->
+<!-- import "./testimonials.css"; -->
+
+<BaseLayout title={title} description={description} seo={seo}>
+  <main id="main" class="page-testimonials">
+    <div class="container stack page-testimonials__inner">
+      <!-- 2.1 Testimonial Hero: PageHeader + stats band -->
+      <section
+        class="testimonials-hero stack stack--tight"
+        aria-labelledby="testimonials-page-title"
+      >
+        <PageHeader
+          title={title}
+          intro={heroIntro}
+          eyebrow="Social proof"
+          id="testimonials-page-title"
+        />
+
+        <!-- Compact stats + CTAs band -->
+<section
+  class="testimonials-hero__support stack stack--tight"
+  aria-label="Client results summary"
+>
+  <div class="testimonials-hero__stats">
+    <StatStrip
+      stats={[
+        {
+          value: "1,200+",
+          label: "CVs written and reviewed since 2023.",
+        },
+        {
+          value: "82%+",
+          label: "report more interview invitations within 4–6 weeks after an upgrade.",
+        },
+        {
+          value: "65%+",
+          label: "secure promotions, job offers, or successful role changes within 12 months.",
+        },
+        {
+          value: "70%+",
+          label: "of new projects come from repeat or referred clients.",
+        },
+      ]}
+      compact={true}
+    />
+  </div>
+</section>
+
+
+          <div class="testimonials-hero__ctas">
+            <Button
+              href="/pricing/"
+              label="View packages & pricing"
+              variant="primary"
+              size="md"
+            />
+            <Button
+              href="/contact/"
+              label="Start your CV upgrade"
+              variant="ghost"
+              size="md"
+            />
+          </div>
+        </section>
+      </section>
+
+      <!-- 2.2 Trust bar – stacked header, global typography compliant -->
+      <section
+        class="testimonials-trustbar bg-surface rounded-lg shadow-md py-6 px-6"
+        aria-label="Industries and review sources"
+      >
+        <header class="testimonials-trustbar__header">
+          <div class="stack stack--tight">
+            <p class="testimonials-trustbar__eyebrow text-muted mb-2">
+              Where our clients work
+            </p>
+            <h2 class="testimonials-trustbar__title section-title">
+              Trusted by professionals from…
+            </h2>
+          </div>
+        </header>
+
+        <div
+          class="testimonials-trustbar__logos grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4"
+        >
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Banking &amp; Finance
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            NGOs &amp; Development
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Government &amp; Public Sector
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Tech &amp; Startups
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Healthcare &amp; Education
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Consulting &amp; Professional Services
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            Public &amp; Non-profit Agencies
+          </span>
+          <span
+            class="trust-pill bg-light rounded-lg px-4 py-2 text-center hover:bg-light hover:text-primary"
+          >
+            SMEs &amp; High-growth businesses
+          </span>
+        </div>
+      </section>
+
+      <!-- 2.3 + 2.4 Core testimonials filter + grid -->
+      <TestimonialsGridSection
+  filters={testimonialsFilters}
+  testimonials={testimonialsForGrid}
+  initialLimit={4}
+/>
+
+      <!-- 2.5 Mini case studies -->
+      <TestimonialsCaseStudiesSection
+        eyebrow="Client stories in detail"
+        title="How we approach different situations"
+        intro="A closer look at how we handle specific client scenarios and the outcomes they see."
+        items={caseStudyItems}
+        headingLevel="h2"
+      />
+
+      <!-- 2.6 Outcome metrics & “Why this works” band -->
+      <TestimonialsOutcomeSection
+        eyebrow="Why our approach works"
+        title="Outcomes our clients report"
+        stats={outcomeStats}
+        reasons={outcomeReasons}
+        headingLevel="h2"
+      />
+
+      <!-- 2.7 Data privacy & authenticity -->
+      <DataPrivacyNote
+        bullets={[
+          "Testimonials are only published with explicit client consent.",
+          "Names, employers, and other identifying details are anonymised where needed.",
+          "CVs and documents are never shared publicly without written permission.",
+          "We handle all communication discreetly via email, WhatsApp, or phone.",
+        ]}
+      />
+
+      <!-- 2.8 Inline FAQ (testimonials-specific wrapper) -->
+      <TestimonialsFAQSection />
+
+                        <!-- 2.9 Final CTA / Next steps -->
+      <section
+        class="testimonials-next-steps"
+        aria-label="Next steps after reading client results"
+      >
+        <div
+          class="container testimonials-next-steps__inner"
+          style="row-gap: var(--space-4, 1rem);"
+        >
+          <header
+            class="testimonials-next-steps__head"
+            style="max-width: none; width: 100%;"
+          >
+            <h2 class="section-title testimonials-next-steps__title">
+              Ready to get similar results?
+            </h2>
+            <p
+              class="testimonials-next-steps__intro"
+              style="max-width: none; width: 100%;"
+            >
+              Choose the next best step for you – compare packages, review our
+              services, see anonymised CV samples, or talk to us about your
+              specific situation.
+            </p>
+          </header>
+
+          <div class="testimonials-next-steps__grid">
+            <article class="testimonials-next-steps__card">
+              <h3 class="testimonials-next-steps__card-title">
+                View packages &amp; pricing
+              </h3>
+              <p class="testimonials-next-steps__card-body">
+                Compare CV, cover letter, and LinkedIn options and pick a
+                package aligned to your goals and budget.
+              </p>
+              <Button
+                href="/pricing/"
+                label="View pricing"
+                variant="primary"
+                size="md"
+                class="testimonials-next-steps__card-link"
+              />
+            </article>
+
+            <article class="testimonials-next-steps__card">
+              <h3 class="testimonials-next-steps__card-title">
+                Explore our services
+              </h3>
+              <p class="testimonials-next-steps__card-body">
+                See everything we can help with – from CV rewrites to full
+                career branding and interview coaching.
+              </p>
+              <Button
+                href="pages/services/"
+                label="View services"
+                variant="ghost"
+                size="md"
+                class="testimonials-next-steps__card-link"
+              />
+            </article>
+
+            <article class="testimonials-next-steps__card">
+              <h3 class="testimonials-next-steps__card-title">
+                See sample CV layouts
+              </h3>
+              <p class="testimonials-next-steps__card-body">
+                Review anonymised CV samples to understand the level of
+                structure, clarity, and positioning you can expect.
+              </p>
+              <Button
+                href="/samples/"
+                label="View samples"
+                variant="ghost"
+                size="md"
+                class="testimonials-next-steps__card-link"
+              />
+            </article>
+
+            <article class="testimonials-next-steps__card">
+              <h3 class="testimonials-next-steps__card-title">
+                Talk to us
+              </h3>
+              <p class="testimonials-next-steps__card-body">
+                Have a specific timeline, geography, or role in mind? Share the
+                details and we’ll recommend a practical next step.
+              </p>
+              <Button
+                href="/contact/"
+                label="Contact us"
+                variant="primary"
+                size="md"
+                class="testimonials-next-steps__card-link"
+              />
+            </article>
+          </div>
+        </div>
+      </section>
+
+
+    </div>
+  </main>
+
+  <!-- JSON-LD for ProfessionalService + reviews -->
+  <script type="application/ld+json">
+    {JSON.stringify(structuredData)}
+  </script>
+</BaseLayout>

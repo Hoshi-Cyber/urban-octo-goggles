@@ -1,0 +1,17 @@
+{
+  "slug": "faq-page",
+  "topItemIds": [
+    "process-from-payment-to-final-cv",
+    "pricing-packages-cost",
+    "turnaround-time-cv-delivery",
+    "clients-outside-kenya"
+  ],
+  "groupIds": [
+    "getting-started",
+    "pricing-payment",
+    "process-timelines",
+    "revisions-guarantees",
+    "cv-formats-ats",
+    "data-privacy"
+  ]
+}

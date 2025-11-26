@@ -1,0 +1,84 @@
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+@import "../../../../styles/utilities.css";
+@import "../../../../styles/breakpoints.css";
+@import "../../../../styles/sections.css";
+
+/* Root section */
+.testimonials-outcome-section {
+  background: var(--color-background);
+  color: var(--color-text);
+  /* Reduce vertical spacing between previous content and this section top */
+  padding-top: var(--space-8, 2rem);
+}
+
+/* Use a tokenised, slightly tighter vertical rhythm between header + body */
+.testimonials-outcome-section__inner {
+  display: grid;
+  gap: var(--space-4, 1rem);
+}
+
+/* Header: full-width, left-aligned H2 and intro using global typography */
+.testimonials-outcome-section__head {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2, 0.5rem);
+}
+
+.testimonials-outcome-section__title {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  /* Typography (size/weight) comes from .section-title in typography.css */
+}
+
+/* New intro paragraph stacked immediately under the H2 */
+.testimonials-outcome-section__intro {
+  margin: 0;
+  width: 100%;
+  font-size: var(--fs-sm, 0.95rem);
+  color: var(--color-muted, #6b7280);
+}
+
+/* Body layout: keep tight, premium spacing between metrics and reasons */
+.testimonials-outcome-section__body {
+  display: grid;
+  gap: var(--space-5, 1.25rem);
+}
+
+/* Metrics block: StatStrip already handles its own surface + grid */
+.testimonials-outcome-section__metrics {
+  max-width: 100%;
+}
+
+/* Reasons block: Checklist is already styled via Checklist.css */
+.testimonials-outcome-section__reasons {
+  max-width: 40rem;
+}
+
+/* md+ – keep vertical rhythm but balanced spacing */
+@media (min-width: 768px) {
+  .testimonials-outcome-section__body {
+    gap: var(--space-6, 1.5rem);
+  }
+}
+
+/* lg+ – slightly widen reasons while maintaining clear hierarchy */
+@media (min-width: 1024px) {
+  .testimonials-outcome-section__reasons {
+    max-width: 44rem;
+  }
+}
+
+/* Reduced motion – defensive */
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-outcome-section *,
+  .testimonials-outcome-section *::before,
+  .testimonials-outcome-section *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

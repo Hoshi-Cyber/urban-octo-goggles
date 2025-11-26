@@ -1,0 +1,66 @@
+---
+import "./TwoColumnCriteriaSection.css";
+
+export interface Props {
+  id: string;
+  title: string;
+  intro?: string;
+  leftHeading: string;
+  rightHeading: string;
+  leftItems: string[];
+  rightItems: string[];
+}
+
+const {
+  id,
+  title,
+  intro,
+  leftHeading,
+  rightHeading,
+  leftItems = [],
+  rightItems = [],
+} = Astro.props as Props;
+---
+
+<section
+  id={id}
+  class="section stack criteria-section"
+  aria-labelledby={`${id}-title`}
+>
+  <div class="container">
+    <header class="criteria-section__head stack">
+      <h2
+        id={`${id}-title`}
+        class="section-title fs-h2 lh-tight text-left"
+      >
+        {title}
+      </h2>
+
+      {intro && (
+        <p class="section-intro fs-base text-left">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    <div class="criteria-section__body">
+      <div class="criteria-section__column">
+        <h3 class="criteria-section__subheading h3">
+          {leftHeading}
+        </h3>
+        <ul class="criteria-section__list">
+          {leftItems.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <div class="criteria-section__column">
+        <h3 class="criteria-section__subheading h3">
+          {rightHeading}
+        </h3>
+        <ul class="criteria-section__list">
+          {rightItems.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,89 @@
+/* FAQSupportStrip – reusable support CTA band for FAQ/help pages
+   Uses existing tokens & utilities only.  */
+
+.faq-support-strip {
+  margin-block: var(--space-5) 0;
+  padding-block: var(--space-4);
+  background-color: var(--color-bg-alt, var(--color-light-alt));
+}
+
+/* Inner card: high-contrast, compact, premium */
+.faq-support-strip__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg, #ffffff);
+  border-radius: var(--radius-lg, 0.75rem);
+  box-shadow: var(--shadow-sm, 0 8px 24px rgba(15, 23, 42, 0.06));
+}
+
+/* Content (title + copy) */
+.faq-support-strip__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.faq-support-strip__title {
+  margin: 0;
+}
+
+.faq-support-strip__copy {
+  margin: 0;
+  font-size: var(--fs-sm, 0.9rem);
+  color: var(
+    --color-text-muted,
+    var(--color-text-subtle, inherit)
+  );
+}
+
+/* Actions container */
+.faq-support-strip__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Buttons inherit .btn styling; we only adjust sizing for compactness */
+.faq-support-strip__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding-inline: var(--space-3);
+  padding-block: 0.5rem;
+  font-size: var(--fs-sm, 0.9rem);
+  width: auto;
+  min-width: 0;
+}
+
+/* Extra emphasis on secondary button hover without breaking global style */
+.faq-support-strip__btn--secondary:focus-visible,
+.faq-support-strip__btn--secondary:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* sm+: align content left, CTAs right in a tight horizontal layout */
+@media (min-width: 640px) {
+  .faq-support-strip {
+    padding-block: var(--space-5);
+  }
+
+  .faq-support-strip__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .faq-support-strip__content {
+    max-width: 42rem;
+  }
+
+  .faq-support-strip__actions {
+    justify-content: flex-end;
+  }
+}

@@ -1,9 +1,16 @@
 /* Hero – service section
    Mobile-first, token-driven, section-scoped */
 
-/* Section padding – scoped to service hero only */
+/* Section band – scoped to service hero only */
 [data-section="service-hero"] {
   padding-block: var(--space-8);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 94%,
+    var(--color-text) 6%
+  );
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
 }
 
 @media (min-width: 640px) {
@@ -40,6 +47,11 @@
   max-width: 40rem;
 }
 
+/* Ensure clear hierarchy between H1 and following text */
+.hero__header .h1 {
+  margin: 0 0 var(--space-2);
+}
+
 /* Eyebrow text – short, quiet label */
 .eyebrow {
   margin: 0;
@@ -66,7 +78,7 @@
   font-size: var(--fs-base);
   line-height: 1.6;
   color: var(--color-muted);
-  max-width: 38rem;
+  max-width: 60ch;
 }
 
 /* Actions */
@@ -74,6 +86,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-top: var(--space-3);
 }
 
 /* On small screens, allow CTAs to wrap into a column when needed */

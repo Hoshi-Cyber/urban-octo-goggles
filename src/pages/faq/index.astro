@@ -1,0 +1,270 @@
+---
+import "../../styles/pages/faq.css";
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import PageHeader from "../../components/sections/shared/PageHeader/index.astro";
+import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
+import FAQQuickNav from "../../components/faq/FAQQuickNav/index.astro";
+import FAQSupportStrip from "../../components/sections/faq/FAQSupportStrip/index.astro";
+import FAQSidebar from "../../components/sections/faq/FAQSidebar/index.astro";
+import { getFaqPageFaqs } from "../../data/faqs";
+
+const title = "Frequently Asked Questions";
+const description =
+  "Answers to the most common questions about CV, cover letter, and LinkedIn profile services from cvwriting.co.ke – pricing, process, timelines, revisions, and more.";
+const seo = {
+  canonical: "/faq/",
+};
+
+type FaqItem = {
+  q: string;
+  a: string;
+};
+
+type FaqGroup = {
+  id: string;
+  title: string;
+  items: FaqItem[];
+};
+
+type SidebarCtaVariant = "primary" | "ghost";
+
+type SidebarCta = {
+  label: string;
+  href: string;
+  variant?: SidebarCtaVariant;
+  dataCta?: string;
+};
+
+type SidebarCard = {
+  title: string;
+  body?: string;
+  list?: string[];
+  ctas?: SidebarCta[];
+};
+
+// Load all FAQ content from central data layer (Fix Plan 207 – single source of truth)
+const resolvedFaqPage = getFaqPageFaqs();
+const resolvedTopQuestions = resolvedFaqPage.topQuestions;
+const resolvedGroups = resolvedFaqPage.groups;
+
+// Map resolved items into the shape expected by FAQAccordion
+const topQuestions: FaqItem[] = resolvedTopQuestions.map((item) => ({
+  q: item.question,
+  a: item.answer,
+}));
+
+const faqGroups: FaqGroup[] = resolvedGroups.map((group) => ({
+  id: group.id,
+  title: group.title,
+  items: group.items.map((item) => ({
+    q: item.question,
+    a: item.answer,
+  })),
+}));
+
+// Quick nav anchors (intent shortcuts) – wired to resolved group IDs
+const navItems = [
+  { href: "#top-questions", label: "Top questions" },
+  ...faqGroups.map((group) => ({
+    href: `#${group.id}`,
+    // Keep the shorter label for this specific group, otherwise use full title
+    label: group.id === "revisions-guarantees" ? "Revisions" : group.title,
+  })),
+];
+
+// Sidebar cards for FAQSidebar (Fix Plan 206 roles)
+const faqSidebarCards: SidebarCard[] = [
+  {
+    title: "Need personalised support?",
+    body:
+      "If your situation is unique or complex, share a brief summary and our team will advise on the best package.",
+    ctas: [
+      {
+        label: "Contact support",
+        href: "/contact/",
+        variant: "primary",
+        dataCta: "faq-contact-support",
+      },
+      {
+        label: "View pricing",
+        href: "/pricing/",
+        variant: "ghost",
+        dataCta: "faq-view-pricing",
+      },
+    ],
+  },
+  {
+    title: "Why clients choose us",
+    list: [
+      "Kenya and international CV expertise.",
+      "ATS-aware layouts that stay readable.",
+      "Clear timelines and revision windows.",
+      "Email-based process so everything stays in writing.",
+    ],
+  },
+  {
+    title: "See our work",
+    body:
+      "Explore anonymised sample CVs to understand the level of clarity and structure you can expect.",
+    ctas: [
+      {
+        label: "View CV samples",
+        href: "/samples/",
+        variant: "ghost",
+        dataCta: "faq-view-samples",
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={title} description={description} seo={seo}>
+  <main id="main" class="page-faq">
+    <PageHeader
+      id="faq-page-title"
+      eyebrow="Support & FAQs"
+      title="Frequently asked questions"
+      align="left"
+    >
+      <p class="page-faq__intro">
+        Answers to the most common questions about our CV, cover letter, and LinkedIn profile
+        services. If you still need help after reading this page, our team is ready to assist.
+      </p>
+    </PageHeader>
+
+    <div class="container stack page-faq__inner">
+      {/* Quick intent navigation */}
+      <FAQQuickNav items={navItems} ariaLabel="FAQ sections" />
+
+      {/* Main layout: FAQ content + sidebar */}
+      <div class="page-faq__layout">
+        <div class="page-faq__main stack">
+          {/* Top questions */}
+          <section
+            id="top-questions"
+            class="faq-section"
+            aria-labelledby="faq-top-questions-title"
+          >
+            <header class="faq-section__head">
+              <h2 id="faq-top-questions-title" class="section-title">
+                Top questions
+              </h2>
+              <p class="section-sub">
+                Start here for the most common questions about how we work, pricing, and timelines.
+              </p>
+            </header>
+
+            <FAQAccordion
+              class="faq-section__accordion"
+              title=""
+              items={topQuestions}
+              showHead={false}
+            />
+          </section>
+
+          {/* Category sections */}
+          {faqGroups.map((group) => (
+            <section
+              id={group.id}
+              class="faq-section"
+              aria-labelledby={`faq-${group.id}-title`}
+            >
+              <header class="faq-section__head">
+                <h2 id={`faq-${group.id}-title`} class="section-title">
+                  {group.title}
+                </h2>
+              </header>
+
+              <FAQAccordion
+                class="faq-section__accordion"
+                title=""
+                items={group.items}
+                showHead={false}
+              />
+            </section>
+          ))}
+
+          {/* SEO text block */}
+          <section
+            class="faq-section faq-section--seo"
+            aria-labelledby="faq-seo-overview-title"
+          >
+            <header class="faq-section__head">
+              <h2 id="faq-seo-overview-title" class="section-title">
+                About our CV writing services
+              </h2>
+            </header>
+
+            <div class="faq-section__body">
+              <div class="faq-section__copy prose">
+                <p>
+                  cvwriting.co.ke provides professional CV writing, cover letter, and LinkedIn
+                  profile optimisation services for clients in Kenya and abroad. We focus on clear,
+                  results-based CVs that speak to your target roles, whether you are applying
+                  locally or in international markets such as the UK, EU, or US.
+                </p>
+                <p>
+                  Our process is structured but flexible: we start with a clear brief, review your
+                  existing documents, and then prepare drafts for you to review and refine within
+                  defined timelines. This FAQ page is designed to answer the most common questions
+                  about how we work.
+                </p>
+              </div>
+
+              <div class="faq-seo-links-wrapper">
+                <h3 class="faq-seo-links__title">Key pages to explore next</h3>
+                <ul class="faq-seo-links">
+                  <li>
+                    <a href="/services/cv-writing/">CV writing services</a>
+                    <p>Packages and process for creating a professional, results-focused CV.</p>
+                  </li>
+                  <li>
+                    <a href="/services/cover-letter/">Cover letter writing</a>
+                    <p>Custom cover letters aligned with your CV and target role.</p>
+                  </li>
+                  <li>
+                    <a href="/services/linkedin-optimization/">LinkedIn profile optimisation</a>
+                    <p>Profile rewrites to improve clarity, credibility, and recruiter visibility.</p>
+                  </li>
+                  <li>
+                    <a href="/pricing/">Packages &amp; pricing</a>
+                    <p>Current pricing by career level and service combination.</p>
+                  </li>
+                  <li>
+                    <a href="/samples/">CV samples</a>
+                    <p>Anonymised examples to see our structure, tone, and formatting.</p>
+                  </li>
+                  <li>
+                    <a href="/blog/">CV &amp; career advice blog</a>
+                    <p>Articles on CV best practice, interviews, and career communication.</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Sidebar – powered by FAQSidebar */}
+        <div class="page-faq__sidebar">
+          <FAQSidebar cards={faqSidebarCards} ariaLabel="Support and resources" />
+        </div>
+      </div>
+
+      {/* Bottom support strip */}
+      <FAQSupportStrip
+        title="Still have questions?"
+        copy="If you cannot find what you are looking for, share a brief summary of your situation and we will respond with clear next steps."
+        primaryCta={{
+          label: "Contact support",
+          href: "/contact/",
+          dataCta: "faq-contact-bottom",
+        }}
+        secondaryCta={{
+          label: "WhatsApp our team",
+          href: "https://wa.me/2547XXXXXXXX",
+          dataCta: "faq-whatsapp-bottom",
+        }}
+      />
+    </div>
+  </main>
+</BaseLayout>

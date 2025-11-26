@@ -1,4 +1,5 @@
-/* StickyAsideCard — mobile-first, token-driven (single CTA) */
+/* StickyAsideCard — mobile-first, token-driven (single CTA)
+   Container-only responsibility: soft card + sticky behaviour. */
 
 .saside {
   position: relative;
@@ -8,27 +9,27 @@
 .saside__card {
   display: grid;
   gap: var(--space-4, 1rem);
-  padding: var(--space-6, 1.25rem);
+  padding: var(--space-4, 1rem) var(--space-4, 1rem);
   border-radius: var(--radius-lg, 0.75rem);
-  background: color-mix(in oklab, var(--color-primary, #2563eb) 6%, #fff);
+  background: var(--color-surface, #f9fafb);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #2563eb) 22%, transparent);
-  box-shadow: var(--shadow-xs, 0 1px 1px rgba(0, 0, 0, 0.05));
+    color-mix(in oklab, var(--color-border-subtle, #e5e7eb) 80%, transparent);
+  box-shadow: var(--shadow-xs, 0 1px 1px rgba(0, 0, 0, 0.04));
   position: relative;
   overflow: hidden;
 }
 
-/* Top accent */
+/* Subtle top accent */
 .saside__card::before {
   content: "";
   position: absolute;
   inset-inline: 0;
   top: 0;
-  height: 4px;
+  height: 3px;
   background: linear-gradient(
     90deg,
-    var(--color-primary, #2563eb),
-    var(--color-accent, #16a34a)
+    color-mix(in oklab, var(--color-primary, #2563eb) 60%, transparent),
+    color-mix(in oklab, var(--color-accent, #16a34a) 40%, transparent)
   );
 }
 
@@ -37,6 +38,7 @@
   display: grid;
   gap: 0.375rem;
 }
+
 .saside__eyebrow {
   margin: 0;
   font-size: 0.75rem;
@@ -44,43 +46,46 @@
   text-transform: uppercase;
   color: var(--color-muted, #6b7280);
 }
+
 .saside__title {
   margin: 0;
   font-weight: 700;
   line-height: 1.2;
   font-size: var(--fs-lg, 1.125rem);
 }
+
 .saside__sub {
   margin: 0;
   color: var(--color-muted, #6b7280);
 }
 
-/* Actions: single button, balanced */
+/* Actions: single optional button, intrinsic width */
 .saside__actions {
-  display: grid;
-  grid-template-columns: 1fr; /* one CTA */
-  justify-items: stretch;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   gap: var(--space-3, 0.75rem);
 }
+
 .saside__btn {
-  width: 100%;
-  min-height: 40px; /* compact */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: var(--space-3, 0.75rem);
+  width: auto;
+  min-width: 0;
 }
 
-/* Sticky at lg+ (strict) */
+/* Sticky at lg+ */
 @media (min-width: 1024px) {
   .saside {
-    position: sticky !important;
-    top: var(--stick-top, 6rem) !important;
+    position: sticky;
+    top: var(--stick-top, 6rem);
   }
 
   /* Slightly tighter card at large to balance vertical rhythm */
   .saside__card {
-    padding: var(--space-5, 1rem) var(--space-6, 1.25rem);
-  }
-
-  /* Keep single CTA full-width; center the block visually */
-  .saside__actions {
-    justify-items: stretch;
+    padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   }
 }

@@ -1,0 +1,54 @@
+---
+// src/components/cards/ServiceCard/index.astro
+
+import Button from "../../cta/Button/index.astro";
+import "./ServiceCard.css";
+
+export interface Props {
+  title: string;
+  body: string;
+  href: string;
+  ctaLabel: string;
+  ctaVariant?: "primary" | "accent" | "ghost" | "link";
+}
+
+const {
+  title,
+  body,
+  href,
+  ctaLabel,
+  ctaVariant = "primary",
+} = Astro.props as Props;
+---
+
+<article
+  class="service-card card stack"
+  itemScope
+  itemType="https://schema.org/Service"
+>
+  <header class="service-card__header">
+    <h3
+      class="service-card__title fs-h4 lh-tight text-left"
+      itemProp="name"
+    >
+      {title}
+    </h3>
+  </header>
+
+  <p
+    class="service-card__body fs-base text-left mt-2"
+    itemProp="description"
+  >
+    {body}
+  </p>
+
+  <div class="service-card__cta mt-4">
+    <Button
+      href={href}
+      label={ctaLabel}
+      variant={ctaVariant}
+      size="md"
+      cta={`service-card:${title}`}
+    />
+  </div>
+</article>

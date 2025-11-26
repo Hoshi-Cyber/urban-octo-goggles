@@ -1,0 +1,169 @@
+/* BrandPillarsStrip – reusable brand principles strip
+   - Uses global tokens & utilities only
+   - Layout: 1 → 2 → 4-column grid (mobile → tablet → desktop)
+   - Premium, high-contrast, compact treatment
+*/
+
+.brand-pillars {
+  padding-block: var(--space-6);
+  background: color-mix(
+    in oklab,
+    var(--color-background) 94%,
+    var(--color-primary) 6%
+  );
+}
+
+@media (min-width: 1024px) {
+  .brand-pillars {
+    padding-block: var(--space-8);
+  }
+}
+
+.brand-pillars__inner {
+  align-items: stretch;
+}
+
+/* Header – left-aligned, stacked, with controlled width */
+
+.brand-pillars__head {
+  margin-bottom: var(--space-5);
+  text-align: left;
+  display: block;
+}
+
+.brand-pillars__head .section-title {
+  margin: 0 0 var(--space-2);
+}
+
+.brand-pillars__intro {
+  max-width: 46rem;
+  margin: 0;
+}
+
+/* Grid
+   - 1 column on mobile
+   - 2 columns on small/medium
+   - 4 columns on large+
+*/
+
+.brand-pillars__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .brand-pillars__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .brand-pillars__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Pillar item – elevated card with subtle accent */
+
+.brand-pillars__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%),
+      var(--color-surface)
+    );
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  border: 1px solid
+    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+  overflow: hidden;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out,
+    background 150ms ease-out;
+}
+
+/* Accent bar at top of each card */
+
+.brand-pillars__item::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-3);
+  inset-block-start: var(--space-3);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
+}
+
+/* Hover / focus states */
+
+@media (hover: hover) {
+  .brand-pillars__item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 35%,
+      var(--color-light) 65%
+    );
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--color-surface) 90%, var(--color-primary) 10%),
+        var(--color-surface)
+      );
+  }
+}
+
+.brand-pillars__item:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 3px color-mix(in oklab, var(--color-primary) 65%, #ffffff);
+}
+
+/* Pillar label – slightly reduced for compactness, uses .h3 scale */
+
+.brand-pillars__label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-md);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .brand-pillars__label {
+    font-size: var(--fs-lg);
+  }
+}
+
+/* Pillar description */
+
+.brand-pillars__description {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-pillars__item {
+    transition: none;
+    transform: none;
+  }
+}
