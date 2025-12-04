@@ -1,9 +1,9 @@
 # File: netlify.toml
 
 [build]
-  # Astro (SSR) via Netlify adapter writes to ".netlify/"
+  # Build the Astro site and publish the static + SSR assets from "dist/"
   command = "npm run build"
-  publish = ".netlify"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
