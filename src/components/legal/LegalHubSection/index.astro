@@ -1,0 +1,56 @@
+---
+// src/components/legal/LegalHubSection/index.astro
+import "./LegalHubSection.css";
+
+interface Props {
+  id?: string;
+  title: string;
+  intro?: string;
+  eyebrow?: string;
+  as?: "h1" | "h2" | "h3";
+}
+
+const {
+  id,
+  title,
+  intro,
+  eyebrow,
+  as = "h2",
+} = Astro.props as Props;
+
+const HeadingTag = as;
+const headingId = id ? `${id}-title` : undefined;
+---
+
+<section
+  class="legal-hub-section"
+  {...(id ? { id } : {})}
+  {...(headingId ? { "aria-labelledby": headingId } : {})}
+>
+  <div class="legal-hub-section__inner">
+    <header class="legal-hub-section__header">
+      {eyebrow && (
+        <p class="legal-hub-section__eyebrow">
+          {eyebrow}
+        </p>
+      )}
+
+      <HeadingTag
+        class="legal-hub-section__title"
+        {...(headingId ? { id: headingId } : {})}
+      >
+        {title}
+      </HeadingTag>
+
+      {intro && (
+        <p class="legal-hub-section__intro">
+          {intro}
+        </p>
+      )}
+    </header>
+
+    <div class="legal-hub-section__body">
+      <slot />
+    </div>
+  </div>
+</section>

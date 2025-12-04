@@ -58,11 +58,13 @@ const {
   aria-label="FAQ about testimonials and data protection"
   data-section="testimonials-faq"
 >
-  <FAQAccordion
-    items={items}
-    title={title}
-    sub={sub}
-    schema={true}
-    class="faq-accordion--testimonials"
-  />
+  <div class="container testimonials-faq-section__container">
+    <FAQAccordion
+      items={items}
+      title={title}
+      sub={sub}
+      schema={true}
+      class="faq-accordion--testimonials"
+    />
+  </div>
 </section>

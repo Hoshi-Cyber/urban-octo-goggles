@@ -1,5 +1,10 @@
 ---
-// src/components/blog/base/PostShare/index.astro
+/**
+ * File: src/components/blog/base/PostShare/index.astro
+ * Purpose: Premium share block for single blog posts
+ * - Minimal, token-driven visuals handled in PostShare.css
+ * - WhatsApp, LinkedIn, Email, X, and Copy-link support
+ */
 
 import sheet from "./PostShare.css?url";
 import type { PostShareProps } from "./types";
@@ -43,6 +48,9 @@ const emailUrl = `mailto:?subject=${enc(emailSubject)}&body=${enc(emailBody)}`;
     <h2 id="post-share-title" class="post__shareTitle h6">
       Share this article
     </h2>
+    <p class="post__shareIntro">
+      A quick way to pass this on to someone who will find it useful.
+    </p>
   </header>
 
   <nav class="post__shareNav" aria-label="Share this article">

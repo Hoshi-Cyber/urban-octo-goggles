@@ -37,31 +37,42 @@
   border-radius: var(--radius-xl);
   font-family: var(--font-sans);
   font-size: var(--fs-xs); /* slightly smaller for a lighter feel */
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
 }
 
-/* Base chip style – understated, premium */
+/* Base chip style – understated, premium, brand-tinted */
 .faq-quicknav__pill.btn {
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-light);
-  box-shadow: none;
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
+  color: var(--color-primary);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 22%, var(--color-surface) 78%);
+  box-shadow: var(--shadow-xs);
   text-transform: none;
 }
 
-/* Hover & focus – blue chip with white text */
+/* Hover & focus – stronger brand chip with on-primary text */
 .faq-quicknav__pill:hover {
-  background-color: var(--color-primary);
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary) 90%,
+    var(--color-surface) 10%
+  );
   border-color: var(--color-primary);
   color: var(--color-on-primary, #ffffff);
 }
 
 .faq-quicknav__pill:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid transparent;
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--color-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  border-radius: var(--radius-xl);
 }
 
 /* md+: allow wrapping and remove horizontal scrollbars */

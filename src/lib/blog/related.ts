@@ -1,7 +1,7 @@
 // src/lib/blog/related.ts
 
 /**
- * RelatedArticles selection logic (Fix Plan 205.1.6)
+ * RelatedArticles selection logic (Fix Plan 205.1.6 + 213)
  *
  * Responsibilities:
  * - Honour manual overrides from frontmatter: entry.data.relatedPosts.
@@ -11,7 +11,7 @@
  *   - Recency (date) as a tiebreaker
  *   - Stable fallback ordering (slug) to avoid jitter between builds
  *
- * Output shape matches BlogPostLayout.RelatedArticle:
+ * Output shape is UI-agnostic but matches what BlogPostLayout expects:
  *   type RelatedArticle = {
  *     title: string;
  *     href: string;
@@ -23,9 +23,21 @@
  */
 
 import { getCollection, type CollectionEntry } from "astro:content";
-import type { RelatedArticle } from "@/components/blog/post/BlogPostLayout";
 
 type BlogPostEntry = CollectionEntry<"blog">;
+
+/**
+ * Public output shape for BlogPostLayout and other consumers.
+ * Kept here (lib) to avoid coupling data logic back to the UI component.
+ */
+export type RelatedArticle = {
+  title: string;
+  href: string;
+  category: string;
+  readingTimeMinutes?: number;
+  excerpt?: string;
+  dateISO?: string;
+};
 
 type ManualRelatedPost = {
   title: string;
@@ -90,7 +102,12 @@ function getManualOverrides(entry: BlogPostEntry): RelatedArticle[] | null {
   const selfHref = `/blog/${getCategorySlug(entry)}/${getBaseSlug(entry)}/`;
 
   const normalised = raw
-    .filter((item) => item && typeof item.href === "string" && item.href.trim().length > 0)
+    .filter(
+      (item) =>
+        item &&
+        typeof item.href === "string" &&
+        item.href.trim().length > 0
+    )
     // avoid self-linking by mistake
     .filter((item) => item.href !== selfHref)
     .map<RelatedArticle>((item) => ({
@@ -123,6 +140,9 @@ interface GetRelatedArticlesOptions {
  *    - Score by tag overlap + same-category bonus.
  *    - Sort by score desc, then date desc, then slug asc (stable).
  *    - Map to RelatedArticle objects.
+ *
+ * This keeps all "what is related?" logic in /lib and lets the route layer
+ * simply call getRelatedArticles(...) and feed the result into BlogPostLayout.
  */
 export async function getRelatedArticles(
   entry: BlogPostEntry,
@@ -138,7 +158,6 @@ export async function getRelatedArticles(
 
   const selfSlug = entry.slug;
   const currentCategory = getCategorySlug(entry);
-  const currentDate = new Date((entry.data as any).date);
 
   const candidates = allPosts.filter((post) => post.slug !== selfSlug);
 
@@ -158,25 +177,27 @@ export async function getRelatedArticles(
     // Heuristic scoring:
     // - Same category = +3
     // - Each overlapping tag = +2
-    // (You can tweak weights later if needed; behaviour stays deterministic.)
+    // Behaviour is deterministic and stable.
     const score = (sameCategory ? 3 : 0) + overlap * 2;
 
     return { post, score, date };
   });
 
   // Filter out completely unrelated posts unless we have no tags at all.
-  const hasTags = Array.isArray((entry.data as any).tags) &&
+  const hasTags =
+    Array.isArray((entry.data as any).tags) &&
     ((entry.data as any).tags as any[]).length > 0;
 
   const filtered =
-    hasTags
-      ? scored.filter((item) => item.score > 0)
-      : scored;
+    hasTags ? scored.filter((item) => item.score > 0) : scored;
 
   // If everything got filtered out (e.g. no overlaps), fall back to same-category by recency.
-  const pool = filtered.length > 0
-    ? filtered
-    : scored.filter((item) => getCategorySlug(item.post) === currentCategory);
+  const pool =
+    filtered.length > 0
+      ? filtered
+      : scored.filter(
+          (item) => getCategorySlug(item.post) === currentCategory
+        );
 
   // If still empty (edge case), fall back to "latest posts minus self".
   const finalPool = pool.length > 0 ? pool : scored;
@@ -204,7 +225,7 @@ export async function getRelatedArticles(
         ? (post.data as any).readingTime
         : undefined;
 
-    // Prefer category-aware URL when we have one; otherwise fall back to /blog/<slug>/
+    // Prefer category-aware URL when we have one; otherwise fall back to /blog/<slug>/.
     const href =
       category && category.trim().length > 0
         ? `/blog/${category}/${base}/`

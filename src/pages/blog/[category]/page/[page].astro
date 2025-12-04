@@ -47,6 +47,14 @@ import { categorySlug, postUrlFromEntry, abs as absUrl } from "../../../../lib/s
 
 export const prerender = true;
 
+const PLACEHOLDER = "/images/blog/hero/blog-home-hero.webp";
+
+const isBad = (v: unknown) =>
+  v === null ||
+  v === undefined ||
+  (typeof v === "string" &&
+    (!v.trim() || v.includes("undefined") || v.includes("null")));
+
 /** Build static paths for pages ≥ 2 (page 1 lives at parent route) */
 export async function getStaticPaths() {
   const entries = await Promise.all(
@@ -70,11 +78,37 @@ const cat = categorySlug(category);
 
 /** Derive best-available thumbnail with intrinsic size fallbacks */
 function getThumb(p: any) {
-  const t = p?.data?.thumbnail ?? p?.data?.image ?? p?.data?.cover ?? p?.data?.ogImage ?? null;
-  const src = typeof t === "string" ? t : t?.src ?? "/assets/logos/logo-wide-1200.png";
-  const alt = (typeof t === "object" && t?.alt) ? t.alt : p?.data?.title ?? "Post thumbnail";
-  const width = (typeof t === "object" && typeof t?.width === "number") ? t.width : 1200;
-  const height = (typeof t === "object" && typeof t?.height === "number") ? t.height : 675;
+  const data = p?.data ?? {};
+  const cover = data.cover;
+  const ogImage = data.ogImage;
+  const thumbnail = data.thumbnail ?? data.image ?? cover ?? ogImage ?? null;
+
+  let src: string | null = null;
+
+  if (thumbnail && typeof thumbnail === "object" && typeof thumbnail.src === "string") {
+    src = thumbnail.src;
+  } else if (typeof thumbnail === "string") {
+    src = thumbnail;
+  }
+
+  if (isBad(src)) {
+    src = PLACEHOLDER;
+  }
+
+  const alt =
+    (thumbnail && typeof thumbnail === "object" && thumbnail.alt?.trim()) ||
+    data.title ||
+    "Post thumbnail";
+
+  const width =
+    thumbnail && typeof thumbnail === "object" && typeof thumbnail.width === "number"
+      ? thumbnail.width
+      : 1200;
+  const height =
+    thumbnail && typeof thumbnail === "object" && typeof thumbnail.height === "number"
+      ? thumbnail.height
+      : 675;
+
   return { src, alt, width, height };
 }
 

@@ -1,5 +1,10 @@
 ---
-// File: src/pages/index.astro
+/**
+ * File: src/pages/index.astro
+ * Home – CVWriting Kenya
+ * Aligned to Pricing Plan implementation (4-tier packages surfaced on home).
+ */
+
 import BaseLayout from "@/components/layout/BaseLayout.astro";
 import Hero from "@/components/sections/service/Hero/index.astro";
 import FeatureList from "@/components/sections/service/FeatureList/index.astro";
@@ -16,7 +21,7 @@ const description =
   "Get more interviews with ATS-optimized CVs, cover letters and LinkedIn profiles tailored to the Kenyan job market.";
 
 const seo = {
-  canonical: "/", // BaseLayout will render relative in dev, absolute in prod
+  canonical: "/",
   ogImage: "/assets/images/hero.png",
 };
 
@@ -38,23 +43,46 @@ const stats = [
 
 const features = {
   items: [
-    { title: "1k+ CVs Delivered", body: "Proven throughput for every career level in Kenya." },
-    { title: "95% Satisfaction", body: "Consistent 5★ feedback and repeat engagements." },
-    { title: "98% ATS Pass Rate", body: "Structures and keywords aligned to local ATS." },
-    { title: "CV Writing", body: "Achievement-led CVs tailored to industry and level.", icon: "" },
-    { title: "Cover Letters", body: "Clear narrative that maps your story to role needs.", icon: "" },
-    { title: "LinkedIn Optimization", body: "Profile tuned for recruiter search and brand." },
+    {
+      title: "1k+ CVs delivered",
+      body:
+        "CVs written for graduates, mid-career professionals and senior leaders across Kenya.",
+    },
+    {
+      title: "95% client satisfaction",
+      body:
+        "Consistent positive feedback and repeat engagements from local and diaspora clients.",
+    },
+    {
+      title: "98% ATS pass rate",
+      body:
+        "Documents structured and keyworded for BrighterMonday, Fuzu and corporate portals.",
+    },
+    {
+      title: "CV writing",
+      body:
+        "Achievement-led CVs tailored to your industry, level and target role.",
+    },
+    {
+      title: "Cover letters",
+      body:
+        "Clear, targeted letters that connect your story to role requirements.",
+    },
+    {
+      title: "LinkedIn optimisation",
+      body:
+        "Profiles tuned for recruiter search, credibility and personal brand.",
+    },
   ],
 };
 
 const lead = {
-  title: "Ready to Get Started?",
-  sub: "Choose a plan or speak to a specialist. No hidden fees.",
+  title: "Ready to get more interviews?",
+  sub: "Choose a plan or talk to a specialist. No hidden fees, no subscriptions.",
   primaryHref: "/contact/",
   primaryLabel: "Get Started Today",
 };
 
-// Env-aware base for JSON-LD urls
 const isDev = import.meta.env.DEV;
 const siteUrl = isDev ? "" : site.siteUrl;
 
@@ -62,14 +90,14 @@ const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Professional CV Writing Kenya",
-  url: siteUrl || undefined, // omit in dev
+  url: siteUrl || undefined,
 };
 
 const webJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Professional CV Writing Kenya",
-  url: siteUrl || undefined, // omit in dev
+  url: siteUrl || undefined,
 };
 ---
 
@@ -77,24 +105,35 @@ const webJsonLd = {
   <!-- Hero -->
   <Hero {...hero} />
 
-  <!-- Key metrics before features -->
+  <!-- Key metrics -->
   <section class="section" aria-label="Key metrics">
     <div class="container">
       <StatStrip stats={stats} />
     </div>
   </section>
 
-  <!-- Services/features -->
+  <!-- Services -->
   <FeatureList {...features} />
 
-  <!-- Pricing -->
-<section class="section" aria-labelledby="pricing-title" id="pricing">
-  <div class="container">
-    <h2 id="pricing-title" class="h2">Transparent Pricing</h2>
-    <PricingTable showTitle={false} />
-  </div>
-</section>
+  <!-- Pricing preview -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <header class="section-head">
+        <p class="section-head__eyebrow">Our Packages</p>
+        <h2 class="h2 section-head__title">
+          Transparent CV Writing Packages in Kenya
+        </h2>
+        <p class="section-head__sub">
+          Choose the right package for your career stage. No hidden fees.
+        </p>
+      </header>
+    </div>
 
+    <!-- IMPORTANT: PricingTable rendered directly inside the section,
+         not inside the container, so it uses its own band width
+         exactly as on the Pricing page -->
+    <PricingTable />
+  </section>
 
   <!-- Social proof -->
   <TestimonialStrip {...testimonials} />
@@ -102,7 +141,45 @@ const webJsonLd = {
   <!-- Lead capture -->
   <LeadCaptureBanner {...lead} />
 
-  <!-- SEO -->
+  <!-- SEO structured data -->
   <StructuredData type="Organization" data={orgJsonLd} />
   <StructuredData type="WebSite" data={webJsonLd} />
+
+  <style>
+    /* Apply two-row vertical spacing before + after this section */
+    #pricing {
+      margin-block: calc(var(--space-6) * 2);
+    }
+
+    /* Tight section head: eyebrow + h2 + subtitle with zero internal gaps */
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: var(--space-5);
+      width: 100%;
+    }
+
+    .section-head * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .section-head__eyebrow {
+      font-size: var(--fs-sm);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .section-head__sub {
+      font-size: var(--fs-base);
+      color: var(--color-text);
+      width: 100%;
+      max-width: none;
+      display: block;
+    }
+  </style>
 </BaseLayout>

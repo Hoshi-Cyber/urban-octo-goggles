@@ -1,4 +1,6 @@
 ---
+// src/pages/blog/index.astro
+
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import BlogHero from "../../components/blog/compose/BlogHero/index.astro";
 import CategoryGrid from "../../components/blog/compose/CategoryGrid/index.astro";
@@ -9,7 +11,7 @@ import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astr
 import Pagination from "../../components/blog/compose/Pagination/index.astro";
 import { getCollection } from "astro:content";
 
-const PLACEHOLDER = "/assets/images/blog/hero/blog-home-hero.webp";
+const PLACEHOLDER = "/images/blog/hero/blog-home-hero.webp";
 
 const slugify = (s: string) =>
   String(s || "uncategorized")
@@ -35,7 +37,7 @@ const posts = all
     const postSlug = p.slug.split("/").pop()!;
     const categorySlug = slugify(p.data.category ?? "uncategorized");
 
-    // Prefer frontmatter.cover.src, then frontmatter.cover (string), then ogImage (string)
+    // Prefer frontmatter.cover.src, then frontmatter.cover (string), then ogImage.src (object)
     let coverSrc: string | null = null;
     const cover = (p.data as any).cover;
     const ogImage = (p.data as any).ogImage;
@@ -44,16 +46,23 @@ const posts = all
       coverSrc = cover.src;
     } else if (typeof cover === "string") {
       coverSrc = cover;
-    } else if (typeof ogImage === "string") {
-      coverSrc = ogImage;
+    } else if (
+      ogImage &&
+      typeof ogImage === "object" &&
+      typeof ogImage.src === "string"
+    ) {
+      // object-based ogImage contract
+      coverSrc = ogImage.src;
     }
 
     // Fault-tolerant fallback to placeholder per Fix Plan 181
     if (isBad(coverSrc)) coverSrc = PLACEHOLDER;
 
     return {
+      slug: postSlug,
       title: p.data.title,
       description: p.data.description,
+      excerpt: p.data.description ?? p.data.metaDescription,
       href: `/blog/${categorySlug}/${postSlug}/`,
       date: new Date(p.data.date),
       author: p.data.author,
@@ -63,7 +72,7 @@ const posts = all
       categorySlug,
       readingTime:
         (p.data as any).readingTimeMinutes ??
-        p.data.readingTime ??
+        (p.data as any).readingTime ??
         undefined,
     };
   })
@@ -89,7 +98,7 @@ const relPrev = null;
 const relNext = totalPages > 1 ? "/blog/page/2/" : null;
 const canonical = "/blog/";
 
-// Adapt to PostFeedLatest prop shape
+// IMPORTANT: Adapt to PostFeedLatest prop shape (url + frontmatter)
 const feedPosts = pagePostsRaw.map((p) => ({
   url: p.href,
   frontmatter: {
@@ -149,7 +158,7 @@ const categoryCards = [
   ),
   card(
     svg.briefcase,
-    "Interviews & Offers",
+    "Career Growth",
     "career-growth",
     "Prep, strategy, and negotiation.",
   ),
@@ -211,7 +220,11 @@ const jsonLd = {
   />
 
   <!-- Explore Categories with counts -->
-  <CategoryGrid eyebrow="Topics" title="Explore Categories" items={categoryCards} />
+  <CategoryGrid
+    eyebrow="Topics"
+    title="Explore Categories"
+    items={categoryCards}
+  />
 
   <PostFeedLatest
     posts={feedPosts}

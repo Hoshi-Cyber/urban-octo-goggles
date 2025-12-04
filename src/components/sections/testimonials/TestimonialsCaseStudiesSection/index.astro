@@ -17,7 +17,7 @@ interface TestimonialsCaseStudiesSectionProps {
 }
 
 const {
-  eyebrow, // intentionally unused
+  eyebrow, // intentionally unused (reserved for future use)
   title,
   intro,
   items = [],
@@ -33,12 +33,12 @@ const headingId =
 ---
 
 <section
-  class="testimonials-case-studies-section py-10 xs:py-12 md:py-16"
+  class="testimonials-case-studies-section section"
   aria-labelledby={headingId}
   data-section="testimonials-case-studies"
 >
   <div class="container stack testimonials-case-studies-section__inner">
-    <header class="testimonials-case-studies-section__head section-head">
+    <header class="testimonials-case-studies-section__head section-head stack">
       <HeadingTag
         id={headingId}
         class="section-title testimonials-case-studies-section__title"
@@ -47,7 +47,7 @@ const headingId =
       </HeadingTag>
 
       {intro && (
-        <p class="testimonials-case-studies-section__intro">
+        <p class="section-sub testimonials-case-studies-section__intro">
           {intro}
         </p>
       )}

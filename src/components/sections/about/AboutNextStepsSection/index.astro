@@ -1,13 +1,13 @@
 ---
 // src/components/sections/about/AboutNextStepsSection/index.astro
 import "./AboutNextStepsSection.css";
-import LeadCaptureBanner from "../../../cta/LeadCaptureBanner/index.astro";
 
 export interface NextStepLink {
   key: "pricing" | "services" | "samples" | "contact" | string;
   label: string;
   description: string;
   href: string;
+  ctaLabel?: string;
 }
 
 export interface AboutNextStepsSectionProps {
@@ -15,7 +15,6 @@ export interface AboutNextStepsSectionProps {
   title: string;
   intro?: string;
   links: NextStepLink[];
-  showLeadCapture?: boolean;
   headingLevel?: "h2" | "h3";
 }
 
@@ -24,7 +23,6 @@ const {
   title,
   intro,
   links,
-  showLeadCapture = false,
   headingLevel = "h2",
 } = Astro.props as AboutNextStepsSectionProps;
 
@@ -37,6 +35,24 @@ const sectionId =
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
+
+// Clear, action-focused CTA labels per next-step key
+const getCtaLabel = (link: NextStepLink): string => {
+  if (link.ctaLabel) return link.ctaLabel;
+
+  switch (link.key) {
+    case "pricing":
+      return "View pricing";
+    case "services":
+      return "Explore services";
+    case "samples":
+      return "Browse samples";
+    case "contact":
+      return "Talk to the team";
+    default:
+      return "Learn more";
+  }
+};
 ---
 
 <section
@@ -52,7 +68,10 @@ const sectionId =
         </p>
       )}
 
-      <Heading id={sectionId} class="section-title">
+      <Heading
+        id={sectionId}
+        class={`section-title ${headingLevel === "h2" ? "h2" : "h3"}`}
+      >
         {title}
       </Heading>
 
@@ -72,33 +91,29 @@ const sectionId =
           <ul class="about-next-steps__links">
             {links.map((link) => (
               <li class="about-next-steps__links-item">
-                <a
-                  href={link.href}
+                <article
                   class="about-next-steps__link-card"
                   data-next-step-key={link.key}
                 >
                   <span class="about-next-steps__link-label">
                     {link.label}
                   </span>
+
                   <span class="about-next-steps__link-description">
                     {link.description}
                   </span>
-                </a>
+
+                  <a
+                    href={link.href}
+                    class="btn btn-primary btn-sm about-next-steps__link-cta"
+                  >
+                    {getCtaLabel(link)}
+                  </a>
+                </article>
               </li>
             ))}
           </ul>
         </nav>
-      )}
-
-      {showLeadCapture && (
-        <div class="about-next-steps__cta card">
-          <LeadCaptureBanner
-            title="Ready to move your CV forward?"
-            sub="Share your context and target roles and we’ll reply with clear, practical next steps – no pushy sales scripts."
-            primaryHref="/contact/"
-            primaryLabel="Talk to the team"
-          />
-        </div>
       )}
     </div>
   </div>

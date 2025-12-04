@@ -1,11 +1,106 @@
+/* src/components/blog/mdx/Note/Note.css
+   MDX Note – neutral, premium inline note.
+   Mobile-first, token-driven, aligned with CVWriting global styles.
+*/
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
 .mdx-note {
-  padding: var(--space-3) var(--space-4);
-  border-left: 4px solid var(--color-primary);
-  background: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
-  border-radius: var(--radius-md);
+  position: relative;
+
+  margin-block: clamp(var(--space-3), 2.5vw, var(--space-5));
+  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-5));
+
+  border-radius: var(--radius-2xl, 1.25rem);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-surface, #ffffff) 10%
+  );
+  box-shadow: var(--shadow-sm);
+
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
 }
 
+/* Subtle vertical accent bar using primary + accent */
+.mdx-note::before {
+  content: "";
+  position: absolute;
+  inset-block: clamp(var(--space-2), 1.4vw, var(--space-3));
+  inset-inline-start: 0;
+
+  width: 3px;
+  border-radius: 0 var(--radius-xl, 1rem) var(--radius-xl, 1rem) 0;
+
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-accent, #d4ab18) 30%
+  );
+}
+
+/* Body rhythm inside note */
+.mdx-note > *:first-child {
+  margin-top: 0;
+}
+
+.mdx-note > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdx-note p {
+  margin-block: var(--space-1);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.mdx-note ul,
+.mdx-note ol {
+  margin-block: var(--space-2);
+  padding-left: var(--space-4);
+}
+
+/* Links / interactive elements inside the note */
+.mdx-note :where(a) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.mdx-note :where(a:hover) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 96%,
+    #000000
+  );
+}
+
+/* Focus styles for any interactive children */
 .mdx-note :where(a, button):focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary, #1b3637);
   outline-offset: 2px;
+}
+
+/* Reduced motion – preserve still, premium appearance */
+@media (prefers-reduced-motion: reduce) {
+  .mdx-note {
+    transition: none;
+  }
 }

@@ -1,28 +1,47 @@
-/* Mobile-first. Uses shared tokens and container rhythm.
-   FP-169: Works without extra outer wrappers; relies on parent stack when present.
-   - Visible focus rings via :focus-visible
-   - Tap targets >= 44px (>= 48px at sm+)
-   - Resilient spacing with optional CSS var override
+/* src/components/blog/compose/Pagination/Pagination.css
+   Pagination – mobile-first, premium strip
+   - Subtle tinted band across full width (no container wrapper)
+   - Square, typographic controls (no rounded pills)
+   - 44px+ tap targets, clear focus-visible
 */
 
-/* Optional top spacing if used outside a parent stack:
-   Set --pagination-mt on the host to standard rhythm, e.g. var(--space-10).
-   Default is 0 to avoid double spacing inside stacks/sections.
-*/
+/* Host band: subtle colour + top/bottom borders */
 .pagination {
-  margin-block-start: var(--pagination-mt, 0);
-  padding-block: var(--space-8);
-  background: var(--color-background);
-  border-top: 1px solid var(--color-light);
+  margin-block-start: var(--pagination-mt, clamp(var(--space-8), 4vw, var(--space-10)));
+  padding-block: clamp(var(--space-4), 2vw, var(--space-6));
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
+  border-block: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
 }
 
+/* Inner rail: width-limited and centred, no rounded edges */
+.pagination__surface {
+  max-width: var(--container-max, 72rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-5));
+
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* List layout */
 .pagination__list {
   margin: 0;
   padding: 0;
   list-style: none;
+
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-1);
   align-items: center;
   justify-content: center;
 }
@@ -31,81 +50,121 @@
   display: inline-flex;
 }
 
-/* Controls: Prev/Next */
-.pagination__control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.75rem; /* 44px target */
-  min-width: 2.75rem;  /* 44px target */
-  padding: 0 var(--space-4);
-  font-size: var(--fs-base);
-  font-weight: 600;
-  color: var(--color-primary);
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-light);
-  background: var(--color-background);
-  box-shadow: var(--shadow-sm);
-  outline: none;
-  outline-offset: 2px;
-}
-
-.pagination__control:hover {
-  background: var(--color-surface);
-}
-
-.pagination__control:focus-visible {
-  outline: 2px solid var(--color-primary);
-  background: var(--color-surface);
-}
-
-.pagination__control.is-disabled {
-  color: var(--color-muted);
-  opacity: 0.6;
-  pointer-events: none;
-  box-shadow: none;
-}
-
-/* Numeric pages */
+/* Base button/link reset for controls and pages */
+.pagination__control,
 .pagination__page,
 .pagination__page.is-current {
   display: inline-flex;
-  min-width: 2.75rem; /* 44px */
-  height: 2.75rem;    /* 44px */
-  padding-inline: var(--space-2);
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-base);
+
+  min-height: 2.75rem; /* ≥44px */
+  min-width: 2.4rem;
+  padding-inline: var(--space-3);
+
+  font-size: var(--fs-sm, 0.9rem);
   line-height: 1;
-  border-radius: var(--radius-md);
   text-decoration: none;
-  border: 1px solid var(--color-light);
-  box-shadow: var(--shadow-sm);
+
+  border-radius: 0; /* no rounded elements */
+  border: 1px solid transparent;
+  background: transparent;
+
   outline: none;
   outline-offset: 2px;
 }
 
+/* Controls: Prev / Next (square text buttons) */
+.pagination__control {
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 80%,
+    var(--color-text, #020617)
+  );
+  border-color:
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 94%,
+    var(--color-surface-alt, #f9fafb) 6%
+  );
+}
+
+.pagination__control:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%,
+    var(--color-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 38%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+.pagination__control:focus-visible {
+  outline: 2px solid var(--color-primary, #1b3637);
+}
+
+.pagination__control.is-disabled {
+  color: var(--color-muted, #6b7280);
+  background-color: transparent;
+  border-color: transparent;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Numeric pages: square tabs with underline for current */
 .pagination__page {
-  color: var(--color-text);
-  background: var(--color-background);
+  color: var(--color-text, #020617);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 96%,
+    var(--color-surface-alt, #f9fafb) 4%
+  );
+  border-color:
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 94%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
+    );
 }
 
 .pagination__page:hover {
-  color: var(--color-primary);
-  background: var(--color-surface);
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-text, #020617)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 36%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 70%,
+    var(--color-surface, #ffffff)
+  );
 }
 
 .pagination__page:focus-visible {
-  outline: 2px solid var(--color-primary);
-  background: var(--color-surface);
+  outline: 2px solid var(--color-primary, #1b3637);
 }
 
+/* Current page: primary text + bottom rule (no rounded fill) */
 .pagination__page.is-current {
   font-weight: 700;
-  color: #fff;
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+  color: var(--color-primary, #1b3637);
+  background-color: transparent;
+  border-color: transparent;
+  border-bottom: 2px solid var(--color-primary, #1b3637);
 }
 
 /* Ellipsis gap */
@@ -114,23 +173,35 @@
   align-items: center;
   justify-content: center;
   width: 2rem;
-  color: var(--color-muted);
+
+  font-size: var(--fs-sm, 0.9rem);
+  color: var(--color-muted, #6b7280);
   user-select: none;
 }
 
 /* ≥640px: slightly larger tap targets and breathing room */
 @media (min-width: 640px) {
   .pagination {
-    padding-block: var(--space-10);
+    padding-block: clamp(var(--space-5), 3vw, var(--space-8));
   }
+
   .pagination__page,
   .pagination__page.is-current {
-    min-width: 3rem; /* 48px */
-    height: 3rem;    /* 48px */
+    min-width: 2.8rem;
+    min-height: 2.8rem;
   }
+
   .pagination__control {
-    min-height: 3rem; /* 48px */
-    min-width: 3rem;  /* 48px */
-    padding: 0 var(--space-5);
+    min-height: 2.8rem;
+    min-width: 3.2rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pagination__control,
+  .pagination__page,
+  .pagination__page.is-current {
+    transition: none;
   }
 }

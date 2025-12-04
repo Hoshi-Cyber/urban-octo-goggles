@@ -51,12 +51,17 @@ const hasAny = Boolean(prevItem || nextItem);
 <link rel="stylesheet" href={sheet} />
 
 {hasAny && (
-  <div class="postNav" role="group" aria-label="Previous and next articles">
+  <nav
+    class="postNav"
+    role="navigation"
+    aria-label="Previous and next articles"
+  >
     {prevItem && (
       <a
         class="postNav__card postNav__card--prev"
         href={prevItem.href}
         rel="prev"
+        aria-label={`Previous article: ${prevItem.title}`}
       >
         <span class="postNav__label">Previous article</span>
         <span class="postNav__title">{prevItem.title}</span>
@@ -68,10 +73,11 @@ const hasAny = Boolean(prevItem || nextItem);
         class="postNav__card postNav__card--next"
         href={nextItem.href}
         rel="next"
+        aria-label={`Next article: ${nextItem.title}`}
       >
         <span class="postNav__label">Next article</span>
         <span class="postNav__title">{nextItem.title}</span>
       </a>
     )}
-  </div>
+  </nav>
 )}

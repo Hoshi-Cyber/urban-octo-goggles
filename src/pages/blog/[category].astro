@@ -1,285 +1,304 @@
 ---
-// File: src/pages/blog/[category].astro
-/**
- * Category landing (page 1)
- * Canonical:
- * - Category: /blog/<category>/
- * - Post:     /blog/<category>/<slug>/
- *
- * FP-156.1  Performance + Head/JSON-LD parity
- * FP-158    Hero spacing & layout
- * FP-159    Keep toolbar inside page container
- * FP-160    Larger desktop gaps between Hero ↔ Toolbar ↔ Grid
- * FP-163    Unify cards with Blog Home “Latest articles” (use pfl__* contract)
- * FP-166    LeadMagnetStrip modern placement, spacing, and CSS parity
- * FP-167    Fix subscribe endpoint trailing-slash and action normalization
- * FP-168    Keep inline success/error UX; optional success page via successHref (not used here)
- * FP-169.2  Order parity: Grid → LeadMagnetStrip → Pagination → RelatedCategories; show up to 6 chips
- */
-
 import BaseLayout from "../../components/layout/BaseLayout.astro";
-import Breadcrumbs from "../../components/blog/base/Breadcrumbs/index.astro";
-import CategoryHero from "../../components/blog/compose/CategoryHero/index.astro";
-import Pagination from "../../components/blog/compose/Pagination/index.astro";
-import RelatedCategories from "../../components/blog/compose/RelatedCategories/index.astro";
-import LeadMagnetStrip from "../../components/blog/compose/LeadMagnetStrip/index.astro";
-
-import CategoryUtilityBar from "../../components/blog/compose/CategoryUtilityBar";
-import "../../components/blog/compose/CategoryUtilityBar/styles.css";
-
-/* FP-163: load exact feed CSS used by Blog Home “Latest articles” */
-import pflCss from "../../components/blog/compose/PostFeedLatest/PostFeedLatest.css?url";
-
-/* FP-166: ensure LeadMagnetStrip modern styling is present on this page */
-import lmsCss from "../../components/blog/compose/LeadMagnetStrip/LeadMagnetStrip.css?url";
-
+import "../../styles/pages/blog-category.css";
 import { getCollection } from "astro:content";
-import {
-  PER_PAGE,
-  relatedCategories,
-  prettyCategoryTitle,
-  buildCategoryTitle,
-  buildCategoryDescription,
-} from "../../lib/blog/categories";
-import { categorySlug, postUrlFromEntry, abs as absUrl } from "../../lib/slug";
 
-export const prerender = true;
+/**
+ * Dynamic category route – no getStaticPaths.
+ * This avoids any build-time errors and resolves entirely at request time.
+ */
+export const prerender = false;
 
-/** Static paths from canonical category list */
-export async function getStaticPaths() {
-  const { CATEGORIES } = await import("../../lib/blog/categories");
-  return CATEGORIES.map((c: string) => ({
-    params: { category: categorySlug(c) },
-  }));
+// Local slug normaliser (no external dependencies)
+function categorySlug(value: unknown): string {
+  return String(value || "uncategorized")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
-/** Params */
-const { category } = Astro.params as { category: string };
-const cat = categorySlug(category);
+const { category } = Astro.params;
+const cat = categorySlug(category || "uncategorized");
 
-/** Validate category */
-const { CATEGORIES } = await import("../../lib/blog/categories");
-const ALLOWED = new Set<string>(CATEGORIES.map((c: string) => categorySlug(c)));
-if (!ALLOWED.has(cat)) {
-  return Astro.redirect("/404");
+// Load all non-draft posts
+const allEntries = await getCollection("blog", ({ data }) => !data.draft);
+
+// Filter posts for this category
+const categoryEntries = allEntries.filter((entry) => {
+  const name = (entry.data as any)?.category ?? "";
+  return categorySlug(name) === cat;
+});
+
+// If no posts match this category, go to 404
+if (!categoryEntries.length) {
+  return Astro.redirect("/404/");
 }
 
-/** Thumbnail resolver with intrinsic size defaults to avoid CLS */
-function getThumb(p: any) {
-  const t = p.data?.thumbnail ?? p.data?.image ?? p.data?.cover ?? p.data?.ogImage ?? null;
-  const src = typeof t === "string" ? t : t?.src ?? "/assets/logos/logo-wide-1200.png";
-  const alt = (typeof t === "object" && t?.alt) ? t.alt : p.data?.title ?? "Post thumbnail";
-  const width = (typeof t === "object" && typeof t?.width === "number") ? t.width : 1200;
-  const height = (typeof t === "object" && typeof t?.height === "number") ? t.height : 675;
-  return { src, alt, width, height };
-}
+// Hero images per category (fallback to default)
+const HERO_IMAGES: Record<string, string> = {
+  "cv-tips": "/images/blog/hero/blog-home-hero-01.webp",
+  linkedin: "/images/blog/hero/blog-home-hero-02.webp",
+  "career-growth": "/images/blog/hero/blog-home-hero-03.webp",
+  "kenya-market": "/images/blog/hero/blog-home-hero-04.webp",
+};
 
-/** Fetch, map, sort */
-let all: any[] = [];
-try {
-  all = await getCollection("blog", ({ data }) => !data.draft && categorySlug(data.category) === cat);
-} catch {
-  all = [];
-}
+// Separate OG images mapping so hero image and OG image can diverge if needed
+const OG_IMAGES: Record<string, string> = {
+  "cv-tips": "/images/blog/og/blog-category-cv-tips-og.webp",
+  linkedin: "/images/blog/og/blog-category-linkedin-og.webp",
+  "career-growth": "/images/blog/og/blog-category-career-growth-og.webp",
+  "kenya-market": "/images/blog/og/blog-category-kenya-market-og.webp",
+};
 
-const posts = all
-  .map((p) => {
-    const { src: thumbnailSrc, alt: thumbnailAlt, width: thumbnailW, height: thumbnailH } = getThumb(p);
-    const date = new Date(p.data.date);
-    return {
-      url: postUrlFromEntry(p),
-      title: p.data.title,
-      description: p.data.description,
-      stage: p.data.stage ?? null,
-      readMins: p.data.readingTimeMinutes ?? p.data.readingTime ?? null,
-      date,
-      dateISO: isNaN(date.getTime()) ? undefined : date.toISOString(),
-      thumbnailSrc,
-      thumbnailAlt,
-      thumbnailW,
-      thumbnailH,
-      tags: Array.isArray(p.data.tags) ? p.data.tags : [],
+const heroImageSrc =
+  HERO_IMAGES[cat] ?? "/images/blog/hero/blog-home-hero.webp";
+
+const ogImageSrc = OG_IMAGES[cat] ?? heroImageSrc;
+
+// Map entries into the unified post shape for the feed
+const posts = categoryEntries
+  .map((entry) => {
+    const data: any = entry.data;
+    const categoryName: string = data.category ?? "Uncategorized";
+    const catSlug = categorySlug(categoryName);
+
+    const baseSlug =
+      typeof entry.slug === "string" && entry.slug.includes("/")
+        ? entry.slug.split("/").pop()!
+        : (entry.slug as string);
+
+    const url = `/blog/${catSlug}/${baseSlug}/`;
+
+    const frontmatter = {
+      title: data.title ?? "Untitled article",
+      description: data.description ?? data.metaDescription ?? "",
+      date: data.date ?? "",
+      readingTime: data.readingTime,
+      category: categoryName,
+      cover: data.cover
+        ? {
+            src: data.cover.src,
+            alt: data.cover.alt || data.title,
+            width: data.cover.width,
+            height: data.cover.height,
+          }
+        : undefined,
     };
+
+    return { url, frontmatter };
   })
-  .sort((a, b) => b.date.getTime() - a.date.getTime());
+  // Newest → oldest, so cards are always ordered by date
+  .sort((a, b) => {
+    const at = new Date(a.frontmatter.date as any).getTime() || 0;
+    const bt = new Date(b.frontmatter.date as any).getTime() || 0;
+    return bt - at;
+  });
 
-/** Pagination (page 1) */
-const pageCount = Math.max(1, Math.ceil(posts.length / PER_PAGE));
-const pageItems = posts.slice(0, PER_PAGE);
+const totalPosts = posts.length;
 
-/** URLs + SEO */
-const basePath = `/blog/${cat}`;
-const pretty = prettyCategoryTitle(cat);
-const pageTitle = buildCategoryTitle(cat);
-const desc = buildCategoryDescription(cat);
-const canonical = `${basePath}/`;
-const nextUrl = pageCount > 1 ? `${basePath}/page/2/` : null;
+// Page size for category landing – show first 12 posts
+const PAGE_SIZE = 12;
+const postsPage1 = posts.slice(0, PAGE_SIZE);
+const hasMore = posts.length > PAGE_SIZE;
 
-/** Hero stats */
-const postCount = posts.length;
-const lastUpdated = posts[0]?.date ?? null;
-const readRange = "4–9 min";
+// Helpers
+const fmtDate = (d: string | Date) =>
+  new Date(d).toLocaleDateString("en-KE", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
-/** First card image for OG + preload */
-const ogImage = pageItems[0]?.thumbnailSrc ?? null;
+const catHref = (p: { frontmatter: any }) =>
+  `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
 
-/** JSON-LD */
-const current = 1;
-const breadcrumbsLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home",  item: absUrl("/", Astro.site) },
-    { "@type": "ListItem", position: 2, name: "Blog",  item: absUrl("/blog/", Astro.site) },
-    { "@type": "ListItem", position: 3, name: pretty, item: absUrl(`${basePath}/`, Astro.site) },
-    { "@type": "ListItem", position: 4, name: `Page ${current}`, item: absUrl(canonical, Astro.site) },
-  ],
+// Human-friendly titles & descriptions
+const categoryTitleMap: Record<string, string> = {
+  "cv-tips": "CV & Cover Letter Tips",
+  linkedin: "LinkedIn & Branding",
+  "career-growth": "Career Growth",
+  "kenya-market": "Kenya Job Market",
 };
 
-const itemListLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  itemListElement: pageItems.map((p, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    url: absUrl(p.url, Astro.site),
-    name: p.title,
-  })),
+const categoryDescriptionMap: Record<string, string> = {
+  "cv-tips":
+    "Actionable CV and cover letter advice tailored to Kenya’s job market.",
+  linkedin:
+    "LinkedIn profile and personal brand guidance to help you be discoverable and credible.",
+  "career-growth":
+    "Interviews, offers, and career leverage strategies for Kenyan professionals.",
+  "kenya-market":
+    "Local job market trends, salary intel, and hiring patterns in Kenya.",
 };
 
-const collectionPageLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  url: absUrl(canonical, Astro.site),
-  name: `${pretty} — Page ${current}`,
-  isPartOf: absUrl(`${basePath}/`, Astro.site),
-};
+const title = categoryTitleMap[cat] || "Blog category";
+const description =
+  categoryDescriptionMap[cat] ||
+  "Curated articles from CVWriting.co.ke on CVs, interviews, and strategy.";
 
-/** Breadcrumbs (visible) */
-const breadcrumbItems = [
-  { label: "Home", href: "/" },
-  { label: "Blog", href: "/blog/" },
-  { label: pretty, current: true },
-];
+const seo = {
+  title: `${title} | CVWriting.co.ke Blog`,
+  description,
+  openGraph: {
+    title: `${title} | CVWriting.co.ke Blog`,
+    description,
+    image: ogImageSrc,
+  },
+};
 ---
 
-<BaseLayout title={pageTitle} description={desc} seo={{ canonical, ogImage }} relNext={nextUrl}>
-  <Fragment slot="head">
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    {ogImage && <link rel="preload" as="image" href={ogImage} />}
+<BaseLayout {title} {description} {seo}>
+  <main data-section="blog-category">
+    <!-- HERO: page title, description, hero image (mobile-first, 2-column on desktop) -->
+    <section class="section bcat-hero" aria-labelledby="bcat-hero-heading">
+      <div class="container bcat-hero__inner">
+        <div class="bcat-hero__copy">
+          <p class="bcat-hero__eyebrow">Blog category</p>
+          <!-- h1 element using global h1 styling -->
+          <h1 id="bcat-hero-heading" class="bcat-hero__title section-title h1">
+            {title}
+          </h1>
+          <p class="bcat-hero__lede">
+            {description}
+          </p>
+          <p class="bcat-hero__meta">
+            <span class="bcat-hero__metaPill">
+              {totalPosts} Post{totalPosts === 1 ? "" : "s"}
+            </span>
+          </p>
+        </div>
 
-    <link rel="stylesheet" href={pflCss} />
-    <link rel="stylesheet" href={lmsCss} />
+        <figure class="bcat-hero__media">
+          <img
+            src={heroImageSrc}
+            alt={`${title} hero image`}
+            loading="eager"
+            decoding="async"
+            width="1200"
+            height="720"
+            sizes="(min-width: 1024px) 38vw, 100vw"
+          />
+        </figure>
+      </div>
+    </section>
 
-    <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
-    <script type="application/ld+json" is:inline>{JSON.stringify(itemListLd)}</script>
-    <script type="application/ld+json" is:inline>{JSON.stringify(collectionPageLd)}</script>
-  </Fragment>
-
-  <section class="container page-gap-after" data-section="category" aria-label="Category articles">
-    <Breadcrumbs items={breadcrumbItems} />
-
-    <div class="stack" style="--section-gap: clamp(var(--space-5), 2vw, var(--space-10));">
-      <CategoryHero
-        title={pretty}
-        dek={desc}
-        stats={{ postCount, lastUpdated: lastUpdated ?? undefined, readRange }}
-        primaryCta={{ href: "/services/cv-rewrite?utm_source=blog&utm_medium=category&utm_campaign=hero", label: "Book CV Rewrite" }}
-        secondaryCta={{ href: "/offers/free-cv-audit?utm_source=blog&utm_medium=category&utm_campaign=hero", label: "Free 24-Point CV Audit" }}
-      />
-
-      <section aria-label="Category controls">
-        <CategoryUtilityBar client:load category={cat} pageSize={PER_PAGE} mountId="category-client-list" prettyCategory={pretty} />
-      </section>
-
-      {/* Inner stack: Grid → LeadMagnet → Pagination → RelatedCategories (FP-169.2) */}
-      <div class="stack" style="--section-gap: clamp(var(--space-8), 3vw, var(--space-12));">
-        <section aria-labelledby="latest-heading">
-          <header class="pfl__head">
-            <p class="pfl__eyebrow">From the blog</p>
-            <h2 id="latest-heading" class="pfl__title">Latest articles</h2>
+    <!-- FEED: Latest articles (UNCHANGED) -->
+    <section
+      class="section bcat-feed"
+      aria-label="Latest articles in this category"
+    >
+      <div class="container">
+        <div class="bcat-feed__container">
+          <header class="bcat-feed__head">
+            <p class="bcat-feed__eyebrow">From the blog</p>
+            <h2 class="bcat-feed__title section-title h2">Latest articles</h2>
           </header>
 
-          <ol id="category-client-list" class="pfl__grid" role="list">
-            {pageItems.map((p, i) => {
-              const eager = i < 4;
-              const high = i < 2;
-              const dateStr = new Date(p.date).toLocaleDateString();
+          <div id="bcat-grid" class="bcat-grid">
+            {postsPage1.map((p, idx) => {
+              const href = p.url;
+              const categoryLink = catHref(p);
+              const dt = new Date(p.frontmatter.date);
+              const dateIso = isNaN(dt.getTime()) ? undefined : dt.toISOString();
+
               return (
-                <li role="listitem" class="pfl__card">
-                  <article>
-                    <a class="pfl__media" href={p.url}>
-                      {p.thumbnailSrc && (
-                        <img
-                          src={p.thumbnailSrc}
-                          alt={p.thumbnailAlt ?? p.title}
-                          width={p.thumbnailW}
-                          height={p.thumbnailH}
-                          loading={eager ? "eager" : "lazy"}
-                          decoding="async"
-                          {...(high ? { fetchpriority: "high" } : {})}
-                        />
-                      )}
+                <article
+                  class="bcat-card"
+                  data-index={idx}
+                  data-cat={
+                    (p.frontmatter?.category ?? "").trim() || "uncategorized"
+                  }
+                >
+                  {p.frontmatter?.cover?.src ? (
+                    <a
+                      href={href}
+                      class="bcat-card__media"
+                      aria-label={`Read ${p.frontmatter.title}`}
+                    >
+                      <img
+                        src={p.frontmatter.cover.src}
+                        alt={p.frontmatter.cover.alt ?? p.frontmatter.title}
+                        width={p.frontmatter.cover.width ?? 640}
+                        height={p.frontmatter.cover.height ?? 360}
+                        loading={idx < 4 ? "eager" : "lazy"}
+                        decoding="async"
+                        sizes="(min-width:1280px) 25vw, (min-width:1024px) 25vw, (min-width:640px) 33vw, 100vw"
+                        fetchpriority={idx < 2 ? "high" : "low"}
+                      />
                     </a>
-                    <div class="pfl__body">
-                      <p class="pfl__cat"><a href={`${basePath}/`}>{pretty}</a></p>
-                      <h3 class="pfl__cardTitle"><a href={p.url} class="pfl__link">{p.title}</a></h3>
-                      {p.description && <p class="pfl__excerpt clamp-3">{p.description}</p>}
-                      <p class="pfl__meta">
-                        <time dateTime={p.dateISO}>{dateStr}</time> · {typeof p.readMins === "number" ? p.readMins : "—"} min read
+                  ) : (
+                    <div
+                      class="bcat-card__media bcat-card__media--empty"
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  <div class="bcat-card__body">
+                    {p.frontmatter?.category && (
+                      <p class="bcat-card__cat">
+                        <a
+                          href={categoryLink}
+                          aria-label={`View ${p.frontmatter.category} posts`}
+                        >
+                          {p.frontmatter.category}
+                        </a>
                       </p>
-                    </div>
-                  </article>
-                </li>
+                    )}
+
+                    <h3 class="bcat-card__title line-clamp-2">
+                      <a
+                        href={href}
+                        class="bcat-card__link"
+                        aria-label={`Read ${p.frontmatter.title}`}
+                      >
+                        {p.frontmatter.title}
+                      </a>
+                    </h3>
+
+                    {p.frontmatter?.description && (
+                      <p class="bcat-card__excerpt clamp-3">
+                        {p.frontmatter.description}
+                      </p>
+                    )}
+
+                    <p class="bcat-card__meta">
+                      {dateIso && (
+                        <span class="bcat-card__metaPill bcat-card__metaPill--date">
+                          <time datetime={dateIso}>
+                            {fmtDate(p.frontmatter.date)}
+                          </time>
+                        </span>
+                      )}
+                      {typeof p.frontmatter?.readingTime === "number" && (
+                        <span
+                          class="bcat-card__metaPill bcat-card__metaPill--read"
+                          aria-label={`${p.frontmatter.readingTime} minute read`}
+                        >
+                          {p.frontmatter.readingTime} min read
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </article>
               );
             })}
-          </ol>
-        </section>
+          </div>
 
-        {/* Lead magnet immediately after grid */}
-        <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF">
-          <LeadMagnetStrip
-            title="Get the CV Optimization PDF"
-            sub="Join 12,000+ professionals receiving actionable, local career tactics."
-            action="/api/subscribe/"
-            source="blog_category_leadmagnet"
-            /* To use a dedicated success page for campaigns, pass:
-               successHref="/subscribe/success/" */
-          />
-        </section>
-
-        {/* Pagination for page 1 when multiple pages exist */}
-        {pageCount > 1 && (
-          <Pagination
-            basePath={basePath}
-            current={1}
-            total={pageCount}
-            query={Astro.url.search}
-          />
-        )}
-
-        {/* FP-169.2: Related categories after Pagination; up to 6 chips; canonical URLs */}
-        <RelatedCategories
-          items={relatedCategories(cat).slice(0, 6)}
-          current={cat}
-          title="Related categories"
-          variant="compact"
-        />
+          {hasMore && (
+            <div class="bcat-feed__actions">
+              <a
+                href={`/blog/${cat}/page/2/`}
+                aria-label="View more posts in this category"
+                class="bcat-feed__more"
+                data-cta="category-view-more"
+              >
+                View more
+              </a>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 </BaseLayout>
-
-<style>
-  .category-hero { padding-inline: 0 !important; padding-block: clamp(var(--space-8), 3vw, var(--space-12)); }
-  .category-hero__grid { display: block; }
-  @media (min-width: 1024px) {
-    .category-hero__grid {
-      display: grid !important;
-      grid-template-columns: minmax(0,1.25fr) minmax(0,1fr);
-      gap: clamp(var(--space-6), 3vw, var(--space-10));
-    }
-  }
-  .category-hero__ctas { display: grid; grid-auto-flow: row; gap: var(--space-3); }
-  @media (min-width: 640px) { .category-hero__ctas { grid-auto-flow: column; justify-content: start; } }
-</style>

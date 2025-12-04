@@ -1,30 +1,45 @@
 ---
 // File: src/components/blog/compose/PostCTAs/index.astro
 
-interface CTA { label: string; url: string }
-interface PostCTAsProps {
-  primary?: CTA
-  secondary?: CTA
+interface CTA {
+  label: string;
+  url: string;
+  ariaLabel?: string;
 }
 
-const { primary, secondary } = Astro.props as PostCTAsProps
-const hasAny = Boolean(primary || secondary)
+interface PostCTAsProps {
+  primary?: CTA;
+  secondary?: CTA;
+}
+
+const { primary, secondary } = Astro.props as PostCTAsProps;
+const hasAny = Boolean(primary || secondary);
 
 // Local component CSS only (no global imports per Fix Plan 155)
-import css from "./PostCTAs.css?url"
+import css from "./PostCTAs.css?url";
 ---
 {hasAny && (
   <nav class="post__ctas" aria-label="Post calls to action">
     <link rel="stylesheet" href={css} />
 
     {primary && (
-      <a class="post__cta post__cta--primary" href={primary.url}>
+      <a
+        class="post__cta post__cta--primary"
+        href={primary.url}
+        data-cta="post-primary"
+        aria-label={primary.ariaLabel || primary.label}
+      >
         {primary.label}
       </a>
     )}
 
     {secondary && (
-      <a class="post__cta post__cta--secondary" href={secondary.url}>
+      <a
+        class="post__cta post__cta--secondary"
+        href={secondary.url}
+        data-cta="post-secondary"
+        aria-label={secondary.ariaLabel || secondary.label}
+      >
         {secondary.label}
       </a>
     )}

@@ -1,117 +1,93 @@
 /** File: src/lib/blog/categories.ts */
 
-/** Canonical category config */
-export const CATEGORIES = [
-  "cv-tips",
-  "linkedin",
-  "career-growth",
-  "kenya-market",
-] as const;
+/**
+ * Canonical category definitions for the blog.
+ * Single source of truth for:
+ * - Category slugs used in routes
+ * - Display names and descriptions
+ * - Optional hero/OG image configs
+ */
 
-export type Category = (typeof CATEGORIES)[number];
+/** URL-safe slugs for all blog categories. */
+export type CategorySlug =
+  | "cv-tips"
+  | "linkedin"
+  | "career-growth"
+  | "kenya-market";
 
-/** Pagination size (kept at 8 for QA) */
+/** Reusable image configuration for hero/OG images. */
+export type ImageConfig = {
+  src: string;
+  alt: string;
+};
+
+/** Full category metadata model. */
+export type BlogCategory = {
+  /** URL-safe slug (used in routes and content frontmatter). */
+  slug: CategorySlug;
+  /** Human-readable category name used in UI. */
+  name: string;
+  /** Short description used in intros, SEO snippets, etc. */
+  description: string;
+  /** Optional hero image for category pages. */
+  heroImage?: ImageConfig;
+  /** Optional OG image for category pages. */
+  ogImage?: ImageConfig;
+};
+
+/**
+ * Canonical category config.
+ * All category- and routing-related logic should derive from this list.
+ */
+export const CATEGORIES: BlogCategory[] = [
+  {
+    slug: "cv-tips",
+    name: "CV Tips",
+    description:
+      "Practical CV and cover letter tips tailored to Kenya’s job market.",
+  },
+  {
+    slug: "linkedin",
+    name: "LinkedIn & Online Profiles",
+    description:
+      "Guides on optimising your LinkedIn and online profiles for visibility and credibility.",
+  },
+  {
+    slug: "career-growth",
+    name: "Career Growth",
+    description:
+      "Strategies for job search, promotions, career resilience and long-term growth.",
+  },
+  {
+    slug: "kenya-market",
+    name: "Kenya Job Market",
+    description:
+      "Insights on hiring trends, salary ranges and employer expectations in Kenya.",
+  },
+];
+
+/**
+ * Exported list of all category slugs for routing (getStaticPaths, etc.).
+ */
+export const CATEGORY_SLUGS: CategorySlug[] = CATEGORIES.map(
+  (category) => category.slug,
+);
+
+/**
+ * Legacy alias maintained for compatibility with existing code.
+ * Wherever possible, prefer CategorySlug or BlogCategory.
+ */
+export type Category = CategorySlug;
+
+/** Pagination size (kept at 8 for QA). */
 export const PER_PAGE = 8;
 
-/** Category intro copy (used for hero/dek and meta description) */
-export const CATEGORY_INTRO: Record<Category, string> = {
-  "cv-tips": "Practical, Kenya-ready CV and cover-letter tactics.",
-  linkedin: "Profiles, headlines, and outreach that get replies.",
-  "career-growth": "Interviews, offers, and career leverage.",
-  "kenya-market": "Local trends, roles, and salary intelligence.",
-};
-
-/** Pretty titles for categories */
-export function prettyCategoryTitle(slug: Category): string {
-  return slug
-    .split("-")
-    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-    .join(" ");
-}
-
-/** Human titles map (stable, overridable if needed) */
-export const CATEGORY_TITLES: Record<Category, string> = {
-  "cv-tips": "CV Tips",
-  linkedin: "LinkedIn",
-  "career-growth": "Career Growth",
-  "kenya-market": "Kenya Market",
-};
-
-/** Marketing title + description helpers (spec-aligned) */
-export function buildCategoryTitle(cat: Category): string {
-  return `${CATEGORY_TITLES[cat]} | Get Hired Faster in Kenya`;
-}
-
-export function buildCategoryDescription(cat: Category): string {
-  return (
-    CATEGORY_INTRO[cat] ??
-    `Articles in ${prettyCategoryTitle(cat)} on CV Writing Kenya`
-  );
-}
-
-/** Related categories (always show all other categories = 3) */
-export type RelatedItem = { title: string; slug: Category };
-
-/** Optional manual ordering per category (omit to use default order in CATEGORIES) */
-const RELATED_ORDER: Partial<Record<Category, Category[]>> = {
-  // Example: "cv-tips": ["linkedin", "career-growth", "kenya-market"],
-};
-
-/** Builder returns the 3 remaining categories in the chosen order */
-export function relatedCategories(cat: Category): RelatedItem[] {
-  const pool = CATEGORIES.filter((c) => c !== cat);
-  const ordered = RELATED_ORDER[cat]
-    ? RELATED_ORDER[cat]!.filter((c) => c !== cat)
-    : pool;
-  return ordered.map((slug) => ({ title: CATEGORY_TITLES[slug], slug }));
-}
-
-/** Fast guard and lookup */
-const CAT_SET: ReadonlySet<string> = new Set(CATEGORIES);
-export function isCategory(x: unknown): x is Category {
-  return typeof x === "string" && CAT_SET.has(x);
-}
-
-/** Route builders
- * Trailing slash policy: 'always'
- * Keep in sync with astro.config.mjs and all link emitters.
+/**
+ * Look up category metadata by slug.
+ * Returns undefined if the slug does not match any known category.
  */
-export function categoryBasePath(category: Category): string {
-  return `/blog/category/${category}/`;
-}
-export function categoryPagePath(category: Category, page: number): string {
-  return `/blog/category/${category}/page/${page}/`;
-}
-
-/** Authoritative post URL helper (single source of truth) */
-export function postUrlFromSlug(slug: string): string {
-  return `/blog/${slug}/`;
-}
-
-/** Simple pagination helper */
-export function paginate<T>(items: T[], page: number, perPage = PER_PAGE) {
-  const count = Math.max(1, Math.ceil(items.length / perPage));
-  const clamped = Math.min(Math.max(1, page || 1), count);
-  const start = (clamped - 1) * perPage;
-  const end = start + perPage;
-  return {
-    pageCount: count,
-    page: clamped,
-    start,
-    end,
-    slice: items.slice(start, end),
-  };
-}
-
-/** Utility to decide if pagination UI should render */
-export function shouldRenderPagination(totalItems: number, perPage = PER_PAGE) {
-  return totalItems > perPage;
-}
-
-/** Read-time range helper for hero metrics (optional) */
-export function computeReadRange(readMins: number[]): string {
-  if (!readMins || readMins.length === 0) return "4–9 min";
-  const min = Math.max(1, Math.min(...readMins));
-  const max = Math.max(...readMins);
-  return min === max ? `${min} min` : `${min}–${max} min`;
+export function getCategoryBySlug(
+  slug: string,
+): BlogCategory | undefined {
+  return CATEGORIES.find((category) => category.slug === slug);
 }

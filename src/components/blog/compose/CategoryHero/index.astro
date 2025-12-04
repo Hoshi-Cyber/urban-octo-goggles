@@ -3,20 +3,25 @@
 
 import css from "./CategoryHero.css?url";
 
-export interface Cta { href: string; label: string }
+export interface Cta {
+  href: string;
+  label: string;
+}
+
 export interface Stats {
   postCount?: number;
   lastUpdated?: string | Date;
   readRange?: string; // e.g., "3–7 min"
 }
+
 export interface Props {
   title: string;
   dek?: string;
   stats?: Stats;
   primaryCta?: Cta;
   secondaryCta?: Cta;
-  /** Fix Plan 158: do NOT add inner horizontal gutters by default */
-  contained?: boolean; // if true, allow an inner container (defaults to false)
+  /** Fix Plan 158: avoid double horizontal gutters at page level */
+  contained?: boolean;
 }
 
 const {
@@ -32,7 +37,10 @@ function fmtDate(d?: string | Date) {
   if (!d) return null;
   try {
     const date = typeof d === "string" ? new Date(d) : d;
-    return date.toLocaleDateString("en-KE", { year: "numeric", month: "short" });
+    return date.toLocaleDateString("en-KE", {
+      year: "numeric",
+      month: "short",
+    });
   } catch {
     return null;
   }
@@ -42,15 +50,22 @@ const lastUpdatedText = fmtDate(stats.lastUpdated);
 const statBits = [
   typeof stats.postCount === "number" ? `${stats.postCount} posts` : null,
   lastUpdatedText ? `Updated ${lastUpdatedText}` : null,
-  stats.readRange ? stats.readRange : null
+  stats.readRange ? stats.readRange : null,
 ].filter(Boolean) as string[];
 
 const dekId = "category-hero-dek";
 const titleId = "category-hero-title";
 
-/** Detect optional media slot; grid activates at lg only when media exists */
-const hasMedia = Astro.slots.has?.("media") === true;
+/**
+ * We always render a hero visual:
+ * - If a <slot name="media" /> is provided, we use it.
+ * - Otherwise we fall back to a default hero image in /public/images.
+ */
+const hasMediaSlot = Astro.slots.has?.("media") === true;
+const hasMedia = true; // ensure layout treats hero as media-present
+const FALLBACK_HERO = "/images/blog/hero/blog-home-hero.webp"; // safe shared fallback
 ---
+
 <section
   class="category-hero"
   data-section="category-hero"
@@ -60,26 +75,32 @@ const hasMedia = Astro.slots.has?.("media") === true;
 >
   <link rel="stylesheet" href={css} />
 
-  {/*
-    Fix Plan 158:
-    - No inner container/gutters by default; rely on page-level .container for horizontal padding.
-    - Keep only padding-block in CSS (no padding-inline).
-    - Single column by default; grid only at lg when media exists.
-  */}
-  <div class:list={[
-    "category-hero__grid",
-    hasMedia ? "has-media" : "no-media",
-    contained ? "is-contained" : "is-uncontained",
-  ]}>
+  <div
+    class:list={[
+      "category-hero__grid",
+      hasMedia ? "has-media" : "no-media",
+      contained ? "is-contained" : "is-uncontained",
+    ]}
+  >
     <header class="category-hero__head">
-      <p class="category-hero__eyebrow">Blog Category</p>
-      <h1 id={titleId} class="category-hero__title">{title}</h1>
+      <p class="category-hero__eyebrow">Blog category</p>
 
-      {dek && <p id={dekId} class="category-hero__dek">{dek}</p>}
+      {/* h1 using global h1 styles via utility + hero-specific styling */}
+      <h1 id={titleId} class="category-hero__title section-title h1">
+        {title}
+      </h1>
+
+      {dek && (
+        <p id={dekId} class="category-hero__dek">
+          {dek}
+        </p>
+      )}
 
       {statBits.length > 0 && (
         <ul class="category-hero__stats" aria-label="Category metrics">
-          {statBits.map((s) => <li class="category-hero__stat">{s}</li>)}
+          {statBits.map((s) => (
+            <li class="category-hero__stat">{s}</li>
+          ))}
         </ul>
       )}
 
@@ -109,10 +130,20 @@ const hasMedia = Astro.slots.has?.("media") === true;
       )}
     </header>
 
-    {hasMedia && (
-      <div class="category-hero__media" aria-hidden="true">
+    <div class="category-hero__media" aria-hidden="true">
+      {hasMediaSlot ? (
         <slot name="media" />
-      </div>
-    )}
+      ) : (
+        <figure class="category-hero__media-frame">
+          <div class="category-hero__media-backdrop" />
+          <img
+            src={FALLBACK_HERO}
+            alt="Curated CV writing and career insights for this category"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      )}
+    </div>
   </div>
 </section>

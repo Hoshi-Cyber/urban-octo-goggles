@@ -1,14 +1,18 @@
 ---
 // File: src/components/blog/compose/CollectionSchema/index.astro
+// Non-visual JSON-LD emitter for collection pages (e.g., blog categories).
+// Keeps layout untouched while improving SEO and rich results.
 
 import css from "./CollectionSchema.css?url";
 
 /**
- * Emits JSON-LD for a blog category (CollectionPage) and its items (ItemList).
- * Non-visual. Guard absolute URL building per Fix Plan 136.1.
+ * Collection page + items contracts
  */
+export interface Crumb {
+  name: string;
+  url?: string;
+}
 
-export interface Crumb { name: string; url?: string }
 export interface PageInfo {
   title: string;
   url: string;
@@ -18,6 +22,7 @@ export interface PageInfo {
   totalPages?: number;
   breadcrumb?: Crumb[];
 }
+
 export interface Item {
   title: string;
   url: string;
@@ -27,6 +32,7 @@ export interface Item {
   authorName?: string;
   description?: string;
 }
+
 export interface Props {
   pageInfo: PageInfo;
   items: Item[];
@@ -39,41 +45,47 @@ const site = Astro.site ? Astro.site.toString() : "";
 const abs = (u?: string | null): string | undefined =>
   u ? (site ? new URL(u, site).toString() : u) : undefined;
 
-const listElements = items.map((it, i) => {
+/** ItemList elements */
+const listElements = items.map((it, index) => {
   const url = abs(it.url);
   const img = abs(it.image);
+
   return {
     "@type": "ListItem",
-    position: i + 1,
-    ...(url ? { url } : {}),
+    position: index + 1,
     name: it.title,
+    ...(url ? { url } : {}),
     ...(img ? { image: img } : {}),
   };
 });
 
+/** BreadcrumbList (optional) */
 const breadcrumbLd =
   pageInfo.breadcrumb?.length
     ? {
         "@type": "BreadcrumbList",
-        itemListElement: pageInfo.breadcrumb.map((c, i) => ({
+        itemListElement: pageInfo.breadcrumb.map((crumb, index) => ({
           "@type": "ListItem",
-          position: i + 1,
-          name: c.name,
-          ...(c.url ? { item: abs(c.url) } : {}),
+          position: index + 1,
+          name: crumb.name,
+          ...(crumb.url ? { item: abs(crumb.url) } : {}),
         })),
       }
     : null;
 
+/** CollectionPage schema */
 const collectionPageLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: pageInfo.title,
-  ...(pageInfo.description ? { description: pageInfo.description } : {}),
+  ...(pageInfo.description
+    ? { description: pageInfo.description }
+    : {}),
   ...(pageInfo.url ? { url: abs(pageInfo.url) } : {}),
   ...(breadcrumbLd ? { breadcrumb: breadcrumbLd } : {}),
   isPartOf: {
     "@type": "WebSite",
-    name: (Astro.site && new URL(site).hostname) || "Website",
+    name: (site && new URL(site).hostname) || "Website",
     ...(site ? { url: site } : {}),
   },
   ...(pageInfo.page && pageInfo.totalPages
@@ -86,6 +98,7 @@ const collectionPageLd = {
     : {}),
 };
 
+/** ItemList schema */
 const itemListLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -94,7 +107,8 @@ const itemListLd = {
   itemListElement: listElements,
 };
 ---
-<!-- Non-visual block that only injects SEO JSON-LD -->
+
+<!-- Non-visual block that only injects SEO JSON-LD; kept fully hidden via CSS -->
 <div class="collection-schema" aria-hidden="true">
   <link rel="stylesheet" href={css} />
   <script type="application/ld+json">

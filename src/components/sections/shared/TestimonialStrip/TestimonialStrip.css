@@ -1,11 +1,49 @@
-/* TestimonialStrip — mobile-first, token-driven, infinite carousel on small/medium */
+/* TestimonialStrip — mobile-first, token-driven, infinite carousel on small/medium
+   Upgraded for CVWriting brand:
+   - Soft, premium band using primary + accent tints
+   - Cards with gold/primary top accent and subtle glow
+   - Clear, high-contrast quote + meta styling
+*/
 
-/* Section tint and spacing with subtle gradient */
+/* Section tint and spacing with subtle brand gradient */
 [data-section="testimonials"] {
   background:
-    linear-gradient(180deg, var(--color-surface, #f8fafc) 0%, #fff 100%),
-    var(--color-surface, #f8fafc);
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 9%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #f8fafc) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
+    );
   padding-block: var(--space-10, 2.5rem);
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  border-block-end: 1px solid
+    color-mix(in oklab, var(--color-border-soft, #e5e7eb) 90%, transparent);
 }
 
 /* MOBILE–MD: infinite loop scroller (two copies in markup) */
@@ -13,11 +51,13 @@
   overflow: clip;
   padding-inline: 0; /* constrained by .container */
 }
+
 @media (max-width: 639px) {
   .tscroller {
     padding-inline: var(--space-4, 1rem);
   }
 }
+
 .tscroller__track {
   display: flex;
   gap: var(--space-6, 1.5rem);
@@ -25,14 +65,152 @@
   will-change: transform;
   animation: scroll-loop 35s linear infinite;
 }
+
+/* Card wrapper inside the track */
 .tcard {
+  position: relative;
   flex: 0 0 85%;
   max-inline-size: 36rem;
+  scroll-snap-align: center;
+  display: grid;
+  grid-template-rows: 1fr auto; /* equal-height cards */
+  min-block-size: 100%;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-5, 1.25rem);
+  border-radius: var(--radius-xl, 1rem);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 16%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 14%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 92%,
+        transparent
+      )
+    );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary) 18%,
+      rgba(148, 163, 184, 0.4)
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 26px rgba(15, 23, 42, 0.08)
+  );
+  transition:
+    transform 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    border-color 0.16s ease-out,
+    background 0.16s ease-out;
 }
+
 @media (min-width: 640px) {
   .tcard {
     flex-basis: 60%;
   }
+}
+
+/* Gold/primary top accent bar */
+.tcard::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  block-size: 4px;
+  border-top-left-radius: var(--radius-xl, 1rem);
+  border-top-right-radius: var(--radius-xl, 1rem);
+  background: linear-gradient(
+    90deg,
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 50%,
+      var(--color-accent, #d4ab18)
+    )
+  );
+}
+
+/* Soft glow chip in top-right corner for subtle polish */
+.tcard::after {
+  content: "";
+  position: absolute;
+  top: -1.6rem;
+  right: -1.6rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 210deg,
+      var(--color-primary),
+      var(--color-accent),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 60%,
+        var(--color-accent)
+      ),
+      var(--color-primary)
+    );
+  opacity: 0.24;
+  filter: blur(1px);
+}
+
+/* Hover / focus elevation */
+@media (hover: hover) {
+  .tcard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(
+      --shadow-sm,
+      0 18px 34px rgba(15, 23, 42, 0.16)
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 26%,
+      transparent
+    );
+  }
+}
+
+.tcard:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--color-primary) 55%,
+        #ffffff
+      ),
+    var(--shadow-sm, 0 18px 34px rgba(15, 23, 42, 0.16));
+  border-radius: var(--radius-xl, 1rem);
 }
 
 /* DESKTOP: static 3-up grid, show only first 3 to avoid overwhelm */
@@ -41,20 +219,24 @@
     overflow: visible;
     padding-inline: 0;
   }
+
   .tscroller__track {
     display: grid;
     grid-auto-flow: initial;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-6, 1.5rem);
     padding-block: var(--space-8, 2rem);
     animation: none;
   }
+
   .tscroller__track > .tcard:nth-child(n + 4) {
     display: none;
   }
+
   .tcard {
     flex: initial;
     max-inline-size: none;
+    padding: var(--space-4, 1rem);
   }
 }
 
@@ -62,6 +244,7 @@
 .testimonials__more {
   display: none;
 }
+
 @media (min-width: 1024px) {
   .testimonials__more {
     display: grid;
@@ -79,85 +262,97 @@
     transform: translateX(-50%);
   }
 }
+
 /* Pause on interaction; honor reduced motion */
 .tscroller:hover .tscroller__track,
 .tscroller:focus-within .tscroller__track {
   animation-play-state: paused;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .tscroller__track {
     animation: none;
   }
 }
 
-/* Card: brand tint, top accent bar, compact spacing */
-.tcard {
-  position: relative;
-  scroll-snap-align: center;
+/* Inner testimonial-card layout inside each tcard */
+
+.testimonial-card {
   display: grid;
-  grid-template-rows: 1fr auto; /* equal-height cards */
-  min-block-size: 100%;
-  gap: var(--space-3, 0.75rem);
-  background: color-mix(in oklab, var(--color-primary, #2563eb) 6%, #fff);
-  border: 1px solid
-    color-mix(in oklab, var(--color-primary, #2563eb) 22%, transparent);
-  border-radius: var(--radius-lg, 0.75rem);
-  box-shadow: var(--shadow-xs, 0 1px 1px rgba(0, 0, 0, 0.05));
-  padding: var(--space-5, 1.25rem);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
-}
-@media (min-width: 1024px) {
-  .tcard {
-    padding: var(--space-4, 1rem);
-  }
-}
-.tcard::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  block-size: 4px;
-  border-top-left-radius: var(--radius-lg, 0.75rem);
-  border-top-right-radius: var(--radius-lg, 0.75rem);
-  background: linear-gradient(
-    90deg,
-    var(--color-primary, #2563eb),
-    var(--color-accent, #7c3aed)
-  );
-}
-.tcard:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
+  grid-template-rows: 1fr auto;
+  gap: var(--space-3);
+  min-height: 100%;
 }
 
-/* Quote + copy (smaller decorative quote, clamp text) */
-.tcard blockquote {
+/* Quote + copy (decorative quote, clamp text) */
+.tcard blockquote,
+.testimonial-card__quote {
   margin: 0 0 var(--space-3, 0.75rem) 0;
   color: var(--color-text, #111827);
   max-inline-size: 60ch;
+  font-size: var(--fs-base);
+  line-height: 1.7;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.tcard blockquote::before {
+
+.tcard blockquote::before,
+.testimonial-card__quote::before {
   content: "“";
   font-size: 2rem;
   line-height: 1;
   margin-inline-end: 0.25rem;
-  color: color-mix(in oklab, var(--color-primary, #2563eb) 35%, #fff);
-}
-.tcard__role {
-  color: var(--color-muted, #6b7280);
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary)) 45%,
+    #ffffff
+  );
 }
 
-/* Focus ring for keyboard users */
-.tcard:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
-  border-radius: var(--radius-lg, 0.75rem);
+/* Meta block (name / role / context) */
+.testimonial-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem var(--space-2);
+  align-items: baseline;
+  font-size: var(--fs-sm);
+}
+
+/* Name – slightly stronger */
+.testimonial-card__name {
+  font-weight: 600;
+  color: var(--color-primary-strong, var(--color-primary));
+}
+
+/* Role + context – muted and separated with bullets */
+.testimonial-card__role,
+.testimonial-card__context,
+.tcard__role {
+  color: var(--color-muted, #6b7280);
+  font-weight: 400;
+}
+
+.testimonial-card__role::before,
+.testimonial-card__context::before {
+  content: "•";
+  margin-inline: 0.35rem;
+  color: color-mix(
+    in oklab,
+    var(--color-muted, #6b7280) 80%,
+    var(--color-primary) 20%
+  );
+}
+
+.testimonial-card__role:first-of-type::before {
+  content: "";
+  margin: 0;
+}
+
+/* Small-screen spacing adjustments */
+@media (max-width: 639px) {
+  [data-section="testimonials"] {
+    padding-block: var(--space-8);
+  }
 }

@@ -1,10 +1,7 @@
-/* src/components/blog/base/Breadcrumbs/Breadcrumbs.css */
-
-/*
-  Blog breadcrumbs
-  - Compact, low-noise trail above the post header
-  - Mobile-first, wraps cleanly on narrow screens
-  - Uses color and subtle background (no underlines)
+/* src/components/blog/base/Breadcrumbs/Breadcrumbs.css
+   Blog breadcrumbs – premium pill trail above the post header
+   - Mobile-first, low-noise, uses brand colours subtly
+   - Compact layout that wraps gracefully on narrow screens
 */
 
 .breadcrumbs {
@@ -12,36 +9,51 @@
   max-width: var(--container-max);
   margin-inline: auto;
 
-  /* small breathing room above, no extra space below */
-  padding-block-start: var(--space-1);
+  /* modest breathing room above, none below */
+  padding-block-start: var(--space-2);
   padding-block-end: 0;
 
   font-size: var(--fs-xs);
   color: var(--color-muted);
 }
 
-/* Main list wrapper */
+/* Main list wrapper – pill band using surface + primary-soft tint */
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
 
-  /* HARD RESET any global gap that might be applied */
+  /* reset any external gap */
   gap: 0 !important;
 
-  /* We handle horizontal spacing via the "/" margins, not column-gap */
   column-gap: 0;
   row-gap: var(--space-1);
 
   margin: 0;
-  padding: 0;
+  padding: clamp(0.2rem, 0.4vw, 0.35rem)
+           clamp(var(--space-2), 2vw, var(--space-3));
   list-style: none;
+
+  border-radius: var(--radius-pill, 999px);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      transparent
+    );
+  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.05));
 }
 
 /* Items + separators */
 .breadcrumbs__item {
   display: inline-flex;
   align-items: center;
+  min-width: 0; /* allow current crumb to shrink */
 
   /* No internal gap so text and "/" stay close */
   gap: 0 !important;
@@ -54,17 +66,12 @@
   padding: 0 !important;
 }
 
-/* Our compact separator */
+/* Compact separator using muted tone */
 .breadcrumbs__item:not(:last-child)::after {
   content: "/";
   font-size: 0.9em;
   color: color-mix(in oklab, var(--color-muted) 80%, transparent);
 
-  /*
-    Tighten space between text and "/"
-    - small margin before slash
-    - slightly larger margin after slash before the next crumb
-  */
   margin-inline-start: 0.12rem !important;
   margin-inline-end: 0.32rem !important;
 }
@@ -74,12 +81,10 @@
   display: inline-flex;
   align-items: center;
 
-  /* Tighter pills so padding does not create huge gaps */
-  padding-inline: calc(var(--space-1) * 0.6);
-  padding-block: 2px;
-  border-radius: 999px;
+  padding-inline: clamp(0.25rem, 0.4vw, 0.5rem);
+  padding-block: 0.15rem;
+  border-radius: var(--radius-pill, 999px);
 
-  /* Remove all text decoration, including hover/focus underlines from globals */
   text-decoration: none !important;
 
   color: var(--color-muted);
@@ -88,57 +93,85 @@
   transition:
     color 150ms ease-out,
     background-color 150ms ease-out,
-    box-shadow 150ms ease-out;
+    box-shadow 150ms ease-out,
+    transform 150ms ease-out;
 }
 
-/* Hover/focus: no underline, just color + background change */
+/* Hover/focus: subtle primary tint, no underline */
 .breadcrumbs__link:hover,
 .breadcrumbs__link:focus-visible {
   text-decoration: none !important;
-  color: var(--color-primary);
+  color: var(--color-primary-strong, var(--color-primary));
+
   background-color: color-mix(
     in oklab,
-    var(--color-primary) 6%,
-    var(--color-surface)
+    var(--color-primary-soft, var(--color-primary)) 14%,
+    var(--color-surface, #ffffff)
   );
-  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.05));
+
+  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.07));
   outline: none;
 }
 
-.breadcrumbs__current {
-  font-weight: 600;
-  color: var(--color-text);
-  text-decoration: none; /* defensive: ensure no underline on current item */
+/* Explicit focus ring for keyboard users */
+.breadcrumbs__link:focus-visible {
+  box-shadow:
+    0 0 0 1px color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 65%,
+      transparent
+    ),
+    var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.07));
 }
 
-/* Responsive refinements – mobile first, then scale spacing on larger viewports */
-@media (min-width: 768px) {
+/* Current (terminal) crumb – slightly stronger pill */
+.breadcrumbs__current {
+  display: inline-flex;
+  align-items: center;
+
+  padding-inline: clamp(0.35rem, 0.6vw, 0.7rem);
+  padding-block: 0.18rem;
+  border-radius: var(--radius-pill, 999px);
+
+  font-weight: 600;
+  color: var(--color-primary-strong, var(--color-text));
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface, #ffffff)
+  );
+
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive refinements – mobile first */
+@media (min-width: 640px) {
   .breadcrumbs {
-    /* keep top modest, bottom zero */
-    padding-block-start: var(--space-1);
+    padding-block-start: var(--space-2);
     padding-block-end: 0;
+  }
+
+  .breadcrumbs__list {
+    padding-block: clamp(0.25rem, 0.3vw, 0.45rem);
+    padding-inline: clamp(var(--space-2), 1.8vw, var(--space-4));
   }
 }
 
 /*
   Desktop refinement:
-  - Keep the current (post title) crumb on a single line.
-  - Use ellipsis to prevent it from forcing horizontal overflow.
+  - Keep the current (post title) crumb on a single line with ellipsis.
 */
 @media (min-width: 1024px) {
   .breadcrumbs {
-    /* same compact spacing on desktop to avoid large gaps */
-    padding-block-start: var(--space-1);
+    padding-block-start: var(--space-2);
     padding-block-end: 0;
   }
 
-  .breadcrumbs__item {
-    min-width: 0; /* allow current item to shrink within container */
-  }
-
   .breadcrumbs__current {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 32ch;
   }
 }

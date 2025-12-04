@@ -1,60 +1,96 @@
-/* src/components/blog/compose/PostCover/PostCover.css */
-
-/*
-  Post cover / hero image for single blog post.
-  CLS-safe, mobile-first, aligned with global tokens.
+/* src/components/blog/compose/PostCover/PostCover.css
+   Post cover / hero image for single blog post.
+   CLS-safe, mobile-first, premium and aligned with global tokens.
 */
 
-.post .post__cover {
-  margin: 0 0 var(--space-5); /* tighter on small screens */
-  border-radius: var(--radius-xl);
+/* Outer hero card
+   - Subtle brand-tinted surface
+   - Strong radius + soft, long shadow
+*/
+.post .post__cover,
+.post .postCover {
+  margin: 0 0 var(--space-5);
+  border-radius: var(--radius-3xl, 1.75rem);
   overflow: hidden;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 90%,
+    var(--color-surface-alt, #f9fafb) 10%
+  );
+
+  box-shadow: var(--shadow-md, 0 20px 50px rgb(15 23 42 / 0.16));
 }
 
-/* Step 6.2 – responsive vertical rhythm:
-   increase breathing room on tablet and desktop so the hero
-   feels balanced without dominating mobile viewports. */
+/* Responsive vertical rhythm */
 @media (min-width: 768px) {
-  .post .post__cover {
+  .post .post__cover,
+  .post .postCover {
     margin-bottom: var(--space-8);
   }
 }
 
 @media (min-width: 1024px) {
-  .post .post__cover {
+  .post .post__cover,
+  .post .postCover {
     margin-bottom: var(--space-10);
   }
 }
 
-/* Ensure picture and image fill width and prevent layout shift */
-
-.post .post__cover picture {
+/* Picture + image: full-bleed, CLS-safe 16:9 */
+.post .postCover__picture {
   display: block;
 }
 
-.post .post__cover img {
+.post .post__cover picture,
+.post .postCover picture {
+  display: block;
+}
+
+.post .post__cover img,
+.post .postCover img {
   display: block;
   width: 100%;
   height: auto;
   object-fit: cover;
-  /* Width/height attributes from HTML provide primary CLS safety;
-     aspect-ratio remains as a defensive fallback. */
+  /* Width/height in markup provide primary CLS safety;
+     aspect-ratio is a defensive fallback. */
   aspect-ratio: 16 / 9;
 }
 
-/* Caption / credit line */
-
+/* Caption / credit line
+   - Split tone row using brand neutrals
+   - Subtle top border to anchor image
+*/
 .post .postCover__caption {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
   align-items: baseline;
+
   padding: var(--space-3) var(--space-4);
+
   font-size: var(--fs-sm);
   color: var(--color-muted);
-  background: var(--color-surface);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 94%,
+    var(--color-surface-alt, #f9fafb) 6%
+  );
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
 }
 
 .post .postCover__captionText {
@@ -64,10 +100,14 @@
 .post .postCover__credit {
   margin: 0;
   font-style: italic;
+  color: color-mix(
+    in oklab,
+    var(--color-muted, #6b7280) 80%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
+  );
 }
 
-/* Slight tightening on larger screens */
-
+/* Slight tightening + more generous horizontal padding on larger screens */
 @media (min-width: 768px) {
   .post .postCover__caption {
     padding-inline: var(--space-6);

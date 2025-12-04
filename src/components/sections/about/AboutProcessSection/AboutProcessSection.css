@@ -1,10 +1,33 @@
 .about-process {
   padding-block: var(--space-8);
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--color-primary) 4%, var(--color-light-alt)),
-    var(--color-light-alt)
-  );
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary) 10%,
+        var(--color-light-alt)
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(
+        in oklab,
+        var(--color-accent) 9%,
+        var(--color-light-alt)
+      ),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-primary) 4%,
+        var(--color-light-alt)
+      ),
+      var(--color-light-alt)
+    );
 }
 
 @media (min-width: 768px) {
@@ -31,25 +54,57 @@
   gap: var(--space-2);
   padding: var(--space-5) var(--space-5) var(--space-4);
   border-radius: var(--radius-xl);
-  background-color: color-mix(
-    in oklab,
-    var(--color-primary) 4%,
-    var(--color-surface)
+  background: linear-gradient(
+    135deg,
+    color-mix(
+      in oklab,
+      var(--color-primary) 6%,
+      var(--color-surface)
+    ),
+    color-mix(
+      in oklab,
+      var(--color-accent) 4%,
+      var(--color-surface)
+    )
   );
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 10%, transparent);
-  box-shadow: var(--shadow-xs);
+    color-mix(in oklab, var(--color-primary) 16%, transparent);
+  box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top accent bar across header card */
+.about-process__head::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-5);
+  top: calc(var(--space-5) - 0.75rem);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 70%,
+      var(--color-primary)
+    )
+  );
+  opacity: 0.95;
 }
 
 .about-process__title {
   margin: 0;
   text-align: left;       /* override any global centering on .section-title */
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
 .about-process__intro {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text);
   max-width: none;        /* intro spans full section width */
   text-align: left;       /* override any global centering */
 }
@@ -88,20 +143,60 @@
   padding: var(--space-5);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  background-color: var(--color-surface);
+  background: linear-gradient(
+    145deg,
+    color-mix(
+      in oklab,
+      var(--color-surface) 92%,
+      var(--color-primary-soft, var(--color-primary))
+    ),
+    color-mix(
+      in oklab,
+      var(--color-light) 90%,
+      var(--color-accent-soft, var(--color-accent))
+    )
+  );
   border-top: 3px solid
-    color-mix(in oklab, var(--color-primary) 20%, var(--color-surface));
+    color-mix(in oklab, var(--color-primary) 22%, var(--color-surface));
+  border-inline: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft halo accent behind principles content */
+.about-process__principles::before {
+  content: "";
+  position: absolute;
+  inset: 12% 18%;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    color-mix(
+      in oklab,
+      var(--color-primary) 12%,
+      transparent
+    ),
+    transparent 60%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.about-process__principles > * {
+  position: relative; /* keep text above halo */
 }
 
 .about-process__principles-title {
   margin: 0;
+  color: var(--color-text);
 }
 
 .about-process__principles-intro {
   margin: 0;
   margin-top: var(--space-2);
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
   max-width: 34rem;
 }
 
@@ -140,5 +235,22 @@
   .about-process__principles {
     position: sticky;
     top: var(--space-8);
+  }
+}
+
+/* Focus visibility for any interactive elements in this band */
+.about-process :where(a, button):focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 35%, #ffffff);
+  border-radius: var(--radius-md);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .about-process__head,
+  .about-process__principles,
+  .about-process :where(a, button) {
+    transition: none !important;
   }
 }

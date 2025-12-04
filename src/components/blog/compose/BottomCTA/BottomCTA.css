@@ -1,90 +1,179 @@
-/* src/components/blog/BottomCTA/BottomCTA.css */
-/* BottomCTA — mobile-first, token-driven. Zero CLS, fast paint. */
+/* File: src/components/blog/compose/BottomCTA/BottomCTA.css
+   BottomCTA — premium, mobile-first closing band
+   - Uses deep green primary + soft neutral tint
+   - Raised inner card for clarity and focus
+   - Zero CLS, fast paint, content-visibility
+*/
+
+/* OUTER BAND
+   ------------------------------------------------------------------ */
 
 .bcta {
-  padding-block: var(--space-8);
-  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  border-top: 1px solid rgba(17, 24, 39, 0.06);
+  padding-block: clamp(var(--space-8), 3vw, var(--space-12));
   contain: content;
+
+  /* Soft band using surface + primary-soft tint */
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 16%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 94%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
+    );
+
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 86%,
+      transparent
+    );
 }
 
 @supports not (background: color-mix(in oklab, white 50%, black)) {
-  /* Fallback if color-mix is unsupported */
   .bcta {
-    background: var(--color-surface, #f8fafc);
+    background: var(--color-surface-alt, #f9fafb);
   }
 }
 
-@media (min-width: 768px) {
-  .bcta {
-    padding-block: var(--space-10);
-  }
-}
-@media (min-width: 1024px) {
-  .bcta {
-    padding-block: var(--space-12);
-  }
-}
+/* INNER CARD + GRID
+   ------------------------------------------------------------------ */
 
 .bcta__wrap {
   display: grid;
   gap: var(--space-4);
   align-items: center;
+
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  border-radius: var(--radius-2xl, 1.5rem);
+
+  background: linear-gradient(
+    135deg,
+    var(--color-surface, #ffffff),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 96%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
+    )
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      transparent
+    );
+  box-shadow: var(--shadow-sm, 0 18px 40px rgb(15 23 42 / 0.08));
+
   content-visibility: auto;
-  contain-intrinsic-size: 200px;
+  contain-intrinsic-size: 220px;
 }
 
 @media (min-width: 768px) {
   .bcta__wrap {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1.6fr) auto;
     gap: var(--space-6);
   }
 }
 
+/* COPY
+   ------------------------------------------------------------------ */
+
+.bcta__copy {
+  max-width: 40rem;
+}
+
 .bcta__title {
   margin: 0 0 var(--space-1);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
-  font-size: clamp(var(--fs-xl), 3.2vw, var(--fs-3xl));
-  color: var(--color-text);
+  font-size: clamp(var(--fs-xl), 2.8vw, var(--fs-3xl));
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
 }
 
 .bcta__sub {
   margin: 0;
-  color: var(--color-muted);
   max-width: 60ch;
+  font-size: var(--fs-base);
+  color: var(--color-muted, #6b7280);
 }
+
+/* ACTIONS
+   ------------------------------------------------------------------ */
 
 .bcta__actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: var(--space-3);
 }
 
 .bcta__btn {
   min-height: 44px; /* a11y target */
   white-space: nowrap;
+
+  /* Subtle refinement on global .btn-primary */
+  box-shadow: var(--shadow-sm, 0 12px 30px rgb(15 23 42 / 0.12));
 }
 
-/* Focus visible adopts global .btn rings; add fallback */
+/* Focus-visible adopts global .btn rings; add local fallback */
 .bcta__btn:focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 40%, #fff);
-  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--color-primary, #1b3637) 55%,
+        #ffffff
+      ),
+    var(--shadow-sm, 0 12px 30px rgb(15 23 42 / 0.12));
+  border-radius: var(--radius-pill, 999px);
 }
 
-/* Reduced motion */
+/* LAYOUT REFINEMENT: align CTA to the end on larger screens */
+@media (min-width: 768px) {
+  .bcta__actions {
+    justify-content: flex-end;
+  }
+}
+
+/* REDUCED MOTION
+   ------------------------------------------------------------------ */
+
 @media (prefers-reduced-motion: reduce) {
   .bcta,
+  .bcta__wrap,
   .bcta__btn {
     transition: none;
   }
 }
 
-/* Print */
+/* PRINT
+   ------------------------------------------------------------------ */
+
 @media print {
   .bcta {
-    background: #fff;
+    background: #ffffff;
     border: 0;
     padding-block: var(--space-4);
+  }
+
+  .bcta__wrap {
+    box-shadow: none;
+    border-radius: 0;
+    padding: var(--space-4) 0;
+    border: 0;
+    background: #ffffff;
   }
 }

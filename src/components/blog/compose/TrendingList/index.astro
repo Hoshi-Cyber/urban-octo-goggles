@@ -22,7 +22,10 @@
  *  - viewAllLabel?: string            // default "View all trending"
  */
 
-export interface Cover { src: string; alt?: string }
+export interface Cover {
+  src: string;
+  alt?: string;
+}
 export interface Item {
   title: string;
   href: string;
@@ -56,11 +59,15 @@ import css from "./TrendingList.css?url";
 <link rel="stylesheet" href={css} />
 
 {top.length > 0 && (
-  <section class="trend" aria-label="Trending articles">
+  <section class="trend" aria-label="Trending articles" data-section="trending-list">
     <div class="container">
       <header class="trend__head">
         {eyebrow && <p class="trend__eyebrow">{eyebrow}</p>}
-        {title && <h2 class="trend__title">{title}</h2>}
+        {title && (
+          <h2 class="trend__title h2 section-title">
+            {title}
+          </h2>
+        )}
       </header>
 
       {/* Ordered list kept for a11y semantics; numbers not rendered visually */}
@@ -75,32 +82,54 @@ import css from "./TrendingList.css?url";
             >
               {/* optional thumbnail */}
               {t.cover?.src && (
-                <img
-                  class="tl__thumb"
-                  src={t.cover.src}
-                  alt={t.cover.alt ?? t.title}
-                  width="56"
-                  height="56"
-                  loading="lazy"
-                  decoding="async"
-                  sizes="56px"
-                />
+                <div class="tl__thumbWrap">
+                  <img
+                    class="tl__thumb"
+                    src={t.cover.src}
+                    alt={t.cover.alt ?? t.title}
+                    width="56"
+                    height="56"
+                    loading="lazy"
+                    decoding="async"
+                    sizes="56px"
+                  />
+                </div>
               )}
 
               {/* content */}
               <span class="tl__content">
                 <span class="tl__title clamp-1">{t.title}</span>
-                <span class="tl__meta">
-                  {t.category && <span class="tl__chip">{t.category}</span>}
-                  {t.date && <time>{t.date}</time>}
-                  {typeof t.readingTime === "number" && (
-                    <span aria-hidden="true"> · {t.readingTime} min read</span>
-                  )}
-                </span>
+
+                {t.category && (
+                  <span class="tl__catRow">
+                    <span class="tl__chip">{t.category}</span>
+                  </span>
+                )}
+
+                {(t.date || typeof t.readingTime === "number") && (
+                  <span class="tl__meta">
+                    {t.date && (
+                      <span class="tl__metaPill tl__metaPill--date">
+                        <time>{t.date}</time>
+                      </span>
+                    )}
+                    {typeof t.readingTime === "number" && (
+                      <span class="tl__metaPill tl__metaPill--read">
+                        {t.readingTime} min read
+                      </span>
+                    )}
+                  </span>
+                )}
               </span>
 
               {/* chevron */}
-              <svg class="tl__chev" viewBox="0 0 20 20" aria-hidden="true" width="20" height="20">
+              <svg
+                class="tl__chev"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+                width="20"
+                height="20"
+              >
                 <path
                   d="M7 5l5 5-5 5"
                   fill="none"

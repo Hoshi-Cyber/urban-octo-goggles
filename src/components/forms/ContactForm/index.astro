@@ -1,174 +1,745 @@
 ---
-/** ContactForm — mobile-first, brand-consistent, Fix Plan 62
- * Props:
- *  action?: string                     // form endpoint (defaults to Formspree)
- *  method?: 'POST' | 'GET'             // default 'POST'
- *  whatsappHref?: string               // retained for API compatibility (not rendered here)
- *  packageParam?: string               // query param name to capture (default 'package')
- *  showFile?: boolean                  // toggle CV upload field
- *  accept?: string                     // file accept list
- *  class?: string                      // extra classes on root
- */
+import "./ContactForm.css";
 
 export interface Props {
   action?: string;
-  method?: 'POST' | 'GET';
-  whatsappHref?: string;
-  packageParam?: string;
-  showFile?: boolean;
-  accept?: string;
+  method?: "POST" | "GET";
   class?: string;
+  maxFileSizeMb?: number;
+  whatsappHref?: string;
+  phoneDisplay?: string;
+  email?: string;
 }
 
 const {
-  action = 'https://formspree.io/f/mayvdvbg',
-  method = 'POST',
-  whatsappHref = 'https://wa.me/254712345678',
-  packageParam = 'package',
-  showFile = true,
-  accept = '.pdf,.doc,.docx,.rtf',
-  class: className = ''
+  action = "https://formspree.io/f/mayvdvbg",
+  method = "POST",
+  class: className = "",
+  maxFileSizeMb = 5,
+  whatsappHref = "https://wa.me/254115117501",
+  phoneDisplay = "+254 115 117 501",
+  email = "hello@cvwriting.co.ke",
 } = Astro.props as Props;
-
-const pkg = Astro.url?.searchParams?.get(packageParam) ?? '';
 ---
 
-import "./ContactForm.css";
-
-<form
-  class={`contactform ${className}`.trim()}
+<section
   data-section="contactform"
-  name="contact"
-  action={action}
-  method={method}
-  enctype="multipart/form-data"
-  autocomplete="on"
+  aria-labelledby="contact-heading"
 >
-  <!-- spam honeypot -->
-  <input type="text" name="website" class="hp" tabindex="-1" aria-hidden="true" />
-
-  <div class="contactform__grid">
-    <!-- Full name (required) -->
-    <div class="field">
-      <label for="cf-name" class="label">
-        Full name <span class="req" aria-hidden="true">*</span>
-      </label>
-      <input
-        id="cf-name"
-        name="name"
-        type="text"
-        required
-        autocomplete="name"
-        class="input"
-        aria-required="true"
-      />
-    </div>
-
-    <!-- Email address (required) -->
-    <div class="field">
-      <label for="cf-email" class="label">
-        Email address <span class="req" aria-hidden="true">*</span>
-      </label>
-      <input
-        id="cf-email"
-        name="email"
-        type="email"
-        inputmode="email"
-        autocomplete="email"
-        required
-        class="input"
-        aria-required="true"
-      />
-    </div>
-
-    <!-- Service needed (required) -->
-    <div class="field">
-      <label for="cf-service" class="label">
-        Service needed <span class="req" aria-hidden="true">*</span>
-      </label>
-      <select
-        id="cf-service"
-        name="service"
-        required
-        class="select"
-        aria-required="true"
-      >
-        <option value="">Select service…</option>
-        <option value="new-cv">New CV</option>
-        <option value="cv-cover-letter">CV + Cover Letter</option>
-        <option value="cv-linkedin">CV + LinkedIn Profile</option>
-        <option value="other">Other (please specify in your message)</option>
-      </select>
-    </div>
-
-    <!-- Country (optional; Kenya pinned at top) -->
-    <div class="field">
-      <label for="cf-country" class="label">
-        Country (optional)
-      </label>
-      <select
-        id="cf-country"
-        name="country"
-        class="select"
-      >
-        <option value="">Select country…</option>
-        <option value="Kenya">Kenya</option>
-        <option value="Other">Other (specify in your message)</option>
-      </select>
-    </div>
-
-    <!-- Message (full width, primary context) -->
-    <div class="field field--full">
-      <label for="cf-message" class="label">
-        Message
-      </label>
-      <textarea
-        id="cf-message"
-        name="message"
-        rows="4"
-        class="textarea"
-        placeholder="Tell us about your current role, target role, and any deadlines."
-        aria-describedby="cf-message-help"
-      ></textarea>
-      <p id="cf-message-help" class="help">
-        Include any context that helps us understand your situation and timelines.
+  <div class="container contactform__layout">
+    <!-- Left: contact info -->
+    <div class="contactform__info stack" data-order="0">
+      <p class="contactform__eyebrow">Contact CVWriting.co.ke</p>
+      <h2 id="contact-heading" class="contactform__title">
+        Talk to a CV specialist
+      </h2>
+      <p class="contactform__lead">
+        Share a few details about your situation and we’ll recommend the most suitable CV or career support option for you.
       </p>
+
+      <ul class="contactform__info-list">
+        <li>
+          <span class="contactform__info-label">Phone / WhatsApp:</span>
+          <a href={whatsappHref} class="contactform__info-link">
+            {phoneDisplay}
+          </a>
+        </li>
+        <li>
+          <span class="contactform__info-label">Email:</span>
+          <a href={`mailto:${email}`} class="contactform__info-link">
+            {email}
+          </a>
+        </li>
+        <li class="contactform__info-meta">
+          We usually reply within <strong>1 business day</strong>.
+        </li>
+      </ul>
     </div>
 
-    <!-- Optional CV upload -->
-    {showFile && (
-      <div class="field field--full">
-        <label for="cf-file" class="label">
-          Attach your current CV (optional)
-        </label>
-        <input
-          id="cf-file"
-          name="file"
-          type="file"
-          class="file"
-          accept={accept}
-        />
-        <p class="help">Accepted: PDF, DOC, DOCX, RTF.</p>
+    <!-- Right: form card -->
+    <div class="contactform__card" data-order="1">
+      <div
+        class="contactform__status contactform__status--success"
+        data-contact-status="success"
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+        Thank you! Your message has been received. We’ll get back to you within 1 business day.
       </div>
-    )}
+
+      <div
+        class="contactform__status contactform__status--error"
+        data-contact-status="error"
+        role="alert"
+        hidden
+      >
+        Please correct the highlighted fields and try again.
+      </div>
+
+      <form
+        class={`contactform ${className}`.trim()}
+        data-contactform
+        name="contact"
+        action={action}
+        method={method}
+        enctype="multipart/form-data"
+        autocomplete="on"
+        data-max-file-size-mb={maxFileSizeMb}
+        novalidate
+      >
+        <!-- spam honeypot -->
+        <input
+          type="text"
+          name="website"
+          class="hp"
+          tabindex="-1"
+          aria-hidden="true"
+        />
+
+        <div class="contactform__grid">
+          <!-- Full Name * (order 1) -->
+          <div class="field" data-field="full_name" data-order="1" data-required="true">
+            <label for="cf-full_name" class="label">
+              Full Name <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="cf-full_name"
+              name="full_name"
+              type="text"
+              class="input"
+              required
+              autocomplete="name"
+              aria-required="true"
+              aria-describedby="cf-full_name-help cf-full_name-error"
+              placeholder="e.g. Jane Wanjiku"
+            />
+            <p id="cf-full_name-help" class="help">
+              Please enter your full name as you’d like us to address you.
+            </p>
+            <p
+              id="cf-full_name-error"
+              class="field__error"
+              data-error-for="full_name"
+            ></p>
+          </div>
+
+          <!-- Email Address * (order 2) -->
+          <div class="field" data-field="email" data-order="2" data-required="true">
+            <label for="cf-email" class="label">
+              Email Address <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="cf-email"
+              name="email"
+              type="email"
+              inputmode="email"
+              class="input"
+              required
+              autocomplete="email"
+              aria-required="true"
+              aria-describedby="cf-email-help cf-email-error"
+              placeholder="e.g. jane@example.com"
+            />
+            <p id="cf-email-help" class="help">
+              We’ll use this email to send our reply and any quotation.
+            </p>
+            <p
+              id="cf-email-error"
+              class="field__error"
+              data-error-for="email"
+            ></p>
+          </div>
+
+          <!-- Phone / WhatsApp Number * (order 3) -->
+          <div class="field" data-field="phone" data-order="3" data-required="true">
+            <label for="cf-phone" class="label">
+              Phone / WhatsApp Number <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="cf-phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              class="input"
+              required
+              autocomplete="tel"
+              aria-required="true"
+              aria-describedby="cf-phone-help cf-phone-error"
+              placeholder="e.g. +254 712 345 678"
+            />
+            <p id="cf-phone-help" class="help">
+              Include your country code so we can reach you on WhatsApp if needed.
+            </p>
+            <p
+              id="cf-phone-error"
+              class="field__error"
+              data-error-for="phone"
+            ></p>
+          </div>
+
+          <!-- Service Type * (order 4) -->
+          <div class="field" data-field="service_type" data-order="4" data-required="true">
+            <label for="cf-service_type" class="label">
+              What do you need help with? <span class="req" aria-hidden="true">*</span>
+            </label>
+            <select
+              id="cf-service_type"
+              name="service_type"
+              class="select"
+              required
+              aria-required="true"
+              aria-describedby="cf-service_type-help cf-service_type-error"
+            >
+              <option value="">Select one</option>
+              <option value="cv">CV/Resume Writing/Revamp</option>
+              <option value="cv-cover-letter">CV + Cover Letter</option>
+              <option value="cover-letter-only">Cover Letter Only</option>
+              <option value="linkedin">LinkedIn Profile Optimization</option>
+              <option value="cv-cover-letter+linkedin">CV + Cover Letter + LinkedIn Optimization</option>
+              <option value="other">Other (please describe in the message box)</option>
+            </select>
+            <p id="cf-service_type-help" class="help">
+              Choose the main service you’re interested in.
+            </p>
+            <p
+              id="cf-service_type-error"
+              class="field__error"
+              data-error-for="service_type"
+            ></p>
+          </div>
+
+          <!-- Current Career Level (order 5) optional -->
+          <div class="field" data-field="career_level" data-order="5">
+            <label for="cf-career_level" class="label">
+              Current Career Level
+            </label>
+            <select
+              id="cf-career_level"
+              name="career_level"
+              class="select"
+              aria-describedby="cf-career_level-help cf-career_level-error"
+            >
+              <option value="">Select your current level</option>
+              <option value="student">Student / Graduate</option>
+              <option value="entry">Entry Level (1–3 years)</option>
+              <option value="mid">Mid-Level (3–8 years)</option>
+              <option value="mid">Mid-Senior (6–12 years)</option>
+              <option value="executive">Executive / Director / C-level</option>
+              <option value="not-sure">Not sure</option>
+            </select>
+            <p id="cf-career_level-help" class="help">
+              This helps us recommend the right package for your stage.
+            </p>
+            <p
+              id="cf-career_level-error"
+              class="field__error"
+              data-error-for="career_level"
+            ></p>
+          </div>
+
+          <!-- Industry / Field (order 6) optional -->
+          <div class="field" data-field="industry" data-order="6">
+            <label for="cf-industry" class="label">
+              Industry / Field
+            </label>
+            <input
+              id="cf-industry"
+              name="industry"
+              type="text"
+              class="input"
+              aria-describedby="cf-industry-help cf-industry-error"
+              placeholder="e.g. Accounting, IT, Marketing, Engineering"
+            />
+            <p id="cf-industry-help" class="help">
+              Tell us the main industry or profession you’re in or targeting.
+            </p>
+            <p
+              id="cf-industry-error"
+              class="field__error"
+              data-error-for="industry"
+            ></p>
+          </div>
+
+          <!-- Message * (full width) (order 7) -->
+          <div class="field field--full" data-field="message" data-order="7" data-required="true">
+            <label for="cf-message" class="label">
+              How can we help? <span class="req" aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="cf-message"
+              name="message"
+              rows="5"
+              class="textarea"
+              required
+              aria-required="true"
+              aria-describedby="cf-message-help cf-message-error"
+              placeholder="Tell us briefly about your goal (new job, promotion, career change), your current role, and any questions you have."
+            ></textarea>
+            <p id="cf-message-help" class="help">
+              The more detail you share, the more specific and helpful our reply can be.
+            </p>
+            <p
+              id="cf-message-error"
+              class="field__error"
+              data-error-for="message"
+            ></p>
+          </div>
+
+          <!-- Preferred contact method (radio group) (order 9) optional -->
+          <fieldset
+            class="field field--full"
+            data-field="preferred_contact"
+            data-order="9"
+          >
+            <legend class="label">
+              Preferred contact method
+            </legend>
+            <p id="cf-preferred_contact-help" class="help">
+              Choose how you’d like us to follow up with you.
+            </p>
+
+            <div class="contactform__radio-group" aria-describedby="cf-preferred_contact-help cf-preferred_contact-error">
+              <label class="contactform__radio">
+                <input
+                  type="radio"
+                  name="preferred_contact"
+                  value="email"
+                />
+                <span>Email</span>
+              </label>
+              <label class="contactform__radio">
+                <input
+                  type="radio"
+                  name="preferred_contact"
+                  value="whatsapp"
+                />
+                <span>WhatsApp</span>
+              </label>
+              <label class="contactform__radio">
+                <input
+                  type="radio"
+                  name="preferred_contact"
+                  value="phone"
+                />
+                <span>Phone call</span>
+              </label>
+            </div>
+            <p
+              id="cf-preferred_contact-error"
+              class="field__error"
+              data-error-for="preferred_contact"
+            ></p>
+          </fieldset>
+
+          <!-- CV upload (optional) (order 10) -->
+          <div class="field field--full" data-field="cv_file" data-order="10">
+            <label for="cf-cv_file" class="label">
+              Upload your current CV (optional)
+            </label>
+            <input
+              id="cf-cv_file"
+              name="cv_file"
+              type="file"
+              class="file"
+              accept=".pdf,.doc,.docx"
+              aria-describedby="cf-cv_file-help cf-cv_file-error"
+            />
+            <p id="cf-cv_file-help" class="help">
+              Sharing your current CV helps us review your situation and give a more accurate response. Accepted:
+              PDF or Word (.pdf, .doc, .docx). Max {maxFileSizeMb} MB.
+            </p>
+            <p
+              id="cf-cv_file-error"
+              class="field__error"
+              data-error-for="cv_file"
+            ></p>
+          </div>
+
+          <!-- How did you hear about us? (order 11) optional -->
+          <div class="field field--full" data-field="source" data-order="11">
+            <label for="cf-source" class="label">
+              How did you hear about us?
+            </label>
+            <select
+              id="cf-source"
+              name="source"
+              class="select"
+              aria-describedby="cf-source-help cf-source-error"
+            >
+              <option value="">Select one</option>
+              <option value="google">Google / Online search</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="tiktok">TikTok</option>
+              <option value="referral">Referral from a friend</option>
+              <option value="returning-client">Returning client</option>
+              <option value="other">Other</option>
+            </select>
+            <p id="cf-source-help" class="help">
+              This helps us understand which platforms are working best.
+            </p>
+            <p
+              id="cf-source-error"
+              class="field__error"
+              data-error-for="source"
+            ></p>
+          </div>
+
+          <!-- Consent checkboxes (consent_contact required) (order 12) -->
+          <fieldset
+            class="field field--full contactform__consent-group"
+            data-field="consent_contact"
+            data-order="12"
+            data-required="true"
+          >
+            <legend class="label">
+              Privacy &amp; consent <span class="req" aria-hidden="true">*</span>
+            </legend>
+
+            <div class="contactform__checkbox">
+              <input
+                id="cf-consent_contact"
+                name="consent_contact"
+                type="checkbox"
+                required
+                aria-required="true"
+                aria-describedby="cf-consent_contact-help cf-consent_contact-error"
+              />
+              <label for="cf-consent_contact">
+                I agree that CVWriting.co.ke can use my details to contact me regarding my enquiry.
+              </label>
+            </div>
+            <p id="cf-consent_contact-help" class="help">
+              We respect your privacy and will not share your details with third parties.
+            </p>
+            <p
+              id="cf-consent_contact-error"
+              class="field__error"
+              data-error-for="consent_contact"
+            ></p>
+
+            <div class="contactform__checkbox" data-field="consent_marketing" data-order="13">
+              <input
+                id="cf-consent_marketing"
+                name="consent_marketing"
+                type="checkbox"
+                aria-describedby="cf-consent_marketing-help cf-consent_marketing-error"
+              />
+              <label for="cf-consent_marketing">
+                Keep me updated about CV tips, resources, and special offers.
+              </label>
+            </div>
+            <p id="cf-consent_marketing-help" class="help">
+              You can unsubscribe at any time from our updates.
+            </p>
+            <p
+              id="cf-consent_marketing-error"
+              class="field__error"
+              data-error-for="consent_marketing"
+            ></p>
+          </fieldset>
+        </div>
+
+        <div class="contactform__actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            data-cta="contact-submit"
+            aria-disabled="true"
+            disabled
+          >
+            <span class="btn__inner">
+              <span class="btn__label contactform__submit-label">
+                Send Message
+              </span>
+            </span>
+          </button>
+          <p class="help contactform__response-note">
+            We usually reply within 1 business day. For urgent requests, you can also call or WhatsApp us on{" "}
+            {phoneDisplay}.
+          </p>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- capture package / context -->
-  <input type="hidden" name={packageParam} value={pkg} />
+  <script>
+    (() => {
+      const form = document.querySelector("[data-contactform]");
+      if (!form) return;
 
-  <!-- IA microcopy under the form -->
-  <p class="help contactform__summary">
-    We’ll review your details and reply with a clear recommendation and next steps.
-  </p>
-  <p class="help contactform__privacy">
-    We only use your details to respond to your enquiry. No mailing lists, no spam.
-  </p>
+      // DOM helpers
+      const fieldNodes = Array.from(form.querySelectorAll(".field, fieldset.field"));
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const successEl = form.parentElement?.querySelector('[data-contact-status="success"]');
+      const errorEl = form.parentElement?.querySelector('[data-contact-status="error"]');
+      const maxFileSizeMbAttr = form.getAttribute("data-max-file-size-mb");
+      const maxFileSizeMb = maxFileSizeMbAttr ? Number(maxFileSizeMbAttr) : 5;
 
-  <div class="contactform__actions">
-    <button type="submit" class="btn btn-primary" data-cta="contact-submit">
-      <span class="btn__inner">
-        <span class="btn__label">Send message</span>
-      </span>
-    </button>
-  </div>
-</form>
+      const phonePattern = /^[+0-9][0-9\s()+-]{6,}$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      const requiredFieldSelector = '[data-required="true"]';
+
+      // Convenience: map fieldName -> container element (kept for future use)
+      const fieldByName = {};
+      fieldNodes.forEach((el) => {
+        const name = el.getAttribute("data-field");
+        if (name) fieldByName[name] = el;
+      });
+
+      // Validate a single field by name. Returns { valid: boolean, message: string|null }
+      function validateField(name, { showError = true } = {}) {
+        const container = form.querySelector(`[data-field="${name}"]`);
+        if (!container) return { valid: true, message: null };
+        const errorEl = container.querySelector(`[data-error-for="${name}"]`);
+        const input =
+          container.querySelector('[name="' + name + '"]') ||
+          container.querySelectorAll('[name]')[0];
+
+        // Helper to mark error state
+        function setError(msg) {
+          container.classList.add("field--error");
+          if (errorEl) {
+            if (showError) {
+              errorEl.textContent = msg || "";
+              if (msg) errorEl.setAttribute("role", "alert");
+            } else {
+              errorEl.textContent = "";
+              errorEl.removeAttribute("role");
+            }
+          }
+          if (input && input.setAttribute) input.setAttribute("aria-invalid", "true");
+          return { valid: false, message: msg || "Invalid" };
+        }
+
+        function clearError() {
+          container.classList.remove("field--error");
+          if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.removeAttribute("role");
+          }
+          if (input && input.removeAttribute) input.removeAttribute("aria-invalid");
+        }
+
+        const isRequired = container.getAttribute("data-required") === "true";
+
+        // Find value
+        let value = "";
+        if (!input) {
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (input.type === "checkbox") {
+          value = input.checked ? "1" : "";
+        } else if (input.type === "file") {
+          value = input.files && input.files.length ? input.files[0].name : "";
+        } else if (input.tagName === "SELECT") {
+          value = input.value || "";
+        } else {
+          value = (input.value || "").trim();
+        }
+
+        // Field-specific rules
+        if (name === "full_name") {
+          if (isRequired && !value) return setError("Please enter your full name.");
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "email") {
+          if (isRequired && !value) return setError("Please enter your email address.");
+          if (value && !emailPattern.test(value)) return setError("Please enter a valid email address.");
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "phone") {
+          if (isRequired && !value) return setError("Please enter a phone or WhatsApp number.");
+          if (value && !phonePattern.test(value))
+            return setError(
+              "Please enter a valid phone number including country code (e.g. +254 712 345 678)."
+            );
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "service_type") {
+          if (isRequired && !value) return setError("Please select what you need help with.");
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "message") {
+          if (isRequired && (!value || value.length < 20))
+            return setError(
+              "Please tell us a bit more about how we can help (at least 20 characters)."
+            );
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "consent_contact") {
+          const checkbox = container.querySelector('input[type="checkbox"]');
+          if (isRequired && (!checkbox || !checkbox.checked))
+            return setError("Please confirm that we can contact you regarding your enquiry.");
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        if (name === "cv_file") {
+          const fileInput = container.querySelector('input[type="file"]');
+          if (fileInput && fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const nameLower = (file.name || "").toLowerCase();
+            const ext = nameLower.split(".").pop();
+            const allowed = ["pdf", "doc", "docx"];
+            if (!allowed.includes(ext))
+              return setError("Please upload as PDF or Word (.pdf, .doc, .docx).");
+            const maxBytes = maxFileSizeMb * 1024 * 1024;
+            if (file.size > maxBytes)
+              return setError(`File too large. Max ${maxFileSizeMb} MB.`);
+          }
+          clearError();
+          return { valid: true, message: null };
+        }
+
+        // default: clear
+        clearError();
+        return { valid: true, message: null };
+      }
+
+      // Validate all required fields and update submit enabled state
+      function validateAll() {
+        const requiredFields = Array.from(form.querySelectorAll(requiredFieldSelector));
+        let allValid = true;
+        for (const req of requiredFields) {
+          const name = req.getAttribute("data-field");
+          if (!name) continue;
+          const r = validateField(name, { showError: false });
+          if (!r.valid) allValid = false;
+        }
+        toggleSubmit(allValid);
+        return allValid;
+      }
+
+      // Toggle submit button and aria-disabled
+      function toggleSubmit(enabled) {
+        if (!submitBtn) return;
+        if (enabled) {
+          submitBtn.removeAttribute("disabled");
+          submitBtn.removeAttribute("aria-disabled");
+        } else {
+          submitBtn.setAttribute("disabled", "true");
+          submitBtn.setAttribute("aria-disabled", "true");
+        }
+      }
+
+      // On input/change events run validation for that field and update submit state
+      form.addEventListener("input", (ev) => {
+        const target = ev.target;
+        if (!target) return;
+        const fieldEl = target.closest("[data-field]");
+        if (fieldEl) {
+          const name = fieldEl.getAttribute("data-field");
+          if (name) validateField(name, { showError: true });
+        }
+        validateAll();
+      });
+
+      form.addEventListener("change", (ev) => {
+        const target = ev.target;
+        if (!target) return;
+        const fieldEl = target.closest("[data-field]");
+        if (fieldEl) {
+          const name = fieldEl.getAttribute("data-field");
+          if (name) validateField(name, { showError: true });
+        }
+        validateAll();
+      });
+
+      // Initial run: just compute submit availability, no gating on later fields
+      validateAll();
+
+      // Submit handler: final validation and asynchronous submission
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const requiredFields = Array.from(form.querySelectorAll(requiredFieldSelector));
+        let firstInvalidInput = null;
+
+        // clear previous errors
+        form.querySelectorAll(".field--error").forEach((el) =>
+          el.classList.remove("field--error")
+        );
+        form.querySelectorAll(".field__error").forEach((el) => {
+          el.textContent = "";
+          el.removeAttribute("role");
+        });
+        form
+          .querySelectorAll("[aria-invalid='true']")
+          .forEach((el) => el.removeAttribute("aria-invalid"));
+
+        // validate required fields and capture first invalid
+        for (const req of requiredFields) {
+          const name = req.getAttribute("data-field");
+          if (!name) continue;
+          const res = validateField(name, { showError: true });
+          if (!res.valid && !firstInvalidInput) {
+            const input =
+              req.querySelector('[name="' + name + '"]') ||
+              req.querySelector("input, select, textarea, button");
+            if (input) firstInvalidInput = input;
+          }
+        }
+
+        // Also validate cv file size/types if provided
+        const cvContainer = form.querySelector('[data-field="cv_file"]');
+        if (cvContainer) validateField("cv_file", { showError: true });
+
+        // If invalid, show error status and focus first invalid
+        if (firstInvalidInput) {
+          if (errorEl) errorEl.hidden = false;
+          if (successEl) successEl.hidden = true;
+
+          try {
+            const target =
+              firstInvalidInput.closest(".field") || firstInvalidInput;
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstInvalidInput.focus({ preventScroll: true });
+          } catch (e) {}
+          return;
+        }
+
+        // All required fields valid — proceed to submit (async)
+        toggleSubmit(false); // disable submit while sending
+        if (errorEl) errorEl.hidden = true;
+        if (successEl) successEl.hidden = true;
+        form.setAttribute("data-submitting", "true");
+
+        const formData = new FormData(form);
+        fetch(form.getAttribute("action") || "", {
+          method: form.getAttribute("method") || "POST",
+          body: formData,
+          headers: { Accept: "application/json" },
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Network error");
+            if (successEl) successEl.hidden = false;
+            if (errorEl) errorEl.hidden = true;
+            form.reset();
+            validateAll();
+          })
+          .catch(() => {
+            if (errorEl) errorEl.hidden = false;
+          })
+          .finally(() => {
+            form.removeAttribute("data-submitting");
+            toggleSubmit(true);
+          });
+      });
+    })();
+  </script>
+</section>

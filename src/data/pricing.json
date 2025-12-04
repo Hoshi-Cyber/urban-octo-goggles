@@ -1,41 +1,61 @@
 [
   {
     "id": "starter",
-    "name": "Starter",
-    "priceRange": "KSh 1,000 – 1,500",
-    "description": "Entry‑level CV that passes ATS, perfect for students and new graduates.",
-    "features": ["ATS‑optimized CV", "One revision", "Standard 3‑day delivery"],
-    "ctaLabel": "Choose Strater",
+    "name": "Starter CV Pack",
+    "description": "Get Noticed – ATS-ready CV and cover letter for graduate and early-career roles.",
+    "priceRange": "KSh 2,500",
+    "features": [
+      "Professionally written CV (Word & PDF) tailored to your first roles",
+      "Basic cover letter aligned to your main target role",
+      "ATS keywording for Kenyan job boards (BrighterMonday, Fuzu, corporate portals)",
+      "Up to 2 revision rounds within 7 days"
+    ],
+    "ctaLabel": "Choose Starter",
     "highlight": false
   },
   {
-    "id": "pro",
-    "name": "Pro",
-    "priceRange": "KSh 2,500 – 3,000",
-    "description": "Ideal for mid‑career professionals seeking to stand out with a cover letter and LinkedIn refresh.",
+    "id": "professional-impact",
+    "name": "Professional Impact Pack",
+    "description": "Get Shortlisted – achievement-led CV plus targeted cover letter and LinkedIn refresh.",
+    "priceRange": "KSh 4,800",
     "features": [
-      "ATS‑optimized CV",
-      "Cover letter",
-      "LinkedIn basics (headline & summary)",
-      "Two revisions",
-      "Priority delivery (2–3 days)"
+      "Strategic CV rewrite with quantified achievements and impact bullets",
+      "Tailored cover letter for your primary target role",
+      "LinkedIn headline & summary refresh tuned for recruiter search",
+      "Role- and industry-specific ATS keyword mapping",
+      "Up to 2 revision rounds within 10 days"
     ],
-    "ctaLabel": "Choose Pro",
+    "ctaLabel": "Choose Professional",
     "highlight": true
   },
   {
-    "id": "elite",
-    "name": "Elite",
-    "priceRange": "KSh 5,000 – 6,500",
-    "description": "Designed for senior executives who need full personal branding across CV, cover letter and LinkedIn.",
+    "id": "advanced-growth",
+    "name": "Advanced Growth Pack",
+    "description": "Get Ahead – leadership-ready CV plus full LinkedIn optimisation.",
+    "priceRange": "KSh 7,500",
     "features": [
-      "Senior‑level ATS‑optimized CV",
-      "Tailored cover letter",
-      "Full LinkedIn optimization (about, experience, skills, banner guidance)",
-      "Unlimited revisions for 14 days",
-      "48‑hour turnaround"
+      "Impact-focused CV rewrite for supervisor / manager / specialist roles",
+      "Custom cover letter positioned for your next step",
+      "Full LinkedIn profile optimisation (headline, about, experience, skills)",
+      "Career statement and positioning narrative aligned to your growth path",
+      "Industry-specific keyword mapping for ATS and recruiter search"
     ],
-    "ctaLabel": "Choose Elite",
+    "ctaLabel": "Choose Advanced",
+    "highlight": false
+  },
+  {
+    "id": "executive-brand",
+    "name": "Executive Brand Suite",
+    "description": "Get Remembered – executive CV and leadership brand for senior roles and diaspora searches.",
+    "priceRange": "KSh 10,500",
+    "features": [
+      "Executive CV tailored for board, C-suite and regional leadership roles",
+      "Leadership brand statement articulating your value, scope and results",
+      "Full LinkedIn revamp across about, experience, skills and profile structure",
+      "Global keyword strategy for Kenyan and international markets",
+      "Priority editing support during the engagement window"
+    ],
+    "ctaLabel": "Choose Executive",
     "highlight": false
   }
 ]

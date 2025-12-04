@@ -1,54 +1,252 @@
 /* FAQSidebar – stacked StickyAsideCard wrapper for FAQ/help pages
-   Uses tokenized spacing, colors, and typography only. */
+   Visually elevated with brand colour accents, while respecting global tokens. */
 
-/* Sidebar wrapper – give breathing room from SEO text block above */
+/* Sidebar wrapper – soft band with brand-tinted chrome */
 .faq-sidebar {
-  /* .stack from globals already handles vertical rhythm */
+  /* .stack from globals already handles vertical rhythm between children */
   margin-top: var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg, 0.75rem);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 95%,
+        #ffffff 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 9%,
+        transparent
+      )
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 25px rgba(15, 23, 42, 0.05)
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* Vertical brand ribbon along the left edge */
+.faq-sidebar::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--space-2);
+  inset-inline-start: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 70%,
+      var(--color-primary)
+    )
+  );
+  opacity: 0.95;
+}
+
+/* Tighten padding on very small screens */
+@media (max-width: 47.99rem) {
+  .faq-sidebar {
+    padding: var(--space-3);
+    margin-top: var(--space-4);
+  }
 }
 
 /* Each logical card + its meta content */
 .faq-sidebar__item {
   display: grid;
   gap: var(--space-2);
+  position: relative;
 }
 
-/* Tuning for StickyAsideCard when used in FAQ sidebar */
+/* Divider between stacked items */
+.faq-sidebar__item + .faq-sidebar__item {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px dashed
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 35%,
+      transparent
+    );
+}
+
+/* StickyAsideCard tuning inside FAQ sidebar */
 .faq-sidebar__saside {
-  /* Moderate padding, calm appearance (container bg handled in StickyAsideCard) */
-  padding: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md, 0.75rem);
+  border: 1px solid
+    color-mix(in oklab, var(--color-surface-alt, #e5e7eb) 70%, transparent);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+  background:
+    radial-gradient(
+      circle at 0 0,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 40%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 96%,
+      #ffffff 4%
+    );
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out,
+    background 160ms ease-out;
+}
+
+/* Emphasise cards with a primary CTA */
+.faq-sidebar__item--primary .faq-sidebar__saside {
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 26%,
+    transparent
+  );
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  background:
+    radial-gradient(
+      circle at 0 0,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 22%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 96%,
+      #ffffff 4%
+    );
+}
+
+/* Softer treatment for informational / ghost-only cards */
+.faq-sidebar__item--soft .faq-sidebar__saside {
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent-soft, var(--color-accent)) 22%,
+    transparent
+  );
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 18%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 96%,
+      #ffffff 4%
+    );
+}
+
+/* Hover / focus elevation */
+.faq-sidebar__item:hover .faq-sidebar__saside,
+.faq-sidebar__item:focus-within .faq-sidebar__saside {
+  transform: translateY(-2px);
+  box-shadow: var(
+    --shadow-md,
+    0 22px 45px rgba(15, 23, 42, 0.12)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 32%,
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-sidebar__saside {
+    transition: none;
+    transform: none !important;
+  }
 }
 
 /* Optional meta content (bullets + secondary CTAs) under each StickyAsideCard */
 .faq-sidebar__meta {
   padding-inline: var(--space-1);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-text) 6%, transparent);
+  display: grid;
+  gap: var(--space-2);
 }
 
-/* Bullet list for extra context */
+/* Bullet list for extra context – custom brand bullets */
 .faq-sidebar__list {
   margin: 0;
-  padding-left: var(--space-4);
+  padding-left: 0;
   font-size: var(--fs-sm);
   color: var(--color-muted);
   display: grid;
   gap: var(--space-1);
-  list-style: disc outside; /* force bullets even if global reset removes them */
+  list-style: none;
 }
 
 .faq-sidebar__list-item {
   margin: 0;
+  position: relative;
+  padding-inline-start: 1.5rem;
+  max-width: 40ch;
+}
+
+.faq-sidebar__list-item::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.55em;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, #ffffff 0, #ffffff 45%, transparent 60%),
+    linear-gradient(
+      135deg,
+      var(--color-primary),
+      color-mix(
+        in oklab,
+        var(--color-accent) 70%,
+        var(--color-primary)
+      )
+    );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-surface) 40%,
+      transparent
+    );
 }
 
 /* Secondary CTAs below each card */
 .faq-sidebar__extra-ctas {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   justify-content: center;
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
 }
 
-/* Sidebar buttons – intrinsic width, compact, non–full-width */
+/* Sidebar buttons – compact, pill-shaped, intrinsic width */
 .faq-sidebar__btn {
   display: inline-flex;
   align-items: center;
@@ -58,6 +256,25 @@
   width: auto;
   min-width: 0;
   text-align: center;
+  border-radius: 999px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+/* Ghost variant – lightly tinted with primary border */
+.faq-sidebar__btn.btn-ghost {
+  box-shadow: none;
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary) 26%,
+      transparent
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 10%,
+    transparent
+  );
 }
 
 /* From tablet/desktop upwards, subtly right-align CTA groups */
@@ -67,5 +284,4 @@
   }
 }
 
-/* No special breakpoint rules needed for stickiness;
-   StickyAsideCard handles position: sticky at lg+. */
+/* Stickiness remains handled by StickyAsideCard at lg+ */

@@ -18,33 +18,67 @@ const {
     ],
   },
 } = Astro.props;
+
+const heroEyebrow = hero?.eyebrow;
+const heroActions = Array.isArray(hero?.actions) ? hero.actions : [];
+
+// Toggleable hero image (can be disabled with hero.disableImage === true)
+const heroDisableImage = hero?.disableImage === true;
+const heroHasImage = !heroDisableImage;
+
+// Default hero image + alt, overrideable via hero.image / hero.imageAlt
+const heroImage =
+  hero?.image ?? "/assets/images/services/service-generic-hero.webp";
+const heroImageAlt =
+  hero?.imageAlt ??
+  `${title || "CV writing service"} – professional CV and career branding visual`;
 ---
 
 <BaseLayout {title} {description}>
   <div class="servicePage stack page-gap-after" data-template="service-page">
     <!-- HERO -->
     <section class="section section--hero" aria-labelledby="service-hero">
-      <div class="container flow">
-        {hero?.eyebrow && <p class="eyebrow">{hero.eyebrow}</p>}
-        <h1 id="service-hero" class="h1 servicePage__title">
-          {title}
-        </h1>
-        {description && (
-          <p class="sub page-lead">
-            {description}
-          </p>
-        )}
+      <div class="container servicePage__hero">
+        <div class="servicePage__hero-content flow">
+          {heroEyebrow && <p class="eyebrow">{heroEyebrow}</p>}
 
-        {Array.isArray(hero?.actions) && hero.actions.length > 0 && (
-          <div class="cta-row">
-            {hero.actions.map((a) => (
-              <Button
-                label={a.label}
-                href={a.href}
-                variant="primary"
-                size="md"
+          <h1 id="service-hero" class="h1 servicePage__title">
+            {title}
+          </h1>
+
+          {description && (
+            <p class="sub page-lead">
+              {description}
+            </p>
+          )}
+
+          {heroActions.length > 0 && (
+            <div class="cta-row">
+              {heroActions.map((a) => (
+                <Button
+                  label={a.label}
+                  href={a.href}
+                  variant="primary"
+                  size="md"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {heroHasImage && (
+          <div class="servicePage__hero-media">
+            <div class="servicePage__hero-media-shell">
+              <img
+                class="servicePage__hero-image"
+                src={heroImage}
+                alt={heroImageAlt}
+                width="1600"
+                height="1200"
+                loading="eager"
+                decoding="async"
               />
-            ))}
+            </div>
           </div>
         )}
       </div>

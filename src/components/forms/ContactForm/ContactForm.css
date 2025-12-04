@@ -1,7 +1,107 @@
-/* ContactForm — scoped styles
-   Mobile-first, token-driven, WCAG-compliant. */
+/* src/components/forms/ContactForm/ContactForm.css
+   ContactForm — scoped styles
+   Mobile-first, token-driven, WCAG-compliant.
+   Reduced vertical rhythm (tighter spacing) while preserving original tokens and structure.
+   Visual locked-state added (subtle dim + accent) using design tokens.
+*/
 
-/* Root */
+/* Section band – scoped to contact form only */
+[data-section="contactform"] {
+  padding-block: var(--space-6);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
+}
+
+@media (min-width: 640px) {
+  [data-section="contactform"] {
+    padding-block: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-section="contactform"] {
+    padding-block: var(--space-10);
+  }
+}
+
+/* Outer layout: info + form */
+.contactform__layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* tightened */
+}
+
+/* Left column – contact info */
+.contactform__info {
+  max-width: 34rem;
+}
+
+.contactform__eyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: var(--fw-semibold, 600);
+  color: var(--color-primary);
+}
+
+.contactform__title {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(var(--fs-xl), 2.6vw, var(--fs-2xl));
+  line-height: 1.18;
+  font-weight: var(--fw-semibold, 600);
+  color: var(--color-heading, var(--color-ink));
+}
+
+/* reduced bottom margin */
+.contactform__lead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: var(--color-text-muted, var(--color-ink-soft));
+}
+
+.contactform__info-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.contactform__info-label {
+  font-weight: var(--fw-medium, 500);
+  color: var(--color-ink);
+}
+
+.contactform__info-link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.contactform__info-link:hover,
+.contactform__info-link:focus-visible {
+  text-decoration: underline;
+}
+
+.contactform__info-meta {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted, var(--color-ink-soft));
+}
+
+/* Right column – form card */
+.contactform__card {
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-subtle, var(--color-light-alt));
+  box-shadow: var(--shadow-md, 0 18px 45px rgba(15, 23, 42, 0.06));
+  padding: clamp(var(--space-4), 2.5vw, var(--space-6)); /* slightly reduced */
+}
+
+/* Root form */
 .contactform {
   width: 100%;
   color: var(--color-text);
@@ -17,29 +117,104 @@
   overflow: hidden;
 }
 
-/* Grid wrapper */
+/* Status messages */
+.contactform__status {
+  margin-bottom: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  display: none;
+}
+
+.contactform__status[hidden] {
+  display: none;
+}
+
+.contactform__status--success:not([hidden]) {
+  display: block;
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface, #ffffff) 82%
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 30%, var(--color-surface) 70%);
+  color: var(--color-primary);
+}
+
+/* Hides the red error status text entirely */
+.contactform__status--error:not([hidden]) {
+  display: none;
+}
+
+/* Grid wrapper for fields */
 .contactform__grid {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-2); /* tighter between rows */
 }
 
 /* Fields */
 .field {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1); /* reduced */
+  transition: background-color 180ms ease, opacity 180ms ease, transform 180ms ease;
+  position: relative;
+  padding: calc(var(--space-1) - 2px);
+  border-radius: calc(var(--radius-sm) - 2px);
 }
 
+/* locked visual state (subtle dim + soft accent border) */
+.field.locked,
+fieldset.field.locked {
+  opacity: 0.88;
+  filter: grayscale(6%);
+  background: color-mix(in oklab, var(--color-surface) 96%, var(--color-light) 4%);
+  border: 1px solid color-mix(in oklab, var(--color-light) 60%, var(--color-surface) 40%);
+  pointer-events: none; /* JS already disables inputs, but ensure visuals match */
+}
+
+/* add a small top-right lock hint for visual affordance (non-interactive) */
+.field.locked::after,
+fieldset.field.locked::after {
+  content: "Complete previous fields to continue";
+  position: absolute;
+  right: 0.5rem;
+  top: 0.35rem;
+  font-size: var(--fs-xxs, 0.675rem);
+  color: var(--color-muted);
+  background: transparent;
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* keep full-width fields consistent */
 .field.field--full {
   grid-column: 1 / -1;
+}
+
+/* Error state for fields
+   Visual overrides removed so there is NO red outline or background.
+   Validation logic still runs, but appearance matches normal fields.
+*/
+.field--error .input,
+.field--error .select,
+.field--error .textarea,
+.field--error .file {
+  border-color: inherit;
+  box-shadow: none;
+  background-color: inherit;
 }
 
 /* Labels */
 .label {
   font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--color-text);
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
+/* Required asterisk kept as-is */
 .req {
   color: var(--color-error);
 }
@@ -51,18 +226,61 @@
 .file {
   width: 100%;
   font-size: var(--fs-base);
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--color-text);
-  background-color: var(--color-surface);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-light);
-  padding-block: var(--space-2);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, var(--color-light));
+  padding-block: var(--space-1); /* reduced control padding */
   padding-inline: var(--space-3);
-  min-height: 44px; /* a11y target */
+  min-height: 40px; /* slightly reduced but still accessible */
   transition:
     border-color 150ms ease-out,
     box-shadow 150ms ease-out,
-    background-color 150ms ease-out;
+    background-color 150ms ease-out,
+    transform 120ms ease;
+}
+
+/* Native select (still used where you haven't migrated to custom yet) */
+.select {
+  font-size: var(--fs-sm); /* slightly smaller than other controls */
+  line-height: 1.4;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Cpath%20fill='none'%20stroke='currentColor'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='1.5'%20d='M4%206l4%204%204-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right calc(var(--space-3)) center;
+  background-size: 0.75rem;
+  padding-right: calc(var(--space-3) + 1.75rem);
+}
+
+.select option {
+  color: var(--color-text);
+}
+
+/* Subtle elevation on focus for premium feel */
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible,
+.file:focus-visible {
+  transform: translateY(-1px);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--color-primary) 8%, rgba(15,23,42,0.06));
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
 }
 
 /* Textarea specifics */
@@ -74,17 +292,6 @@
 .input::placeholder,
 .textarea::placeholder {
   color: var(--color-muted);
-}
-
-/* Focus states */
-.input:focus-visible,
-.select:focus-visible,
-.textarea:focus-visible,
-.file:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 /* Disabled / read-only */
@@ -104,25 +311,80 @@
   color: var(--color-muted);
 }
 
-/* IA-aligned microcopy under the form */
+/* Field-level error text
+   Completely hidden so no red validation copy is shown.
+*/
+.field__error {
+  display: none;
+}
+
+/* Inline groups */
+.contactform__radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.contactform__radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.contactform__radio input {
+  accent-color: var(--color-primary);
+}
+
+.contactform__checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.contactform__checkbox input {
+  margin-top: 0.15rem;
+  accent-color: var(--color-primary);
+}
+
+/* Actions */
+.contactform__actions {
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* Buttons use global .btn styles – do not override them here, just subtle enhancements */
+.contactform__submit-label::after {
+  content: "";
+}
+
+/* Submitting state */
+[data-submitting="true"] .btn[disabled] {
+  cursor: progress;
+  opacity: 0.82;
+}
+
+/* Response note */
+.contactform__response-note {
+  max-width: 36rem;
+}
+
+/* IA-aligned microcopy under the form (legacy hooks retained) */
 .contactform__summary {
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
 }
 
 .contactform__privacy {
   margin-top: var(--space-1);
 }
-
-/* Actions */
-.contactform__actions {
-  margin-top: var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-3);
-}
-
-/* Buttons use global .btn styles – do not override them here */
 
 /* Responsive layout */
 
@@ -130,7 +392,7 @@
 @media (min-width: 48rem) {
   .contactform__grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-4);
+    gap: var(--space-2);
   }
 
   .field.field--full {
@@ -140,14 +402,227 @@
 
 /* lg ≥1024px */
 @media (min-width: 64rem) {
+  .contactform__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.45fr);
+    align-items: start;
+    gap: var(--space-5);
+  }
+
   .contactform__grid {
-    gap: var(--space-6);
+    gap: var(--space-3);
   }
 }
 
 /* 2xl ≥1536px */
 @media (min-width: 96rem) {
-  .contactform__grid {
+  .contactform__layout {
     gap: var(--space-6);
   }
+
+  .contactform__grid {
+    gap: var(--space-3);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Custom select component (full brand control, no OS blue)
+   Usage pattern (within a .field):
+     <div class="c-select" data-open="false">
+       <button class="c-select__button" type="button" ...>...</button>
+       <ul class="c-select__menu" role="listbox"> ... </ul>
+       <select class="c-select__input" ...>...</select>  (visually hidden)
+     </div>
+   JS toggles data-open and synchronises value between menu + hidden select.
+------------------------------------------------------------------- */
+
+.c-select {
+  position: relative;
+  display: block;
+  font-size: var(--fs-sm);
+}
+
+.c-select__button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  min-height: 40px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, var(--color-light));
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
+
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--color-text);
+  cursor: pointer;
+
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out,
+    background-color 150ms ease-out,
+    transform 120ms ease;
+}
+
+/* text container */
+.c-select__label {
+  flex: 1 1 auto;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* chevron icon */
+.c-select__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 12%,
+    var(--color-surface) 88%
+  );
+  color: var(--color-primary);
+  pointer-events: none;
+}
+
+.c-select__icon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* hover / focus / open states */
+.c-select__button:hover {
+  border-color: var(--color-primary);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
+}
+
+.c-select__button:focus-visible {
+  transform: translateY(-1px);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 18px
+    color-mix(in oklab, var(--color-primary) 8%, rgba(15, 23, 42, 0.06));
+}
+
+.c-select[data-open="true"] .c-select__button {
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 30px
+    color-mix(in oklab, var(--color-primary) 10%, rgba(15, 23, 42, 0.08));
+}
+
+/* rotate chevron when open */
+.c-select[data-open="true"] .c-select__icon {
+  transform: rotate(180deg);
+}
+
+/* dropdown menu */
+.c-select__menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-1));
+  inset-inline-start: 0;
+  min-width: 100%;
+  max-height: 16rem;
+  overflow-y: auto;
+  padding: var(--space-1);
+  margin: 0;
+
+  list-style: none;
+
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-subtle, var(--color-light-alt));
+  background-color: var(--color-surface, #ffffff);
+  box-shadow: var(--shadow-md, 0 18px 45px rgba(15, 23, 42, 0.06));
+  z-index: 40;
+
+  display: none;
+}
+
+.c-select[data-open="true"] .c-select__menu {
+  display: block;
+}
+
+/* individual options */
+.c-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  width: 100%;
+  padding-block: 0.4rem;
+  padding-inline: var(--space-2);
+
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--color-text);
+  cursor: pointer;
+
+  background-color: transparent;
+  border: none;
+}
+
+.c-select__option:hover,
+.c-select__option[aria-selected="true"],
+.c-select__option--active {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
+  color: var(--color-primary);
+}
+
+/* small gold dot for the selected option (premium detail) */
+.c-select__option[aria-selected="true"]::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background-color: var(--color-accent);
+}
+
+/* keyboard focus outline inside menu */
+.c-select__option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* disabled option variant */
+.c-select__option[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* hide the real <select>, but keep it accessible for screenreaders if needed */
+.c-select__input {
+  position: absolute;
+  inset: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
 }

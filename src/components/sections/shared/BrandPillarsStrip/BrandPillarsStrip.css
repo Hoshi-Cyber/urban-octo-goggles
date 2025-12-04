@@ -1,21 +1,33 @@
 /* BrandPillarsStrip – reusable brand principles strip
-   - Uses global tokens & utilities only
-   - Layout: 1 → 2 → 4-column grid (mobile → tablet → desktop)
-   - Premium, high-contrast, compact treatment
+   Aligned with About page tiles (“What defines”, “What we specialise in”):
+   - Light, neutral band
+   - Solid cards with gold top accent
+   - Clear, high-contrast typography
 */
 
 .brand-pillars {
-  padding-block: var(--space-6);
-  background: color-mix(
-    in oklab,
-    var(--color-background) 94%,
-    var(--color-primary) 6%
-  );
+  padding-block: var(--space-8);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        var(--color-accent-soft, var(--color-accent)) 12%
+      )
+    );
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
 }
 
 @media (min-width: 1024px) {
   .brand-pillars {
-    padding-block: var(--space-8);
+    padding-block: var(--space-10);
   }
 }
 
@@ -23,33 +35,40 @@
   align-items: stretch;
 }
 
-/* Header – left-aligned, stacked, with controlled width */
-
+/* Header – intro stacked under title, full width, left aligned */
 .brand-pillars__head {
   margin-bottom: var(--space-5);
   text-align: left;
-  display: block;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 
-.brand-pillars__head .section-title {
-  margin: 0 0 var(--space-2);
+.brand-pillars__title {
+  margin: 0;
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
 }
 
 .brand-pillars__intro {
-  max-width: 46rem;
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--fs-base);
+  color: var(
+    --color-muted,
+    color-mix(in oklab, var(--color-text) 70%, transparent)
+  );
 }
 
-/* Grid
-   - 1 column on mobile
-   - 2 columns on small/medium
-   - 4 columns on large+
-*/
-
+/* Grid – 1 / 2 / 4 layout */
 .brand-pillars__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 @media (min-width: 640px) {
@@ -64,84 +83,103 @@
   }
 }
 
-/* Pillar item – elevated card with subtle accent */
-
+/* Pillar item – solid tiles with gold top accent */
 .brand-pillars__item {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-xl, 1rem);
   background:
     linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%),
-      var(--color-surface)
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
     );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      transparent
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 24px rgba(15, 23, 42, 0.06)
+  );
   color: var(--color-text);
   font-family: var(--font-sans);
-  border: 1px solid
-    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
   overflow: hidden;
   transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    background 150ms ease-out;
+    transform 140ms ease-out,
+    box-shadow 140ms ease-out,
+    border-color 140ms ease-out,
+    background 140ms ease-out;
 }
 
-/* Accent bar at top of each card */
-
+/* Gold top accent line (full width) */
 .brand-pillars__item::before {
   content: "";
   position: absolute;
-  inset-inline: var(--space-3);
-  inset-block-start: var(--space-3);
+  inset-inline: 0;
+  top: 0;
   height: 3px;
-  border-radius: 999px;
   background: linear-gradient(
     90deg,
-    var(--color-primary),
-    var(--color-accent)
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 40%,
+      var(--color-accent, #d4ab18)
+    )
   );
 }
 
 /* Hover / focus states */
-
 @media (hover: hover) {
   .brand-pillars__item:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(
+      --shadow-sm,
+      0 16px 32px rgba(15, 23, 42, 0.12)
+    );
     border-color: color-mix(
       in oklab,
-      var(--color-primary) 35%,
-      var(--color-light) 65%
+      var(--color-primary) 20%,
+      transparent
     );
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in oklab, var(--color-surface) 90%, var(--color-primary) 10%),
-        var(--color-surface)
-      );
   }
 }
 
 .brand-pillars__item:focus-within {
   outline: 2px solid transparent;
   box-shadow:
-    var(--shadow-md),
-    0 0 0 3px color-mix(in oklab, var(--color-primary) 65%, #ffffff);
+    var(
+      --shadow-sm,
+      0 16px 32px rgba(15, 23, 42, 0.12)
+    ),
+    0 0 0 3px color-mix(
+      in oklab,
+      var(--color-primary) 60%,
+      #ffffff 40%
+    );
 }
 
-/* Pillar label – slightly reduced for compactness, uses .h3 scale */
-
+/* Pillar label */
 .brand-pillars__label {
   margin: 0 0 var(--space-2);
   font-size: var(--fs-md);
   line-height: 1.4;
   font-weight: 600;
+  color: var(--color-primary-strong, var(--color-primary));
 }
 
 @media (min-width: 768px) {
@@ -151,16 +189,25 @@
 }
 
 /* Pillar description */
-
 .brand-pillars__description {
   margin: 0;
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm, 0.95rem);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-text, #111827);
+}
+
+/* Small-screen tweaks */
+@media (max-width: 639.98px) {
+  .brand-pillars {
+    padding-block: var(--space-7);
+  }
+
+  .brand-pillars__item {
+    padding: var(--space-4);
+  }
 }
 
 /* Reduced motion */
-
 @media (prefers-reduced-motion: reduce) {
   .brand-pillars__item {
     transition: none;

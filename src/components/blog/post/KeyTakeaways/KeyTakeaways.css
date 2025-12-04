@@ -1,99 +1,171 @@
 /*
-  src/components/blog/post/KeyTakeaways/KeyTakeaways.css
+ * File: src/components/blog/post/KeyTakeaways/KeyTakeaways.css
+ *
+ * Compact summary block for 3–5 key points in the body column:
+ * - Mobile-first
+ * - Token-driven (spacing, typography, colours)
+ * - Light, subtle band above the article content (no heavy card chrome)
+ */
 
-  Compact summary card for 3–5 key points:
-  - Mobile-first
-  - Token-driven (colors, radius, shadow, spacing, typography)
-  - No global resets
-*/
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
 
 .key-takeaways {
   width: 100%;
+
+  /* Modest separation from surrounding prose */
+  margin-block: clamp(var(--space-3), 2.8vw, var(--space-4));
 }
 
-/* Card container */
-
+/* Container – compact, subtle band inside the body column */
 .key-takeaways__inner {
-  max-width: 70ch;
+  max-width: 72ch;
   margin-inline: auto;
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+
+  padding-block: clamp(var(--space-3), 2.6vw, var(--space-4));
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-4));
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 96%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
+  );
+  border-radius: var(--radius-lg, 0.75rem);
   border: 1px solid
-    color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  box-shadow: none;
 }
 
 /* Header */
-
 .key-takeaways__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  margin-block-end: var(--space-3);
+
+  /* Kill any flex gap between eyebrow and title */
+  gap: 0;
+
+  /* Space only between the heading block and the list */
+  margin-block-end: var(--space-2);
 }
 
+/* Eyebrow – very light, text-first label */
 .key-takeaways__eyebrow {
+  /* Hard override any paragraph defaults */
+  margin-top: 0 !important;
+  margin-bottom: -0.12rem !important;
+  padding: 0 !important;
+
+  line-height: 1;
+  display: block;
+
   font-size: var(--fs-xs);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-muted);
+
+  color: color-mix(
+    in oklab,
+    var(--color-accent-soft, var(--color-accent, #d4ab18)) 68%,
+    var(--color-text-muted, #6b7280)
+  );
 }
 
-.key-takeaways__title {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-text);
-  margin: 0;
+/* Title – override global .h2 / .section-title margins with higher specificity */
+.key-takeaways__title,
+.key-takeaways__title.h2,
+.key-takeaways__title.section-title,
+.key-takeaways__title.h2.section-title {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  line-height: 1.15;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
 }
 
-/* List */
-
+/* List – stacked list with a subtle accent rail (single column on all breakpoints) */
 .key-takeaways__list {
   list-style: none;
   margin: 0;
   padding: 0;
+
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1-5, 0.4rem);
+
+  border-inline-start: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-accent-soft, var(--color-accent, #d4ab18)) 40%,
+      var(--color-surface-alt, #e5e7eb)
+    );
+  padding-inline-start: clamp(var(--space-2), 2.4vw, var(--space-3));
 }
 
 .key-takeaways__item {
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: start;
+  align-items: flex-start;
   column-gap: var(--space-2);
 }
 
+/* Bullet – minimal iconography: small coloured check, no pill background */
 .key-takeaways__bullet {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  color: var(--color-primary);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  margin-top: 0.15rem;
+
+  margin-top: 0.1rem;
+
+  width: auto;
+  height: auto;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+
+  color: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 78%,
+    var(--color-primary, #1b3637)
+  );
 }
 
+/* Text */
 .key-takeaways__text {
-  font-size: var(--fs-base);
-  line-height: 1.6;
-  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
 }
 
 /* Tablet+ */
-
 @media (min-width: 768px) {
   .key-takeaways__inner {
-    padding: var(--space-5);
+    max-width: 72ch;
+    padding-block: clamp(var(--space-3), 2.4vw, var(--space-4));
   }
 
-  .key-takeaways__title {
-    font-size: var(--fs-xl);
+  .key-takeaways__title,
+  .key-takeaways__title.h2,
+  .key-takeaways__title.section-title,
+  .key-takeaways__title.h2.section-title {
+    max-width: 26rem;
   }
 }

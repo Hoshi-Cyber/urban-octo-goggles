@@ -1,14 +1,21 @@
 /* StatStrip — responsive metrics strip, zero-JS, token-driven */
 /* Matches src/components/metrics/StatStrip/index.astro */
 
-/* Outer surface */
+/* Outer surface — align with card/surface role tokens */
 .statstrip {
-  background: var(--color-surface);
+  margin-block: var(--section-gap);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-primary) 12%
+  );
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-light-alt);
+  border-top: 3px solid var(--color-accent);
 }
 
-/* Inner container: padding, width and vertical rhythm */
+/* Inner container: use container tokens for gutters + global gap token */
 .statstrip__inner {
   margin-inline: auto;
   max-width: var(--container-max);
@@ -16,13 +23,12 @@
   padding-inline: var(--container-px);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--gap);
 }
 
 /* Compact variant for tighter layouts */
 .statstrip--compact .statstrip__inner {
   padding-block: var(--space-4);
-  padding-inline: var(--space-4);
 }
 
 /* Header */
@@ -30,6 +36,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  gap: var(--space-3);
 }
 
 .statstrip__eyebrow {
@@ -38,7 +45,8 @@
   font-size: var(--fs-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  font-weight: 500;
+  color: var(--color-accent);
 }
 
 /* Stats list */
@@ -63,6 +71,14 @@
   gap: var(--space-2);
   align-items: flex-start;
   text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(
+    in oklab,
+    var(--color-background) 92%,
+    var(--color-primary) 8%
+  );
+  border: 1px solid var(--color-light-alt);
 }
 
 /* Value (e.g. 98%, 1k+ etc.) */
@@ -76,9 +92,9 @@
 
 /* Label */
 .statstrip__label {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   line-height: 1.5;
-  color: var(--color-muted);
+  color: var(--color-text);
   max-width: 32ch;
 }
 

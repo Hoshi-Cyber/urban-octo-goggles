@@ -5,6 +5,8 @@ import css from "./PostFooter.css?url";
 ---
 <link rel="stylesheet" href={css} />
 
-<footer class="post__footer">
-  <slot />
+<footer class="post__footer" data-section="post-footer">
+  <div class="post__footerInner">
+    <slot />
+  </div>
 </footer>

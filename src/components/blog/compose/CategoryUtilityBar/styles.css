@@ -1,10 +1,10 @@
 /* CategoryUtilityBar — FP-163
-   - Elevated toolbar card with clear contrast
-   - Block padding via clamp; no external margins
-   - Controls grid with protected gaps; desktop two columns
-   - 44px touch targets; strong focus-visible
+   Premium visual pass:
+   - Elevated, rounded toolbar card using brand neutrals + deep green accent
+   - Comfortable padding + breathing space on all breakpoints
+   - 44px+ touch targets; strong focus-visible
    - Sticky access on scroll
-   - IMPORTANT: Card/list styling removed here; PostFeedLatest.css is the single source of truth
+   - Card/list styling remains in PostFeedLatest.css (single source of truth)
 */
 
 /* Toolbar surface */
@@ -12,16 +12,49 @@
   position: sticky;
   top: clamp(var(--space-2), 1.5vh, var(--space-4));
   z-index: 10;
-  background: var(--color-surface);
-  border: 1px solid var(--color-light);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  padding:
-    clamp(var(--space-4), 2.2vw, var(--space-6))
-    clamp(var(--space-4), 3vw, var(--space-6));
+
   display: grid;
   gap: clamp(var(--space-3), 2vw, var(--space-6));
-  /* no margin-block; page container controls section spacing */
+
+  padding: clamp(var(--space-4), 2.2vw, var(--space-6))
+    clamp(var(--space-4), 3vw, var(--space-6));
+
+  border-radius: var(--radius-2xl, 1.5rem);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 94%,
+        #ffffff 6%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 92%,
+        transparent
+      )
+    );
+
+  box-shadow: var(
+    --shadow-sm,
+    0 14px 35px rgb(15 23 42 / 0.12)
+  );
 }
 
 /* Layout: controls then pagination on mobile; split at sm+ */
@@ -60,42 +93,104 @@
 }
 
 .cu-field > span {
-  color: var(--color-muted);
   font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 55%,
+    var(--color-text, #020617)
+  );
 }
 
 .cu-field select {
   width: 100%;
   min-width: 14rem;
   min-height: 44px;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--border, #d6d6d6);
-  background: var(--color-elevated, #fff);
-  border-radius: 12px;
+
+  padding: 0.55rem 0.8rem;
+
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-surface-alt, #f9fafb) 8%
+  );
+
+  font-size: 0.95rem;
+  color: var(--color-text, #020617);
+}
+
+.cu-field select:hover {
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 35%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
 }
 
 .cu-field select:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
-  outline-offset: 1px;
+  outline: 3px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 38%,
+      transparent
+    );
+  outline-offset: 2px;
 }
 
-/* Clear button (tertiary) */
+/* Clear / reset button (tertiary pill) */
 .cu-clear {
   min-height: 44px;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid var(--border, #d6d6d6);
+  padding: 0.5rem 0.9rem;
+
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
   background: transparent;
-  border-radius: 12px;
+
   cursor: pointer;
+
+  font-size: 0.9rem;
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-text, #020617)
+  );
 }
 
 .cu-clear:hover {
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+    var(--color-surface, #ffffff)
+  );
 }
 
 .cu-clear:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
-  outline-offset: 1px;
+  outline: 3px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 38%,
+      transparent
+    );
+  outline-offset: 2px;
 }
 
 /* Pagination block */
@@ -114,24 +209,73 @@
 
 .cu-pagination button {
   min-height: 40px;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--border, #d6d6d6);
-  background: var(--color-elevated, #fff);
-  border-radius: 10px;
+  padding: 0.45rem 0.95rem;
+
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 94%,
+    var(--color-surface-alt, #f3f4f6) 6%
+  );
+
   cursor: pointer;
+
+  font-size: 0.9rem;
+  color: var(--color-text, #020617);
+
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.12s ease;
+}
+
+.cu-pagination button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%,
+    var(--color-surface, #ffffff)
+  );
+}
+
+.cu-pagination button:focus-visible {
+  outline: 3px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 38%,
+      transparent
+    );
+  outline-offset: 2px;
 }
 
 .cu-pagination button:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
 .cu-page {
-  font-size: 0.95rem;
-  opacity: 0.85;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 70%,
+    var(--color-text, #020617)
+  );
 }
 
 /* NOTE:
    Any styling for the cards/list (e.g., #category-client-list, .c-card, .c-card__media, etc.)
-   has been intentionally removed. Category pages must import PostFeedLatest.css so that the
-   pfl__* classes define visuals for both SSR and client-rendered cards. */
+   remains in PostFeedLatest.css. Category pages must import that file so the pfl__* contract
+   governs visuals for both SSR and client-rendered cards.
+*/

@@ -1,22 +1,33 @@
-/* src/components/sections/shared/BrandSnapshot/BrandSnapshot.css */
-
-/* BrandSnapshot – brand narrative + highlight strip
+/* src/components/sections/shared/BrandSnapshot/BrandSnapshot.css
+   BrandSnapshot – brand narrative + highlight strip
    - Uses global tokens & utilities only
    - Layout: 1-col → 2-col card grid
+   - Visually aligned with About page tiles (soft band, gold accent, clean cards)
 */
 
 .brand-snapshot {
-  padding-block: var(--space-6);
-  background: color-mix(
-    in oklab,
-    var(--color-background) 94%,
-    var(--color-primary) 6%
-  );
+  padding-block: var(--space-8);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        var(--color-accent-soft, var(--color-accent)) 12%
+      )
+    );
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
 }
 
 @media (min-width: 1024px) {
   .brand-snapshot {
-    padding-block: var(--space-8);
+    padding-block: var(--space-10);
   }
 }
 
@@ -24,44 +35,89 @@
   align-items: stretch;
 }
 
-/* Header – H2 + intro stacked and left-aligned (mirrors AudienceGrid) */
-
+/* Header – H2 + intro stacked and left-aligned */
 .brand-snapshot__head {
   text-align: left;
-  margin-bottom: var(--space-4);
-  display: block; /* force stacked layout, intro spans full width */
+  margin-bottom: var(--space-5);
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 
-.brand-snapshot__head .section-title {
-  margin: 0 0 var(--space-2);
+.brand-snapshot__title {
+  margin: 0;
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
 }
 
 .brand-snapshot__intro {
   margin: 0;
-  max-width: none; /* intro spans full container width */
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--fs-base);
+  color: var(
+    --color-muted,
+    color-mix(in oklab, var(--color-text) 70%, transparent)
+  );
 }
 
-/* Main card */
-
+/* Main card – premium, lightly accented container */
 .brand-snapshot__card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-4);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-2xl, 1.5rem);
   background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 12%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 10%,
+        transparent
+      ),
+      transparent 65%
+    ),
     linear-gradient(
       135deg,
-      color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%),
-      var(--color-surface)
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
     );
   border: 1px solid
-    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      transparent
+    );
+  box-shadow: var(
+    --shadow-sm,
+    0 18px 40px rgba(15, 23, 42, 0.08)
+  );
   position: relative;
   overflow: hidden;
 }
 
+/* Gold/primary top accent bar */
 .brand-snapshot__card::before {
   content: "";
   position: absolute;
@@ -71,9 +127,44 @@
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    var(--color-primary),
-    var(--color-accent)
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 50%,
+      var(--color-accent, #d4ab18)
+    )
   );
+}
+
+/* Soft glow chip in top-right for extra polish */
+.brand-snapshot__card::after {
+  content: "";
+  position: absolute;
+  top: -1.75rem;
+  right: -1.75rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 210deg,
+      var(--color-primary),
+      var(--color-accent),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 60%,
+        var(--color-accent)
+      ),
+      var(--color-primary)
+    );
+  opacity: 0.22;
+  filter: blur(1px);
 }
 
 @media (min-width: 768px) {
@@ -84,7 +175,6 @@
 }
 
 /* Columns */
-
 .brand-snapshot__col {
   position: relative;
 }
@@ -93,7 +183,11 @@
   .brand-snapshot__col--body {
     padding-inline-end: var(--space-5);
     border-inline-end: 1px solid
-      color-mix(in oklab, var(--color-light) 85%, var(--color-primary) 15%);
+      color-mix(
+        in oklab,
+        var(--color-light, #e5e7eb) 85%,
+        var(--color-primary) 15%
+      );
   }
 
   .brand-snapshot__col--highlights {
@@ -101,44 +195,81 @@
   }
 }
 
-/* Body copy – normal paragraphs with clear vertical gap */
-
+/* Body copy – clear vertical rhythm */
 .brand-snapshot__body {
   margin: 0;
 }
 
-.brand-snapshot__body p {
+.brand-snapshot__paragraph {
   margin: 0;
   font-size: var(--fs-base);
   line-height: 1.7;
   color: var(--color-text);
-  text-indent: 0; /* ensure no paragraph indent */
+  text-indent: 0;
 }
 
-.brand-snapshot__body p + p {
-  margin-top: var(--space-3); /* vertical gap between paragraphs */
+.brand-snapshot__paragraph + .brand-snapshot__paragraph {
+  margin-top: var(--space-3);
 }
 
-/* Highlights – bullets in a neat column */
-
+/* Highlights – structured, with custom bullets */
 .brand-snapshot__highlights {
   align-items: flex-start;
 }
 
 .brand-snapshot__highlights-title {
   margin: 0 0 var(--space-2);
+  color: var(--color-primary-strong, var(--color-primary));
 }
 
 .brand-snapshot__highlights-list {
   margin: 0;
-  padding-inline-start: 1.25rem;
-  list-style: disc;
+  padding-left: 0;
+  list-style: none;
 }
 
 .brand-snapshot__highlights-item {
+  position: relative;
+  padding-inline-start: 1.5rem;
   font-size: var(--fs-base);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(
+    --color-muted-strong,
+    color-mix(in oklab, var(--color-text) 80%, transparent)
+  );
+}
+
+/* Branded bullet chip */
+.brand-snapshot__highlights-item::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.65em;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--color-primary),
+      color-mix(
+        in oklab,
+        var(--color-accent) 70%,
+        var(--color-primary)
+      )
+    );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 40%,
+      transparent
+    );
 }
 
 .brand-snapshot__highlights-item + .brand-snapshot__highlights-item {
@@ -146,7 +277,6 @@
 }
 
 /* Compact variant – slightly tighter padding */
-
 .brand-snapshot--compact .brand-snapshot__card {
   padding: var(--space-3);
 }
@@ -158,7 +288,6 @@
 }
 
 /* Reduced motion */
-
 @media (prefers-reduced-motion: reduce) {
   .brand-snapshot__card {
     transition: none;

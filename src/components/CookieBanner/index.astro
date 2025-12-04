@@ -36,8 +36,7 @@ const consentConfig: ConsentConfig = {
         device.
       </p>
       <p class="cookie-banner__meta text-muted">
-        For full details, see our
-        {' '}
+        For full details, see our{" "}
         <a href="/privacy-policy" class="cookie-banner__link">Privacy Policy</a>.
       </p>
     </div>
@@ -69,7 +68,8 @@ const consentConfig: ConsentConfig = {
 
 <script is:inline>
   (function () {
-    var STORAGE_KEY = {{ JSON.stringify(consentConfig.storageKey) }};
+    // Use a plain JS string here – no template braces.
+    var STORAGE_KEY = "cvw_cookie_consent_v1";
     var STATUS_ACCEPTED = "accepted";
     var STATUS_DECLINED = "declined";
     var STATUS_PENDING = "pending";
@@ -166,14 +166,13 @@ const consentConfig: ConsentConfig = {
       }
 
       // Hook for "Manage Cookies" in footer (or elsewhere).
+      // @ts-ignore
       window.openCookieBanner = function () {
         showBanner();
       };
     }
 
     if (typeof window !== "undefined" && typeof document !== "undefined") {
-      // Astro usually injects this near the end of <body> anyway,
-      // but we guard for safety.
       if (
         document.readyState === "interactive" ||
         document.readyState === "complete"

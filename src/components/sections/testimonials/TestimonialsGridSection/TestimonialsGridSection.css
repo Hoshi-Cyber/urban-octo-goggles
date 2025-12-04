@@ -5,60 +5,161 @@
 @import "../../../../styles/breakpoints.css";
 @import "../../../../styles/sections.css";
 
-/* Section shell */
+/* Section shell – soft primary/accent tint band */
 .testimonials-grid-section {
-  background: var(--color-background);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 9%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 95%,
+        #ffffff 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        transparent
+      )
+    );
   color: var(--color-text);
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  border-block-end: 1px solid
+    color-mix(in oklab, var(--color-border-soft, #e5e7eb) 90%, transparent);
 }
 
-/* Use global .section-inner + .stack; tighten vertical rhythm */
-.testimonials-grid-section .section-inner {
-  gap: var(--space-6, 1.5rem);
+/* Keep default stack spacing for header vs grid; we only control gap inside header */
+.testimonials-grid-section .section-inner.stack {
+  row-gap: var(--space-6, 1.5rem);
+  column-gap: 0;
 }
 
-/* Header: left-aligned, stacked title + intro, no eyebrow
-   Use higher specificity so we beat global .section-head rules */
-.testimonials-grid-section .testimonials-grid-section__head {
+/* Header: title + filters */
+.testimonials-grid-section .testimonials-grid-section__head.section-head {
   margin: 0;
+  margin-block-end: 0; /* override global section-head bottom margin */
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
   text-align: left;
-  gap: var(--space-2, 0.5rem);
+  row-gap: 0;
+  column-gap: 0;
+  gap: 0;
   width: 100%;
 }
 
-.testimonials-grid-section .testimonials-grid-section__head .section-title {
+/* Title with premium underline accent */
+.testimonials-grid-section__title {
   max-width: 28rem;
-}
-
-/* Ensure intro sits directly under the H2 and stays left-aligned */
-.testimonials-grid-section .testimonials-grid-section__head .section-intro {
-  max-width: 36rem;
   margin: 0;
-  text-align: left;
+  position: relative;
+  padding-bottom: var(--space-2); /* internal space for underline only */
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
 }
 
-/* Controls (filter bar) — keep close to header */
+/* Remove any default bottom margin applied via global .section-title */
+.testimonials-grid-section .testimonials-grid-section__title.section-title {
+  margin-bottom: 0;
+}
+
+.testimonials-grid-section__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
+  );
+}
+
+/* Controls (filter bar) — sits under title with var(--space-3) gap */
 .testimonials-grid-section__controls {
-  margin-top: var(--space-3, 0.75rem);
-}
-
-/* Grid surface — compact, premium background */
-.testimonials-grid-section__grid {
-  margin-top: var(--space-3, 0.75rem);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr); /* 1 column mobile */
-  gap: var(--space-5, 1.25rem);
-  padding: var(--space-4, 1rem);
+  margin-top: var(--space-3, 0.75rem); /* requested vertical gap */
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding: var(--space-4, 1rem) var(--space-4, 1rem);
+  border-radius: var(--radius-xl, 1rem);
   background: color-mix(
     in oklab,
-    var(--color-surface-alt, #f9fafb) 92%,
-    var(--color-primary-soft, var(--color-primary, #2563eb)) 8%
+    var(--color-surface, #ffffff) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
   );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary)) 10%
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 24px rgba(15, 23, 42, 0.08)
+  );
+  width: 100%;
+}
+
+/* Grid surface — compact, premium background (tightened) */
+.testimonials-grid-section__grid {
+  margin-top: var(--space-3, 0.75rem);       /* down from space-4 */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);     /* 1 column mobile */
+  gap: var(--space-4, 1rem);                 /* down from space-5 */
+  padding: var(--space-3, 0.75rem);          /* down from space-4 */
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 12%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 92%,
+      var(--color-primary-soft, var(--color-primary, #2563eb)) 8%
+    );
   border-radius: var(--radius-xl, 1rem);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary)) 10%
+    );
+  box-shadow: var(
+    --shadow-sm,
+    0 14px 32px rgba(15, 23, 42, 0.12)
+  );
 }
 
 /* Items stretch to fill the grid cell */
@@ -68,7 +169,7 @@
 
 /* Actions row: compact meta + button */
 .testimonials-grid-section__actions {
-  margin-top: var(--space-3, 0.75rem);
+  margin-top: var(--space-4, 1rem);
   display: flex;
   flex-direction: column;
   gap: var(--space-2, 0.5rem);
@@ -89,16 +190,20 @@
 
 /* -------------------- Breakpoints -------------------- */
 
-/* md ≥768px: 2 columns, refined spacing */
+/* md ≥768px: 2 columns, still compact */
 @media (min-width: 768px) {
-  .testimonials-grid-section .section-inner {
-    gap: var(--space-7, 1.75rem);
+  .testimonials-grid-section .section-inner.stack {
+    row-gap: var(--space-6, 1.5rem);
+  }
+
+  .testimonials-grid-section__controls {
+    padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   }
 
   .testimonials-grid-section__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: var(--space-5, 1.25rem);
-    gap: var(--space-6, 1.5rem);
+    padding: var(--space-4, 1rem);          /* down from space-5 */
+    gap: var(--space-5, 1.25rem);           /* down from space-6 */
   }
 
   .testimonials-grid-section__actions {
@@ -114,27 +219,27 @@
   }
 }
 
-/* lg ≥1024px: 4 columns (4/2/1 layout target) */
+/* lg ≥1024px: 4 columns (4/2/1 layout target), compact band */
 @media (min-width: 1024px) {
   .testimonials-grid-section__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding: var(--space-6, 1.5rem);
-    gap: var(--space-6, 1.5rem);
+    padding: var(--space-5, 1.25rem);       /* down from space-6 */
+    gap: var(--space-5, 1.25rem);           /* down from space-6 */
   }
 }
 
-/* xl ≥1280px: keep tight but stable */
+/* xl ≥1280px: keep compact but stable */
 @media (min-width: 1280px) {
   .testimonials-grid-section__grid {
-    padding: var(--space-7, 1.75rem);
-    gap: var(--space-7, 1.75rem);
+    padding: var(--space-5, 1.25rem);       /* down from space-7 */
+    gap: var(--space-5, 1.25rem);           /* down from space-7 */
   }
 }
 
 /* 2xl ≥1536px: slight breathing without losing compact feel */
 @media (min-width: 1536px) {
   .testimonials-grid-section__grid {
-    padding: var(--space-8, 2rem);
+    padding: var(--space-6, 1.5rem);        /* down from space-8 */
   }
 }
 

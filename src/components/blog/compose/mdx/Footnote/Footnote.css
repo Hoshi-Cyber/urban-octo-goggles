@@ -1,9 +1,98 @@
-.mdx-footnote a {
-  text-decoration: none;
-  border-bottom: 1px dotted var(--color-muted);
+/* src/components/blog/mdx/Footnote/Footnote.css
+   MDX Footnote marker — subtle, premium inline reference.
+   Mobile-first, token-driven, aligned with CVWriting brand.
+*/
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
+.mdx-footnote {
+  position: relative;
+  top: -0.25em; /* gentle raise above baseline */
+  font-size: 0.78em;
+  line-height: 1;
+  margin-left: 0.15em;
 }
 
+/* Inline pill-style marker using brand colours */
+.mdx-footnote a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 1.4em;
+  height: 1.4em;
+  padding-inline: 0.35em;
+
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-surface, #ffffff) 12%
+  );
+
+  font-size: inherit;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 78%,
+    var(--color-text, #020617)
+  );
+
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    color 140ms ease-out,
+    transform 90ms ease-out,
+    box-shadow 140ms ease-out;
+}
+
+/* Hover / active – subtle but clearly interactive */
+.mdx-footnote a:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%,
+    var(--color-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 50%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  transform: translateY(-0.5px);
+  box-shadow: var(--shadow-xs);
+}
+
+.mdx-footnote a:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Focus ring for keyboard users */
 .mdx-footnote a:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary, #1b3637);
   outline-offset: 2px;
+}
+
+/* Reduced motion – keep still but preserve visual design */
+@media (prefers-reduced-motion: reduce) {
+  .mdx-footnote a {
+    transition: none;
+    transform: none;
+    box-shadow: none;
+  }
 }

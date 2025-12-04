@@ -60,12 +60,12 @@
   text-wrap: balance;
 }
 
-/* Subtitle / lead: aligned with body tone */
+/* Subtitle / lead: aligned with body tone (stronger contrast) */
 .section-sub {
   margin: 0;
   font-size: var(--fs-base);
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-neutral-600); /* primary body tone, not muted */
   max-width: 70ch;
 }
 
@@ -91,7 +91,8 @@
   font-size: clamp(var(--fs-base), 0.35vw + var(--fs-base), var(--fs-lg));
   line-height: 1.55;
 
-  color: var(--color-muted);
+  /* Strong readable text on a soft, subtle panel */
+  color: var(--color-neutral-600);
   background: color-mix(in oklab, var(--color-primary) 3%, var(--color-background));
   border: 1px solid color-mix(in oklab, var(--color-primary) 14%, transparent);
 

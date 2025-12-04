@@ -1,0 +1,23 @@
+---
+// src/components/legal/LegalAnchorLink/index.astro
+import "./LegalAnchorLink.css";
+
+interface Props {
+  targetId: string;
+  label?: string;
+}
+
+const { targetId, label = "Copy link to this section" } = Astro.props;
+---
+
+<a
+  href={`#${targetId}`}
+  class="legal-anchor-link"
+  data-legal-anchor-link
+  aria-label={label}
+  title={label}
+>
+  <span class="legal-anchor-link__icon" aria-hidden="true">
+    #
+  </span>
+</a>

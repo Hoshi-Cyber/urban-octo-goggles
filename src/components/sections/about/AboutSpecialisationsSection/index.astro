@@ -26,7 +26,6 @@ const {
 } = Astro.props as AboutSpecialisationsSectionProps;
 
 type HeadingTag = "h2" | "h3";
-
 const Heading = headingLevel as HeadingTag;
 
 const sectionId =
@@ -58,20 +57,20 @@ const getCtaLabel = (item: SpecialisationItem): string => {
   aria-labelledby={sectionId}
   data-section="about-specialisations"
 >
-  <div class="container about-specialisations__inner stack">
+  <div class="container about-specialisations__inner">
     <header class="about-specialisations__header section-head">
       {eyebrow && (
-        <p class="about-specialisations__eyebrow section-sub">
+        <p class="about-specialisations__eyebrow">
           {eyebrow}
         </p>
       )}
 
-      <Heading id={sectionId} class="section-title">
+      <Heading id={sectionId} class="about-specialisations__title section-title">
         {title}
       </Heading>
 
       {intro && (
-        <p class="about-specialisations__intro section-sub">
+        <p class="about-specialisations__intro">
           {intro}
         </p>
       )}
@@ -79,20 +78,20 @@ const getCtaLabel = (item: SpecialisationItem): string => {
 
     {items && items.length > 0 && (
       <ul
-        class="about-specialisations__grid grid"
+        class="about-specialisations__grid"
         aria-label="Key service specialisations"
       >
         {items.map((item) => (
           <li class="about-specialisations__grid-item">
             <article
-              class="about-specialisations__card card stack"
+              class="about-specialisations__card"
               data-specialisation-key={item.key}
             >
-              <h3 class="about-specialisations__card-title h3">
+              <h3 class="about-specialisations__card-title">
                 {item.title}
               </h3>
 
-              <div class="about-specialisations__card-body prose">
+              <div class="about-specialisations__card-body">
                 <p class="about-specialisations__card-summary">
                   {item.summary}
                 </p>

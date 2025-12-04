@@ -1,0 +1,101 @@
+---
+// src/components/legal/LegalFooterNav/index.astro
+import "./LegalFooterNav.css";
+
+type RelatedItem = {
+  slug: string;
+  href: string;
+  label: string;
+  description?: string;
+};
+
+interface Props {
+  currentSlug?: string;
+  related?: RelatedItem[];
+  title?: string;
+  contactTitle?: string;
+  contactBody?: string;
+  contactHref?: string;
+  contactLabel?: string;
+}
+
+const {
+  currentSlug,
+  related = [],
+  title = "Related policies",
+  contactTitle = "Need help or have a question?",
+  contactBody = "Talk to our team if you have questions about how these policies apply to your CV or personal data.",
+  contactHref = "/contact/",
+  contactLabel = "Contact support",
+} = Astro.props;
+
+// Normalise URLs to respect trailingSlash: "always"
+const withTrailingSlash = (url: string) =>
+  url && !url.endsWith("/") ? `${url}/` : url;
+
+const visibleItems = currentSlug
+  ? related.filter((item) => item.slug !== currentSlug)
+  : related;
+
+const safeContactHref =
+  contactHref && withTrailingSlash(contactHref);
+---
+
+<section class="legal-footer-nav" aria-labelledby="legal-footer-nav-heading">
+  <div class="legal-footer-nav__inner">
+    {visibleItems.length > 0 && (
+      <div class="legal-footer-nav__related">
+        <h2
+          id="legal-footer-nav-heading"
+          class="legal-footer-nav__title"
+        >
+          {title}
+        </h2>
+
+        <ul class="legal-footer-nav__list">
+          {visibleItems.map((item) => {
+            const href = withTrailingSlash(
+              item.href || `/legal/${item.slug}`
+            );
+
+            return (
+              <li class="legal-footer-nav__item">
+                <a href={href} class="legal-footer-nav__link">
+                  <span class="legal-footer-nav__link-label">
+                    {item.label}
+                  </span>
+                  {item.description && (
+                    <span class="legal-footer-nav__link-description">
+                      {item.description}
+                    </span>
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
+
+    <aside class="legal-footer-nav__cta">
+      <h2 class="legal-footer-nav__cta-title">
+        {contactTitle}
+      </h2>
+
+      {contactBody && (
+        <p class="legal-footer-nav__cta-body">
+          {contactBody}
+        </p>
+      )}
+
+      {safeContactHref && contactLabel && (
+        <a
+          href={safeContactHref}
+          class="legal-footer-nav__cta-btn"
+        >
+          {contactLabel}
+        </a>
+      )}
+    </aside>
+  </div>
+</section>

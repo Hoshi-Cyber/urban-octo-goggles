@@ -2,7 +2,11 @@
 
 /* Section tint and spacing */
 [data-section="service-features"] {
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
   padding-block: var(--space-8);
 }
 
@@ -43,23 +47,35 @@
   flex-direction: column;
   gap: var(--space-3);
   min-block-size: 100%;
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
   border: 1px solid color-mix(
     in oklab,
-    var(--color-text) 8%,
-    transparent
+    var(--color-primary) 18%,
+    var(--color-surface) 82%
   );
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: var(--space-6);
   transition:
     transform 0.15s ease,
-    box-shadow 0.15s ease;
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .features__item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 86%,
+    var(--color-primary-soft, var(--color-primary)) 14%
+  );
 }
 
 /* Icon badge */
@@ -69,22 +85,29 @@
   border-radius: 9999px;
   background: color-mix(
     in oklab,
-    var(--color-primary) 12%,
-    var(--color-surface)
+    var(--color-accent) 20%,
+    var(--color-surface) 80%
+  );
+  border: 1px solid color-mix(
+    in oklab,
+    var(--color-accent) 40%,
+    transparent
   );
   padding: var(--space-2);
   margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(15, 23, 42, 0.08));
 }
 
 /* Typography rhythm */
 .features__item .h3 {
   margin-top: 0;
   margin-bottom: var(--space-2);
+  color: var(--color-primary);
 }
 
 .features__item p {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 /* Links and tap targets inside cards */
@@ -107,6 +130,7 @@
   box-shadow: 0 0 0 3px
     color-mix(in oklab, var(--color-primary) 35%, white);
   border-radius: var(--radius-lg);
+  border-color: var(--color-primary);
 }
 
 /* Reduced motion */

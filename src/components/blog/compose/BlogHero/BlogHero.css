@@ -2,11 +2,37 @@
    - Block padding only (no inner gutters)
    - Single column by default
    - Grid ≥ lg only when media exists
+   - Premium band using CVWriting deep green + soft neutrals
 */
 
-/* Section rhythm */
+/* SECTION RHYTHM & BACKGROUND BAND
+   ------------------------------------------------------------------ */
+
 .bloghero {
   padding-block: clamp(var(--space-8), 3vw, var(--space-12));
+
+  /* Soft band using surface + primary-soft tint */
+  background: radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 18%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+
+  border-block-end: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 85%,
+      transparent
+    );
 }
 
 /* Slightly tighter top/bottom padding on very small screens */
@@ -21,6 +47,22 @@
   display: block;
 }
 
+/* When marked as "contained", create a raised card inside the band */
+.bloghero[data-contained="true"] .bloghero__grid {
+  border-radius: var(--radius-2xl, 1.5rem);
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  background: linear-gradient(
+    135deg,
+    var(--color-surface, #ffffff),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 96%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
+    )
+  );
+  box-shadow: var(--shadow-sm, 0 10px 25px rgb(15 23 42 / 0.05));
+}
+
 /* Enable two-column grid only when a media pane is present */
 @media (min-width: 1024px) {
   .bloghero__grid.has-media {
@@ -31,17 +73,26 @@
   }
 }
 
-/* Copy column – spacing is handled by .stack; keep optional width constraint */
+/* COPY COLUMN
+   ------------------------------------------------------------------ */
+
 .bloghero__copy {
   max-width: 42rem;
 }
 
-/* Title and deck */
+/* Title */
 .bloghero__title {
   margin: 0 0 var(--space-2);
-  color: var(--color-text);
+
+  /* Slightly stronger than body, but still calm */
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
 }
 
+/* Dek / subheading */
 .bloghero__sub {
   margin: 0 0 var(--space-6);
   color: var(--color-muted);
@@ -60,6 +111,34 @@
   width: 100%;
 }
 
+/* Highlight primary CTA and keep secondary as calm accent */
+.bloghero__ctas .btn-primary {
+  box-shadow: var(--shadow-sm, 0 10px 25px rgb(15 23 42 / 0.08));
+}
+
+.bloghero__ctas .btn-accent {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 30%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+.bloghero__ctas .btn-accent:hover,
+.bloghero__ctas .btn-accent:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%,
+    var(--color-surface, #ffffff)
+  );
+}
+
+/* SM+ layout refinement */
 @media (min-width: 640px) {
   .bloghero__ctas {
     grid-auto-flow: column;
@@ -71,16 +150,26 @@
   }
 }
 
-/* Media: image shown in full (no cropping) */
+/* MEDIA COLUMN
+   ------------------------------------------------------------------ */
+
 .bloghero__media {
   margin-top: clamp(var(--space-4), 4vw, var(--space-8)); /* vertical gap when stacked */
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl, 1.5rem);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md, 0 18px 45px rgb(15 23 42 / 0.16));
   background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--color-primary) 16%, var(--color-surface)),
-    var(--color-background)
+    160deg,
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 18%,
+      var(--color-surface, #ffffff)
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 96%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
+    )
   );
 }
 
@@ -124,7 +213,9 @@
   opacity: 0.6;
 }
 
-/* Reduced motion */
+/* REDUCED MOTION
+   ------------------------------------------------------------------ */
+
 @media (prefers-reduced-motion: reduce) {
   .bloghero__media,
   .ring {

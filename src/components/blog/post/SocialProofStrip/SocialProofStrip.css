@@ -4,69 +4,118 @@
   In-article testimonial strip built on top of shared TestimonialCard.
   - Mobile-first
   - Token-driven
-  - No global resets
+  - Premium, minimal, brand-aligned styling
 */
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
 
 .social-proof-strip {
   width: 100%;
+  /* one row of breathing room before & after the strip */
+  margin-block: clamp(var(--space-6), 4vw, var(--space-8));
 }
 
-/* Constrain to reading width inside the container from BlogPostLayout */
-
+/* Constrain to reading width and create a soft branded band */
 .social-proof-strip__inner {
-  max-width: 72ch;
+  max-width: 80ch;
   margin-inline: auto;
-  padding-inline: var(--space-4);
+
+  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-5));
+
+  border-radius: var(--radius-2xl, 1.25rem);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+  box-shadow: var(--shadow-sm);
 }
 
 /* Header */
-
 .social-proof-strip__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  align-items: flex-start;
+  gap: 0;
   margin-block-end: var(--space-3);
 }
 
+/* Eyebrow – compact pill using primary + accent */
 .social-proof-strip__eyebrow {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding-inline: 0.7rem;
+  padding-block: 0.14rem;
+
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-surface-alt, #f9fafb) 8%
+  );
+
   font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-muted);
+  line-height: 1;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 76%,
+    var(--color-text, #020617)
+  );
 }
 
+/* Title – uses global h2; here we refine colour */
 .social-proof-strip__title {
   margin: 0;
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-text);
+  margin-top: var(--space-1);
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 80%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Grid of testimonial cards */
-
 .social-proof-strip__grid {
   display: grid;
   gap: var(--space-3);
 }
 
-/* We only adjust outer spacing; TestimonialCard handles card styling */
-
+/* TestimonialCard itself handles each card’s styling;
+   we only adjust outer behaviour */
 .social-proof-strip__card {
   width: 100%;
 }
 
 /* Tablet+ */
-
 @media (min-width: 768px) {
   .social-proof-strip__inner {
-    padding-inline: var(--space-6);
+    max-width: 84ch;
+    padding-inline: clamp(var(--space-5), 4vw, var(--space-6));
   }
 
   .social-proof-strip__title {
-    font-size: var(--fs-xl);
+    max-width: 32rem;
   }
 
   .social-proof-strip__grid {
@@ -75,8 +124,11 @@
 }
 
 /* Desktop+ */
-
 @media (min-width: 1024px) {
+  .social-proof-strip__inner {
+    padding-block: clamp(var(--space-5), 3.5vw, var(--space-6));
+  }
+
   .social-proof-strip__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

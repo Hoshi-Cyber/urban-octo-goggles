@@ -9,8 +9,7 @@ import Hero from "../../components/sections/service/Hero/index.astro";
 import ServiceCard from "../../components/cards/ServiceCard/index.astro";
 import ServiceDetailSection from "../../components/sections/service/ServiceDetailSection/index.astro";
 import TwoColumnCriteriaSection from "../../components/sections/criteria/TwoColumnCriteriaSection/index.astro";
-
-// Optional page-level stylesheet (create src/styles/pages/services.css)
+import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
 
 const title = "CV & Career Branding Services in Kenya";
 const description =
@@ -18,8 +17,8 @@ const description =
 
 const hero = {
   eyebrow: "Pick the right level of support for your next move",
-  image: "/assets/images/hero.png",
-  alt: "CV, cover letter, and LinkedIn interface illustration",
+  image: "/assets/images/services/main-services-overview-hero.webp",
+  imageAlt: "CV, cover letter, and LinkedIn interface illustration",
   actions: [
     { label: "View packages & pricing", href: "/pricing/" },
     { label: "Talk to us about your CV", href: "/contact/" },
@@ -49,26 +48,34 @@ const stats = [
 
 const popularCombos = [
   {
-    title: "Job application bundle (CV + cover letter)",
-    body: "Perfect when you are actively applying to specific roles and want a consistent story across CV and cover letter.",
+    id: "cv-cover-letter",
+    title: "Job application bundle",
+    comboLabel: "CV + cover letter",
+    body:
+      "Perfect when you are actively applying to specific roles and want a consistent story across CV and cover letter.",
     href: "/pricing/#cv-cover-letter-bundles",
     ctaLabel: "See bundles on pricing",
   },
   {
-    title: "Career branding bundle (CV + LinkedIn)",
-    body: "Best when you are changing roles, industries, or locations and need your CV and LinkedIn to tell one story.",
+    id: "cv-linkedin",
+    title: "Career branding bundle",
+    comboLabel: "CV + LinkedIn",
+    body:
+      "Best when you are changing roles, industries, or locations and need your CV and LinkedIn to tell one story.",
     href: "/pricing/#cv-linkedin-bundles",
     ctaLabel: "View branding bundles",
   },
   {
-    title: "Full upgrade (CV + cover letter + LinkedIn)",
-    body: "For major moves such as relocation, senior promotions, or competitive international opportunities.",
+    id: "full-upgrade",
+    title: "Full upgrade",
+    comboLabel: "CV + cover letter + LinkedIn",
+    body:
+      "For major moves such as relocation, senior promotions, or competitive international opportunities.",
     href: "/pricing/#cv-full-upgrade-bundles",
     ctaLabel: "Explore full upgrade",
   },
 ];
 
-// Core service cards for "Our core services" section
 const coreServices = [
   {
     title: "Professional CV writing",
@@ -101,7 +108,7 @@ const coreServices = [
     sub={description}
     eyebrow={hero.eyebrow}
     image={hero.image}
-    alt={hero.alt}
+    alt={hero.imageAlt}
     actions={hero.actions}
   />
 
@@ -143,7 +150,7 @@ const coreServices = [
     </div>
   </section>
 
-  <!-- 3. Core service sections (lightweight anchors pointing to deep pages) -->
+  <!-- 3. Core service sections -->
   <ServiceDetailSection
     id="cv-writing"
     title="Professional CV writing"
@@ -206,24 +213,33 @@ const coreServices = [
     aria-labelledby="service-bundles-title"
   >
     <div class="container stack">
-      <header class="service-bundles__head stack">
+      <header class="section-head service-bundles__head">
         <h2
           id="service-bundles-title"
-          class="section-title fs-h2 lh-tight text-left"
+          class="section-title section-title--with-underline fs-h2 lh-tight text-left"
         >
           Popular combinations
         </h2>
-        <p class="section-intro fs-base text-left">
-          Many clients combine services for a complete upgrade—choose the mix
+        <p class="section-intro fs-base text-left service-bundles__intro">
+          Many clients combine services for a complete upgrade – choose the mix
           that fits your move, then confirm details on the pricing page.
         </p>
       </header>
 
-      <div class="service-bundles__grid">
+      <div class="service-bundles__grid" aria-label="Service bundles">
         {popularCombos.map((combo) => (
-          <article class="service-bundles__card">
-            <h3 class="service-bundles__card-title">{combo.title}</h3>
-            <p class="service-bundles__card-body">{combo.body}</p>
+          <article class="service-bundles__card" id={combo.id}>
+            <div class="service-bundles__card-header">
+              <h3 class="service-bundles__card-title">
+                {combo.title}
+              </h3>
+              <p class="service-bundles__card-combo">
+                {combo.comboLabel}
+              </p>
+            </div>
+            <p class="service-bundles__card-body">
+              {combo.body}
+            </p>
             <Button
               href={combo.href}
               label={combo.ctaLabel}
@@ -280,7 +296,7 @@ const coreServices = [
     </div>
   </section>
 
-  <!-- 7. Inline social proof (data note removed) -->
+  <!-- 7. Inline social proof -->
   <section
     class="section stack service-social-proof"
     aria-label="Client feedback and data handling"
@@ -290,39 +306,11 @@ const coreServices = [
     </div>
   </section>
 
-  <!-- 8. Final CTA -->
-  <section
-    class="section stack service-final-cta"
-    aria-labelledby="service-final-cta-title"
-  >
-    <div class="container stack">
-      <header class="section-head">
-        <h2
-          id="service-final-cta-title"
-          class="section-title fs-h2 lh-tight text-left max-w-full"
-        >
-          Ready to start your upgrade?
-        </h2>
-        <p class="section-intro fs-base text-left max-w-full mt-2">
-          Send us your current CV and a short note about your target roles or
-          locations. We’ll confirm the right package and next steps.
-        </p>
-      </header>
-
-      <div class="service-final-cta__actions">
-        <Button
-          href="/pricing/"
-          label="View packages & pricing"
-          variant="primary"
-          size="md"
-        />
-        <Button
-          href="/contact/"
-          label="Talk to us about your CV"
-          variant="ghost"
-          size="md"
-        />
-      </div>
-    </div>
-  </section>
+  <!-- 8. Final CTA – Lead capture banner -->
+  <LeadCaptureBanner
+    title="Ready to start your upgrade?"
+    sub="Send us your current CV and a short note about your target roles or locations. We’ll confirm the right package and next steps."
+    primaryHref="/pricing/"
+    primaryLabel="View packages & pricing"
+  />
 </BaseLayout>

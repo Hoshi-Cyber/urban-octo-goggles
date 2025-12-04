@@ -1,15 +1,26 @@
 ---
 /**
  * File: src/pages/blog/[slug].astro
- * Purpose: Permanently redirect legacy /blog/:slug → canonical /blog/:category/:slug/
- * Behavior: Never renders a layout; avoids accidental unstyled output per Fix Plan 143.
+ *
+ * Purpose:
+ * - Permanently redirect legacy /blog/:slug → canonical /blog/:category/:slug/
+ * - Never renders a layout; avoids accidental unstyled output per Fix Plan 143.
+ *
+ * Fix Plan 213 – Note:
+ * - This route is redirect-only and does NOT participate in BlogPostLayout IA,
+ *   presets, or slice ordering.
+ * - All IA / banding logic for single posts is applied in the canonical
+ *   /blog/[category]/[slug].astro route via BlogPostLayout.
  */
 
 import { getCollection } from "astro:content";
 
 export const prerender = true;
 
-/** Build-time: only claim real, unique last-segment slugs so we don't shadow other routes */
+/**
+ * Build-time:
+ * Only claim real, unique last-segment slugs so we don't shadow other routes.
+ */
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
   const seen = new Set<string>();
@@ -36,7 +47,8 @@ const slugify = (s: string) =>
 const slug = Astro.params.slug as string;
 
 /**
- * Resolve canonical by scanning the collection for a post whose last path segment matches.
+ * Resolve canonical by scanning the collection for a post whose last path
+ * segment matches.
  * This works even though getEntryBySlug requires the full "category/slug" path.
  */
 const posts = await getCollection("blog");

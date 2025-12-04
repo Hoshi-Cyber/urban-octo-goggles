@@ -5,18 +5,25 @@
   Mobile-first, token-driven, aligned with global blog styling.
 */
 
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
 /* Section wrapper inside single post footer */
 .post .post__tagsSection {
   margin-block: var(--space-6);
 }
 
-/* Section label */
+/* Section label – small, premium eyebrow style */
 .post .post__tagsTitle {
   margin: 0 0 var(--space-3);
   font-size: var(--fs-sm);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Tags container (legacy + component-local) */
@@ -39,23 +46,50 @@
   padding: 0;
 }
 
-/* Tag pill (link) – unified styling */
+/* Tag pill (link) – premium, brand-aligned styling */
 .post .post__tag,
 .post-tags__item a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding-inline: var(--space-3);
   padding-block: calc(var(--space-1) * 0.75);
   min-height: 2rem;
+
   border-radius: var(--radius-full, 9999px);
-  border: 1px solid var(--color-light-alt);
-  background-color: var(--color-light);
-  color: var(--color-muted);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-surface, #ffffff) 10%
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
+  );
+
   font-size: var(--fs-sm);
   line-height: 1.4;
   text-decoration: none;
   white-space: nowrap;
+
+  box-shadow: var(
+    --shadow-xxs,
+    0 0 0 1px
+      color-mix(
+        in oklab,
+        var(--color-border-subtle, #e5e7eb) 80%,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
+      )
+  );
+
   transition:
     background-color 140ms ease-out,
     border-color 140ms ease-out,
@@ -67,27 +101,51 @@
 /* Hover/active/focus states – subtle, secondary hierarchy */
 .post .post__tag:hover,
 .post-tags__item a:hover {
-  background-color: var(--color-primary-light, var(--color-surface));
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%,
+    var(--color-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 50%,
+    var(--color-border-subtle, #e5e7eb) 50%
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
   text-decoration: none;
-  box-shadow: 0 0 0 1px var(--color-primary);
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 24px rgb(15 23 42 / 0.12)
+  );
+  transform: translateY(-1px);
 }
 
 .post .post__tag:active,
 .post-tags__item a:active {
-  transform: translateY(0.5px);
+  transform: translateY(0);
+  box-shadow: none;
 }
 
+/* Keep visited tags visually aligned with brand palette */
 .post .post__tag:visited,
 .post-tags__item a:visited {
-  color: var(--color-text);
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-text, #020617) 30%
+  );
 }
 
+/* Focus ring for accessibility */
 .post .post__tag:focus-visible,
 .post-tags__item a:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-primary);
+  outline: 2px solid var(--color-primary, #1b3637);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 /* Spacing bump on larger screens */
@@ -103,10 +161,7 @@
   .post .post__tag,
   .post-tags__item a {
     transition: none;
-  }
-
-  .post .post__tag:active,
-  .post-tags__item a:active {
     transform: none;
+    box-shadow: none;
   }
 }

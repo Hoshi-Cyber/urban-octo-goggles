@@ -1,5 +1,8 @@
 ---
-// src/components/sections/testimonials/TestimonialsGridSection/index.astro
+/**
+ * File: src/components/sections/testimonials/TestimonialsGridSection/index.astro
+ * Purpose: Filterable testimonials grid with brand-aligned, compact layout.
+ */
 
 import "./TestimonialsGridSection.css";
 
@@ -66,26 +69,25 @@ const safeInitialLimit =
   data-initial-limit={safeInitialLimit}
 >
   <div class="section-inner container stack">
-    <!-- Section header: title + intro, left-aligned, compact -->
+    <!-- Section header: title + filters -->
     <header class="testimonials-grid-section__head section-head">
-      <h2 id={headingId} class="section-title">
+      <h2
+        id={headingId}
+        class="section-title testimonials-grid-section__title"
+      >
         Filter testimonials
       </h2>
-      <p class="section-intro">
-        Choose career level and service type to see the most relevant client stories.
-      </p>
-    </header>
 
-    <!-- Filter bar -->
-    <section
-      class="testimonials-grid-section__controls"
-      aria-label="Filter testimonials by career level and service type"
-    >
-      <TestimonialsFilterBar
-        levels={careerLevels}
-        services={serviceTypes}
-      />
-    </section>
+      <div
+        class="testimonials-grid-section__controls"
+        aria-label="Filter testimonials by career level and service type"
+      >
+        <TestimonialsFilterBar
+          levels={careerLevels}
+          services={serviceTypes}
+        />
+      </div>
+    </header>
 
     <!-- Results grid -->
     <div
@@ -191,6 +193,7 @@ const safeInitialLimit =
 
         const serviceMatches =
           !service ||
+          !service.length ||
           service === "all" ||
           itemService === service;
 
@@ -260,7 +263,7 @@ const safeInitialLimit =
         });
       }
 
-      // Initial render (8 cards by default)
+      // Initial render (first page)
       apply();
     })();
   </script>

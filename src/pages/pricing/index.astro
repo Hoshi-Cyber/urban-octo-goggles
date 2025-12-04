@@ -5,40 +5,18 @@ import PricingTable from "../../components/plan/PricingTable/index.astro";
 import ComparisonMatrix from "../../components/plan/ComparisonMatrix/index.astro";
 import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
-import TrustBar from "../../components/socialproof/TrustBar/index.astro";
 import StatStrip from "../../components/metrics/StatStrip/index.astro";
+import Addons from "../../components/plan/Addons/index.astro";
 import { getPricingFaqs } from "../../data/faqs";
 
-const title = "Pricing";
+const title = "Transparent CV Writing Packages in Kenya";
 const description =
-  "Transparent, one-time pricing for CV, cover letter and LinkedIn services. Pick a plan, get predictable outcomes.";
+  "Four clear, one-time packages for CV, cover letter and LinkedIn optimisation — tailored to Kenyan jobseekers at every career stage.";
 const seo = { canonical: "/pricing/" };
 
 type FaqItem = {
   q: string;
   a: string;
-};
-
-// Social proof – outcome- and segment-focused (no logos)
-const trust = {
-  eyebrow: "Trusted by operators and graduates",
-  rating: {
-    score: 4.9,
-    count: 200,
-    label: "career documents",
-    since: 2020,
-  },
-  summary:
-    "Used by professionals in tax, telecom, banking, NGOs and development projects across Kenya.",
-  segments: [
-    { label: "Mid-career operators" },
-    { label: "Graduates starting out" },
-    { label: "Public sector & parastatals" },
-    { label: "NGO & UN assignments" },
-    { label: "Banking & finance" },
-    { label: "Tech & telecom" },
-  ],
-  footnote: "Rating based on verified client feedback collected since 2020.",
 };
 
 // Key metrics
@@ -49,20 +27,9 @@ const stats = [
   { value: "72h", label: "Typical turnaround" },
 ];
 
-// Comparison matrix
-const plans = ["Starter", "Pro", "Elite"];
-const features = [
-  { label: "ATS-optimized CV", values: [true, true, true] },
-  { label: "Cover letter", values: [false, true, true] },
-  { label: "LinkedIn optimization", values: [false, true, true] },
-  { label: "Turnaround time", values: ["3 Days", "3 Days", "3 Days"] },
-  { label: "Priority support", values: [false, true, true] },
-];
-
-// Load pricing FAQs from shared data layer (Fix Plan 207)
+// Load pricing FAQs
 const resolvedPricingFaqs = getPricingFaqs();
 
-// Flatten topQuestions + grouped items into a single ordered list, de-duplicated by id
 const rawPricingFaqItems = [
   ...resolvedPricingFaqs.topQuestions,
   ...resolvedPricingFaqs.groups.flatMap((group) => group.items),
@@ -74,65 +41,62 @@ const pricingFaqItems: FaqItem[] = [];
 for (const item of rawPricingFaqItems) {
   if (seenFaqIds.has(item.id)) continue;
   seenFaqIds.add(item.id);
-  pricingFaqItems.push({
-    q: item.question,
-    a: item.answer,
-  });
+  pricingFaqItems.push({ q: item.question, a: item.answer });
 }
 ---
 
 <BaseLayout {title} {description} {seo}>
-  {/* Hero */}
-  <section class="section" aria-labelledby="pricing-title">
-    <div class="container">
-      <Hero
-        eyebrow="One-time CV &amp; profile pricing"
-        title={title}
-        sub="Pay once for a complete CV, cover letter and LinkedIn pack built for Kenya’s job market. Clear deliverables, predictable timelines, no subscriptions."
-        meta={[
-          { label: "One-time professional fee per project" },
-          { label: "No hidden charges, upsells or lock-ins" },
-          { label: "Packages aligned to career stage and role seniority" },
-        ]}
-      />
-    </div>
-  </section>
 
-  {/* Trust */}
-  <section class="section section--tight" aria-label="Trust">
-    <div class="container">
-      <TrustBar
-        variant="compact"
-        eyebrow={trust.eyebrow}
-        rating={trust.rating}
-      />
-    </div>
-  </section>
+  <Hero
+    eyebrow="CV &amp; LinkedIn pricing, made clear"
+    title={title}
+    sub="Each package includes a professionally written, ATS-optimised CV plus the assets you need to stand out on LinkedIn, BrighterMonday, Fuzu and corporate portals."
+    image="/assets/images/services/main-services-overview-hero.webp"
+    alt="Pricing overview illustration showing CV, cover letter and LinkedIn profile on screen."
+    meta={[
+      { label: "Four packages aligned to career stage" },
+      { label: "One-time professional fee per project" },
+      { label: "Optional add-ons for LinkedIn and speed" },
+    ]}
+  />
 
-  {/* Metrics */}
-  <section class="section section--tight" aria-label="Key metrics">
+  <section class="section" aria-label="Key metrics">
     <div class="container">
       <StatStrip stats={stats} />
     </div>
   </section>
 
-  {/* Plans */}
-  <section class="section" aria-labelledby="plans">
+  <!-- NEW PERFECTLY-TIGHT SECTION HEADER -->
+  <section class="section" id="pricing">
     <div class="container">
-      <h2 id="plans" class="sr-only">Plans</h2>
-      <PricingTable showTitle={false} />
+
+      <header class="section-head">
+        <p class="section-head__eyebrow">Our Packages</p>
+        <h2 class="h2 section-head__title">Transparent CV Writing Packages in Kenya</h2>
+        <p class="section-head__sub">
+          Four clear, one-time project fees mapped to your career stage. Starter for graduates, Professional Impact for mid-level professionals, Advanced Growth for emerging leaders, and Executive Brand Suite for senior roles and diaspora searches.
+        </p>
+      </header>
+
+      <PricingTable />
     </div>
   </section>
 
-  {/* Comparison */}
   <section class="section section--tight" aria-labelledby="compare">
     <div class="container">
-      <h2 id="compare" class="h2">Compare what’s included</h2>
-      <ComparisonMatrix plans={plans} features={features} wide showHead={false} />
+      <h2 id="compare" class="h2">Compare what’s included in each package</h2>
+      <ComparisonMatrix wide showHead={false} />
     </div>
   </section>
 
-  {/* FAQs – powered by shared FAQ data layer */}
+  <Addons
+    sectionId="addons"
+    categories={["addons", "speed"]}
+    ctaHref="/contact/"
+    ctaLabel="Add this option"
+    ctaVariant="link"
+  />
+
   <section class="section section--tight" aria-labelledby="faq">
     <div class="container">
       <h2 id="faq" class="h2">FAQs</h2>
@@ -145,7 +109,6 @@ for (const item of rawPricingFaqItems) {
     </div>
   </section>
 
-  {/* Bottom CTA */}
   <section class="section section--tight">
     <div class="container">
       <LeadCaptureBanner
@@ -158,20 +121,48 @@ for (const item of rawPricingFaqItems) {
   </section>
 
   <style>
+    /* Perfect zero-gap stack */
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      /* stretch children to full available width */
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: var(--space-5);
+      width: 100%;
+    }
+
+    .section-head .section-head__eyebrow,
+    .section-head .section-head__title,
+    .section-head .section-head__sub {
+      margin: 0;
+      padding: 0;
+    }
+
+    .section-head__eyebrow {
+      font-size: var(--fs-sm);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .section-head__sub {
+      font-size: var(--fs-base);
+      color: var(--color-text);
+      /* Ensure subtitle spans full section width */
+      width: 100%;
+      max-width: none;
+      display: block;
+    }
+
     .section--tight {
       padding-block: clamp(var(--space-4), 2vw, var(--space-6));
     }
 
-    .sr-only {
-      position: absolute !important;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    #pricing.section {
+      padding-block-start: clamp(var(--space-6), 4vw, var(--space-8));
     }
   </style>
+
 </BaseLayout>

@@ -1,4 +1,4 @@
-/* SamplePreviewModal — token-driven, mobile-first */
+/* SamplePreviewModal — token-driven, mobile-first, brand-aligned */
 @import "../../../styles/tokens.css";
 @import "../../../styles/typography.css";
 @import "../../../styles/utilities.css";
@@ -11,13 +11,19 @@
   z-index: 60;
   pointer-events: none;
 }
+
 .spm__backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in oklab, #000 55%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-ink, #020617) 60%,
+    transparent
+  );
   opacity: 0;
   transition: opacity 0.15s ease;
 }
+
 @supports not (background: color-mix(in oklab, black 50%, white)) {
   .spm__backdrop {
     background: rgba(0, 0, 0, 0.55);
@@ -32,10 +38,20 @@
   margin: 0 auto;
   max-width: min(960px, 100vw);
   width: 100%;
-  background: var(--color-background, #fff);
-  color: var(--color-text, #111);
+  background: color-mix(
+    in oklab,
+    var(--color-surface, var(--color-background, #fff)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
+  color: var(--color-text, #111827);
   border-radius: var(--radius-2xl, 1rem) var(--radius-2xl, 1rem) 0 0;
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 -10px 36px rgba(15, 23, 42, 0.20);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 80%,
+      transparent
+    );
   transform: translateY(12%);
   opacity: 0;
   transition:
@@ -52,82 +68,126 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1rem 0.5rem;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-4, 1rem) var(--space-4, 1rem) var(--space-3, 0.75rem);
+  border-bottom: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 85%,
+      transparent
+    );
 }
+
 .spm__title {
   margin: 0;
   font-weight: 600;
   font-size: clamp(1.125rem, 1vw + 1rem, 1.5rem);
+  color: var(--color-text);
 }
+
 .spm__close {
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--color-text, #111);
+  color: var(--color-text);
   font-size: 1.5rem;
   line-height: 1;
-  width: 44px;
-  height: 44px; /* a11y target */
-  border-radius: 0.5rem;
+  inline-size: 44px;
+  block-size: 44px; /* a11y target */
+  border-radius: var(--radius-md, 0.5rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
+
+.spm__close:hover {
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 10%,
+    var(--color-surface) 90%
+  );
+}
+
 .spm__close:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
-  outline-offset: 2px;
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
 }
 
 /* Content */
 .spm__content {
   overflow: auto;
-  padding: 1rem;
+  padding: var(--space-4, 1rem);
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4, 1rem);
 }
+
 .spm__media img {
   width: 100%;
   height: auto;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-xl, 0.75rem);
   display: block;
+  box-shadow: var(--shadow-sm);
 }
+
+/* Before / After blocks */
 .spm__ba {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4, 1rem);
 }
+
 .spm__block {
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 6%, #fff);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 24%, #e5e7eb);
-  border-radius: 0.75rem;
-  padding: 0.85rem;
+    color-mix(
+      in oklab,
+      var(--color-primary) 22%,
+      var(--color-border-subtle, #e5e7eb)
+    );
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-3, 0.85rem) var(--space-4, 1rem);
 }
+
 @supports not (background: color-mix(in oklab, white 50%, black)) {
   .spm__block {
     background: #f8fafc;
     border: 1px solid #e5e7eb;
   }
 }
+
+/* Eyebrow – strong, branded label */
 .spm__eyebrow {
   margin: 0 0 0.25rem;
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-xs, 0.8rem);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted, #6b7280);
+  font-weight: 600;
+  color: var(--color-primary);
 }
+
+/* Body copy */
 .spm__text {
   margin: 0;
-  font-size: 0.95rem;
-  color: var(--color-text, #111);
+  font-size: var(--fs-sm, 0.95rem);
+  line-height: 1.6;
+  color: var(--color-text);
 }
 
 /* Open state */
 .spm.is-open {
   pointer-events: auto;
 }
+
 .spm.is-open .spm__backdrop {
   opacity: 1;
 }
+
 .spm.is-open .spm__dialog {
   transform: translateY(0);
   opacity: 1;
@@ -141,12 +201,13 @@
     transform: translateY(10%);
     border-radius: var(--radius-2xl, 1rem);
   }
+
   .spm.is-open .spm__dialog {
     transform: translateY(-50%);
   }
 }
 
-/* Reduced motion */
+/* Reduced motion – scoped to component */
 @media (prefers-reduced-motion: reduce) {
   .spm__backdrop,
   .spm__dialog {

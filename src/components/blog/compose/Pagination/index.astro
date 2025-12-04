@@ -73,7 +73,8 @@ if (total <= 7) {
 ---
 <nav class="pagination" aria-label="Pagination" data-section="pagination">
   <link rel="stylesheet" href={css} />
-  <div class="container">
+
+  <div class="pagination__surface">
     <ol class="pagination__list" role="list">
       {/* Prev */}
       <li class="pagination__item">
@@ -88,7 +89,9 @@ if (total <= 7) {
             ‹ Prev
           </a>
         ) : (
-          <span class="pagination__control is-disabled" aria-disabled="true">‹ Prev</span>
+          <span class="pagination__control is-disabled" aria-disabled="true">
+            ‹ Prev
+          </span>
         )}
       </li>
 
@@ -131,7 +134,9 @@ if (total <= 7) {
             Next ›
           </a>
         ) : (
-          <span class="pagination__control is-disabled" aria-disabled="true">Next ›</span>
+          <span class="pagination__control is-disabled" aria-disabled="true">
+            Next ›
+          </span>
         )}
       </li>
     </ol>

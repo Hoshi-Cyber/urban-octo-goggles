@@ -6,37 +6,8 @@
 
 :root {
   /* ==========================================================================
-     Brand colour – core roles
-     ========================================================================== */
-
-  /* Primary brand colour (Deep Green) */
-  --color-primary: #1b3637;       /* Green 500 – main brand colour */
-  --color-primary-hover: #152a2b; /* Green 600 – primary hover/active */
-
-  /* Accent brand colour (Gold) */
-  --color-accent: #d4ab18;        /* Gold 500 – highlights, key accents */
-
-  /* Text & neutrals – mapped to neutral ramp below */
-  --color-text: #222628;          /* Neutral 600 – primary text */
-  --color-muted: #8a959a;         /* Neutral 400 – secondary text */
-  --color-surface: #f7f8f9;       /* Neutral 10 – cards / subtle surfaces */
-  --color-background: #ffffff;    /* Neutral 0 – page background */
-  --color-light: #f1f3f4;         /* Neutral 50 – light surfaces */
-  --color-light-alt: #e0e4e6;     /* Neutral 100 – subtle borders / fills */
-
-  /* Semantic status colours */
-  --color-success: #14805d;       /* Success – confirmations, positive states */
-  --color-warning: #f5a623;       /* Warning – soft alerts */
-  --color-error: #d64545;         /* Error – validation / critical states */
-  --color-info: #1e6091;          /* Info – informational highlights */
-
-  /* Focus & overlay tokens (renamed to match style guide) */
-  --color-focus-ring: rgba(212, 171, 24, 0.7); /* Gold focus ring */
-  --color-card-hover: rgba(27, 54, 55, 0.04);  /* Deep Green hover wash */
-  --color-backdrop: rgba(0, 0, 0, 0.55);       /* Standard modal backdrop */
-
-  /* ==========================================================================
      Colour ramps – Deep Green, Gold, Neutrals
+     (base tokens – do not reference roles here)
      ========================================================================== */
 
   /* Deep Green ramp (brand primary) */
@@ -67,6 +38,36 @@
   --color-neutral-400: #8a959a;
   --color-neutral-600: #222628;
   --color-neutral-800: #141718;
+
+  /* ==========================================================================
+     Brand colour – role tokens (aliases to ramps above)
+     ========================================================================== */
+
+  /* Primary brand colour (Deep Green) */
+  --color-primary: var(--color-green-500);       /* main brand colour */
+  --color-primary-hover: var(--color-green-600); /* primary hover/active */
+
+  /* Accent brand colour (Gold) */
+  --color-accent: var(--color-gold-500);         /* highlights, key accents */
+
+  /* Text & neutrals – role aliases mapped to neutral ramp */
+  --color-text: var(--color-neutral-600);        /* primary body text */
+  --color-muted: var(--color-neutral-400);       /* secondary / meta text */
+  --color-surface: var(--color-neutral-10);      /* cards / subtle surfaces */
+  --color-background: var(--color-neutral-0);    /* page background */
+  --color-light: var(--color-neutral-50);        /* light surfaces */
+  --color-light-alt: var(--color-neutral-100);   /* subtle borders / fills */
+
+  /* Semantic status colours */
+  --color-success: #14805d;  /* Success – confirmations, positive states */
+  --color-warning: #f5a623;  /* Warning – soft alerts */
+  --color-error: #d64545;    /* Error – validation / critical states */
+  --color-info: #1e6091;     /* Info – informational highlights */
+
+  /* Focus & overlay tokens */
+  --color-focus-ring: rgba(212, 171, 24, 0.7); /* Gold focus ring */
+  --color-card-hover: rgba(27, 54, 55, 0.04);  /* Deep Green hover wash */
+  --color-backdrop: rgba(0, 0, 0, 0.55);       /* Standard modal backdrop */
 
   /* ==========================================================================
      Radius scale (matches usage in BlogPost/PostHeader/etc.)

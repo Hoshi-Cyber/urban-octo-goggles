@@ -1,4 +1,10 @@
 ---
+/**
+ * File: src/components/plan/PricingTable/index.astro
+ * CVWriting.co.ke – 4-tier GTM packages (Kenya 2025)
+ * Header removed completely (eyebrow, h2 title, subtitle).
+ */
+
 import defaultPricing from "../../../data/pricing.json";
 
 export interface Plan {
@@ -13,18 +19,12 @@ export interface Plan {
 
 export interface Props {
   items?: Plan[];
-  title?: string;
-  subtitle?: string;
   class?: string;
-  showTitle?: boolean;
 }
 
 const {
   items,
-  title = "Choose Your Package",
-  subtitle = "Transparent, one-time pricing for every career stage.",
   class: className = "",
-  showTitle = true,
 } = Astro.props as Props;
 
 const pricing: Plan[] = items ?? (defaultPricing as Plan[]);
@@ -37,35 +37,42 @@ import "./PricingTable.css";
   id="pricing"
   data-section="pricing"
 >
-  {showTitle && (
-    <header class="pricing__head text-center">
-      <h2 class="pricing__title h2">{title}</h2>
-      <p class="pricing__sub text-muted">{subtitle}</p>
-    </header>
-  )}
+
+  <!-- HEADER REMOVED -->
 
   <div class="pricing__grid">
     {pricing.map((plan) => (
       <article
-        class={`pricing__card card ${plan.highlight ? "is-highlight" : ""}`.trim()}
+        class={`pricing__card card ${
+          plan.highlight ? "is-highlight" : ""
+        }`.trim()}
         aria-labelledby={`plan-${plan.id}-title`}
+        data-plan-id={plan.id}
       >
+        {plan.highlight && (
+          <p class="pricing__badge">
+            <span class="pricing__badgeLabel">Most popular</span>
+          </p>
+        )}
+
         <header class="pricing__cardHead">
           <h3 id={`plan-${plan.id}-title`} class="pricing__planName">
             {plan.name}
           </h3>
+
           {plan.description && (
-            <p class="pricing__planDesc text-muted">{plan.description}</p>
+            <p class="pricing__planDesc">{plan.description}</p>
           )}
+
           <p class="pricing__price">
-            <span class="sr-only">Price range:</span>
+            <span class="sr-only">Price:</span>
             {plan.priceRange}
           </p>
         </header>
 
         <ul
           class="pricing__features"
-          aria-label={`${plan.name} features`}
+          aria-label={`${plan.name} deliverables`}
         >
           {plan.features.map((feat) => (
             <li class="pricing__feature">{feat}</li>

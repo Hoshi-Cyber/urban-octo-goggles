@@ -20,8 +20,9 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: var(--color-background);
-  color: var(--color-text);
+  /* Brand-aligned background + text roles */
+  background: var(--color-neutral-10);
+  color: var(--color-neutral-600);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -34,22 +35,25 @@ body {
   overflow-x: clip;
 }
 
+/* Global focus ring (accessibility baseline) */
+:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
 /* Links – token-driven, no underline (handled via color/outline) */
 a {
-  color: var(--color-primary);
+  color: var(--color-green-500);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-green-600);
   text-decoration: none;
 }
 
 a:focus-visible {
-  color: var(--color-primary-hover);
-  text-decoration: none;
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
+  color: var(--color-green-600);
 }
 
 /* Global accessible skip link */
@@ -58,8 +62,8 @@ a:focus-visible {
   inset-inline-start: 0;
   top: -40px;
 
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-neutral-0);
+  color: var(--color-neutral-800);
 
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
@@ -72,8 +76,6 @@ a:focus-visible {
 .skip-link:focus-visible {
   top: var(--space-2);
   z-index: 1000;
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
 }
 
 /* Media */
@@ -87,11 +89,6 @@ img {
 button {
   font-family: var(--font-sans);
   cursor: pointer;
-}
-
-button:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
 }
 
 /* Layout utilities
@@ -190,8 +187,9 @@ button:focus-visible {
   text-align: center;
 }
 
+/* Muted text reserved for genuinely secondary/meta content */
 .text-muted {
-  color: var(--color-muted);
+  color: var(--color-neutral-400);
 }
 
 /* Spacing utilities */
@@ -245,7 +243,7 @@ button:focus-visible {
 
 /* Surface utilities */
 .bg-surface {
-  background: var(--color-surface);
+  background: var(--color-neutral-0);
 }
 
 .rounded-lg {

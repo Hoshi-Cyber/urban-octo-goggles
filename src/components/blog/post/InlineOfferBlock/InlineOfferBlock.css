@@ -4,67 +4,100 @@
   Mid-article offer card:
   - Mobile-first
   - Token-driven (spacing, color, radius, shadow)
-  - No global resets
   - Visually lighter than LeadMagnetStrip but clearly a CTA block.
 */
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
 
 .inline-offer {
   width: 100%;
 }
 
-/* Card container */
-
+/* Card container – premium panel using brand primary + surface blend */
 .inline-offer__inner {
-  max-width: 70ch;
+  width: 100%;
+  max-width: min(var(--blog-post-content-max-width, 70ch), 100%);
   margin-inline: auto;
-  padding: var(--space-4);
 
-  border-radius: var(--radius-xl);
+  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
+  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-6));
+
+  border-radius: var(--radius-2xl, 1.25rem);
   background: color-mix(
-    in srgb,
-    var(--color-primary) 6%,
-    var(--color-surface)
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%,
+    var(--color-surface, #ffffff)
   );
   border: 1px solid
-    color-mix(in srgb, var(--color-primary) 18%, transparent);
-  box-shadow: var(--shadow-sm);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 84%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 16%
+    );
+  box-shadow: var(--shadow-md);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 /* Header */
-
 .inline-offer__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+
+  /* Kill flex gap between eyebrow and title */
+  gap: 0;
 }
 
+/* Eyebrow – match KeyTakeaways styling (no pill, text-only label) */
 .inline-offer__eyebrow {
-  margin: 0;
+  /* Hard override any paragraph defaults */
+  margin-top: 0 !important;
+  /* Slightly less negative so there is a tiny visible gap */
+  margin-bottom: -0.02rem !important;
+  padding: 0 !important;
+
+  line-height: 1;
+  display: block;
+
   font-size: var(--fs-xs);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-muted);
+
+  color: color-mix(
+    in oklab,
+    var(--color-accent-soft, var(--color-accent, #d4ab18)) 68%,
+    var(--color-text-muted, #6b7280)
+  );
 }
 
-.inline-offer__title {
-  margin: 0;
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-text);
+/* Title – h2 scale from .h2, but margins hard-overridden */
+.inline-offer__title,
+.inline-offer__title.h2,
+.inline-offer__title.section-title,
+.inline-offer__title.h2.section-title {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Bullet list */
-
 .inline-offer__list {
   list-style: none;
   margin: 0;
   padding: 0;
+
   display: grid;
   gap: var(--space-2);
 }
@@ -76,28 +109,44 @@
   align-items: flex-start;
 }
 
+/* Marker – soft check in accent-tinted pill */
 .inline-offer__marker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  color: var(--color-accent);
+
+  width: 1.4rem;
+  height: 1.4rem;
+
+  border-radius: var(--radius-full, 9999px);
+  background: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 16%,
+    var(--color-surface, #ffffff)
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 80%,
+    var(--color-primary, #1b3637) 20%
+  );
+
   font-size: var(--fs-xs);
   font-weight: 700;
-  margin-top: 0.15rem;
+  margin-top: 0.1rem;
 }
 
+/* Bullet text */
 .inline-offer__text {
-  font-size: var(--fs-base);
-  line-height: 1.6;
-  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 86%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
+  );
 }
 
 /* Footer: CTA + trust note */
-
 .inline-offer__footer {
   display: flex;
   flex-direction: column;
@@ -105,6 +154,7 @@
   margin-block-start: var(--space-1);
 }
 
+/* Button layout only – visual style comes from Button system */
 .inline-offer__cta {
   align-self: flex-start;
 }
@@ -112,20 +162,27 @@
 .inline-offer__trust {
   margin: 0;
   font-size: var(--fs-xs);
-  line-height: 1.5;
-  color: var(--color-muted);
+  line-height: 1.6;
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 78%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 22%
+  );
 }
 
 /* Tablet+ */
-
 @media (min-width: 768px) {
   .inline-offer__inner {
-    padding: var(--space-5);
-    gap: var(--space-4);
+    padding-block: clamp(var(--space-5), 3.5vw, var(--space-6));
+    padding-inline: clamp(var(--space-5), 4vw, var(--space-7));
+    gap: var(--space-5);
   }
 
-  .inline-offer__title {
-    font-size: var(--fs-xl);
+  .inline-offer__title,
+  .inline-offer__title.h2,
+  .inline-offer__title.section-title,
+  .inline-offer__title.h2.section-title {
+    max-width: 26rem;
   }
 
   .inline-offer__footer {
@@ -135,7 +192,7 @@
   }
 
   .inline-offer__trust {
-    max-width: 32rem;
+    max-width: 30rem;
     text-align: right;
   }
 }

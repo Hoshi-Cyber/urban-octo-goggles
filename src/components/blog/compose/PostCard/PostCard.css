@@ -1,70 +1,83 @@
-/* File: src/components/blog/PostCard/PostCard.css
-   Fix Plan 146 — keep original visual design, enforce stable media ratio (CLS),
-   polish focus states, and ensure content is always visible. */
+/* File: src/components/blog/compose/PostCard/PostCard.css
+   PostCard – premium blog card
+   - Solid, token-driven surfaces (no harsh borders)
+   - Calm hover motion
+   - Clear hierarchy: media → category → title → excerpt → meta
+*/
 
 /* Card shell */
 .pcard {
-  background: var(--color-surface);
-  border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
-  border-radius: var(--radius-lg);
+  inline-size: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-surface-alt, #f9fafb) 8%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+  border-radius: var(--radius-2xl, 1.25rem);
   box-shadow: var(--shadow-sm);
+
   overflow: hidden;
+
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
     border-color 0.18s ease,
     background-color 0.18s ease;
-  /* avoid collapsed placeholders while still rendering immediately */
+
   content-visibility: visible;
   contain-intrinsic-size: auto;
-  inline-size: 100%;
 }
+
+.pcard:hover,
+.pcard:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 38%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 88%,
+    var(--color-surface-alt, #f9fafb) 12%
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pcard {
     transition: none;
   }
 }
 
-.pcard:hover,
-.pcard:focus-within {
-  transform: translateY(-1px) scale(0.998);
-  box-shadow: var(--shadow-md);
-  border-color: color-mix(
-    in oklab,
-    var(--color-primary) 15%,
-    var(--color-light)
-  );
-}
-
-/* Whole-card link as grid: media then content */
-.pcard__link {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 0;
-  color: inherit;
-  text-decoration: none;
-  outline: 0;
-  height: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
-.pcard__link:hover,
-.pcard__link:focus,
-.pcard__link:focus-visible {
-  text-decoration: none;
-}
-.pcard__link:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 22%, #fff);
-}
-
-/* Media — enforce a stable 16:9 box to prevent CLS */
+/* Media – stable 16:9 box to prevent CLS */
 .pcard__media {
   position: relative;
   --pcard-media-ratio: 16 / 9;
   aspect-ratio: var(--pcard-media-ratio);
   block-size: auto;
-  background: var(--color-light-alt);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f3f4f6) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
   border-bottom: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  overflow: hidden;
 }
 
 /* Fallback for browsers without aspect-ratio support */
@@ -75,112 +88,170 @@
   .pcard__media::before {
     content: "";
     display: block;
-    padding-top: calc(100% * 9 / 16); /* 16:9 placeholder */
+    padding-top: calc(100% * 9 / 16);
   }
-  .pcard__media > img {
+  .pcard__media > .pcard__mediaLink {
     position: absolute;
     inset: 0;
   }
 }
 
-.pcard__media img {
+.pcard__mediaLink {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  outline: none;
+}
+
+.pcard__mediaLink img {
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.25s ease;
+  transition: transform 0.22s ease;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .pcard__media img {
+  .pcard__mediaLink img {
     transition: none;
   }
 }
+
 @media (hover: hover) {
-  .pcard__link:hover .pcard__media img,
-  .pcard__link:focus-visible .pcard__media img {
-    transform: scale(0.985);
+  .pcard:hover .pcard__mediaLink img,
+  .pcard:focus-within .pcard__mediaLink img {
+    transform: scale(1.03);
   }
 }
 
 /* Stage badge */
 .pcard__badge {
   position: absolute;
-  inset: 0.5rem auto auto 0.5rem;
+  inset: 0.75rem auto auto 0.75rem;
+
   display: inline-flex;
   align-items: center;
-  height: 28px;
-  padding: 0 0.6rem;
+  padding-inline: 0.65rem;
+  padding-block: 0.35rem;
+
   border-radius: 999px;
-  background: #fff;
-  color: var(--color-muted);
-  border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+  background-color: #ffffff;
+  color: var(--color-muted, #6b7280);
+  border: 1px solid
+    color-mix(in oklab, var(--color-text, #020617) 10%, transparent);
+
   font: 600 var(--fs-xs) / 1 var(--font-sans);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   box-shadow: var(--shadow-xs);
 }
 
-/* Content — always visible, no collapsing */
+/* Content */
 .pcard__content {
   --pcard-pad: var(--space-4);
   display: grid;
+  grid-template-rows: auto auto 1fr auto; /* cat, title, excerpt, meta */
   gap: 0.6rem;
-  padding: var(--pcard-pad);
-  min-block-size: auto;
-  visibility: visible;
-  opacity: 1;
-  grid-template-rows: auto auto 1fr auto; /* cat, title, excerpt grows, meta */
+
+  padding-block: var(--pcard-pad);
+  padding-inline: calc(var(--pcard-pad) * 0.75); /* slightly reduced LR padding */
 }
 
-/* Category chip above title */
+/* Category pill – smaller, lighter styling */
 .pcard__kicker {
   margin-bottom: 0.1rem;
 }
-.pcard__category,
-.pfl__cat {
+
+.pcard__category {
   display: inline-flex;
   align-items: center;
-  height: 26px;
-  padding: 0 0.55rem;
+  padding-inline: 0.5rem;
+  padding-block: 0.25rem;
+
   border-radius: 999px;
-  background: color-mix(in oklab, var(--color-primary) 10%, #fff);
-  color: color-mix(in oklab, var(--color-primary) 70%, var(--color-text));
-  border: 1px solid color-mix(in oklab, var(--color-primary) 35%, transparent);
-  font: 600 var(--fs-xs) / 1 var(--font-sans);
-  letter-spacing: 0.04em;
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+    #ffffff
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-text, #020617)
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 32%,
+      transparent
+    );
+
+  font: 600 var(--fs-2xs, 0.72rem) / 1 var(--font-sans);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  box-shadow: var(--shadow-xxs, 0 1px 0 rgba(0, 0, 0, 0.04));
   text-decoration: none;
-}
-.pcard__category:hover,
-.pcard__category:focus-visible,
-.pfl__cat:hover,
-.pfl__cat:focus-visible {
-  background: color-mix(in oklab, var(--color-primary) 16%, #fff);
-  border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, #fff);
+
+  box-shadow: var(
+    --shadow-xxs,
+    0 1px 0 rgba(15, 23, 42, 0.04)
+  );
 }
 
-/* Title */
+.pcard__category:hover,
+.pcard__category:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 16%,
+    #ffffff
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 50%,
+    transparent
+  );
+  outline: none;
+}
+
+/* Title + title link */
 .pcard__title {
   margin: 0;
   font-weight: 800;
   line-height: 1.2;
-  color: var(--color-text);
-  font-size: clamp(calc(var(--fs-md) - 1px), 1.9vw, calc(var(--fs-lg) - 1px));
-}
-.pcard__link:hover .pcard__title,
-.pcard__link:focus-visible .pcard__title {
-  color: var(--color-primary);
+  font-size: clamp(
+    calc(var(--fs-md) - 1px),
+    1.9vw,
+    calc(var(--fs-lg) - 1px)
+  );
+  color: var(--color-text, #020617);
 }
 
-/* Excerpt */
+.pcard__link {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.pcard__link:hover,
+.pcard__link:focus-visible {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 85%,
+    var(--color-text, #020617)
+  );
+  text-decoration: none; /* colour change only, no underline */
+}
+
+/* Excerpt – use main text colour (no muted) */
 .pcard__excerpt {
   margin: 0;
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 92%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+  );
   font-size: var(--fs-sm);
 }
+
 .pcard__excerpt.clamp-3,
 .pcard__excerpt.line-clamp-3 {
   display: -webkit-box;
@@ -189,28 +260,51 @@
   overflow: hidden;
 }
 
-/* Meta */
+/* Meta row – clearer date/read pill */
 .pcard__meta {
   margin: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
+  align-self: flex-end;
+
+  padding-block: 0.3rem;
+  padding-inline: 0.7rem;
+
   border-radius: 999px;
-  background: color-mix(in oklab, var(--color-light) 80%, #fff);
-  border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+
   font-size: var(--fs-xs, 0.8rem);
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
+  );
   letter-spacing: 0.02em;
-  white-space: nowrap; /* avoid multi-line meta chip */
+  white-space: nowrap;
 }
+
 .pcard__meta time::after {
   content: "•";
   margin-inline: 0.5rem;
-  color: color-mix(in oklab, var(--color-muted) 70%, #000);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 70%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 30%
+  );
 }
 
-/* Clamp helpers (kept for non-utility usages) */
+/* Clamp helpers */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -237,11 +331,13 @@
     gap: 0.65rem;
   }
 }
+
 @media (min-width: 1024px) {
   .pcard__content {
     --pcard-pad: var(--space-6);
     gap: 0.7rem;
   }
+
   .pcard__title {
     font-size: clamp(var(--fs-md), 1.5vw, var(--fs-lg));
   }

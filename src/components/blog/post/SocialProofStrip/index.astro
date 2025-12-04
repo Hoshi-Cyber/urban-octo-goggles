@@ -5,7 +5,8 @@
   FP-205.7:
   - Slim testimonial / trust strip for use within a single blog post.
   - Internally reuses the shared TestimonialCard component.
-  - Kept visually lighter than the full TestimonialStrip section.
+  - Visually lighter than the full TestimonialStrip section, but
+    still clearly branded and premium.
 */
 
 import TestimonialCard from "@/components/common/TestimonialCard";
@@ -43,12 +44,14 @@ const hasItems = Array.isArray(items) && items.length > 0;
   >
     <div class="social-proof-strip__inner">
       <header class="social-proof-strip__header">
-        <p class="social-proof-strip__eyebrow">
-          {eyebrow}
-        </p>
+        {eyebrow && (
+          <p class="social-proof-strip__eyebrow">
+            {eyebrow}
+          </p>
+        )}
         <h2
           id="social-proof-title"
-          class="social-proof-strip__title"
+          class="social-proof-strip__title h2 section-title"
         >
           {title}
         </h2>

@@ -1,46 +1,93 @@
 /*
   src/components/blog/post/ArticleHero/ArticleHero.css
 
-  Wrapper/layout for the post hero section.
+  ArticleHero – premium post hero wrapper:
   - Mobile-first
   - Token-driven
   - Does not override PostHeader/PostMeta/PostUpdatedBadge internals.
 */
 
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
 .article-hero {
   width: 100%;
+
+  /* subtle band + separation from body content */
+  padding-block-end: clamp(var(--space-4), 3vw, var(--space-6));
+  border-bottom: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+        transparent
+      ),
+      transparent 58%
+    ),
+    var(--color-surface, #ffffff);
 }
 
-/* Meta row: PostMeta + optional soft CTA */
-
-.article-hero__metaRow {
+/* Inner column: aligns ALL hero content (header, meta, badge)
+   to the same width as the article body. */
+.article-hero__inner {
   width: 100%;
-  max-width: var(--container-max);
+  max-width: min(
+    var(--blog-post-content-max-width, 72ch),
+    var(--container-max)
+  );
   margin-inline: auto;
-
-  /* align with PostHeader / PostMeta horizontal rhythm */
-  padding-inline: var(--space-4);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  align-items: flex-start;
-
-  /* tighten space between header and meta row */
-  margin-block-start: calc(var(--space-1) * 0.5);
+  gap: clamp(var(--space-4), 2.4vw, var(--space-5));
 }
 
-/* Soft CTA button – keeps to the left on mobile */
+/* Meta row: PostMeta + optional soft CTA
+   Sits inside a soft, pill-like panel aligned with the header column. */
+.article-hero__metaRow {
+  width: 100%;
+  margin-inline: 0;
 
+  padding-inline: clamp(var(--space-3), 3.2vw, var(--space-6));
+  margin-block-start: clamp(var(--space-2), 1.8vw, var(--space-3));
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+
+  border-radius: var(--radius-2xl, 1.25rem);
+  padding-block: var(--space-3);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  box-shadow: var(--shadow-sm);
+}
+
+/* Soft CTA button – left-aligned on mobile */
 .article-hero__cta {
   margin-block-start: var(--space-1);
 }
 
 /* Tablet+ */
-
 @media (min-width: 768px) {
   .article-hero__metaRow {
-    padding-inline: var(--space-6);
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -49,5 +96,24 @@
 
   .article-hero__cta {
     margin-block-start: 0;
+  }
+}
+
+/* Desktop+: slightly stronger hero treatment */
+@media (min-width: 1024px) {
+  .article-hero {
+    padding-block-end: clamp(var(--space-5), 4vw, var(--space-8));
+  }
+
+  .article-hero__metaRow {
+    padding-inline: clamp(var(--space-5), 4vw, var(--space-7));
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .article-hero {
+    background: var(--color-surface, #ffffff);
   }
 }

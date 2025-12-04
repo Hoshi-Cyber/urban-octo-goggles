@@ -17,14 +17,87 @@ export interface Props {
 }
 
 const {
-  plans = [],
-  features = [],
-  caption = "Compare plans",
-  eyebrow = "Feature comparison",
+  plans,
+  features,
+  caption = "Compare CV writing packages",
+  eyebrow = "What’s included in each package",
   compact = false,
-  wide = false,
-  showHead = true, // allow page to own the section heading
+  wide = true, // default to wide for 4-column pricing matrix
+  showHead = true, // allow page to own the section heading if needed
 } = Astro.props as Props;
+
+const defaultPlans: string[] = [
+  "Starter CV Pack",
+  "Professional Impact Pack",
+  "Advanced Growth Pack",
+  "Executive Brand Suite",
+];
+
+const effectivePlans: string[] =
+  Array.isArray(plans) && plans.length > 0 ? plans : defaultPlans;
+
+const defaultFeatures: FeatureRow[] = [
+  {
+    label: "Ideal experience level",
+    values: [
+      "0–3 years (graduate / early career)",
+      "3–8 years (mid-level / switchers)",
+      "6–12 years (supervisors & managers)",
+      "Senior executive & diaspora",
+    ],
+  },
+  {
+    label: "Professionally written CV (Word & PDF)",
+    values: [true, true, true, true],
+  },
+  {
+    label: "ATS optimization for Kenyan job boards",
+    values: [true, true, true, true],
+  },
+  {
+    label: "Cover letter",
+    values: [
+      "Basic cover letter",
+      "Tailored cover letter for main target role",
+      "Custom cover letter for primary target role",
+      "Executive-level cover letter aligned to leadership roles",
+    ],
+  },
+  {
+    label: "LinkedIn support",
+    values: [
+      "Not included",
+      "Headline & summary refresh",
+      "Full LinkedIn profile optimization",
+      "Full LinkedIn revamp (about, experience, skills, structure)",
+    ],
+  },
+  {
+    label: "Career statement / personal brand",
+    values: [
+      "Not included",
+      "Not included",
+      "Career statement & positioning narrative",
+      "Leadership brand statement & positioning",
+    ],
+  },
+  {
+    label: "Global keyword strategy (Kenya + international roles)",
+    values: [false, false, false, true],
+  },
+  {
+    label: "Revision window",
+    values: [
+      "Up to 2 revisions within 7 days",
+      "Up to 2 revisions within 10 days",
+      "Revisions during project window",
+      "Priority edits during engagement window",
+    ],
+  },
+];
+
+const effectiveFeatures: FeatureRow[] =
+  Array.isArray(features) && features.length > 0 ? features : defaultFeatures;
 
 const cmatrixClasses =
   "cmatrix" +
@@ -32,23 +105,27 @@ const cmatrixClasses =
   (wide ? " cmatrix--wide" : "");
 
 // Normalized plan labels (keep length, avoid undefined in ARIA/labels)
-const planLabels = Array.isArray(plans)
-  ? plans.map((plan, index) => {
+const planLabels = Array.isArray(effectivePlans)
+  ? effectivePlans.map((plan, index) => {
       if (typeof plan === "string") {
         const trimmed = plan.trim();
-        return trimmed.length > 0 ? trimmed : `Plan ${index + 1}`;
+        return trimmed.length > 0 ? trimmed : `Package ${index + 1}`;
       }
-      return `Plan ${index + 1}`;
+      return `Package ${index + 1}`;
     })
   : [];
 
+// Choose the “Most popular” column (Professional Impact Pack / second plan by default)
+const mostPopularIndex =
+  planLabels.length >= 3 ? 1 : planLabels.length > 0 ? 0 : -1;
+
 // Scroll region label – ties back to caption
-const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
+const scrollRegionLabel = `${caption} – scroll horizontally to compare packages`;
 ---
 
 <section
   class={cmatrixClasses}
-  aria-label="Plan comparison"
+  aria-label="CV writing package comparison"
   data-section="comparison-matrix"
 >
   <div class="container">
@@ -71,41 +148,65 @@ const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
 
         {/* Column model: first column = feature; remaining plan columns divide evenly */}
         <colgroup>
-          <col class="cmatrix__col--feat" />
+          <col class="cmatrix__col cmatrix__col--feat" />
           {planLabels.map(() => (
-            <col class="cmatrix__col--plan" />
+            <col class="cmatrix__col cmatrix__col--plan" />
           ))}
         </colgroup>
 
-        <thead>
+        <thead class="cmatrix__thead">
           <tr>
-            <th scope="col" class="cmatrix__featcol">
-              Feature
+            <th scope="col" class="cmatrix__headcell cmatrix__featcol">
+              <span class="cmatrix__headlabel">Deliverable / feature</span>
             </th>
-            {planLabels.map((planLabel) => (
-              <th scope="col" class="cmatrix__plancol">
-                {planLabel}
-              </th>
-            ))}
+
+            {planLabels.map((planLabel, index) => {
+              const isPopular = index === mostPopularIndex;
+
+              return (
+                <th
+                  scope="col"
+                  class={
+                    "cmatrix__headcell cmatrix__plancol" +
+                    (isPopular ? " cmatrix__plancol--popular" : "")
+                  }
+                  data-plan={planLabel}
+                >
+                  {isPopular && (
+                    <span class="cmatrix__plan-pill">Most popular</span>
+                  )}
+                  <span class="cmatrix__plan-name">{planLabel}</span>
+                </th>
+              );
+            })}
           </tr>
         </thead>
 
         <tbody>
-          {features.map((row) => {
+          {effectiveFeatures.map((row) => {
             const featureLabel =
               typeof row.label === "string" && row.label.trim().length > 0
                 ? row.label.trim()
                 : "Feature";
 
             return (
-              <tr>
-                <th scope="row" class="cmatrix__feat">
-                  {featureLabel}
+              <tr class="cmatrix__row">
+                <th
+                  scope="row"
+                  class="cmatrix__feat"
+                  data-feature={featureLabel}
+                >
+                  <span class="cmatrix__feature-label">{featureLabel}</span>
                 </th>
 
                 {/* Drive cells by plans so header and body stay aligned */}
                 {planLabels.map((planLabel, index) => {
                   const value = row.values?.[index];
+                  const isPopular = index === mostPopularIndex;
+
+                  const baseCellClass =
+                    "cmatrix__cell" +
+                    (isPopular ? " cmatrix__cell--popular" : "");
 
                   if (typeof value === "boolean") {
                     const ariaPlanName = planLabel;
@@ -114,10 +215,7 @@ const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
                       : `Not included in ${ariaPlanName}`;
 
                     return (
-                      <td
-                        class="cmatrix__cell"
-                        data-plan={planLabel}
-                      >
+                      <td class={baseCellClass} data-plan={planLabel}>
                         {value ? (
                           <span class="cmatrix__check" aria-label={cellLabel}>
                             <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -138,21 +236,13 @@ const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
                   // Graceful handling for missing / non-boolean string-like values
                   if (value === null || value === undefined || value === "") {
                     return (
-                      <td
-                        class="cmatrix__cell"
-                        data-plan={planLabel}
-                      ></td>
+                      <td class={baseCellClass} data-plan={planLabel}></td>
                     );
                   }
 
                   return (
-                    <td
-                      class="cmatrix__cell"
-                      data-plan={planLabel}
-                    >
-                      <span class="cmatrix__text">
-                        {String(value)}
-                      </span>
+                    <td class={baseCellClass} data-plan={planLabel}>
+                      <span class="cmatrix__text">{String(value)}</span>
                     </td>
                   );
                 })}
@@ -162,6 +252,10 @@ const scrollRegionLabel = `${caption} – scroll horizontally to compare plans`;
         </tbody>
       </table>
     </div>
+
+    <p class="cmatrix__scrollhint" aria-hidden="true">
+      Swipe left or right to compare all packages.
+    </p>
   </div>
 </section>
 

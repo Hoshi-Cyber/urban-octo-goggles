@@ -1,0 +1,376 @@
+/* Addons – compact tables for add-ons & speed options
+   Mobile-first, aligned with CVWriting.co.ke design tokens */
+
+/* Root section */
+
+.addons {
+  /* Create vertical gap before and after this section (≈ 2 rows) */
+  margin-block: calc(var(--space-6) * 2);
+}
+
+.addons--compact {
+  /* Hook for future tighter layouts */
+}
+
+/* Premium section shell – card-like container inside the section */
+
+.addons .container {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-light-alt);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-surface-subtle) 12%
+  );
+  box-shadow: var(--shadow-sm);
+  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
+  padding-inline: clamp(var(--space-4), 4vw, var(--space-6));
+}
+
+/* Section heading – left-aligned, full-width, no vertical gaps
+   inside the stack, and no gap below the header */
+
+.addons__head {
+  width: 100%;        /* let subtitle span full container width */
+  margin-bottom: 0;   /* no margin below the header */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+/* Kill all extra margins on eyebrow, title, subtitle so the stack is tight */
+.addons__head .addons__eyebrow,
+.addons__head .addons__title,
+.addons__head .addons__sub {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.addons__eyebrow {
+  font-size: var(--fs-sm);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.addons__title {
+  /* h2 typography comes from .h2; here we only override margin via
+     the more specific selector above */
+}
+
+.addons__sub {
+  display: block;
+  max-width: 100%;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+/* On desktop, keep subtitle on a single line for a clean, full-width read */
+@media (min-width: 1024px) {
+  .addons__sub {
+    white-space: nowrap;
+  }
+}
+
+/* Layout */
+
+.addons__grid {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: -0.4rem;  /* pull grid upwards to visually kill the gap */
+}
+
+/* Two columns only from wider screens (more breathing room) */
+
+@media (min-width: 1024px) {
+  .addons__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+  }
+}
+
+/* Column containers */
+
+.addons__column {
+  display: flex;
+  flex-direction: column;
+}
+
+.addons__column-title {
+  margin: 0 0 var(--space-2);
+}
+
+.addons__column--addons .addons__column-title {
+  color: var(--color-primary);
+}
+
+.addons__column--speed .addons__column-title {
+  color: var(--color-accent);
+}
+
+/* Table shell */
+
+.addons__table-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-light-alt);
+  box-shadow: var(--shadow-xs);
+}
+
+.addons__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+/* Descriptive column gets more width than price/action column */
+
+.addons__col--info {
+  width: 76%;
+}
+
+.addons__col--meta {
+  width: 24%;
+}
+
+/* Header row – stronger contrast, no muted text */
+
+.addons__th {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background: color-mix(
+    in oklab,
+    var(--color-light) 70%,
+    var(--color-primary-soft, var(--color-primary)) 30%
+  );
+}
+
+.addons__th--meta {
+  text-align: right;
+}
+
+/* Column note – full-width, premium strip under the table */
+
+.addons__note {
+  grid-column: 1 / -1;  /* if placed in a grid context, span full width */
+  width: 100%;
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-light-alt);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-subtle) 80%,
+    var(--color-light) 20%
+  );
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+/* ------------------------- */
+/* AddOnItem row styling     */
+/* ------------------------- */
+
+.addons-item__cell {
+  padding: var(--space-3) var(--space-3);
+  border-top: 1px solid var(--color-light-alt);
+  vertical-align: top;
+  background: var(--color-surface);
+}
+
+/* Compact mode tightens cells */
+.addons-item--compact .addons-item__cell {
+  padding-block: var(--space-2_5);
+}
+
+/* Clear vertical separation between text and price/action on larger screens */
+
+.addons-item__cell--info {
+  text-align: left;
+  border-right: 1px solid var(--color-light-alt);
+}
+
+.addons-item__cell--meta {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: var(--space-4);
+}
+
+/* On smaller screens, soften the separation for a calmer look */
+@media (max-width: 639px) {
+  .addons-item__cell--info {
+    border-right: none;
+  }
+
+  .addons-item__cell--meta {
+    padding-left: var(--space-3);
+  }
+}
+
+/* Alternating row backgrounds for subtle contrast */
+
+.addons-item:nth-child(even) .addons-item__cell {
+  background: var(--color-surface-subtle);
+}
+
+/* Highlight / speed variants remain subtle and premium */
+
+.addons-item--highlight .addons-item__cell {
+  background: color-mix(
+    in oklab,
+    var(--color-surface-subtle) 80%,
+    var(--color-accent) 20%
+  );
+}
+
+.addons-item--speed .addons-item__cell {
+  background: color-mix(
+    in oklab,
+    var(--color-surface-subtle) 80%,
+    var(--color-primary-soft, var(--color-primary)) 20%
+  );
+}
+
+/* Name, badge, description */
+
+.addons-item__name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.addons-item__name {
+  flex: 1;
+  font-size: var(--fs-base); /* title stands out */
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* On smaller screens, allow wrapping for readability */
+@media (max-width: 639px) {
+  .addons-item__name {
+    white-space: normal;
+  }
+}
+
+/* BADGES (HIGH IMPACT / POPULAR / etc.) – visibly reduced size */
+
+.addons-item__badge {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 0.35rem;  /* smaller */
+  padding-block: 0.05rem;   /* smaller */
+  border-radius: 999px;
+  font-size: 0.7rem;        /* smaller than body text */
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: var(--color-light);
+  border: 1px solid var(--color-light-alt);
+}
+
+.addons-item__desc {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+/* Price + CTA link – meta text reduced in size but still legible */
+
+.addons-item__price {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.addons-item__cta-wrapper {
+  display: inline-flex;
+}
+
+/* Small, text-style CTA that does NOT steal the show */
+
+.addons-item__link {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-primary);
+}
+
+.addons-item__link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.addons-item__link--accent {
+  color: var(--color-accent);
+}
+
+.addons-item__link--primary {
+  color: var(--color-primary);
+}
+
+.addons-item__link--ghost,
+.addons-item__link--link {
+  color: var(--color-text);
+}
+
+/* Hover & focus states */
+
+@media (hover: hover) {
+  .addons-item:hover .addons-item__cell {
+    background: var(--color-card-hover);
+  }
+}
+
+.addons-item:focus-within .addons-item__cell {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* Reduced motion */
+
+.addons-item__cell {
+  transition:
+    background-color 0.16s ease-out,
+    border-color 0.16s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .addons-item__cell {
+    transition: none;
+  }
+}
+
+/* Visually hidden helper */
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

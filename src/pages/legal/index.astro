@@ -1,9 +1,17 @@
 ---
 import BaseLayout from "../../components/layout/BaseLayout.astro";
+import {
+  LegalLayout,
+  LegalHubSection,
+  LegalCardGrid,
+  LegalCard,
+} from "../../components/legal";
 
 const pageTitle = "Legal & Policies";
 const pageDescription =
   "Central hub for CVWriting.co.ke legal documents, including Terms of Service, Privacy Policy, Cookies & Preferences, and Refund & Revisions Policy.";
+
+const lastUpdated = "24 November 2025";
 
 const policies = [
   {
@@ -11,66 +19,48 @@ const policies = [
     title: "Terms of Service",
     description:
       "The rules that govern your use of CVWriting.co.ke and our CV writing and related professional services.",
-    lastUpdated: "[insert date]",
+    lastUpdated,
   },
   {
     slug: "privacy",
     title: "Privacy Policy",
     description:
       "How we collect, use, store, and protect your personal data in line with the Kenya Data Protection Act, 2019.",
-    lastUpdated: "[insert date]",
+    lastUpdated,
   },
   {
     slug: "cookies",
     title: "Cookies & Preferences Policy",
     description:
-      "How we use cookies and similar technologies on cvwriting.co.ke and how you can manage your preferences.",
-    lastUpdated: "[insert date]",
+      "How we use cookies and similar technologies on CVWriting.co.ke and how you can manage your preferences.",
+    lastUpdated,
   },
   {
     slug: "refunds-revisions",
     title: "Refund & Revisions Policy",
     description:
       "How refunds, credits, and revision requests are handled for CVWriting.co.ke services in Kenya.",
-    lastUpdated: "[insert date]",
+    lastUpdated,
   },
 ];
 ---
 
 <BaseLayout title={`${pageTitle} – CVWriting.co.ke`} description={pageDescription}>
-  <main class="page-gap-after">
-    <div class="container">
-      <header class="page-header">
-        <h1 class="h1">{pageTitle}</h1>
-        <p class="page-lead">
-          This hub lists all core legal documents that apply when you use cvwriting.co.ke or engage our CV
-          writing and related services.
-        </p>
-      </header>
-
-      <section class="section" aria-label="Legal documents">
-        <header class="section-head">
-          <h2 class="section-title">Core legal documents</h2>
-          <p class="section-intro">
-            Review the specific policy that matches your question. Each document explains its scope, your rights,
-            and our responsibilities in clear sections.
-          </p>
-        </header>
-
-        <div class="legal-grid">
-          {policies.map((policy) => (
-            <article class="legal-card">
-              <h3 class="legal-card__title">
-                <a href={`/legal/${policy.slug}`}>{policy.title}</a>
-              </h3>
-              <p class="legal-card__description">{policy.description}</p>
-              <p class="legal-card__meta text-muted">
-                Last updated: {policy.lastUpdated}
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
-    </div>
-  </main>
+  <LegalLayout showSidebar={false}>
+    <LegalHubSection
+      title={pageTitle}
+      intro="This hub lists all core legal documents that apply when you use CVWriting.co.ke or engage our CV writing and related services. Each policy explains its scope, your rights and our responsibilities in clear sections."
+    >
+      <LegalCardGrid>
+        {policies.map((policy) => (
+          <LegalCard
+            href={`/legal/${policy.slug}/`}
+            title={policy.title}
+            description={policy.description}
+            lastUpdated={policy.lastUpdated}
+          />
+        ))}
+      </LegalCardGrid>
+    </LegalHubSection>
+  </LegalLayout>
 </BaseLayout>

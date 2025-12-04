@@ -5,7 +5,7 @@
 */
 
 .prose {
-  color: var(--color-text);
+  color: var(--color-neutral-600);
   font-family: var(--font-sans);
   font-size: var(--fs-base);
   line-height: 1.7;
@@ -44,7 +44,7 @@
   margin: 0;
   margin-bottom: var(--space-4);
   line-height: 1.75;
-  color: var(--color-text); /* Primary body colour (Neutral 600) */
+  color: var(--color-neutral-600); /* Primary body colour (Neutral 600) */
 }
 
 /* Lists */
@@ -66,7 +66,7 @@
   padding-left: var(--space-3);
   border-left: 3px solid
     color-mix(in oklab, var(--color-primary) 10%, var(--color-neutral-100));
-  color: var(--color-muted);
+  color: var(--color-neutral-600); /* Strong, readable quote text */
   font-style: italic;
 }
 
@@ -92,7 +92,6 @@
     var(--color-surface)
   );
   box-shadow: var(--shadow-xs);
-  outline: none;
 }
 
 /* Inline code */

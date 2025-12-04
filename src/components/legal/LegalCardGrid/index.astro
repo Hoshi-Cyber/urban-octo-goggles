@@ -1,0 +1,15 @@
+---
+// src/components/legal/LegalCardGrid/index.astro
+import "./LegalCardGrid.css";
+
+interface Props {
+  as?: "div" | "ul" | "ol";
+}
+
+const { as = "div" } = Astro.props as Props;
+const RootTag = as;
+---
+
+<RootTag class="legal-card-grid">
+  <slot />
+</RootTag>

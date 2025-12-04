@@ -4,11 +4,17 @@
 /* Root band */
 .trustbar {
   font-family: var(--font-sans);
-  background: var(--color-light);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
   border-radius: var(--radius-xl);
   padding: var(--space-6) var(--space-4);
   box-shadow: var(--shadow-sm);
   color: var(--color-text);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 18%, transparent);
 }
 
 /* Compact: visually inline / transparent wrapper (used on Pricing) */
@@ -17,6 +23,7 @@
   border-radius: 0;
   padding: 0;
   box-shadow: none;
+  border: 0;
 }
 
 /* Inner layout */
@@ -74,8 +81,19 @@
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-accent-soft, var(--color-accent))
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-accent) 35%, transparent);
   box-shadow: var(--shadow-sm);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 /* Compact: premium pill treatment */
@@ -86,11 +104,11 @@
   border-radius: 999px;
   background: color-mix(
     in srgb,
-    var(--color-surface) 92%,
-    var(--color-accent) 8%
+    var(--color-surface) 88%,
+    var(--color-accent) 12%
   );
   border: 1px solid
-    color-mix(in srgb, var(--color-accent) 35%, transparent);
+    color-mix(in srgb, var(--color-accent) 40%, transparent);
   box-shadow: var(--shadow-xs, var(--shadow-sm));
 }
 
@@ -175,17 +193,26 @@
   padding: var(--space-1) var(--space-3);
   border-radius: 999px;
   border: 1px solid
-    color-mix(in srgb, var(--color-border, var(--color-muted)) 80%, transparent);
+    color-mix(
+      in srgb,
+      var(--color-border, var(--color-muted)) 70%,
+      transparent
+    );
   background: color-mix(
     in srgb,
     var(--color-surface) 88%,
-    var(--color-light) 12%
+    var(--color-primary-soft, var(--color-light)) 12%
   );
   font-size: var(--fs-sm);
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--color-text);
   text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 .trustbar--compact .trustbar__segment-chip {
@@ -194,7 +221,29 @@
 
 /* “+N more” chip */
 .trustbar__segment-chip--more {
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+/* Hover / focus styling for chips (if used as links/buttons) */
+.trustbar__segment-chip:hover,
+.trustbar__segment-chip:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--color-primary) 38%,
+    transparent
+  );
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.trustbar__segment-chip:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Footnote */
@@ -291,5 +340,15 @@
 
   .trustbar__summary {
     max-width: 32rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .trustbar,
+  .trustbar * ,
+  .trustbar *::before,
+  .trustbar *::after {
+    transition: none !important;
   }
 }

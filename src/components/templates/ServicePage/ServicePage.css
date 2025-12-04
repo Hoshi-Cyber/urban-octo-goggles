@@ -21,13 +21,27 @@
   padding-bottom: clamp(var(--space-6), 3vw, var(--space-10));
 }
 
-/* Optional hero modifier
-   Add class "section--hero" to the hero section in markup when desired */
+/* HERO – soft brand-tinted band with subtle radial accents */
 .servicePage .section--hero {
   background:
-    color-mix(in oklab, var(--color-surface) 94%, var(--color-text) 6%);
+    radial-gradient(
+      circle at top left,
+      color-mix(in oklab, var(--color-primary-soft, var(--color-primary)) 14%, transparent)
+        0,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(in oklab, var(--color-accent) 14%, transparent) 0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    );
   border-bottom: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
   padding-top: clamp(var(--space-6), 3vw, var(--space-10));
   padding-bottom: clamp(var(--space-4), 2vw, var(--space-6));
 }
@@ -39,8 +53,21 @@
   padding-inline: var(--container-px);
 }
 
-/* Hero stack + typography
-   Uses global .h1 + .page-lead for type; this just refines layout */
+/* HERO layout: copy + image */
+.servicePage__hero {
+  display: grid;
+  gap: clamp(var(--space-5), 3vw, var(--space-8));
+  align-items: center;
+}
+
+/* On wider screens, two-columns: text left, image right */
+@media (min-width: 768px) {
+  .servicePage__hero {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+  }
+}
+
+/* Hero content stack + typography */
 .servicePage .flow {
   display: grid;
   gap: clamp(var(--space-3), 1.4vw, var(--space-4));
@@ -76,6 +103,61 @@
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-3);
+}
+
+/* HERO media (image) */
+.servicePage__hero-media {
+  position: relative;
+  max-width: 30rem;
+  margin-inline: auto;
+}
+
+/* Subtle halo behind the hero image */
+.servicePage__hero-media::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6%;
+  border-radius: var(--radius-2xl, var(--radius-xl));
+  background: radial-gradient(
+    circle at top left,
+    color-mix(in oklab, var(--color-primary-soft, var(--color-primary)) 30%, transparent) 0,
+    transparent 65%
+  );
+  opacity: 0.7;
+  filter: blur(6px);
+  z-index: 0;
+}
+
+/* Frame for the hero image */
+.servicePage__hero-media-shell {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--radius-2xl, var(--radius-xl));
+  padding: 0.35rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-primary) 70%, transparent),
+    color-mix(in oklab, var(--color-accent) 70%, transparent)
+  );
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 4 / 3;
+}
+
+/* Actual hero image */
+.servicePage__hero-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  background: var(--color-surface);
+}
+
+/* On very small screens, add breathing room below copy */
+@media (max-width: 479px) {
+  .servicePage__hero-media {
+    margin-top: var(--space-4);
+  }
 }
 
 /* Main + aside grid */
@@ -120,15 +202,19 @@
   align-self: flex-start;
 }
 
-/* Aside card – default (mobile / small tablet) non-sticky */
+/* Aside card – soft premium card with brand accent */
 .servicePage .aside .aside-card {
   position: static;
   top: auto;
   padding: var(--space-5);
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   border-radius: var(--radius-xl);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 10%, transparent);
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
   box-shadow: var(--shadow-md);
   overflow: hidden; /* for accent bar */
 }
@@ -142,14 +228,17 @@
   }
 }
 
-/* Accent bar at top of aside card */
+/* Accent bar at top of aside card – primary → accent gradient */
 .servicePage .aside .aside-card::before {
   content: "";
   display: block;
   height: 3px;
   width: 100%;
-  background:
-    color-mix(in oklab, var(--color-text) 12%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 70%, transparent),
+    color-mix(in oklab, var(--color-accent) 70%, transparent)
+  );
   margin-bottom: var(--space-4);
 }
 
@@ -175,7 +264,11 @@
 .servicePage .card-sub {
   margin: 0 0 var(--space-4);
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-muted) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
 }
 
 /* Aside CTA column – compact, full-width buttons */
@@ -229,10 +322,14 @@
 .servicePage .content.prose .benefit-item {
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   box-shadow: var(--shadow-sm);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
 }
 
 .servicePage .content.prose .benefit-item h3 {
@@ -247,7 +344,7 @@
   color: var(--color-muted);
 }
 
-/* Features section */
+/* Features section – light brand tint + subtle hover */
 .servicePage .features {
   display: grid;
   gap: var(--space-4);
@@ -262,22 +359,35 @@
 
 .servicePage .feature {
   padding: var(--space-5);
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 8%, transparent);
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
   box-shadow: var(--shadow-sm);
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
-    border-color 150ms ease-out;
+    border-color 150ms ease-out,
+    background-color 150ms ease-out;
 }
 
 .servicePage .feature:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color:
-    color-mix(in oklab, var(--color-primary) 40%, transparent);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 40%,
+    var(--color-accent) 10%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
 }
 
 .servicePage .feature-title {
@@ -292,13 +402,12 @@
 }
 
 /* ================================
-   New hooks: Trust strip
+   Trust strip
    ================================ */
 
-/* Place directly below hero as a separate band */
 .servicePage .trust-strip {
   border-block: 1px solid
-    color-mix(in oklab, var(--color-text) 8%, transparent);
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
   background: var(--color-surface);
   padding-block: clamp(var(--space-3), 1.6vw, var(--space-4));
 }
@@ -335,7 +444,6 @@
   white-space: nowrap;
 }
 
-/* Optional logo hook */
 .servicePage .trust-strip__logo {
   height: 1.5rem;
   width: auto;
@@ -343,7 +451,7 @@
 }
 
 /* ================================
-   New hooks: How-it-works row
+   How-it-works row
    ================================ */
 
 .servicePage .how-it-works {
@@ -376,7 +484,7 @@
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
 }
@@ -392,8 +500,11 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--color-muted);
-  background:
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 16%,
+    var(--color-surface) 84%
+  );
   margin-bottom: var(--space-2);
 }
 
@@ -408,18 +519,23 @@
 }
 
 /* ================================
-   New hooks: Testimonial + metrics
+   Testimonial + metrics
    ================================ */
 
 .servicePage .testimonial {
   margin-block: clamp(var(--space-4), 2.4vw, var(--space-6));
 }
 
+/* Testimonial card – minimalist brand-tinted panel */
 .servicePage .testimonial--card {
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   border-radius: var(--radius-xl);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 8%, transparent);
+    color-mix(in oklab, var(--color-primary) 14%, transparent);
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
 }
@@ -428,6 +544,11 @@
   margin: 0 0 var(--space-3);
   font-size: var(--fs-md);
   line-height: 1.6;
+  color: color-mix(
+    in oklab,
+    var(--color-text) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
 }
 
 .servicePage .testimonial__quote::before,
@@ -448,21 +569,29 @@
 
 .servicePage .testimonial__name {
   font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 80%,
+    var(--color-accent) 20%
+  );
 }
 
 .servicePage .testimonial__role {
   opacity: 0.9;
 }
 
-/* Metrics panel */
+/* Metrics panel – soft band with strong values */
 .servicePage .metrics-panel {
   margin-block: clamp(var(--space-4), 2.4vw, var(--space-5));
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  background:
-    color-mix(in oklab, var(--color-surface) 94%, var(--color-text) 6%);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 10%, transparent);
+    color-mix(in oklab, var(--color-primary) 16%, transparent);
 }
 
 .servicePage .metrics-panel__title {
@@ -488,6 +617,7 @@
 .servicePage .metrics-panel__value {
   font-size: var(--fs-xl);
   font-weight: 600;
+  color: var(--color-primary);
 }
 
 .servicePage .metrics-panel__label {
@@ -498,7 +628,7 @@
 }
 
 /* ================================
-   New hooks: FAQ accordion
+   FAQ accordion
    ================================ */
 
 .servicePage .faq {
@@ -517,11 +647,11 @@
 .servicePage .faq__item {
   border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 8%, transparent);
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
   background: var(--color-surface);
 }
 
-/* Question row – clickable target; JS/markup will handle the actual button/summary element */
+/* Question row */
 .servicePage .faq__question {
   display: flex;
   justify-content: space-between;
@@ -558,7 +688,7 @@
 }
 
 /* ================================
-   New hooks: Mobile-only sticky CTA bar
+   Mobile-only sticky CTA bar
    ================================ */
 
 .servicePage .mobile-cta-bar {
@@ -566,9 +696,13 @@
   inset-inline: 0;
   bottom: 0;
   z-index: 20;
-  background: var(--color-surface);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
   border-top: 1px solid
-    color-mix(in oklab, var(--color-text) 10%, transparent);
+    color-mix(in oklab, var(--color-primary) 14%, transparent);
   padding: var(--space-3) var(--container-px);
   display: none; /* default off – enabled on mobile via media query */
 }
@@ -590,7 +724,7 @@
   flex: 0 0 auto;
 }
 
-/* Only show on small screens; hide when viewport is wide enough for sidebar + header CTAs to be persistent */
+/* Only show on small screens */
 @media (max-width: 767px) {
   .servicePage .mobile-cta-bar {
     display: block;
@@ -601,7 +735,7 @@
   }
 }
 
-/* Reduced motion – no extra animation here; rely on global button transitions */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .servicePage .aside .aside-card,
   .servicePage .feature {

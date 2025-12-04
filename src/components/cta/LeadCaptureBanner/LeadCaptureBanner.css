@@ -5,7 +5,11 @@
 
 [data-section="lead-cta"] {
   padding-block: var(--space-8);
-  background: var(--color-light);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
 }
 
 /* ===== Inner card ===== */
@@ -16,9 +20,34 @@
   max-width: var(--container-max);
   padding: var(--space-6);
   border-radius: var(--radius-xl);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-md);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* Subtle lift on hover for pointer devices */
+@media (hover: hover) and (pointer: fine) {
+  .lead:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
+    background: color-mix(
+      in oklab,
+      var(--color-surface) 86%,
+      var(--color-primary-soft, var(--color-primary)) 14%
+    );
+  }
 }
 
 /* Top accent bar for subtle brand emphasis */
@@ -31,9 +60,8 @@
   border-radius: var(--radius-md);
   background: linear-gradient(
     90deg,
-    var(--color-primary),
-    var(--color-accent),
-    var(--color-primary)
+    color-mix(in oklab, var(--color-primary) 65%, transparent),
+    color-mix(in oklab, var(--color-accent) 35%, transparent)
   );
 }
 
@@ -80,7 +108,7 @@
   font-weight: 700;
   font-size: var(--fs-2xl);
   line-height: 1.2;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .lead__sub {
@@ -88,7 +116,7 @@
   font-family: var(--font-sans);
   font-size: var(--fs-base);
   line-height: 1.5;
-  color: var(--color-muted);
+  color: var(--color-text);
   max-width: 52ch;
 }
 
@@ -183,5 +211,6 @@
 @media (prefers-reduced-motion: reduce) {
   .lead {
     scroll-behavior: auto;
+    transition: none;
   }
 }

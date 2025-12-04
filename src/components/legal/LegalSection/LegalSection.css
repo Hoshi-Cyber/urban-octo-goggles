@@ -1,0 +1,31 @@
+/* src/components/legal/LegalSection/LegalSection.css */
+
+.legal-section {
+  /* Balanced internal padding for a premium, breathable block */
+  padding-block: clamp(var(--space-6, 1.5rem), 4vw, var(--space-10, 2.5rem));
+  padding-inline: clamp(var(--space-3, 0.75rem), 4vw, var(--space-8, 2rem));
+
+  border-top: 1px solid
+    var(--color-border-subtle, var(--color-light-alt));
+  background-color: var(--color-background, #ffffff);
+}
+
+.legal-section:first-of-type {
+  border-top: none;
+}
+
+/* Vertical layout: title above content, full-width header */
+.legal-section__header {
+  width: 100%;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+/* Strictly use global h2 styling; only reset local margins */
+.legal-section__heading {
+  margin-top: 0;
+}
+
+/* Body content (relies on global .prose + .stack for internal rhythm) */
+.legal-section__body {
+  max-width: 70ch;
+}

@@ -4,15 +4,33 @@
 .samplecard {
   display: grid;
   gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+  box-shadow: var(--shadow-sm);
   transition:
     box-shadow 0.15s ease,
-    transform 0.15s ease;
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
   contain: content;
 }
 
 .samplecard:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  border-color: var(--color-accent);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 86%,
+    var(--color-primary-soft, var(--color-primary)) 14%
+  );
 }
 
 .samplecard--compact {
@@ -37,7 +55,7 @@
   display: block;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  background: var(--color-light);
+  background: var(--color-surface-alt, var(--color-light));
 }
 
 /* Body & header */
@@ -55,15 +73,17 @@
 
 .samplecard__eyebrow {
   margin: 0;
-  font-size: var(--fs-sm);
-  letter-spacing: 0.06em;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
 .samplecard__title {
   margin: 0;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .samplecard__title--clamp {

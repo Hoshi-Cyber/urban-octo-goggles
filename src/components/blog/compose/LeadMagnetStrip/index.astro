@@ -1,5 +1,6 @@
 ---
 // src/components/blog/compose/LeadMagnetStrip/index.astro
+// Bottom-of-article / inline lead magnet strip with premium styling.
 
 import sheet from "./LeadMagnetStrip.css?url";
 import type { LeadMagnetStripProps } from "./types";
@@ -58,7 +59,10 @@ const ariaLabel = hasTitle ? undefined : "Lead magnet";
         )}
 
         {title && (
-          <h2 id={headingId} class="leadMagnet__title h4">
+          <h2
+            id={headingId}
+            class="leadMagnet__title section-title h2"
+          >
             {title}
           </h2>
         )}

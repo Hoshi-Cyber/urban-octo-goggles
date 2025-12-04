@@ -1,29 +1,109 @@
 /* Two-column criteria / fit section
    Shares layout and visual chrome with ServiceDetailSection.
+   Enhanced to use brand gradients and column accents.
 */
 
 .criteria-section {
-  padding-block: var(--space-8);
-  margin-block: var(--space-8);
-  background: color-mix(
-    in oklab,
-    var(--color-surface) 97%,
-    var(--color-text) 3%
+  padding-block: var(--space-10, var(--space-8));
+  margin-block: var(--space-10, var(--space-8));
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl, 1rem);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 22%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 18%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 96%,
+      #ffffff 4%
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 7%, transparent);
+  box-shadow: var(
+    --shadow-sm,
+    0 18px 40px rgba(15, 23, 42, 0.06)
   );
-  border-top: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
-  border-bottom: 1px solid
-    color-mix(in oklab, var(--color-text) 4%, transparent);
 }
 
-/* Header: H2 + intro stacked, full-width inside container */
+/* Inner soft ring to keep things premium but subtle */
+.criteria-section::before {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  border-radius: inherit;
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 10%,
+      transparent
+    );
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Header: H2 + intro – full-width band, left-aligned text */
 .criteria-section__head {
   max-width: 100%;
+  width: 100%;
+  margin-inline: 0;
+  align-items: flex-start;
+  gap: var(--space-3);
+  text-align: left;
+}
+
+.criteria-section__head .section-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: var(--space-2);
+  text-align: left;
+  width: 100%;
+}
+
+/* Gradient underline under H2 to tie into brand colours */
+.criteria-section__head .section-title::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
+  );
 }
 
 .criteria-section__head .section-intro {
   margin-top: 0;
   max-width: 100%;
+  width: 100%;
+  text-align: left;
+  color: var(
+    --color-muted,
+    color-mix(in oklab, var(--color-text) 72%, transparent)
+  );
 }
 
 /* Body: 1 column on mobile → 2 columns on md+ */
@@ -31,13 +111,14 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-6);
-  margin-top: var(--space-6);
+  margin-top: var(--space-8);
   align-items: stretch;
 }
 
 @media (min-width: 768px) {
   .criteria-section__body {
     grid-template-columns: 1fr 1fr;
+    gap: var(--space-7);
   }
 }
 
@@ -47,7 +128,19 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-5);
-  background: var(--color-surface);
+  background: linear-gradient(
+    135deg,
+    color-mix(
+      in oklab,
+      var(--color-surface) 94%,
+      #ffffff 6%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 100%,
+      transparent
+    )
+  );
   border-radius: var(--radius-lg, 0.75rem);
   border: 1px solid
     color-mix(in oklab, var(--color-text) 6%, transparent);
@@ -57,6 +150,11 @@
   );
   position: relative;
   overflow: hidden;
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out,
+    background 160ms ease-out;
 }
 
 /* Top accent bar, aligned with other premium cards */
@@ -69,28 +167,173 @@
   background: linear-gradient(
     to right,
     var(--color-primary),
-    color-mix(in oklab, var(--color-accent) 80%, var(--color-primary))
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
   );
   opacity: 0.9;
+}
+
+/* Left vs right column accent variants */
+.criteria-section__column:nth-child(1)::before {
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 65%,
+      var(--color-accent)
+    )
+  );
+}
+
+.criteria-section__column:nth-child(2)::before {
+  background: linear-gradient(
+    to right,
+    var(--color-accent),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 40%,
+      var(--color-accent)
+    )
+  );
+}
+
+/* Hover / focus elevation */
+.criteria-section__column:hover,
+.criteria-section__column:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(
+    --shadow-md,
+    0 22px 45px rgba(15, 23, 42, 0.09)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 22%,
+    transparent
+  );
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .criteria-section__column {
+    transition: none;
+    transform: none !important;
+  }
 }
 
 /* Subheadings use global H3 scale via .h3 utility */
 .criteria-section__subheading {
   margin: 0;
+  letter-spacing: 0.01em;
 }
 
-/* Lists: compact, readable bullets */
+/* Colour-tune headings per column for quick visual parsing */
+.criteria-section__column:nth-child(1) .criteria-section__subheading {
+  color: var(
+    --color-primary-strong,
+    var(--color-primary)
+  );
+}
+
+.criteria-section__column:nth-child(2) .criteria-section__subheading {
+  color: var(
+    --color-accent-strong,
+    var(--color-accent)
+  );
+}
+
+/* Lists: custom bullets with brand colour chips */
 .criteria-section__list {
-  list-style: disc;
-  padding-left: 1rem;
+  list-style: none;
+  padding-left: 0;
   font-size: var(--fs-base);
   line-height: 1.6;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  color: var(--color-muted-strong, var(--color-text));
+  color: var(
+    --color-muted-strong,
+    var(--color-text)
+  );
+  margin: 0;
 }
 
 .criteria-section__list li {
+  position: relative;
+  padding-left: 1.5rem;
   max-width: 60ch;
+}
+
+/* Base bullet style; tweaked per column below */
+.criteria-section__list li::before {
+  content: "";
+  position: absolute;
+  top: 0.6em;
+  inset-inline-start: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--color-primary),
+      color-mix(
+        in oklab,
+        var(--color-accent) 70%,
+        var(--color-primary)
+      )
+    );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-surface) 40%,
+      transparent
+    );
+}
+
+/* Right column bullet variant leaning into accent */
+.criteria-section__column:nth-child(2)
+  .criteria-section__list
+  li::before {
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--color-accent),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 55%,
+        var(--color-accent)
+      )
+    );
+}
+
+/* Slightly tighter vertical rhythm on small screens */
+@media (max-width: 639.98px) {
+  .criteria-section {
+    padding-block: var(--space-8);
+    margin-block: var(--space-8);
+  }
+
+  .criteria-section__body {
+    margin-top: var(--space-6);
+  }
+
+  .criteria-section__column {
+    padding: var(--space-4);
+  }
 }

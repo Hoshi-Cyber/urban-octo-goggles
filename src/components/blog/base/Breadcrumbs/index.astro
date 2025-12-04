@@ -1,4 +1,10 @@
 ---
+/**
+ * src/components/blog/base/Breadcrumbs/index.astro
+ * Premium, low-noise blog breadcrumb trail with canonical URL normalization
+ * and JSON-LD BreadcrumbList for SEO.
+ */
+
 import "./Breadcrumbs.css";
 import { slug } from "@/utils/slug";
 
@@ -95,9 +101,13 @@ const jsonLd = {
         return (
           <li class="breadcrumbs__item" key={`${c.label}-${i}`}>
             {c.current || !href ? (
-              <span class="breadcrumbs__current" aria-current="page">{c.label}</span>
+              <span class="breadcrumbs__current" aria-current="page">
+                {c.label}
+              </span>
             ) : (
-              <a class="breadcrumbs__link" href={href} data-cta="breadcrumb">{c.label}</a>
+              <a class="breadcrumbs__link" href={href} data-cta="breadcrumb">
+                {c.label}
+              </a>
             )}
           </li>
         );
@@ -106,6 +116,8 @@ const jsonLd = {
   </nav>
 ) : null}
 
-<script type="application/ld+json" is:inline>
-  {JSON.stringify(jsonLd)}
-</script>
+{normalized.length ? (
+  <script type="application/ld+json" is:inline>
+    {JSON.stringify(jsonLd)}
+  </script>
+) : null}

@@ -2,20 +2,16 @@
 /**
  * File: src/pages/blog/[category]/[slug].astro
  *
- * Fix Plan 190 & 190.2: Wire compose components + MDX map (single-post),
- * ensure cover is correctly passed to BlogPost, and wire a visible comments slot.
- *
- * Fix Plan 195: normalized authorSlug model + safe OG image defaults.
- *
- * Fix Plan 205.1: Single Blog Post Layout – data, IA, SEO & migration closure.
- * - Map full BlogPostLayoutProps from frontmatter + content, including:
- *   heroTagline, heroSoftCta, heroImage, introHtml, keyTakeaways,
- *   inlineOffer, socialProofItems, faqItems, finalCta, checklist, relatedArticles.
- * - Align SEO/meta/OG/Twitter + JSON-LD via Seo + ArticleJsonLd components.
+ * Single blog post route wired to BlogPost + BlogPostLayout (Fix Plans 190, 195, 205.1, 213).
  */
 
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+
+import type {
+  BlogPostLayoutPreset,
+  BlogPostLayoutSliceKey,
+} from "@/components/blog/post/BlogPostLayout";
 
 // Layout + page components
 import BaseLayout from "@/components/layout/BaseLayout.astro";
@@ -87,12 +83,8 @@ const canonicalAbs =
   (entry.data as any)?.canonical ||
   (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
 
-// ----- Hero / cover mapping (Fix 205.1 – heroImage as primary) -----
+// ----- Hero / cover mapping (both normalised and safe) -----
 
-// Raw cover data from frontmatter (legacy support; still passed through to BlogPost)
-const cover = (entry.data as any).cover;
-
-// Typed alias used for hero image + preload / JSON-LD image logic
 type ImageForMeta =
   | {
       src:
@@ -106,18 +98,85 @@ type ImageForMeta =
       width?: number;
       height?: number;
     }
+  | string
   | undefined;
 
-// New hero image field (preferred); fallback to cover for older posts
-const heroImage = ((entry.data as any).heroImage ?? cover) as ImageForMeta;
+// Shared fallback image (also used for OG when nothing else is available)
+const FALLBACK_HERO_IMAGE = "/assets/images/og/default-blog.webp";
+
+/** Normalise any frontmatter/cover value into a safe { src, alt, width?, height? } object */
+function normaliseImageForLayout(
+  value: ImageForMeta,
+  fallbackSrc: string,
+  alt: string,
+): { src: string; alt: string; width?: number; height?: number } {
+  // Case 1: direct Astro image object { src: string, width?, height?, alt? }
+  if (
+    value &&
+    typeof value === "object" &&
+    "src" in value &&
+    typeof (value as any).src === "string"
+  ) {
+    const v = value as any;
+    return {
+      src: v.src as string,
+      alt:
+        typeof v.alt === "string" && v.alt.trim().length > 0 ? v.alt : alt,
+      width: typeof v.width === "number" ? v.width : undefined,
+      height: typeof v.height === "number" ? v.height : undefined,
+    };
+  }
+
+  // Case 2: nested Astro image { src: { src, width, height }, alt? }
+  if (
+    value &&
+    typeof value === "object" &&
+    "src" in value &&
+    typeof (value as any).src === "object" &&
+    (value as any).src &&
+    typeof (value as any).src.src === "string"
+  ) {
+    const inner = (value as any).src;
+    return {
+      src: inner.src as string,
+      alt:
+        typeof (value as any).alt === "string" &&
+        (value as any).alt.trim().length > 0
+          ? (value as any).alt
+          : alt,
+      width: typeof inner.width === "number" ? inner.width : undefined,
+      height: typeof inner.height === "number" ? inner.height : undefined,
+    };
+  }
+
+  // Case 3: plain string path
+  if (typeof value === "string" && value.trim().length > 0) {
+    return { src: value, alt };
+  }
+
+  // Case 4: no usable image – fall back to shared default
+  return { src: fallbackSrc, alt };
+}
+
+// First normalise cover (old schema)
+const rawCover = (entry.data as any).cover as ImageForMeta;
+const cover = normaliseImageForLayout(
+  rawCover,
+  FALLBACK_HERO_IMAGE,
+  title,
+);
+
+// Then derive hero image, preferring heroImage but falling back to cover
+const rawHeroImage = ((entry.data as any).heroImage ?? cover) as ImageForMeta;
+const heroImage = normaliseImageForLayout(
+  rawHeroImage,
+  FALLBACK_HERO_IMAGE,
+  title,
+);
 
 // Derive the hero image URL used by PostCover for LCP/JSON-LD/preload coherence
 const heroImageUrl: string | undefined =
-  typeof heroImage?.src === "string"
-    ? heroImage.src
-    : typeof heroImage?.src === "object"
-    ? heroImage.src.src
-    : undefined;
+  typeof heroImage.src === "string" ? heroImage.src : undefined;
 
 // Optional alternates for hreflang (array of { hrefLang, href })
 type Alternate = { hrefLang: string; href: string };
@@ -129,14 +188,24 @@ const alternates = Array.isArray((entry.data as any)?.alternates)
 const tocHeadings = headings
   .filter((h: any) => h.depth === 2 || h.depth === 3)
   .map((h: any) => ({ depth: h.depth, slug: h.slug, text: h.text }));
-const showTOC = tocHeadings.length >= 3;
+
+// Approximate word count from readingTime (for TOC gating + SEO)
+const approxWordCount =
+  typeof readingTime === "number"
+    ? Math.max(1, Math.round(readingTime * 200))
+    : undefined;
+
+// TOC visibility: heading count + approximate length (Fix Plan 213)
+const showTOC =
+  tocHeadings.length >= 3 &&
+  (approxWordCount === undefined || approxWordCount >= 600);
 
 // Prev/Next within same category by date
 const inSameCategory = allPosts
   .filter((p) => (p.data.category ?? catFromPath(p)) === categorySlug)
   .sort(
     (a, b) =>
-      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+      new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
   );
 
 const idx = inSameCategory.findIndex((p) => baseSlug(p) === entryBaseSlug);
@@ -159,7 +228,7 @@ const related = allPosts
   .filter(
     (p) =>
       baseSlug(p) !== entryBaseSlug &&
-      (p.data.category ?? catFromPath(p)) === categorySlug
+      (p.data.category ?? catFromPath(p)) === categorySlug,
   )
   .map((p) => ({ post: p, score: overlapScore(entry, p) }))
   .filter((x) => x.score > 0 || tags.length === 0)
@@ -167,12 +236,11 @@ const related = allPosts
     (a, b) =>
       b.score - a.score ||
       new Date(b.post.data.date).getTime() -
-        new Date(a.post.data.date).getTime()
+        new Date(a.post.data.date).getTime(),
   )
   .slice(0, 6)
   .map((x) => x.post);
 
-// Deterministic RelatedArticle[] payload for layout (Fix 205.1.6)
 type RelatedArticle = {
   title: string;
   url: string;
@@ -184,8 +252,8 @@ type RelatedArticle = {
 
 const relatedArticles: RelatedArticle[] = related.map((post) => {
   const cat = post.data.category ?? catFromPath(post);
-  const base = baseSlug(post);
-  const url = `/blog/${cat}/${base}/`;
+  const b = baseSlug(post);
+  const url = `/blog/${cat}/${b}/`;
 
   return {
     title: post.data.title,
@@ -197,16 +265,12 @@ const relatedArticles: RelatedArticle[] = related.map((post) => {
   };
 });
 
-// ---------- Layout props from frontmatter (Fix 205.1.2) ----------
+// ---------- Layout props from frontmatter ----------
 
-// Hero copy
 const heroTagline = (entry.data as any).heroTagline ?? null;
 const heroSoftCta = (entry.data as any).heroSoftCta ?? null;
-
-// Intro slice (HTML string or rich text pre-derived by MDX pipeline)
 const introHtml = (entry.data as any).introHtml ?? null;
 
-// Key takeaways – normalized to array when present
 const rawKeyTakeaways = (entry.data as any).keyTakeaways;
 const keyTakeaways =
   Array.isArray(rawKeyTakeaways)
@@ -215,22 +279,80 @@ const keyTakeaways =
     ? [rawKeyTakeaways]
     : null;
 
-// Inline offer block
 const inlineOffer = (entry.data as any).inlineOffer ?? null;
-
-// Social proof / testimonials
 const socialProofItems = (entry.data as any).socialProofItems ?? null;
-
-// FAQ entries
 const faqItems = (entry.data as any).faqItems ?? null;
-
-// Final CTA block
 const finalCta = (entry.data as any).finalCta ?? null;
-
-// Checklist (implementation steps) – can be list of strings or objects
 const checklist = (entry.data as any).checklist ?? null;
 
-// ---------- SEO + JSON-LD wiring (Fix 205.1.5) ----------
+// ---------- IA preset + slice ordering (Fix Plan 213) ----------
+
+const layoutPreset: BlogPostLayoutPreset =
+  ((entry.data as any).layoutPreset as BlogPostLayoutPreset | undefined) ??
+  "conversionArticle";
+
+const layoutSlicesFromFrontmatter =
+  (entry.data as any).layoutSlices as BlogPostLayoutSliceKey[] | undefined;
+
+const hasTocSlice = showTOC && tocHeadings.length > 0;
+const hasChecklistSlice = !!checklist;
+const hasInlineOfferSlice = !!inlineOffer;
+const hasSocialProofSlice =
+  Array.isArray(socialProofItems) && socialProofItems.length > 0;
+const hasFaqSlice = Array.isArray(faqItems) && faqItems.length > 0;
+const hasFinalCtaSlice = !!finalCta;
+const hasRelatedSlice =
+  Array.isArray(relatedArticles) && relatedArticles.length > 0;
+
+const defaultSlicesByPreset: Record<
+  BlogPostLayoutPreset,
+  BlogPostLayoutSliceKey[]
+> = {
+  minimalArticle: ["toc", "body", "related"],
+  conversionArticle: [
+    "toc",
+    "body",
+    "checklist",
+    "inlineOffer",
+    "socialProof",
+    "faq",
+    "finalCta",
+    "related",
+  ],
+  educationalGuide: ["toc", "body", "checklist", "faq", "related"],
+};
+
+const baseSlicesForRoute: BlogPostLayoutSliceKey[] =
+  Array.isArray(layoutSlicesFromFrontmatter) &&
+  layoutSlicesFromFrontmatter.length > 0
+    ? layoutSlicesFromFrontmatter
+    : defaultSlicesByPreset[layoutPreset];
+
+const effectiveSlicesForRoute: BlogPostLayoutSliceKey[] =
+  baseSlicesForRoute.filter((sliceKey) => {
+    switch (sliceKey) {
+      case "toc":
+        return hasTocSlice;
+      case "body":
+        return true;
+      case "checklist":
+        return hasChecklistSlice;
+      case "inlineOffer":
+        return hasInlineOfferSlice;
+      case "socialProof":
+        return hasSocialProofSlice;
+      case "faq":
+        return hasFaqSlice;
+      case "finalCta":
+        return hasFinalCtaSlice;
+      case "related":
+        return hasRelatedSlice;
+      default:
+        return false;
+    }
+  });
+
+// ---------- SEO + JSON-LD wiring ----------
 
 const publisherName =
   (site && ((site as any).publisherName || (site as any).orgName)) ||
@@ -240,20 +362,29 @@ const publisherLogoUrl =
   (site && ((site as any).publisherLogo || (site as any).orgLogo)) ||
   undefined;
 
-// Estimate wordCount if not provided: readingTime (min) * 200 wpm
 const wordCount =
   (entry.data as any).wordCount ??
   (typeof readingTime === "number"
     ? Math.max(1, Math.round(readingTime * 200))
     : undefined);
 
-// Resolved OG image (Fix 195-E / 205.1.5): ogImage > heroImage > site default
-const siteDefaultOg = "/assets/images/og/default-blog.webp";
+const siteDefaultOg = FALLBACK_HERO_IMAGE;
 
-const ogImage: string | undefined =
-  (entry.data as any).ogImage ?? heroImageUrl ?? siteDefaultOg;
+const ogFromFrontmatter = (entry.data as any).ogImage;
+let ogImage: string | undefined;
 
-// SEO meta title/description (prefer metaTitle/metaDescription when present)
+if (typeof ogFromFrontmatter === "string" && ogFromFrontmatter.trim().length) {
+  ogImage = ogFromFrontmatter;
+} else if (
+  ogFromFrontmatter &&
+  typeof ogFromFrontmatter === "object" &&
+  typeof (ogFromFrontmatter as any).src === "string"
+) {
+  ogImage = (ogFromFrontmatter as any).src as string;
+} else {
+  ogImage = heroImageUrl ?? siteDefaultOg;
+}
+
 const seoTitle =
   typeof metaTitle === "string" && metaTitle.trim().length > 0
     ? metaTitle
@@ -264,7 +395,6 @@ const seoDescription =
     ? metaDescription
     : description;
 
-// Breadcrumbs array for ArticleJsonLd
 const breadcrumbs = [
   {
     name: "Home",
@@ -292,7 +422,6 @@ const breadcrumbs = [
   },
 ];
 
-// Props for BlogPost component (now aligned with BlogPostLayoutProps)
 const layoutProps = {
   title,
   description,
@@ -301,18 +430,15 @@ const layoutProps = {
   date,
   updated,
   readingTime,
-  // Legacy hero image support
+  // Now always a safe object
   cover,
-  // TOC + navigation
   tocHeadings,
   showTOC,
   prev,
   next,
   related,
-  // Author wiring (Fix 195-B)
   author: authorName,
   authorSlug,
-  // Fix Plan 205.1 – extended layout props
   heroTagline,
   heroSoftCta,
   heroImage,
@@ -324,15 +450,17 @@ const layoutProps = {
   finalCta,
   checklist,
   relatedArticles,
+  preset: layoutPreset,
+  slices: effectiveSlicesForRoute,
 };
 ---
+
 <BaseLayout
   title={title}
   description={description}
   canonical={canonicalAbs}
   seo={{ ogImage }}
 >
-  {/* Core SEO + OG/Twitter */}
   <Seo
     slot="head"
     title={seoTitle}
@@ -345,7 +473,6 @@ const layoutProps = {
     alternates={alternates}
   />
 
-  {/* Structured data (BlogPosting + BreadcrumbList) */}
   {canonicalAbs && (
     <ArticleJsonLd
       slot="head"
@@ -369,7 +496,6 @@ const layoutProps = {
     />
   )}
 
-  {/* LCP image preload (hero-cover aligned with PostCover + JSON-LD) */}
   {(() => {
     const href = heroImageUrl || ogImage || null;
 
@@ -385,7 +511,6 @@ const layoutProps = {
     ) : null;
   })()}
 
-  {/* Reading progress bar (island) */}
   <div
     id="read-progress"
     class="read-progress"
@@ -397,10 +522,8 @@ const layoutProps = {
   ></script>
 
   <BlogPost {...layoutProps}>
-    {/* Article body with MDX shortcodes enabled; BlogPost handles TOC, tags, share, nav, related, lead magnet via compose components */}
     <Content components={mdxComponents} />
 
-    {/* Fix Plan 190.2: ensure Comments slot has visible content */}
     <section slot="comments" class="comments-placeholder">
       <h2 class="h4">Comments</h2>
       <p>

@@ -1,131 +1,232 @@
 ---
 import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import {
+  LegalLayout,
+  LegalPageHeader,
+  LegalTOC,
+  LegalSection,
+  LegalFooterNav,
+} from "../../../components/legal";
 
 const pageTitle = "Cookies & Preferences Policy";
 const pageDescription =
   "How CVWriting.co.ke uses cookies and similar technologies, and how you can manage your preferences.";
+
+const lastUpdated = "1 December 2025";
+
+const tocItems = [
+  { id: "what-are-cookies", label: "1. What are cookies?" },
+  { id: "how-we-use-cookies", label: "2. How we use cookies" },
+  { id: "categories-of-cookies", label: "3. Categories of cookies we use" },
+  {
+    id: "cookie-consent-and-preferences",
+    label: "4. Cookie consent and preferences",
+  },
+  { id: "managing-cookies-browser", label: "5. Managing cookies in your browser" },
+  { id: "third-party-cookies", label: "6. Third-party cookies" },
+  {
+    id: "relationship-with-privacy-policy",
+    label: "7. Relationship with our Privacy Policy",
+  },
+  { id: "updates-to-this-policy", label: "8. Updates to this Cookies Policy" },
+];
+
+const relatedPolicies = [
+  {
+    slug: "privacy",
+    href: "/legal/privacy/",
+    label: "Privacy Policy",
+    description: "How we collect, use, and protect your personal data.",
+  },
+  {
+    slug: "terms",
+    href: "/legal/terms/",
+    label: "Terms of Service",
+    description: "The rules for using CVWriting.co.ke and our services.",
+  },
+  {
+    slug: "refunds-revisions",
+    href: "/legal/refunds-revisions/",
+    label: "Refund & Revisions Policy",
+    description: "When and how refunds or revisions may be provided.",
+  },
+];
 ---
 
 <BaseLayout title={`${pageTitle} – CVWriting.co.ke`} description={pageDescription}>
-  <main class="page-gap-after">
-    <div class="container">
-      <header class="page-header">
-        <h1 class="h1">{pageTitle}</h1>
-        <p class="page-lead">
-          This Policy explains what cookies are, how we use them on cvwriting.co.ke, and the choices you have
-          to manage them.
-        </p>
-      </header>
+  <LegalLayout
+    showSidebar={true}
+    sidebarPosition="right"
+    tocLabel="Cookies & preferences policy sections"
+  >
+    <LegalPageHeader
+      slot="header"
+      title={pageTitle}
+      intro="This Cookies & Preferences Policy explains what cookies are, how we use them on CVWriting.co.ke, and the choices you have to manage them."
+      lastUpdated={lastUpdated}
+      governingLaw="Laws of Kenya"
+    />
 
-      <p class="text-muted">Last updated: [insert date]</p>
+    <LegalTOC slot="toc" items={tocItems} />
 
-      <div class="prose">
-        <h2 id="what-are-cookies">1. What are cookies?</h2>
+    <div class="prose stack">
+      <LegalSection id="what-are-cookies" heading="1. What are cookies?">
         <p>
-          Cookies are small text files stored on your device when you visit a website. They help the site remember
-          your actions and preferences over time, such as login details, language, and pages visited. We also use
-          similar technologies like pixels and tags (collectively, “cookies”) for analytics and marketing.
+          Cookies are small text files stored on your device when you visit a website. They help the site
+          remember your actions and preferences over time, such as login details, language, and pages visited.
+          We also use similar technologies like pixels and tags (collectively, “cookies”) for analytics and
+          marketing.
         </p>
+      </LegalSection>
 
-        <h2 id="how-we-use-cookies">2. How we use cookies</h2>
-        <p>We use cookies on cvwriting.co.ke for the following purposes:</p>
-        <p><strong>Strictly necessary cookies:</strong></p>
+      <LegalSection id="how-we-use-cookies" heading="2. How we use cookies">
         <p>
-          Essential for the site to function (for example, page navigation, basic security). These cookies cannot be
-          switched off in our systems.
+          We use cookies on CVWriting.co.ke for the following purposes:
         </p>
 
-        <p><strong>Preference cookies:</strong></p>
+        <p><strong>2.1 Strictly necessary cookies:</strong></p>
+        <p>
+          Essential for the site to function (for example, page navigation and basic security). These cookies
+          are required for core functionality and cannot be switched off in our systems.
+        </p>
+
+        <p><strong>2.2 Preference cookies:</strong></p>
         <p>
           Remember your settings and choices (for example, preferred language or region, cookie preferences).
+          These help us tailor your experience.
         </p>
 
-        <p><strong>Analytics and performance cookies:</strong></p>
+        <p><strong>2.3 Analytics and performance cookies:</strong></p>
         <p>
           Help us understand how visitors use our website (pages visited, time spent, clicks) so we can improve
-          content and usability.
+          our content, navigation, and overall usability.
         </p>
 
-        <p><strong>Marketing and advertising cookies:</strong></p>
+        <p><strong>2.4 Marketing and advertising cookies:</strong></p>
         <p>
-          Used to deliver and measure ads, retarget visitors, or create audiences for marketing campaigns. These may
-          be set by us or by third-party partners such as social media platforms or ad networks.
+          Used to deliver and measure ads, retarget visitors, or create audiences for marketing campaigns.
+          These may be set by us or by third-party partners such as social media platforms or ad networks.
         </p>
         <p>
-          We will not place non-essential (analytics/marketing) cookies without your consent, where required by
-          applicable regulation.
+          We will not place non-essential (analytics or marketing) cookies without your consent, where required
+          by applicable regulation.
         </p>
+      </LegalSection>
 
-        <h2 id="categories-of-cookies">3. Categories of cookies we use (examples)</h2>
-        <p>Below is an indicative structure you can fill with actual tools and names:</p>
+      <LegalSection id="categories-of-cookies" heading="3. Categories of cookies we use (examples)">
+        <p>Below is an indicative structure that may be updated with specific tools and cookie names used on the site:</p>
         <ul>
           <li>
-            <strong>Strictly necessary cookies</strong><br />
-            Purpose: Load pages, manage sessions, maintain security, store cookie consent choices (for example,
-            “cookieConsent”, “session_id”).
+            <strong>3.1 Strictly necessary cookies</strong><br />
+            Purpose: Load pages, manage sessions, maintain security, and store cookie consent choices (for example,
+            values like “cookieConsent” or “session_id”).
           </li>
           <li>
-            <strong>Preferences cookies</strong><br />
+            <strong>3.2 Preferences cookies</strong><br />
             Purpose: Remember your language, site customisations, and previously selected options.
           </li>
           <li>
-            <strong>Analytics cookies</strong><br />
-            Purpose: Understand website traffic and performance (for example, cookies related to Google Analytics 4
-            or similar tools).
+            <strong>3.3 Analytics cookies</strong><br />
+            Purpose: Understand website traffic and performance (for example, cookies related to analytics tools
+            such as Google Analytics 4 or similar services).
           </li>
           <li>
-            <strong>Marketing cookies</strong><br />
-            Purpose: Measure and improve our marketing, show relevant content or ads on other platforms (for example,
+            <strong>3.4 Marketing cookies</strong><br />
+            Purpose: Measure and improve our marketing, and show relevant content or ads on other platforms (for example,
             pixels or cookies from Meta or Google Ads, where implemented).
           </li>
         </ul>
+      </LegalSection>
 
-        <h2 id="cookie-consent-and-preferences">4. Cookie consent and preferences</h2>
+      <LegalSection
+        id="cookie-consent-and-preferences"
+        heading="4. Cookie consent and preferences"
+      >
         <p>
-          When you first visit cvwriting.co.ke, you may see a cookie banner that explains that we use cookies and why
-          and allows you to accept all, reject non-essential, or manage preferences.
+          When you first visit CVWriting.co.ke, you may see a cookie banner that explains that we use cookies,
+          why we use them, and provides options to accept all, reject non-essential cookies, or manage your
+          preferences.
         </p>
         <p>
-          You can update your preferences at any time by visiting the “Manage Cookies” link in the footer or settings
+          You can update your preferences at any time by using the “Manage Cookies” link in the footer or settings
           section of the site. From there, you can enable or disable non-essential cookie categories (for example,
-          analytics, marketing) and save your preferences, which the site will remember through a consent cookie.
+          analytics or marketing) and save your preferences. We store your choices in a consent cookie so that the
+          site remembers them on future visits from the same browser.
         </p>
         <p>
           Strictly necessary cookies are always active, as the site cannot function properly without them.
         </p>
+      </LegalSection>
 
-        <h2 id="managing-cookies-browser">5. Managing cookies in your browser</h2>
+      <LegalSection
+        id="managing-cookies-browser"
+        heading="5. Managing cookies in your browser"
+      >
         <p>
-          You can also manage or delete cookies directly in your browser settings. Options typically allow you to
-          view cookies set on your device, block cookies from specific sites, delete existing cookies, and set rules
-          for all websites.
+          You can also manage or delete cookies directly in your browser settings. Most browsers allow you to:
+        </p>
+        <ul>
+          <li>
+            <strong>a)</strong> view the cookies stored on your device;
+          </li>
+          <li>
+            <strong>b)</strong> block cookies from specific websites;
+          </li>
+          <li>
+            <strong>c)</strong> delete existing cookies; and
+          </li>
+          <li>
+            <strong>d)</strong> set rules for how cookies should be handled across all websites.
+          </li>
+        </ul>
+        <p>
+          The steps vary by browser and device. If you block or delete certain cookies, some features of
+          CVWriting.co.ke may not function correctly and your experience may be affected.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="third-party-cookies" heading="6. Third-party cookies">
+        <p>
+          Some cookies may be placed by third parties when you interact with embedded content, analytics tools,
+          or advertising and remarketing pixels on CVWriting.co.ke. These third parties may collect information
+          about your usage of our site and other websites over time.
         </p>
         <p>
-          Note: Blocking or deleting certain cookies may affect your experience and prevent parts of the site from
-          working as intended.
+          Third-party cookies are subject to the privacy and cookie policies of the third parties that set them.
+          We encourage you to review those policies to understand how your data is used and how you can exercise
+          your choices.
         </p>
+      </LegalSection>
 
-        <h2 id="third-party-cookies">6. Third-party cookies</h2>
-        <p>
-          Some cookies may be placed by third parties when you interact with embedded content, analytics tools, or
-          advertising or remarketing pixels. These third parties may collect data about your usage of our site and
-          other websites. Their use of cookies is governed by their own privacy and cookie policies.
-        </p>
-
-        <h2 id="relationship-with-privacy-policy">7. Relationship with our Privacy Policy</h2>
+      <LegalSection
+        id="relationship-with-privacy-policy"
+        heading="7. Relationship with our Privacy Policy"
+      >
         <p>
           This Cookies &amp; Preferences Policy should be read together with our{" "}
-          <a href="/legal/privacy">Privacy Policy</a>. That Policy explains how we handle personal data collected via
-          cookies, our legal bases for processing, and your rights under Kenyan law.
+          <a href="/legal/privacy/">Privacy Policy</a>. That Policy explains how we handle personal data
+          collected via cookies, the legal bases we rely on, and your rights under Kenyan law and any other
+          applicable data protection legislation.
         </p>
+      </LegalSection>
 
-        <h2 id="updates-to-this-policy">8. Updates to this Cookies Policy</h2>
+      <LegalSection id="updates-to-this-policy" heading="8. Updates to this Cookies Policy">
         <p>
-          We may update this Policy to reflect changes in technology, legal requirements, or the cookies we use. The
-          latest version will always be available on cvwriting.co.ke with the “Last updated” date at the top. Where
-          necessary, we may re-prompt you for consent.
+          We may update this Cookies &amp; Preferences Policy from time to time to reflect changes in technology,
+          legal requirements, or the cookies and similar technologies we use.
         </p>
-      </div>
+        <p>
+          The latest version will always be available on CVWriting.co.ke with the “Last updated” date shown
+          at the top of the page. Where appropriate, we may notify you of material changes or re-prompt you
+          to review and confirm your cookie preferences.
+        </p>
+      </LegalSection>
     </div>
-  </main>
+
+    <LegalFooterNav
+      slot="footerNav"
+      currentSlug="cookies"
+      related={relatedPolicies}
+    />
+  </LegalLayout>
 </BaseLayout>

@@ -1,0 +1,49 @@
+---
+// src/components/legal/LegalLayout/index.astro
+import "./LegalLayout.css";
+
+interface Props {
+  showSidebar?: boolean;
+  sidebarPosition?: "left" | "right";
+  tocLabel?: string;
+}
+
+const {
+  showSidebar = true,
+  sidebarPosition = "right",
+  tocLabel = "On this page",
+} = Astro.props;
+
+const sidebarOnLeft = sidebarPosition === "left";
+---
+
+<div class="legal-layout">
+  <div class="legal-layout__inner container">
+    <header class="legal-layout__header page-header stack">
+      <slot name="header" />
+    </header>
+
+    <div
+      class:list={[
+        "legal-layout__body",
+        showSidebar && "legal-layout__body--with-sidebar",
+        sidebarOnLeft && "legal-layout__body--sidebar-left",
+        !showSidebar && "legal-layout__body--single-column",
+      ]}
+    >
+      {showSidebar && (
+        <aside class="legal-layout__sidebar" aria-label={tocLabel}>
+          <slot name="toc" />
+        </aside>
+      )}
+
+      <main id="legal-main" class="legal-layout__content" tabindex="-1">
+        <slot />
+      </main>
+    </div>
+
+    <footer class="legal-layout__footer">
+      <slot name="footerNav" />
+    </footer>
+  </div>
+</div>

@@ -1,21 +1,42 @@
 ---
+// src/components/blog/compose/PostUpdatedBadge/index.astro
+
 import css from "./PostUpdatedBadge.css?url";
 
-interface Props { date?: string | Date; updated?: string | Date; }
+interface Props {
+  date?: string | Date;
+  updated?: string | Date;
+}
+
 const toDate = (d?: string | Date) => (d ? new Date(d) : undefined);
+
 const published = toDate((Astro.props as Props)?.date);
 const modified = toDate((Astro.props as Props)?.updated);
-const show = published && modified ? modified > published : Boolean(modified);
+
+// Show badge only when there is a meaningful update
+const show =
+  published && modified ? modified.getTime() > published.getTime() : Boolean(modified);
 
 const fmt = (d?: Date) =>
   d
-    ? new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format(d)
+    ? new Intl.DateTimeFormat("en-GB", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(d)
     : null;
 ---
 <link rel="stylesheet" href={css} />
 
 {show && modified && (
-  <div class="post__updated" aria-live="polite">
-    Updated on {fmt(modified)}
+  <div
+    class="post__updated postUpdatedBadge"
+    aria-live="polite"
+    role="status"
+  >
+    <span class="postUpdatedBadge__label">Updated</span>
+    <time datetime={modified.toISOString()} class="postUpdatedBadge__date">
+      {fmt(modified)}
+    </time>
   </div>
 )}

@@ -1,0 +1,76 @@
+---
+export type AddOnType = "addon" | "speed";
+
+export interface AddOnItemProps {
+  id: string;
+  category: string;
+  type: AddOnType;
+  name: string;
+  description: string;
+  priceLabel: string;
+  badge?: string | null;
+  highlight?: boolean;
+  compact?: boolean;
+  ctaHref?: string;
+  ctaLabel?: string;
+  ctaVariant?: "primary" | "accent" | "ghost" | "link";
+}
+
+const {
+  id,
+  category,
+  type,
+  name,
+  description,
+  priceLabel,
+  badge = null,
+  highlight = false,
+  compact = false,
+  ctaHref,
+  ctaLabel,
+  ctaVariant = "link",
+} = Astro.props as AddOnItemProps;
+
+const rowClasses = [
+  "addons-item",
+  highlight ? "addons-item--highlight" : "",
+  type === "speed" ? "addons-item--speed" : "",
+  compact ? "addons-item--compact" : "",
+]
+  .filter(Boolean)
+  .join(" ");
+
+const linkClasses =
+  "addons-item__link" +
+  (ctaVariant ? ` addons-item__link--${ctaVariant}` : "");
+---
+
+<tr
+  class={rowClasses}
+  data-addon-id={id}
+  data-addon-type={type}
+  data-addon-category={category}
+>
+  <th scope="row" class="addons-item__cell addons-item__cell--info">
+    <div class="addons-item__name-row">
+      <span class="addons-item__name">{name}</span>
+      {badge && <span class="addons-item__badge">{badge}</span>}
+    </div>
+    <p class="addons-item__desc">{description}</p>
+  </th>
+  <td class="addons-item__cell addons-item__cell--meta">
+    <span class="addons-item__price">{priceLabel}</span>
+
+    {ctaHref && ctaLabel && (
+      <span class="addons-item__cta-wrapper">
+        <a
+          href={ctaHref}
+          class={linkClasses}
+          data-cta={`addons:${id}`}
+        >
+          {ctaLabel}
+        </a>
+      </span>
+    )}
+  </td>
+</tr>

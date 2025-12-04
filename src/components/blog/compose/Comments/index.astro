@@ -19,29 +19,56 @@ interface Props {
 const {
   provider = "placeholder",
   heading = "Comments",
-  hint = "Comments load on demand to keep pages fast.",
+  hint = "Thoughtful, Kenya-ready discussion on CVs, careers, and hiring. Comments load on demand to keep pages fast.",
   mountId = "comments-mount",
 } = Astro.props as Props;
+
+const headingId = "comments-heading";
+const hintId = "comments-hint";
 ---
-<section class="comments container" role="region" aria-label="Comments">
+<section
+  class="comments container"
+  role="region"
+  aria-labelledby={headingId}
+  aria-describedby={hint ? hintId : undefined}
+>
   <header class="comments__head section-head">
-    <h2 class="section-title">{heading}</h2>
-    <p class="section-sub text-muted">{hint}</p>
+    {/* h2 using global h2 styles + local underline accent */}
+    <h2
+      id={headingId}
+      class="comments__title section-title h2"
+    >
+      {heading}
+    </h2>
+    {hint && (
+      <p id={hintId} class="section-sub text-muted">
+        {hint}
+      </p>
+    )}
   </header>
 
   <div class="comments__body">
     <!-- Mount target. External scripts can attach here if you choose a provider later. -->
-    <div id={mountId} class="comments__mount" data-provider={provider}></div>
+    <div
+      id={mountId}
+      class="comments__mount"
+      data-provider={provider}
+    ></div>
 
     {provider === "placeholder" && (
       <div class="comments__placeholder" role="note" aria-live="polite">
-        <p class="mb-4">Comments are disabled for now.</p>
-        <p class="mb-0">Enable a provider to collect discussion without hurting Core Web Vitals.</p>
+        <p class="comments__placeholder-title">
+          Comments are currently disabled.
+        </p>
+        <p class="comments__placeholder-text">
+          When you are ready, connect a privacy-conscious provider (like Giscus or Hyvor)
+          to collect discussion without compromising Core Web Vitals.
+        </p>
       </div>
     )}
   </div>
-</section>
 
-<style>
-  @import "./Comments.css";
-</style>
+  <style>
+    @import "./Comments.css";
+  </style>
+</section>

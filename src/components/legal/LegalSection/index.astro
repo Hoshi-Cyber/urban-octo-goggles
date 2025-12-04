@@ -1,0 +1,32 @@
+---
+// src/components/legal/LegalSection/index.astro
+import "./LegalSection.css";
+
+interface Props {
+  id: string;
+  heading: string;
+  as?: "h2" | "h3" | "h4";
+}
+
+const props = Astro.props as Props;
+const { id, heading } = props;
+---
+
+<section
+  id={id}
+  class="legal-section"
+  aria-labelledby={`${id}-heading`}
+>
+  <header class="legal-section__header">
+    <h2
+      id={`${id}-heading`}
+      class="legal-section__heading h2"
+    >
+      {heading}
+    </h2>
+  </header>
+
+  <div class="legal-section__body prose stack">
+    <slot />
+  </div>
+</section>

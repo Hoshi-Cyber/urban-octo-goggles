@@ -53,35 +53,41 @@ const categoryUrl = `/blog/${category}/`;
 const hasSoftCta = Boolean(softCta?.label && softCta?.href);
 ---
 
-<section class="article-hero" aria-labelledby="post-hero-title">
-  <PostHeader
-    id="post-hero-title"
-    title={title}
-    category={category}
-    categoryUrl={categoryUrl}
-    dek={heroTagline}
-  />
-
-  <div class="article-hero__metaRow">
-    <PostMeta
-      date={publishedAt}
-      updated={updatedAt}
-      author={authorName}
-      authorUrl={authorUrl}
-      readingTime={readingTimeMinutes}
+<section
+  class="article-hero"
+  aria-labelledby="post-hero-title"
+  data-section="post-hero"
+>
+  <div class="article-hero__inner">
+    <PostHeader
+      id="post-hero-title"
+      title={title}
+      category={category}
+      categoryUrl={categoryUrl}
+      dek={heroTagline}
     />
 
-    {hasSoftCta && (
-      <Button
-        label={softCta!.label}
-        href={softCta!.href}
-        variant="link"
-        size="sm"
-        class="article-hero__cta"
-        cta={softCta!.ctaId ?? "hero:soft-cta"}
+    <div class="article-hero__metaRow">
+      <PostMeta
+        date={publishedAt}
+        updated={updatedAt}
+        author={authorName}
+        authorUrl={authorUrl}
+        readingTime={readingTimeMinutes}
       />
-    )}
-  </div>
 
-  <PostUpdatedBadge date={publishedAt} updated={updatedAt} />
+      {hasSoftCta && (
+        <Button
+          label={softCta!.label}
+          href={softCta!.href}
+          variant="link"
+          size="sm"
+          class="article-hero__cta"
+          cta={softCta!.ctaId ?? "hero:soft-cta"}
+        />
+      )}
+    </div>
+
+    <PostUpdatedBadge date={publishedAt} updated={updatedAt} />
+  </div>
 </section>

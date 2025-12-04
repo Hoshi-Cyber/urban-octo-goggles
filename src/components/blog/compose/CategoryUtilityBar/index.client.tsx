@@ -8,7 +8,7 @@ type Post = {
   slug?: string;
   title: string;
   url: string;
-  date: string;               // ISO
+  date: string; // ISO
   tags: string[];
   estReadMin: number | null;
 
@@ -23,18 +23,20 @@ type Post = {
 };
 
 type Props = {
-  category: string;   // e.g., "cv-tips"
-  pageSize: number;   // must match server default PER_PAGE
-  mountId?: string;   // id of the server grid container to replace (the <ol>)
+  category: string; // e.g., "cv-tips"
+  pageSize: number; // must match server default PER_PAGE
+  mountId?: string; // id of the server grid container to replace (the <ol>)
 };
 
 type SortKey = "newest" | "oldest" | "read";
 
 function parseSearch(): { sort: SortKey; tag: string; page: number } {
-  if (typeof window === "undefined") return { sort: "newest", tag: "", page: 1 };
+  if (typeof window === "undefined")
+    return { sort: "newest", tag: "", page: 1 };
   const sp = new URLSearchParams(window.location.search);
   const s = (sp.get("sort") || "newest").toLowerCase();
-  const sort: SortKey = s === "oldest" ? "oldest" : s === "read" ? "read" : "newest";
+  const sort: SortKey =
+    s === "oldest" ? "oldest" : s === "read" ? "read" : "newest";
   const tag = sp.get("tag") || "";
   const page = Math.max(1, parseInt(sp.get("page") || "1", 10));
   return { sort, tag, page };
@@ -42,8 +44,14 @@ function parseSearch(): { sort: SortKey; tag: string; page: number } {
 
 function applySort(arr: Post[], sort: SortKey) {
   const copy = [...arr];
-  if (sort === "newest") return copy.sort((a, b) => +new Date(b.date) - +new Date(a.date));
-  if (sort === "oldest") return copy.sort((a, b) => +new Date(a.date) - +new Date(b.date));
+  if (sort === "newest")
+    return copy.sort(
+      (a, b) => +new Date(b.date) - +new Date(a.date)
+    );
+  if (sort === "oldest")
+    return copy.sort(
+      (a, b) => +new Date(a.date) - +new Date(b.date)
+    );
   // "read" = shortest read first, then newest
   return copy.sort((a, b) => {
     const ar = a.estReadMin ?? Number.MAX_SAFE_INTEGER;
@@ -60,7 +68,14 @@ function paginate<T>(arr: T[], page: number, pageSize: number) {
 function escapeHtml(s: string) {
   return s.replace(
     /[&<>"']/g,
-    (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }) as const)[c]!
+    (c) =>
+      (({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }) as const)[c]!
   );
 }
 
@@ -75,29 +90,45 @@ function escapeHtml(s: string) {
  */
 function readFromSSR(): Post[] {
   if (typeof document === "undefined") return [];
-  const container = document.querySelector("section.ssr-grid ol.pfl__grid");
+  const container = document.querySelector(
+    "section.ssr-grid ol.pfl__grid"
+  );
   if (!container) return [];
   const items = Array.from(container.querySelectorAll("li"));
   return items.map((li) => {
     const a =
       (li.querySelector("h3 a") as HTMLAnchorElement | null) ||
-      (li.querySelector(".pfl__cardTitle a") as HTMLAnchorElement | null) ||
-      (li.querySelector(".pfl__title a") as HTMLAnchorElement | null);
+      (li.querySelector(
+        ".pfl__cardTitle a"
+      ) as HTMLAnchorElement | null) ||
+      (li.querySelector(
+        ".pfl__title a"
+      ) as HTMLAnchorElement | null);
     const url = a?.getAttribute("href") || "#";
     const title = (a?.textContent || "").trim();
 
-    const timeEl = li.querySelector("time") as HTMLTimeElement | null;
+    const timeEl = li.querySelector(
+      "time"
+    ) as HTMLTimeElement | null;
     const dateISO = (timeEl?.getAttribute("dateTime") || "").trim();
 
-    const metaText = (li.querySelector(".pfl__meta")?.textContent || "").trim();
+    const metaText = (
+      li.querySelector(".pfl__meta")?.textContent || ""
+    ).trim();
     const readMatch = metaText.match(/(\d+)\s*min\s*read/i);
     const estReadMin = readMatch ? Number(readMatch[1]) : null;
 
-    const img = li.querySelector(".pfl__media img") as HTMLImageElement | null;
+    const img = li.querySelector(
+      ".pfl__media img"
+    ) as HTMLImageElement | null;
     const thumbnailSrc = img?.getAttribute("src") || null;
     const thumbnailAlt = img?.getAttribute("alt") || null;
-    const thumbnailW = img?.getAttribute("width") ? Number(img.getAttribute("width")) : null;
-    const thumbnailH = img?.getAttribute("height") ? Number(img.getAttribute("height")) : null;
+    const thumbnailW = img?.getAttribute("width")
+      ? Number(img.getAttribute("width"))
+      : null;
+    const thumbnailH = img?.getAttribute("height")
+      ? Number(img.getAttribute("height"))
+      : null;
 
     return {
       title,
@@ -114,8 +145,14 @@ function readFromSSR(): Post[] {
   });
 }
 
-export default function CategoryUtilityBar({ category, pageSize, mountId }: Props) {
-  const [{ sort, tag, page }, setState] = useState(() => parseSearch());
+export default function CategoryUtilityBar({
+  category,
+  pageSize,
+  mountId,
+}: Props) {
+  const [{ sort, tag, page }, setState] = useState(() =>
+    parseSearch()
+  );
   const [all, setAll] = useState<Post[] | null>(null);
 
   // Ensure URL-derived state is applied on mount
@@ -150,11 +187,16 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
 
   const totalPages = useMemo(() => {
     if (!all) return 1;
-    const n = tag ? all.filter((p) => p.tags?.includes(tag)).length : all.length;
+    const n = tag
+      ? all.filter((p) => p.tags?.includes(tag)).length
+      : all.length;
     return Math.max(1, Math.ceil(n / pageSize));
   }, [all, pageSize, tag]);
 
-  const pageItems = useMemo(() => paginate(filtered, page, pageSize), [filtered, page, pageSize]);
+  const pageItems = useMemo(
+    () => paginate(filtered, page, pageSize),
+    [filtered, page, pageSize]
+  );
 
   // Clamp page after data load
   useEffect(() => {
@@ -163,14 +205,23 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
   }, [totalPages]);
 
   // URL/state sync
-  function pushState(next: { sort?: string; tag?: string; page?: number }) {
-    const sp = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  function pushState(next: {
+    sort?: string;
+    tag?: string;
+    page?: number;
+  }) {
+    const sp = new URLSearchParams(
+      typeof window !== "undefined"
+        ? window.location.search
+        : ""
+    );
     if (next.sort !== undefined) sp.set("sort", String(next.sort));
     if (next.tag !== undefined) {
       if (next.tag) sp.set("tag", String(next.tag));
       else sp.delete("tag");
     }
-    if (next.page !== undefined) sp.set("page", String(Math.max(1, next.page)));
+    if (next.page !== undefined)
+      sp.set("page", String(Math.max(1, next.page)));
     const qs = sp.toString();
     const nextUrl =
       typeof window !== "undefined"
@@ -178,7 +229,8 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
           ? `${window.location.pathname}?${qs}`
           : `${window.location.pathname}`
         : "";
-    if (typeof window !== "undefined") window.history.pushState({}, "", nextUrl);
+    if (typeof window !== "undefined")
+      window.history.pushState({}, "", nextUrl);
     setState(parseSearch());
   }
 
@@ -203,19 +255,27 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
         : pageItems
             .map((p, i) => {
               const src = p.thumbnailSrc ?? p.cover?.src ?? null;
-              const alt = (p.thumbnailAlt ?? p.cover?.alt ?? p.title ?? "").trim();
+              const alt = (
+                p.thumbnailAlt ?? p.cover?.alt ?? p.title ?? ""
+              ).trim();
               const w = p.thumbnailW ?? 1200;
               const h = p.thumbnailH ?? 675;
 
               // First visible card gets eager/high priority to protect LCP; others lazy
               const loading = i === 0 ? "eager" : "lazy";
-              const fetchpriority = i === 0 ? ' fetchpriority="high"' : "";
+              const fetchpriority =
+                i === 0 ? ' fetchpriority="high"' : "";
               const img = src
-                ? `<img src="${src}" alt="${escapeHtml(alt)}" width="${w}" height="${h}" loading="${loading}" decoding="async"${fetchpriority} />`
+                ? `<img src="${src}" alt="${escapeHtml(
+                    alt
+                  )}" width="${w}" height="${h}" loading="${loading}" decoding="async"${fetchpriority} />`
                 : "";
 
               const read =
-                typeof p.estReadMin === "number" && isFinite(p.estReadMin) ? p.estReadMin : "—";
+                typeof p.estReadMin === "number" &&
+                isFinite(p.estReadMin)
+                  ? p.estReadMin
+                  : "—";
 
               return `
 <li class="pfl__card" data-url="${p.url}">
@@ -224,8 +284,12 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
       ${img}
     </a>
     <div class="pfl__body">
-      <h3 class="pfl__title"><a href="${p.url}">${escapeHtml(p.title)}</a></h3>
-      <p class="pfl__meta">${new Date(p.date).toLocaleDateString()} · ${read} min read</p>
+      <h3 class="pfl__title"><a href="${
+        p.url
+      }">${escapeHtml(p.title)}</a></h3>
+      <p class="pfl__meta">${new Date(
+        p.date
+      ).toLocaleDateString()} · ${read} min read</p>
     </div>
   </article>
 </li>`;
@@ -237,16 +301,28 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
   const tagsSorted = useMemo(() => {
     if (!all) return [];
     const set = new Set<string>();
-    for (const p of all) for (const t of p.tags || []) if (t) set.add(t);
+    for (const p of all)
+      for (const t of p.tags || []) if (t) set.add(t);
     return Array.from(set).sort();
   }, [all]);
 
   return (
-    <section className="cu-wrap" aria-label="Category controls">
-      <form className="cu-controls" onSubmit={(e) => e.preventDefault()}>
+    <section
+      className="cu-wrap"
+      aria-label="Sort and filter these articles"
+    >
+      <form
+        className="cu-controls"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <label className="cu-field">
-          <span>Sort</span>
-          <select value={sort} onChange={(e) => pushState({ sort: e.target.value, page: 1 })}>
+          <span>Sort by</span>
+          <select
+            value={sort}
+            onChange={(e) =>
+              pushState({ sort: e.target.value, page: 1 })
+            }
+          >
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="read">Shortest read</option>
@@ -254,8 +330,13 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
         </label>
 
         <label className="cu-field">
-          <span>Tag</span>
-          <select value={tag} onChange={(e) => pushState({ tag: e.target.value, page: 1 })}>
+          <span>Filter by tag</span>
+          <select
+            value={tag}
+            onChange={(e) =>
+              pushState({ tag: e.target.value, page: 1 })
+            }
+          >
             <option value="">All</option>
             {tagsSorted.map((t) => (
               <option key={t} value={t}>
@@ -266,20 +347,32 @@ export default function CategoryUtilityBar({ category, pageSize, mountId }: Prop
         </label>
 
         {tag && (
-          <button type="button" className="cu-clear" onClick={() => pushState({ tag: "", page: 1 })}>
-            Clear filters
+          <button
+            type="button"
+            className="cu-clear"
+            onClick={() => pushState({ tag: "", page: 1 })}
+          >
+            Reset filters
           </button>
         )}
       </form>
 
-      <nav className="cu-pagination" aria-label="Client pagination">
-        <button type="button" disabled={page <= 1} onClick={() => pushState({ page: page - 1 })}>
+      <nav className="cu-pagination" aria-label="Page navigation">
+        <button
+          type="button"
+          disabled={page <= 1}
+          onClick={() => pushState({ page: page - 1 })}
+        >
           Prev
         </button>
         <span className="cu-page">
           {page} / {totalPages}
         </span>
-        <button type="button" disabled={page >= totalPages} onClick={() => pushState({ page: page + 1 })}>
+        <button
+          type="button"
+          disabled={page >= totalPages}
+          onClick={() => pushState({ page: page + 1 })}
+        >
           Next
         </button>
       </nav>

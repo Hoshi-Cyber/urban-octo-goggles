@@ -7,11 +7,15 @@
  */
 ---
 <div class="mdx-code">
-  <pre class="mdx-code__pre"><code><slot /></code></pre>
+  <pre class="mdx-code__pre">
+    <code><slot /></code>
+  </pre>
+
   <button
     class="mdx-code__copy"
     type="button"
     aria-label="Copy code to clipboard"
+    data-state="ready"
     onClick={`(function(btn){
       const pre = btn.previousElementSibling;
       if(!pre) return;

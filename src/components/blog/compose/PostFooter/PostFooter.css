@@ -3,7 +3,80 @@
 
 /* Scope to post only */
 .post .post__footer {
-  margin-top: var(--space-10);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--color-border);
+  margin-top: clamp(var(--space-8), 5vw, var(--space-12));
+  padding-block: clamp(var(--space-5), 3vw, var(--space-7));
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+}
+
+/* Inner rail – aligns tags/share/sources neatly within the post width */
+.post .post__footerInner {
+  max-width: var(--container-max, 72rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-5));
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(var(--space-4), 3vw, var(--space-6));
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* Child blocks (tags, share, sources) sit as clean columns */
+.post .post__footerInner > * {
+  min-width: min(14rem, 100%);
+}
+
+/* On wider screens, allow more horizontal layout */
+@media (min-width: 768px) {
+  .post .post__footerInner > * {
+    min-width: min(18rem, 100%);
+  }
+}
+
+/* Ensure any small text in footer stays crisp and readable */
+.post .post__footerInner,
+.post .post__footerInner p,
+.post .post__footerInner span,
+.post .post__footerInner a {
+  font-size: var(--fs-sm);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
+  );
+}
+
+/* Subtle emphasis on interactive elements without underlines */
+.post .post__footerInner a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.post .post__footerInner a:hover,
+.post .post__footerInner a:focus-visible {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  outline: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post .post__footer,
+  .post .post__footerInner a {
+    transition: none;
+  }
 }

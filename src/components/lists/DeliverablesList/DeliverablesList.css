@@ -1,33 +1,37 @@
 /* DeliverablesList.css */
-/* Mobile-first. Uses your design tokens where present. */
+/* Mobile-first. Token-driven, aligned with global brand styles. */
 
 .delivs {
-  padding-block: var(--space-2, 0.5rem);
+  padding-block: var(--space-2);
 }
 
+/* Header */
 .delivs__header {
-  margin-bottom: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-3);
 }
 
+/* Eyebrow – clear, branded, no faded opacity */
 .delivs__eyebrow {
   margin: 0 0 0.25rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-primary, #0b57d0) 55%, #000);
-  opacity: 0.8;
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
+/* Title */
 .delivs__title {
   margin: 0;
   font-size: clamp(1.125rem, 1vw + 1rem, 1.5rem);
   line-height: 1.2;
+  color: var(--color-text);
 }
 
+/* List layout – 1 → 2 columns at sm+ */
 .delivs__list {
-  /* 1 → 2 columns at md */
   display: grid;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-3);
   grid-template-columns: 1fr;
 }
 
@@ -37,47 +41,86 @@
   }
 }
 
+/* Item card */
 .delivs__item {
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: start;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-3, 0.75rem) var(--space-3, 0.75rem);
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 14%, #e5e7eb);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 4%, #fff);
-  border-radius: var(--radius-lg, 0.75rem);
+    color-mix(
+      in oklab,
+      var(--color-primary) 18%,
+      var(--color-border-subtle, var(--color-light-alt))
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.08s ease;
 }
 
+/* Hover lift */
+.delivs__item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 26%,
+    var(--color-border-subtle, var(--color-light-alt))
+  );
+}
+
+/* Icon chip */
 .delivs__icon {
   display: inline-grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
   border-radius: 9999px;
-  color: var(--color-primary, #0b57d0);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 12%, #fff);
+  color: var(--color-primary);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-primary-soft, var(--color-primary)) 12%
+  );
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-primary) 28%,
+      var(--color-surface) 72%
+    );
   flex: 0 0 auto;
 }
 
+/* Label – primary text tone, not muted */
 .delivs__label {
-  line-height: 1.45;
-  color: var(--color-muted, #374151);
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-text);
 }
 
 /* Focus-visible support for keyboard users */
-.delivs a:focus-visible,
-.delivs button:focus-visible,
-.delivs__item:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
+.delivs :where(a, button, .delivs__item):focus-visible {
+  outline: 2px solid transparent;
   outline-offset: 2px;
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  border-radius: var(--radius-md);
 }
 
-/* Reduced motion */
+/* Reduced motion – scoped to component */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .delivs * {
     transition: none !important;
     animation: none !important;
   }

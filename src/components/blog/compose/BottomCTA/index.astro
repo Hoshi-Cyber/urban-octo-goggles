@@ -1,5 +1,6 @@
 ---
 // File: src/components/blog/compose/BottomCTA/index.astro
+// Premium bottom CTA band – soft brand tint, strong single primary action.
 
 export interface Props {
   title: string;
@@ -12,30 +13,39 @@ const {
   title,
   sub = "ATS-optimized CVs, cover letters, and LinkedIn profiles.",
   href,
-  label
+  label,
 } = Astro.props as Props;
 
-// Keep only local component stylesheet
+// Local component stylesheet only
 import css from "./BottomCTA.css?url";
 ---
+
 <link rel="stylesheet" href={css} />
 
-<section class="bcta" data-section="bottom-cta" aria-label="Get started">
-  <div class="container bcta__wrap">
-    <div class="bcta__copy">
-      <h2 class="bcta__title">{title}</h2>
-      {sub && <p class="bcta__sub">{sub}</p>}
-    </div>
+<section
+  class="bcta"
+  data-section="bottom-cta"
+  aria-labelledby="bottom-cta-title"
+>
+  <div class="container">
+    <div class="bcta__wrap">
+      <div class="bcta__copy">
+        <h2 id="bottom-cta-title" class="bcta__title section-title h3">
+          {title}
+        </h2>
+        {sub && <p class="bcta__sub">{sub}</p>}
+      </div>
 
-    <div class="bcta__actions">
-      <a
-        href={href}
-        class="btn btn-primary bcta__btn"
-        data-cta="bottom-cta-primary"
-        aria-label={`${label}: ${title}`}
-      >
-        {label}
-      </a>
+      <div class="bcta__actions">
+        <a
+          href={href}
+          class="btn btn-primary bcta__btn"
+          data-cta="bottom-cta-primary"
+          aria-label={`${label}: ${title}`}
+        >
+          {label}
+        </a>
+      </div>
     </div>
   </div>
 </section>

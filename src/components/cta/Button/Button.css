@@ -4,7 +4,11 @@
 /* Base */
 .btn {
   --_bg: var(--color-primary);
-  --_bg-hover: color-mix(in oklab, var(--_bg) 92%, white);
+  --_bg-hover: color-mix(
+    in oklab,
+    var(--_bg) 90%,
+    var(--color-surface)
+  );
   --_fg: var(--color-on-primary);
   --_bd: transparent;
 
@@ -55,7 +59,7 @@
 .btn:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary) 35%, white);
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
 }
 
 /* Disabled state */
@@ -70,34 +74,53 @@
 .btn-primary {
   --_bg: var(--color-primary);
   --_fg: var(--color-on-primary);
-  --_bd: color-mix(in oklab, var(--_bg) 35%, transparent);
+  --_bd: color-mix(in oklab, var(--_bg) 30%, transparent);
+}
+
+.btn-primary:hover {
+  --_bg-hover: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
 }
 
 .btn-accent {
   --_bg: var(--color-accent);
   --_fg: var(--color-on-accent);
-  --_bd: color-mix(in oklab, var(--_bg) 35%, transparent);
+  --_bd: color-mix(in oklab, var(--_bg) 30%, transparent);
+}
+
+.btn-accent:hover {
+  --_bg-hover: color-mix(
+    in oklab,
+    var(--color-accent) 20%,
+    var(--color-surface) 80%
+  );
 }
 
 .btn-ghost {
   --_bg: color-mix(
     in oklab,
-    var(--color-background) 96%,
-    var(--color-primary)
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary))
   );
   --_fg: var(--color-primary);
   --_bd: color-mix(in oklab, var(--color-primary) 30%, transparent);
 }
 
 .btn-ghost:hover {
-  --_bg: color-mix(in oklab, var(--color-primary) 14%, var(--color-background));
-  --_fg: var(--color-primary);
+  --_bg-hover: color-mix(
+    in oklab,
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  );
   box-shadow: var(--shadow-sm);
 }
 
 .btn-link {
   --_bg: transparent;
-  --_fg: var(--color-primary);
+  --_fg: var(--color-accent);
   --_bd: transparent;
   padding-inline: 0;
   border: 0;

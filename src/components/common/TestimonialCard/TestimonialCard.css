@@ -8,67 +8,74 @@
 .testimonial-card {
   position: relative;
   display: grid;
-  gap: var(--space-4, 1rem);
-  padding: var(--space-6, 1.5rem) var(--space-6, 1.5rem);
+  gap: var(--space-3); /* slightly tighter grid gap */
+  padding-block: var(--space-4); /* tightened vertical padding */
+  padding-inline: var(--space-5);
   background: color-mix(
     in oklab,
-    var(--color-surface, var(--color-background, #fff)) 92%,
-    var(--color-primary-soft, var(--color-primary, #2563eb)) 8%
-  );
-  color: var(--color-text, #111827);
-  border-radius: var(--radius-xl, 1rem);
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  ); /* soft, minimal tint */
+  color: var(--color-text);
+  border-radius: var(--radius-xl);
   border: 1px solid
-    var(
-      --color-border-subtle,
-      color-mix(in oklab, var(--color-primary, #2563eb) 14%, #e5e7eb)
-    );
-  box-shadow: var(
-    --shadow-md,
-    0 16px 40px rgba(15, 23, 42, 0.06)
-  );
+    color-mix(
+      in oklab,
+      var(--color-primary) 10%,
+      var(--color-surface-alt, var(--color-surface)) 90%
+    ); /* subtle premium border */
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
     border-color 0.18s ease,
     background-color 0.18s ease;
+  min-height: auto; /* ensure height follows content */
 }
 
-/* Top accent bar using brand colour */
+/* Top accent bar using brand colours (primary + accent) */
 .testimonial-card::before {
   content: "";
   position: absolute;
-  inset-inline: var(--space-6, 1.5rem);
+  inset-inline: var(--space-5); /* align with tighter horizontal padding */
   top: 0.6rem;
   height: 3px;
   border-radius: 9999px;
   background: linear-gradient(
     90deg,
-    var(--color-primary, #2563eb),
-    color-mix(
-      in oklab,
-      var(--color-primary, #2563eb) 70%,
-      var(--color-accent, #0ea5e9)
-    )
-  );
-  opacity: 0.9;
+    color-mix(in oklab, var(--color-accent) 70%, transparent),
+    color-mix(in oklab, var(--color-primary-soft, var(--color-primary)) 60%, transparent)
+  ); /* gold → soft primary sweep */
+  opacity: 0.95;
 }
 
 .testimonial-card:is(:hover, :focus-within) {
   transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.10);
+  box-shadow: var(--shadow-md);
   border-color: color-mix(
     in oklab,
-    var(--color-primary, #2563eb) 28%,
-    #e5e7eb
+    var(--color-accent) 70%,
+    var(--color-primary) 30%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
   );
 }
 
+/* Highlight variant – slightly richer, still minimalist */
 .testimonial-card--highlight {
   background: color-mix(
     in oklab,
-    var(--color-primary, #2563eb) 12%,
-    var(--color-surface, var(--color-background, #fff))
+    var(--color-surface-alt, var(--color-surface)) 88%,
+    var(--color-primary-soft, var(--color-primary)) 12%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent) 60%,
+    var(--color-primary) 40%
   );
 }
 
@@ -80,8 +87,8 @@
     "avatar quote"
     "avatar meta"
     "avatar rating";
-  column-gap: var(--space-4, 1rem);
-  row-gap: var(--space-4, 1rem);
+  column-gap: var(--space-4);
+  row-gap: var(--space-3); /* reduced from 4 for tighter vertical rhythm */
   align-items: flex-start;
   margin: 0;
 }
@@ -95,7 +102,11 @@
   object-fit: cover;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
   border: 2px solid
-    color-mix(in oklab, var(--color-primary, #2563eb) 40%, #ffffff);
+    color-mix(
+      in oklab,
+      var(--color-primary) 40%,
+      var(--color-surface-alt, var(--color-surface)) 60%
+    );
 }
 
 /* Quote block */
@@ -103,14 +114,15 @@
   grid-area: quote;
   position: relative;
   margin: 0;
-  padding-top: var(--space-4, 1rem);
-  font-size: var(--fs-sm, 0.95rem); /* slightly reduced for a tighter, premium feel */
-  line-height: 1.7;
+  margin-bottom: var(--space-3); /* tighter gap before author/meta */
+  padding-top: var(--space-3); /* slightly reduced to cut vertical height */
+  font-size: var(--fs-xs); /* slightly reduced from fs-sm for tighter, balanced feel */
+  line-height: 1.5;
   color: color-mix(
     in oklab,
-    var(--color-text, #111827) 90%,
-    white
-  );
+    var(--color-text) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
+  ); /* subtle primary warmth */
   font-weight: 400;
 }
 
@@ -124,10 +136,10 @@
   line-height: 1;
   color: color-mix(
     in oklab,
-    var(--color-primary, #2563eb) 65%,
-    #e5e7eb
-  );
-  opacity: 0.9;
+    var(--color-accent) 75%,
+    var(--color-surface-alt, var(--color-surface)) 25%
+  ); /* accent-led, premium */
+  opacity: 0.95;
 }
 
 /* Meta (author + role) */
@@ -135,23 +147,35 @@
   grid-area: meta;
   display: grid;
   gap: 0.2rem;
-  margin-top: var(--space-3, 0.75rem);
-  padding-top: var(--space-3, 0.75rem);
+  margin-top: var(--space-2); /* reduced from 3 */
+  padding-top: var(--space-2); /* reduced from 3 */
   border-top: 1px solid
-    color-mix(in oklab, var(--color-border-subtle, #e5e7eb) 80%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 24%,
+      var(--color-surface-alt, var(--color-surface)) 76%
+    );
 }
 
 .testimonial-card__author {
   font-weight: 600;
-  font-size: var(--fs-md, 1rem);
+  font-size: var(--fs-md);
   letter-spacing: 0.01em;
-  color: var(--color-text, #111827);
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 80%,
+    var(--color-accent) 20%
+  ); /* primary with a hint of accent */
 }
 
 .testimonial-card__role {
-  font-size: var(--fs-xs, 0.8125rem);
+  font-size: var(--fs-xs);
   text-transform: none;
-  color: var(--color-muted, #6b7280);
+  color: color-mix(
+    in oklab,
+    var(--color-text) 82%,
+    var(--color-primary-soft, var(--color-primary)) 18%
+  ); /* softened support text */
 }
 
 /* Rating */
@@ -160,17 +184,21 @@
   display: inline-flex;
   gap: 0.25rem;
   align-items: center;
-  margin-top: var(--space-2, 0.5rem);
+  margin-top: var(--space-2);
 }
 
 .testimonial-card__star {
   font-size: 0.95rem;
   line-height: 1;
-  color: color-mix(in oklab, var(--color-muted, #6b7280) 70%, transparent);
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 30%,
+    var(--color-surface-alt, var(--color-surface)) 70%
+  ); /* subtle, low-contrast base */
 }
 
 .testimonial-card__star.is-filled {
-  color: var(--color-accent, var(--color-primary, #2563eb));
+  color: var(--color-accent); /* clear, premium highlight */
 }
 
 /* Focus states for interactive children */
@@ -178,8 +206,8 @@
 .testimonial-card button:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #2563eb) 35%, white);
-  border-radius: var(--radius-md, 0.5rem);
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  border-radius: var(--radius-md);
 }
 
 /* Spacing rhythm helpers */
@@ -191,7 +219,8 @@
 /* sm ≥640px */
 @media (min-width: 640px) {
   .testimonial-card {
-    padding: var(--space-7, 1.75rem) var(--space-7, 1.75rem);
+    padding-block: var(--space-5); /* was 7 */
+    padding-inline: var(--space-6);
   }
 
   .testimonial-card__avatar {
@@ -201,9 +230,9 @@
 
   .testimonial-card__quote {
     font-size: clamp(
-      var(--fs-sm, 0.95rem),
-      0.96rem + 0.18vw,
-      var(--fs-base, 1rem)
+      var(--fs-xs),
+      0.9rem + 0.12vw,
+      var(--fs-sm)
     );
   }
 }
@@ -217,9 +246,9 @@
 
   .testimonial-card__author {
     font-size: clamp(
-      var(--fs-md, 1rem),
+      var(--fs-md),
       1rem + 0.18vw,
-      var(--fs-lg, 1.125rem)
+      var(--fs-lg)
     );
   }
 }
@@ -227,26 +256,28 @@
 /* lg ≥1024px */
 @media (min-width: 1024px) {
   .testimonial-card {
-    padding: var(--space-8, 2rem) var(--space-8, 2rem);
+    padding-block: var(--space-6); /* was 8 */
+    padding-inline: var(--space-6);
   }
 
   .testimonial-card__figure {
-    column-gap: var(--space-6, 1.5rem);
-    row-gap: var(--space-4, 1rem);
+    column-gap: var(--space-5); /* slightly reduced from 6 */
+    row-gap: var(--space-3);
   }
 }
 
 /* xl ≥1280px */
 @media (min-width: 1280px) {
   .testimonial-card__quote {
-    font-size: var(--fs-base, 1rem);
+    font-size: var(--fs-sm); /* quote remains slightly smaller than body */
   }
 }
 
 /* 2xl ≥1536px */
 @media (min-width: 1536px) {
   .testimonial-card {
-    padding: var(--space-9, 2.25rem);
+    padding-block: var(--space-6); /* keep controlled, no extra vertical bloat */
+    padding-inline: var(--space-7);
   }
 
   .testimonial-card__avatar {

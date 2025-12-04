@@ -17,10 +17,14 @@
   gap: var(--space-4, 1rem);
   padding: var(--space-4, 1rem);
   border-radius: var(--radius-xl, 1rem);
-  background: var(--color-surface, #ffffff);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
   border: 1px solid
-    color-mix(in oklab, var(--color-border-subtle, #e5e7eb) 80%, transparent);
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.04));
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Controls wrapper */
@@ -43,7 +47,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-accent);
 }
 
 /* Pills row — horizontal scroll on small screens */
@@ -65,9 +69,13 @@
 .testimonials-filterbar .pill {
   appearance: none;
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 20%, #e5e7eb);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 6%, #ffffff);
-  color: var(--color-text, #111827);
+    color-mix(in oklab, var(--color-primary) 22%, var(--color-surface) 78%);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
+  );
+  color: var(--color-primary);
   padding: 0.4rem 0.9rem;
   font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont);
   font-size: var(--fs-sm, 0.875rem);
@@ -88,27 +96,33 @@
   transform: translateY(-1px);
   background: color-mix(
     in oklab,
-    var(--color-primary, #0b57d0) 10%,
-    #ffffff
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
   );
 }
 
 .testimonials-filterbar .pill[aria-pressed="true"] {
-  border-color: var(--color-primary, #0b57d0);
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent) 45%,
+    var(--color-surface) 55%
+  );
   background: color-mix(
     in oklab,
-    var(--color-primary, #0b57d0) 18%,
-    #eff6ff
+    var(--color-primary-soft, var(--color-primary)) 26%,
+    var(--color-surface) 74%
   );
-  color: var(--color-primary-strong, #0b57d0);
+  color: var(--color-primary);
   font-weight: 600;
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.08));
+  box-shadow: var(--shadow-sm);
 }
 
 /* Focus styles */
 .testimonials-filterbar .pill:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
+  outline: 2px solid transparent;
   outline-offset: 2px;
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
 }
 
 /* -------------------- Breakpoints -------------------- */

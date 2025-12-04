@@ -11,13 +11,32 @@
  *  - eyebrow?: string
  *  - title?: string
  */
-export interface Cover { src: string; alt?: string; width?: number; height?: number }
-export interface FM {
-  title: string; description?: string; date: string|Date;
-  readingTime?: number; category?: string; cover?: Cover;
+export interface Cover {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
 }
-export interface Post { url: string; frontmatter: FM }
-export interface Props { posts: Post[]; eyebrow?: string; title?: string }
+
+export interface FM {
+  title: string;
+  description?: string;
+  date: string | Date;
+  readingTime?: number;
+  category?: string;
+  cover?: Cover;
+}
+
+export interface Post {
+  url: string;
+  frontmatter: FM;
+}
+
+export interface Props {
+  posts: Post[];
+  eyebrow?: string;
+  title?: string;
+}
 
 const {
   posts = [],
@@ -25,51 +44,94 @@ const {
   title = "Editors’ picks",
 } = Astro.props as Props;
 
-const fmt = (d: string|Date) =>
-  new Date(d).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" });
+const fmt = (d: string | Date) =>
+  new Date(d).toLocaleDateString("en-KE", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
 // Local component CSS only (per Fix Plan 155)
 import css from "./EditorsPicks.css?url";
 ---
-<link rel="stylesheet" href={css} />
-
 {posts.length > 0 && (
-  <section class="ep" aria-label="Editors’ picks">
-    <div class="container">
-      <header class="ep__head">
-        {eyebrow && <p class="ep__eyebrow">{eyebrow}</p>}
-        {title && <h2 class="ep__title">{title}</h2>}
-      </header>
+  <>
+    <link rel="stylesheet" href={css} />
 
-      <div class="ep__grid">
-        {posts.slice(0, 3).map((p, i) => (
-          <article class="ep__card">
-            {p.frontmatter?.cover?.src && (
-              <a href={p.url} class="ep__media" aria-label={`Read ${p.frontmatter.title}`}>
-                <img
-                  src={p.frontmatter.cover.src}
-                  alt={p.frontmatter.cover.alt ?? p.frontmatter.title}
-                  width={p.frontmatter.cover.width ?? 640}
-                  height={p.frontmatter.cover.height ?? 360}
-                  loading={i < 1 ? "eager" : "lazy"}
-                  decoding="async"
-                />
-              </a>
+    <section class="ep" aria-label="Editors’ picks">
+      <div class="container">
+        <div class="ep__surface">
+          <header class="ep__head">
+            {eyebrow && <p class="ep__eyebrow">{eyebrow}</p>}
+
+            {title && (
+              <h2 class="ep__title section-title h2">
+                {title}
+              </h2>
             )}
-            <div class="ep__body">
-              {p.frontmatter?.category && <p class="ep__cat">{p.frontmatter.category}</p>}
-              <h3 class="ep__cardTitle"><a href={p.url}>{p.frontmatter.title}</a></h3>
-              {p.frontmatter?.description && <p class="ep__excerpt clamp-3">{p.frontmatter.description}</p>}
-              <p class="ep__meta">
-                <time datetime={new Date(p.frontmatter.date).toISOString()}>
-                  {fmt(p.frontmatter.date)}
-                </time>
-                {typeof p.frontmatter?.readingTime === "number" && <> · {p.frontmatter.readingTime} min read</>}
-              </p>
-            </div>
-          </article>
-        ))}
+          </header>
+
+          <div class="ep__grid">
+            {posts.slice(0, 3).map((p, i) => {
+              const fm = p.frontmatter;
+              const hasCover = Boolean(fm?.cover?.src);
+
+              return (
+                <article class="ep__card">
+                  {hasCover && (
+                    <a
+                      href={p.url}
+                      class="ep__media"
+                      aria-label={`Read ${fm.title}`}
+                    >
+                      <img
+                        src={fm.cover!.src}
+                        alt={fm.cover?.alt ?? fm.title}
+                        width={fm.cover?.width ?? 640}
+                        height={fm.cover?.height ?? 360}
+                        loading={i < 1 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    </a>
+                  )}
+
+                  <div class="ep__body">
+                    {fm?.category && (
+                      <p class="ep__cat">{fm.category}</p>
+                    )}
+
+                    <h3 class="ep__cardTitle">
+                      <a href={p.url}>{fm.title}</a>
+                    </h3>
+
+                    {fm?.description && (
+                      <p class="ep__excerpt clamp-3">
+                        {fm.description}
+                      </p>
+                    )}
+
+                    <p class="ep__meta">
+                      <time
+                        datetime={new Date(
+                          fm.date
+                        ).toISOString()}
+                      >
+                        {fmt(fm.date)}
+                      </time>
+                      {typeof fm?.readingTime === "number" && (
+                        <>
+                          {" "}
+                          · {fm.readingTime} min read
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </>
 )}

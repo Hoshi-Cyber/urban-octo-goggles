@@ -4,27 +4,158 @@
 @import "../../../../styles/breakpoints.css";
 @import "../../../../styles/sections.css";
 
-/* Root wrapper: premium, lightly contrasted surface for this FAQ block */
+/* Root wrapper: premium, softly tinted band */
 .testimonials-faq-section {
-  background: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 94%,
-    var(--color-primary-soft, var(--color-primary, #2563eb)) 6%
-  );
-  color: var(--color-text);
   padding-block: var(--space-8, 2rem);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 8%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 94%,
+        #ffffff 6%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        transparent
+      )
+    );
+  color: var(--color-text);
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  border-block-end: 1px solid
+    color-mix(in oklab, var(--color-border-soft, #e5e7eb) 90%, transparent);
 }
 
-/* Tighten FAQ accordion spacing when used in testimonials context */
-.testimonials-faq-section .faq-accordion {
-  padding-block: 0;
+@media (min-width: 1024px) {
+  .testimonials-faq-section {
+    padding-block: var(--space-10);
+  }
+}
+
+/* Center the FAQ card inside the band */
+.testimonials-faq-section__container {
+  max-width: 60rem;
+}
+
+/* FAQ card – premium container for this context */
+.testimonials-faq-section .faq-accordion--testimonials {
+  position: relative;
+  padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem)
+    var(--space-5, 1.25rem);
+  border-radius: var(--radius-xl, 1rem);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 12%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 12%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 96%,
+      #ffffff 4%
+    );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 85%,
+      var(--color-primary) 15%
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 14px 30px rgba(15, 23, 42, 0.10)
+  );
+}
+
+/* Gold / primary accent bar at the top of the FAQ card */
+.testimonials-faq-section .faq-accordion--testimonials::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-5, 1.25rem);
+  top: var(--space-4, 1rem);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 60%,
+      var(--color-accent, #d4ab18)
+    )
+  );
+}
+
+/* Soft glow chip in top-right corner */
+.testimonials-faq-section .faq-accordion--testimonials::after {
+  content: "";
+  position: absolute;
+  top: -1.6rem;
+  right: -1.6rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 210deg,
+      var(--color-primary),
+      var(--color-accent),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 60%,
+        var(--color-accent)
+      ),
+      var(--color-primary)
+    );
+  opacity: 0.2;
+  filter: blur(1px);
 }
 
 /* Testimonials-specific header refinement:
    - Title left-aligned, full width
    - Intro (sub) stacked immediately below, full width
-   - Maintain .section-title typography from typography.css */
-.testimonials-faq-section .faq-accordion--testimonials .faq-accordion__head {
+   - Gradient underline accent under the title */
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -39,14 +170,38 @@
   margin: 0;
   width: 100%;
   text-align: left;
+  position: relative;
+  padding-bottom: var(--space-2);
   /* Typography comes from .section-title */
+}
+
+/* Underline accent using primary + accent gradient */
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
+  );
 }
 
 .testimonials-faq-section
   .faq-accordion--testimonials
   .faq-accordion__sub {
   margin: 0;
-  margin-top: var(--space-2, 0.5rem);
+  margin-top: var(--space-1, 0.25rem);
   width: 100%;
   text-align: left;
   font-size: var(--fs-sm, 0.95rem);
@@ -60,9 +215,61 @@
   margin-top: var(--space-4, 1rem);
 }
 
-/* Ensure the two-column layout from FAQAccordion is preserved.
-   We DO NOT override .faq-accordion__list grid behavior here:
-   it already handles 1 column on mobile and 2 columns from 768px+. */
+/* FAQ items – subtle card treatment per row */
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__item {
+  border-radius: var(--radius-lg, 0.875rem);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary)) 8%
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+/* Elevation and border colour on hover/focus-within */
+@media (hover: hover) {
+  .testimonials-faq-section
+    .faq-accordion--testimonials
+    .faq-accordion__item:hover {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 28%,
+      transparent
+    );
+  }
+}
+
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__item:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--color-primary) 55%,
+        #ffffff 45%
+      ),
+    0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+/* Optional tweak for the trigger / question row, if present */
+.testimonials-faq-section
+  .faq-accordion--testimonials
+  .faq-accordion__button {
+  font-weight: 600;
+  color: var(--color-primary-strong, var(--color-primary));
+}
 
 /* Reduced motion guard (defensive, though core transitions live in FAQAccordion.css) */
 @media (prefers-reduced-motion: reduce) {

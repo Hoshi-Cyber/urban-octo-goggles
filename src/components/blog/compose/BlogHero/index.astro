@@ -19,6 +19,7 @@ export interface Props {
   secondaryHref?: string;
   secondaryLabel?: string;
   cover?: Cover | null;
+  /** When true, hero looks more like a contained card within the page stack */
   contained?: boolean;
 }
 
@@ -61,6 +62,7 @@ const figureAriaHidden = hasDescriptiveAlt ? undefined : "true";
   data-contained={String(contained)}
   data-has-media={String(hasMedia)}
   aria-labelledby={titleId}
+  aria-describedby={dekId}
 >
   <div
     class:list={[

@@ -3,9 +3,8 @@
  * File: src/components/sections/shared/TestimonialCard/index.astro
  *
  * Purpose (Fix Plan 205.1 – Social proof strip):
- * - Provide the testimonial card component used by SocialProofStrip.
- * - Flexible: works with either props (quote/content/name/role/context)
- *   or with a fallback <slot>.
+ * - Testimonial card used inside TestimonialStrip / SocialProofStrip.
+ * - Accepts quote/content/name/role/context as props or falls back to slot.
  */
 
 const props = Astro.props as {

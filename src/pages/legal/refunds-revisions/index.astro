@@ -1,76 +1,125 @@
 ---
 import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import {
+  LegalLayout,
+  LegalPageHeader,
+  LegalTOC,
+  LegalSection,
+  LegalFooterNav,
+} from "../../../components/legal";
 
 const pageTitle = "Refund & Revisions Policy";
 const pageDescription =
-  "How CVWriting.co.ke handles refunds, credits, and revision requests for CV writing and related services in Kenya.";
+  "How CVWriting.co.ke handles refunds, revisions and related service changes for CV writing and career services in Kenya and beyond.";
+
+const lastUpdated = "24 November 2025";
+
+const tocItems = [
+  { id: "core-principles", label: "1. Core Principles" },
+  { id: "stages-and-eligibility", label: "2. Stages of service and refund eligibility" },
+  { id: "revisions-policy", label: "3. Revisions Policy" },
+  { id: "no-guarantees", label: "4. No guarantees of employment or interview" },
+  { id: "client-responsibilities", label: "5. Client responsibilities and misrepresentation" },
+  { id: "unresponsive-clients", label: "6. Unresponsive clients and project closure" },
+  { id: "payment-disputes", label: "7. Payment disputes and chargebacks" },
+  { id: "how-to-request-refund", label: "8. How to request a refund or raise a concern" },
+  { id: "updates-policy", label: "9. Currency, governing law and updates to this Policy" },
+];
+
+const relatedPolicies = [
+  {
+    slug: "privacy",
+    href: "/legal/privacy/",
+    label: "Privacy Policy",
+    description: "How we collect, use, and protect your personal data.",
+  },
+  {
+    slug: "cookies",
+    href: "/legal/cookies/",
+    label: "Cookies & Preferences Policy",
+    description: "How we use cookies and how you can manage your preferences.",
+  },
+  {
+    slug: "terms",
+    href: "/legal/terms/",
+    label: "Terms of Service",
+    description: "The rules for using CVWriting.co.ke and our services.",
+  },
+];
 ---
 
 <BaseLayout title={`${pageTitle} – CVWriting.co.ke`} description={pageDescription}>
-  <main class="page-gap-after">
-    <div class="container">
-      <header class="page-header">
-        <h1 class="h1">{pageTitle}</h1>
-        <p class="page-lead">
-          Our goal is to be fair to clients while protecting the time and expertise of our team. This Policy explains
-          how refunds, credits, and revisions work.
-        </p>
-      </header>
+  <LegalLayout
+    showSidebar={true}
+    sidebarPosition="right"
+    tocLabel="Refund & revisions policy sections"
+  >
+    <LegalPageHeader
+      slot="header"
+      title={pageTitle}
+      intro="This Refund & Revisions Policy explains how refunds, revisions and related service changes are handled when you purchase CV-writing, cover letter, LinkedIn, interview coaching and related services from CVWriting.co.ke."
+      lastUpdated={lastUpdated}
+      governingLaw="Laws of Kenya"
+    />
 
-      <div class="prose">
-        <p class="text-muted">
-          Purpose. This Refund &amp; Revisions Policy explains how CVWriting.co.ke ("we", "us", "our") handles refunds,
-          credits, and revision requests for our CV writing and related professional services in Kenya.
-        </p>
+    <LegalTOC slot="toc" items={tocItems} />
 
-        <h2 id="core-principles">1. Core Principles</h2>
-
-        <h3 id="service-based-offering">1.1 Service-based offering</h3>
+    <div class="prose stack">
+      <LegalSection id="core-principles" heading="1. Core Principles">
         <p>
           Our products are professional services (CVs, cover letters, LinkedIn profiles and related documentation),
-          not physical goods. Once work has started, our team invests time, expertise and research into your documents.
+          not physical goods. Once work has started, our team invests time, expertise and judgment into your
+          documents and consultation.
         </p>
-
-        <h3 id="fairness-and-professionalism">1.2 Fairness and professionalism</h3>
         <p>
-          We will reasonably consider refund or credit requests in situations where we have clearly failed to deliver
-          what was agreed (scope, timelines, or quality thresholds).
+          We aim to be fair to clients while protecting the time and expertise of our team. Refund and revision
+          decisions are based on the stage of work reached, the scope agreed, and evidence of what has been delivered.
         </p>
-
-        <h3 id="outcome-neutral">1.3 Outcome-neutral</h3>
         <p>
-          We cannot and do not guarantee a job, interview, or recruiter response. Refunds are not issued based on hiring
-          outcomes, market conditions, or employer decisions.
+          We cannot and do not guarantee a job, interview, promotion or recruiter response. Outcomes depend on
+          broader market conditions, employer decisions and your overall profile and performance.
         </p>
+      </LegalSection>
 
-        <h2 id="stages-and-eligibility">2. Stages of Service and Refund Eligibility</h2>
+      <LegalSection
+        id="stages-and-eligibility"
+        heading="2. Stages of service and refund eligibility"
+      >
         <p>
           Our policy is based on clear project stages. Eligibility for a refund or credit depends on the stage your
           order is in when the request is made.
         </p>
 
-        <h3 id="stage-1">2.1 Stage 1 – Before work starts (pre-intake)</h3>
-        <p><strong>a) Definition.</strong> You have made payment, but you have not yet submitted the required information/intake form and no writer has started work.</p>
-        <p><strong>b) Refund eligibility.</strong> You may request a full refund within seven (7) calendar days of payment, provided work has not started.</p>
+        <h3 id="stage-1">2.1 Stage 1 – Payment received, work not yet started</h3>
         <p>
-          <strong>c) Inactivity.</strong> If we do not receive the required information from you within thirty (30)
-          calendar days of payment, the order becomes non-refundable. At our discretion, we may convert the amount paid
-          into a credit that can be used within twelve (12) months for our services.
+          <strong>a) Definition.</strong> You have paid for a service, but you have not yet submitted the required
+          intake information or documents, and no writer or consultant has been assigned to your project.
+        </p>
+        <p>
+          <strong>b) Work not started.</strong> “Work has not started” means no time has been spent reviewing your
+          CV, intake form or supporting documents.
+        </p>
+        <p>
+          <strong>c) Refund eligibility.</strong> If you request a refund at this stage, and it is within thirty (30)
+          calendar days of payment, we may provide a refund less any non-recoverable transaction or processing fees.
+          Alternatively, at our discretion, we may convert the full amount into a time-limited service credit for use
+          on our services.
         </p>
 
-        <h3 id="stage-2">2.2 Stage 2 – After intake but before first draft is delivered</h3>
+        <h3 id="stage-2">2.2 Stage 2 – Intake received, initial assessment underway</h3>
         <p>
-          <strong>a) Definition.</strong> You have submitted your information/intake form, and a writer has started
-          working, but no first draft has yet been delivered.
+          <strong>a) Definition.</strong> You have submitted your intake information and/or CV, and a writer or
+          consultant has begun assessing your materials, but the first draft has not yet been delivered.
         </p>
         <p>
-          <strong>b) Refund eligibility.</strong> Because substantial work typically occurs at this stage, full refunds
-          are not available. In exceptional cases where we have clearly failed to meet agreed timelines or standards,
-          we may offer a partial refund of up to fifty percent (50%) of the fee, subject to review.
+          <strong>b) Work in progress.</strong> At this stage, our team has already invested professional time in
+          reviewing your profile and planning the work.
         </p>
         <p>
-          <strong>c) Credit option.</strong> Where a refund is not appropriate, we may offer a service credit to be
-          applied to another CVWriting.co.ke service within twelve (12) months.
+          <strong>c) Refund eligibility.</strong> Because substantial work typically occurs at this stage, full
+          refunds are not available. Any approved refund will normally be partial, reflecting the work already
+          undertaken, and is assessed on a case-by-case basis. In some cases, we may instead offer a time-limited
+          service credit.
         </p>
 
         <h3 id="stage-3">2.3 Stage 3 – After first draft is delivered</h3>
@@ -78,133 +127,208 @@ const pageDescription =
           <strong>a) Definition.</strong> You have received the first draft of your CV or related document(s).
         </p>
         <p>
-          <strong>b) Refund eligibility.</strong> No monetary refunds are issued once the first draft has been
-          delivered, as the core value of the service has been provided.
+          <strong>b) Refund eligibility.</strong> Once a first draft has been delivered, the core service has been
+          substantially provided and monetary refunds are generally not available.
         </p>
         <p>
-          <strong>c) Revisions.</strong> You are entitled to revisions in line with the package you purchased
-          (for example, a defined number of revision rounds within a specific timeframe).
+          <strong>c) Revisions.</strong> Your entitlement at this stage is to use the revision rounds and support
+          included in your package (for example, a defined number of revision rounds within a specific timeframe).
         </p>
         <p>
-          <strong>d) Escalation.</strong> If you are dissatisfied after reasonable revisions, your case may be
+          <strong>d) Escalation.</strong> If you remain dissatisfied after reasonable revisions, your case may be
           escalated for a senior review and a final revision round, instead of a refund.
         </p>
 
-        <h3 id="stage-4">2.4 Stage 4 – After final delivery or revision window expiry</h3>
+        <h3 id="stage-4">2.4 Stage 4 – Final delivery or revision window expiry</h3>
         <p>
-          <strong>a) Definition.</strong> Your project has been marked as completed, and/or the revision window
-          defined in your package has expired.
+          <strong>a) Definition.</strong> Your project has been marked as completed and/or the revision window defined
+          in your package has expired.
         </p>
         <p>
-          <strong>b) Refund eligibility.</strong> No refunds are available at this stage. Any additional changes or
-          updates are treated as a new engagement or may be offered as a paid refresh service.
+          <strong>b) Refund eligibility.</strong> At this stage, no refunds are provided. Any additional changes or
+          updates are treated as a new engagement or may be offered as a paid refresh or upgrade service.
         </p>
+      </LegalSection>
 
-        <h2 id="revisions-policy">3. Revisions Policy</h2>
-
+      <LegalSection id="revisions-policy" heading="3. Revisions Policy">
         <h3 id="revisions-in-packages">3.1 Inclusion in packages</h3>
         <p>
           Each service package includes a defined number of revision rounds and a revision timeframe. These details
-          are communicated at the time of purchase.
+          are communicated at the time of purchase (for example, “up to 2 revision rounds within 14 days of first
+          draft delivery”).
         </p>
 
         <h3 id="scope-of-revisions">3.2 Scope of revisions</h3>
         <p>
-          Revisions are intended to refine and improve the documents based on your feedback, not to completely change
-          your role, industry, or seniority target unless agreed as an upgraded service.
+          Revisions are intended to refine and improve the documents based on your feedback. Typical revision
+          activities include clarifying responsibilities and achievements, adjusting wording, tone or emphasis,
+          reordering sections or bullet points, and minor adjustments to the target role within the same general
+          field and seniority level.
         </p>
 
-        <h3 id="client-response-times">3.3 Client response times</h3>
+        <h3 id="changes-in-scope">3.3 Changes in scope</h3>
         <p>
-          To keep your project moving, you are expected to provide feedback within the agreed timelines. Extended
-          delays in responding may result in your project being closed or additional fees to reactivate.
+          Revisions are not intended to cover fundamental changes in scope that amount to a new project, such as
+          switching to a completely different role or industry, shifting from entry-level to senior executive
+          targeting, or requesting multiple alternative versions for totally different roles in a single package.
         </p>
-
-        <h2 id="no-guarantees">4. No Guarantees of Employment or Interview</h2>
         <p>
-          While our goal is to significantly improve the quality and positioning of your professional documents, we do
-          not control employer decisions, market demand, or recruitment processes. We therefore do not guarantee any
-          specific outcome, including job offers, interviews, or recruiter responses. Refunds are not granted on the
-          basis of job search outcomes.
+          Where requested changes fall outside the agreed scope (for example, a major career pivot or additional
+          documents not originally included), we will explain this clearly and may propose an upgrade or a new
+          service rather than treating it as a revision.
         </p>
 
-        <h2 id="client-responsibilities">5. Client Responsibilities and Misrepresentation</h2>
+        <h3 id="client-response-times">3.4 Client response times</h3>
+        <p>
+          To keep your project focused and efficient, you are expected to provide clear, consolidated feedback within
+          the agreed revision timeframe. If the revision window passes without feedback, the project may be considered
+          complete and closed, and further changes may require a new engagement or reactivation fee.
+        </p>
+      </LegalSection>
 
+      <LegalSection id="no-guarantees" heading="4. No guarantees of employment or interview">
+        <p>
+          Our goal is to significantly improve the quality and positioning of your professional documents and to
+          present your experience as strongly as possible.
+        </p>
+        <p>
+          However, we do not control employer decisions, recruitment processes or market conditions. A lack of
+          interviews, job offers, promotions or recruiter responses after using our services does not, by itself,
+          qualify you for a refund.
+        </p>
+        <p>
+          If you have concerns about the quality or accuracy of your documents, please raise them promptly within
+          the revision window so they can be addressed.
+        </p>
+      </LegalSection>
+
+      <LegalSection
+        id="client-responsibilities"
+        heading="5. Client responsibilities and misrepresentation"
+      >
         <h3 id="accuracy-of-information">5.1 Accuracy of information</h3>
         <p>
           You are responsible for providing accurate, truthful and complete information about your experience,
-          qualifications and achievements.
+          qualifications and achievements. Our work relies on the information you supply.
         </p>
 
         <h3 id="misrepresentation">5.2 Misrepresentation</h3>
         <p>
-          If we discover that you have supplied false or misleading information (for example, fabricated roles,
-          inflated titles, or inaccurate dates), we may terminate the engagement with no refund and decline further
-          work.
+          If we discover that information you provided is materially false or misleading (for example, fabricated
+          roles, fictitious employers or qualifications, or significantly inaccurate dates), we may refuse to
+          continue the project, decline further work and decline to offer refunds.
         </p>
 
-        <h3 id="timely-communication">5.3 Timely communication</h3>
+        <h3 id="consequences-of-inaccurate-data">5.3 Consequences of inaccurate data</h3>
         <p>
-          You are expected to respond to our questions and requests for clarification within reasonable timeframes so
-          that we can deliver your documents on time.
+          We are not responsible for consequences arising from inaccurate or incomplete information you supply, and
+          such issues do not entitle you to a refund.
         </p>
+      </LegalSection>
 
-        <h2 id="unresponsive-clients">6. Unresponsive Clients and Project Closure</h2>
-
+      <LegalSection
+        id="unresponsive-clients"
+        heading="6. Unresponsive clients and project closure"
+      >
         <h3 id="inactivity">6.1 Inactivity</h3>
         <p>
-          If you become unresponsive for more than thirty (30) calendar days after we request information or feedback,
-          we may close your project and mark the service as delivered based on the work completed up to that point.
+          Our ability to deliver high-quality work depends on timely cooperation. If, after paying for a service, you
+          do not provide the required intake information or respond to our communications, your project may stall.
         </p>
 
-        <h3 id="reactivation">6.2 Reactivation</h3>
+        <h3 id="closure-after-inactivity">6.2 Closure after extended inactivity</h3>
         <p>
-          Reactivating a closed project may attract an additional fee, which will be communicated to you before any
-          further work is carried out.
+          If we have not received the necessary intake information, feedback or responses from you within thirty (30)
+          calendar days, we may pause or close the project and mark it as inactive or delivered (based on the stage
+          reached) and treat the order as non-refundable in line with the relevant stage provisions in Section 2.
         </p>
 
-        <h2 id="payment-disputes">7. Payment Disputes and Chargebacks</h2>
+        <h3 id="reactivation">6.3 Reactivation</h3>
+        <p>
+          If you return after a prolonged period of inactivity, we may need to treat your request as a new project or
+          charge a reactivation or update fee, particularly if your experience has changed or previous drafts are
+          outdated.
+        </p>
+      </LegalSection>
 
+      <LegalSection
+        id="payment-disputes"
+        heading="7. Payment disputes and chargebacks"
+      >
         <h3 id="internal-resolution">7.1 Internal resolution first</h3>
         <p>
           If you have concerns about your service, you agree to contact us first so we can attempt to resolve the
-          issue through revisions, clarification, or a suitable credit, where appropriate.
+          issue through clarification, revisions or, where appropriate, a partial refund or credit in line with this
+          Policy.
         </p>
 
         <h3 id="chargebacks">7.2 Chargebacks</h3>
         <p>
-          Initiating a chargeback or payment dispute with your bank or payment provider without engaging our internal
-          process may result in suspension of our services to you. We reserve the right to submit all supporting
-          documentation to the payment provider to demonstrate the work delivered.
+          Initiating a chargeback or payment dispute with your bank, card issuer or payment provider without engaging
+          our internal process may result in suspension of our services to you. We reserve the right to submit all
+          supporting documentation (including drafts delivered, communication history and this Policy) to the payment
+          provider to demonstrate the work completed.
         </p>
+      </LegalSection>
 
-        <h2 id="how-to-request-refund">8. How to Request a Refund or Raise a Concern</h2>
-
+      <LegalSection
+        id="how-to-request-refund"
+        heading="8. How to request a refund or raise a concern"
+      >
         <h3 id="contact-channel">8.1 Contact channel</h3>
         <p>
-          To request a refund, credit, or raise a concern about your project, please contact us using the official
-          contact details provided on the cvwriting.co.ke website.
+          If you are dissatisfied with any aspect of your service, or you believe a refund or credit may be
+          appropriate under this Policy, please contact us promptly using the official contact details provided on
+          the CVWriting.co.ke website.
         </p>
 
         <h3 id="required-information">8.2 Required information</h3>
         <p>
-          Include your full name, order reference, date of purchase, and a clear explanation of your concern. This
-          helps us review your case quickly and fairly.
+          To help us review your case quickly and fairly, please include:
         </p>
+        <ul>
+          <li>Your full name and contact details.</li>
+          <li>The service/package purchased and date of payment.</li>
+          <li>Your order reference (if applicable).</li>
+          <li>A brief summary of your concern.</li>
+          <li>
+            Relevant documents or screenshots (for example, drafts, email correspondence or notes of key calls).
+          </li>
+        </ul>
 
         <h3 id="review-process">8.3 Review process</h3>
         <p>
-          We will review your request in line with this Policy, the stage of your project, and the evidence of work
-          completed. We will then communicate our decision and any next steps.
+          We aim to review and respond to refund or revision-related concerns within a reasonable business timeframe.
+          Some cases may take longer where additional investigation is required, but we will keep you informed of
+          progress and next steps.
         </p>
+      </LegalSection>
 
-        <h2 id="updates-policy">9. Updates to This Policy</h2>
+      <LegalSection
+        id="updates-policy"
+        heading="9. Currency, governing law and updates to this Policy"
+      >
+        <p>
+          Unless otherwise stated, all fees and any applicable refunds are processed in our primary operating
+          currency (for example, Kenyan Shillings (KES)), or as communicated at the time of payment.
+        </p>
+        <p>
+          This Policy and any disputes arising out of or in connection with it are governed by and construed in
+          accordance with the laws of Kenya. Nothing in this Policy is intended to limit any rights you may have
+          under applicable Kenyan consumer protection or data protection laws.
+        </p>
         <p>
           We may update this Refund &amp; Revisions Policy from time to time to reflect changes in our services,
-          pricing, or applicable regulations. The version posted on the cvwriting.co.ke website at the time of your
-          purchase will normally apply to your order, unless otherwise agreed in writing.
+          business practices or legal requirements. When we make changes, we will update the “Last updated” date at
+          the top of this page and, where appropriate, provide additional notice on our website or via email.
         </p>
-      </div>
+      </LegalSection>
     </div>
-  </main>
+
+    <LegalFooterNav
+      slot="footerNav"
+      currentSlug="refunds-revisions"
+      related={relatedPolicies}
+    />
+  </LegalLayout>
 </BaseLayout>

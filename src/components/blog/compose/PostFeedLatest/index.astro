@@ -3,7 +3,12 @@
 // Implements Fix Plan 149: enforce 8-card cap on homepage feed,
 // prefer SSG pagination, optional client "load more".
 
-export interface Cover { src: string; alt?: string; width?: number; height?: number }
+export interface Cover {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
 export interface FM {
   title: string;
   description?: string;
@@ -12,7 +17,10 @@ export interface FM {
   category?: string;
   cover?: Cover;
 }
-export interface Post { url: string; frontmatter: FM }
+export interface Post {
+  url: string;
+  frontmatter: FM;
+}
 export interface Props {
   posts: Post[];
   pageSize?: number;
@@ -27,6 +35,7 @@ export interface Props {
 }
 
 import { categorySlug } from "../../../../lib/slug";
+import css from "./PostFeedLatest.css?url";
 
 const {
   posts = [],
@@ -44,11 +53,14 @@ const {
 const renderList: Post[] = clientLoadMore ? posts : (posts ?? []).slice(0, pageSize);
 
 const fmt = (d: string | Date) =>
-  new Date(d).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" });
+  new Date(d).toLocaleDateString("en-KE", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
-const catHref = (p: Post) => `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
-
-import css from "./PostFeedLatest.css?url";
+const catHref = (p: Post) =>
+  `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
 ---
 <link rel="stylesheet" href={css} />
 
@@ -56,7 +68,11 @@ import css from "./PostFeedLatest.css?url";
   <div class="container">
     <header class="pfl__head">
       {eyebrow && <p class="pfl__eyebrow">{eyebrow}</p>}
-      {title && <h2 class="pfl__title">{title}</h2>}
+      {title && (
+        <h2 class="pfl__title section-title h2">
+          {title}
+        </h2>
+      )}
     </header>
 
     {/* Grid: CSS handles 1→2→4 columns. 4-up at wide screens per stylesheet. */}
@@ -76,8 +92,12 @@ import css from "./PostFeedLatest.css?url";
             data-index={idx}
             data-cat={(p.frontmatter?.category ?? "").trim() || "uncategorized"}
           >
-            {p.frontmatter?.cover?.src && (
-              <a href={href} class="pfl__media" aria-label={`Read ${p.frontmatter.title}`}>
+            {p.frontmatter?.cover?.src ? (
+              <a
+                href={href}
+                class="pfl__media"
+                aria-label={`Read ${p.frontmatter.title}`}
+              >
                 <img
                   src={p.frontmatter.cover.src}
                   alt={p.frontmatter.cover.alt ?? p.frontmatter.title}
@@ -89,27 +109,51 @@ import css from "./PostFeedLatest.css?url";
                   fetchpriority={idx < 2 ? "high" : "low"}
                 />
               </a>
+            ) : (
+              <div class="pfl__media pfl__media--empty" aria-hidden="true" />
             )}
+
             <div class="pfl__body">
               {p.frontmatter?.category && (
                 <p class="pfl__cat">
-                  <a href={categoryLink} aria-label={`View ${p.frontmatter.category} posts`}>
+                  <a
+                    href={categoryLink}
+                    aria-label={`View ${p.frontmatter.category} posts`}
+                  >
                     {p.frontmatter.category}
                   </a>
                 </p>
               )}
-              <h3 class="pfl__cardTitle">
-                <a href={href} class="pfl__link" aria-label={`Read ${p.frontmatter.title}`}>
+
+              <h3 class="pfl__cardTitle line-clamp-2">
+                <a
+                  href={href}
+                  class="pfl__link"
+                  aria-label={`Read ${p.frontmatter.title}`}
+                >
                   {p.frontmatter.title}
                 </a>
               </h3>
+
               {p.frontmatter?.description && (
-                <p class="pfl__excerpt clamp-3">{p.frontmatter.description}</p>
+                <p class="pfl__excerpt clamp-3">
+                  {p.frontmatter.description}
+                </p>
               )}
+
               <p class="pfl__meta">
-                <time datetime={dateIso}>{fmt(p.frontmatter.date)}</time>
+                {dateIso && (
+                  <span class="pfl__metaPill pfl__metaPill--date">
+                    <time datetime={dateIso}>{fmt(p.frontmatter.date)}</time>
+                  </span>
+                )}
                 {typeof p.frontmatter?.readingTime === "number" && (
-                  <span aria-hidden="true"> · {p.frontmatter.readingTime} min read</span>
+                  <span
+                    class="pfl__metaPill pfl__metaPill--read"
+                    aria-label={`${p.frontmatter.readingTime} minute read`}
+                  >
+                    {p.frontmatter.readingTime} min read
+                  </span>
                 )}
               </p>
             </div>
@@ -120,8 +164,16 @@ import css from "./PostFeedLatest.css?url";
 
     <div class="pfl__actions">
       {clientLoadMore && posts.length > pageSize && (
-        <button id="pfl-more" class="btn btn-outline" data-cta="blog-load-more">Load more</button>
+        <button
+          id="pfl-more"
+          class="pfl__loadMore"
+          data-cta="blog-load-more"
+          type="button"
+        >
+          Load more
+        </button>
       )}
+
       <a
         href={moreHref}
         aria-label={moreAriaLabel ?? moreLabel}
@@ -135,23 +187,31 @@ import css from "./PostFeedLatest.css?url";
 
   {clientLoadMore && (
     <script is:inline>
+      {`
       (() => {
         const grid = document.getElementById("pfl-grid");
         const btn  = document.getElementById("pfl-more");
         if (!grid || !btn) return;
         const PAGE_SIZE = Number(grid.dataset.pageSize) || 8; // align with default
         let shown = Math.min(PAGE_SIZE, grid.children.length);
-        btn.addEventListener("click", () => {
-          const hidden = Array.from(grid.querySelectorAll(".pfl__card.is-hidden"));
-          const next = hidden.slice(0, PAGE_SIZE);
-          next.forEach((card) => {
-            card.classList.remove("is-hidden");
-            card.style.contentVisibility = "auto";
-          });
-          shown += next.length;
-          if (shown >= grid.children.length) btn.remove();
-        }, { passive: true });
+        btn.addEventListener(
+          "click",
+          () => {
+            const hidden = Array.from(
+              grid.querySelectorAll(".pfl__card.is-hidden")
+            );
+            const next = hidden.slice(0, PAGE_SIZE);
+            next.forEach((card) => {
+              card.classList.remove("is-hidden");
+              card.style.contentVisibility = "auto";
+            });
+            shown += next.length;
+            if (shown >= grid.children.length) btn.remove();
+          },
+          { passive: true }
+        );
       })();
+      `}
     </script>
   )}
 </section>

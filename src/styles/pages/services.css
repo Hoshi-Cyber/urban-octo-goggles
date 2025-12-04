@@ -6,29 +6,90 @@
 
 /* Page-specific styles for /services/ */
 
-/* Popular combinations header:
-   intro stacked directly under H2, full-width, left-aligned */
-.service-bundles__head {
-  max-width: 100%;
+/* ================================
+   Popular combinations / bundles
+   ================================ */
+
+/* Section wrapper – subtle band inside the global section */
+.service-bundles {
+  position: relative;
 }
 
-.service-bundles__head .section-intro {
-  margin-top: var(--space-2);
+/* Inner band: premium, soft-tinted card using brand palette */
+.service-bundles__inner {
   max-width: 100%;
+  width: 100%;
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  background:
+    radial-gradient(
+      circle at 0 0,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 18%,
+        transparent
+      ) 0,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 14%,
+        transparent
+      ) 0,
+      transparent 65%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 94%,
+      #ffffff 6%
+    );
+  box-shadow: var(
+    --shadow-md,
+    0 18px 40px rgba(15, 23, 42, 0.08)
+  );
+  display: grid;
+  row-gap: var(--space-3); /* strict vertical gap header ⇄ grid */
+}
+
+/* Popular combinations header: H2 + intro stacked, full-width, left-aligned
+   Use higher-specificity selector so this wins over global .section-head rules */
+.service-bundles .section-head.service-bundles__head {
+  max-width: 100%;
+  width: 100%;
+  display: block;
+}
+
+.service-bundles .section-head.service-bundles__head .section-title {
+  max-width: 100%;
+  width: 100%;
   text-align: left;
+  margin: 0 0 var(--space-2);
 }
 
-/* Reduce vertical gap between header and grid inside this section */
-.service-bundles .container.stack {
-  gap: var(--space-2);
+/* Intro MUST sit directly under the title and span full width */
+.service-bundles
+  .section-head.service-bundles__head
+  .service-bundles__intro {
+  display: block;
+  margin-top: 0;
+  margin-inline: 0;
+  max-width: none; /* remove any global cap */
+  width: 100%;
+  text-align: left;
+  color: var(--color-text); /* override any muted default */
 }
 
-/* Popular combinations grid: 1 / 2 / 4 layout */
+/* Popular combinations grid:
+   1 col mobile → 2 cols md → 4 cols xl (4 / 2 / 1 layout) */
 .service-bundles__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
-  margin-top: 0; /* minimise extra space below header */
+  gap: var(--space-4);
+  margin-top: 0;
 }
 
 @media (min-width: 768px) {
@@ -37,7 +98,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .service-bundles__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -49,16 +110,33 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-5);
-  background: var(--color-surface);
   border-radius: var(--radius-lg, 0.75rem);
   border: 1px solid
     color-mix(in oklab, var(--color-text) 6%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 97%,
+      #ffffff 3%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 100%,
+      transparent
+    )
+  );
   box-shadow: var(
     --shadow-xs,
     0 6px 18px rgba(15, 23, 42, 0.04)
   );
   position: relative;
   overflow: hidden;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out,
+    background-color 150ms ease-out;
 }
 
 /* Top accent line, same treatment as ServiceDetailSection columns */
@@ -76,29 +154,72 @@
   opacity: 0.9;
 }
 
-/* Card title and body */
+/* Card hover elevation */
+.service-bundles__card:hover,
+.service-bundles__card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(
+    --shadow-md,
+    0 20px 40px rgba(15, 23, 42, 0.1)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 20%,
+    transparent
+  );
+}
+
+/* Card header: title + combo label stacked */
+.service-bundles__card-header {
+  display: grid;
+  row-gap: var(--space-1);
+}
+
+/* Main bundle title */
 .service-bundles__card-title {
   margin: 0;
   font-size: var(--fs-h5);
   line-height: var(--lh-tight);
+  color: var(--color-text);
 }
 
+/* Combo label e.g. "CV + cover letter" */
+.service-bundles__card-combo {
+  margin: 0;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* Body copy – use full text colour for legibility */
 .service-bundles__card-body {
   margin: 0;
   font-size: var(--fs-base);
   line-height: 1.6;
-  color: var(--color-muted-strong, var(--color-text));
+  color: var(--color-text);
 }
 
-/* Ensure button uses actual button styling and sits at the bottom */
+/* Ensure button sits at the bottom of the card */
 .service-bundles__card-link {
   margin-top: auto;
 }
 
-/* -----------------------------
+/* XS-only padding tweaks */
+@media (max-width: 639.98px) {
+  .service-bundles__inner {
+    padding: var(--space-4);
+  }
+
+  .service-bundles__card {
+    padding: var(--space-4);
+  }
+}
+
+/* ================================
    "Who our services are best suited for"
    Header + intro full-width, grid below
-   ----------------------------- */
+   ================================ */
 
 /* Make header span full width, grid sit below it */
 .service-fit__inner {
@@ -127,10 +248,10 @@
   grid-area: fit-grid;
 }
 
-/* -----------------------------
+/* ================================
    "What clients report after working with us"
    Ensure H2 + intro stack, full-width, left-aligned
-   ----------------------------- */
+   ================================ */
 
 .service-outcomes .section-head {
   max-width: 100%;
@@ -148,9 +269,9 @@
   margin-top: var(--space-2);
 }
 
-/* -----------------------------
+/* ================================
    Final CTA – stacked header, responsive actions
-   ----------------------------- */
+   ================================ */
 
 /* One row above, two rows below the final CTA section */
 .service-final-cta {
@@ -188,5 +309,3 @@
     flex-direction: row; /* horizontal layout on md+ */
   }
 }
-
-

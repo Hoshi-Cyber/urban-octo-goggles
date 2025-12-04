@@ -1,0 +1,44 @@
+---
+// src/components/legal/LegalTOC/index.astro
+import "./LegalTOC.css";
+
+type TocItem = {
+  id: string;
+  label: string;
+};
+
+interface Props {
+  items: TocItem[];
+  title?: string;
+}
+
+const { items = [], title = "On this page" } = Astro.props as Props;
+---
+
+{items.length > 0 && (
+  <details class="legal-toc" open>
+    <summary class="legal-toc__summary">
+      <span class="legal-toc__title">
+        {title}
+      </span>
+      <span class="legal-toc__chevron" aria-hidden="true">
+        ▾
+      </span>
+    </summary>
+
+    <nav class="legal-toc__nav" aria-label={title}>
+      <ol class="legal-toc__list">
+        {items.map((item) => (
+          <li class="legal-toc__item">
+            <a
+              href={`#${item.id}`}
+              class="legal-toc__link"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </details>
+)}

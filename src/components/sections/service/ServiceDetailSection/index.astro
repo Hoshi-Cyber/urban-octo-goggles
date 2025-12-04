@@ -23,25 +23,27 @@ const {
   ctaLabel,
   ctaVariant = "primary",
 } = Astro.props as Props;
+
+const headingId = `${id}-title`;
 ---
 
 <section
   class="section stack service-detail"
   id={id}
-  aria-labelledby={`${id}-title`}
+  aria-labelledby={headingId}
 >
   <div class="container">
-    <!-- Component header: H2 using global H2 styling -->
+    <!-- Component header: H2 + intro -->
     <header class="service-detail__head stack">
       <h2
-        id={`${id}-title`}
-        class="section-title fs-h2 lh-tight text-left"
+        id={headingId}
+        class="section-title fs-h2 lh-tight text-left service-detail__title"
       >
         {title}
       </h2>
 
       {intro && (
-        <p class="section-intro fs-base text-left">
+        <p class="section-intro fs-base text-left service-detail__intro">
           {intro}
         </p>
       )}
@@ -49,7 +51,7 @@ const {
 
     <!-- Body: 1 col mobile, 2 cols md+ -->
     <div class="service-detail__body">
-      <div class="service-detail__column">
+      <div class="service-detail__column service-detail__column--primary">
         <!-- Column header: H3 using global H3 styling -->
         <h3 class="service-detail__subheading h3">
           What you get
@@ -59,7 +61,7 @@ const {
         </ul>
       </div>
 
-      <div class="service-detail__column">
+      <div class="service-detail__column service-detail__column--accent">
         <!-- Column header: H3 using global H3 styling -->
         <h3 class="service-detail__subheading h3">
           Best for

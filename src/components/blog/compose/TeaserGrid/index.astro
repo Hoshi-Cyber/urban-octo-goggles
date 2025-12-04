@@ -1,24 +1,25 @@
 ---
+// src/components/blog/compose/TeaserGrid/index.astro
 import css from "./TeaserGrid.css?url";
 
 export type TeaserPost = {
   title: string;
-  slug: string;               // e.g., "cv-format-kenya-2025"
+  slug: string; // e.g., "cv-format-kenya-2025"
   excerpt: string;
   category?: string;
-  thumbnail?: string;         // absolute or /public path
+  thumbnail?: string; // absolute or /public path
   author?: string;
-  date?: string;              // ISO string preferred
-  readingTime?: number;       // minutes
-  alt?: string;               // image alt text; if absent uses title
+  date?: string; // ISO string preferred
+  readingTime?: number; // minutes
+  alt?: string; // image alt text; if absent uses title
 };
 
 interface Props {
   title?: string;
   eyebrow?: string;
   posts: TeaserPost[];
-  moreHref?: string;          // e.g., "/blog/"
-  moreLabel?: string;         // default: "View all"
+  moreHref?: string; // e.g., "/blog/"
+  moreLabel?: string; // default: "View all"
 }
 
 const {
@@ -31,10 +32,16 @@ const {
 ---
 <link rel="stylesheet" href={css} />
 
-<section class="tgrid" aria-labelledby="tgrid-title" data-section="blog-teasers">
+<section
+  class="tgrid"
+  aria-labelledby="tgrid-title"
+  data-section="blog-teasers"
+>
   <header class="tgrid__header">
     {eyebrow && <p class="tgrid__eyebrow">{eyebrow}</p>}
-    <h2 id="tgrid-title" class="tgrid__title">{title}</h2>
+    <h2 id="tgrid-title" class="tgrid__title h2 section-title">
+      {title}
+    </h2>
   </header>
 
   {posts.length === 0 ? (
@@ -45,35 +52,49 @@ const {
         <article class="tcard">
           <a href={`/blog/${p.slug}/`} class="tcard__link">
             {p.thumbnail && (
-              <img
-                src={p.thumbnail}
-                alt={p.alt ?? p.title}
-                loading="lazy"
-                width="640"
-                height="360"
-                class="tcard__img"
-                decoding="async"
-              />
-            )}
-            <div class="tcard__body">
-              {p.category && <div class="tcard__cat">{p.category}</div>}
-              <h3 class="tcard__title">{p.title}</h3>
-              <p class="tcard__excerpt">{p.excerpt}</p>
-              <div class="tcard__meta">
-                {p.author && <span>{p.author}</span>}
-                {p.date && (
-                  <>
-                    <span aria-hidden="true"> • </span>
-                    <time datetime={p.date}>{p.date}</time>
-                  </>
-                )}
-                {typeof p.readingTime === "number" && (
-                  <>
-                    <span aria-hidden="true"> • </span>
-                    <span>{p.readingTime} min read</span>
-                  </>
-                )}
+              <div class="tcard__media">
+                <img
+                  src={p.thumbnail}
+                  alt={p.alt ?? p.title}
+                  loading="lazy"
+                  width="640"
+                  height="360"
+                  class="tcard__img"
+                  decoding="async"
+                />
               </div>
+            )}
+
+            <div class="tcard__body">
+              {p.category && (
+                <p class="tcard__cat">
+                  {p.category}
+                </p>
+              )}
+
+              <h3 class="tcard__title">
+                {p.title}
+              </h3>
+
+              <p class="tcard__excerpt">
+                {p.excerpt}
+              </p>
+
+              {(p.author || p.date || typeof p.readingTime === "number") && (
+                <p class="tcard__meta">
+                  {p.author && <span class="tcard__metaPill">{p.author}</span>}
+                  {p.date && (
+                    <span class="tcard__metaPill">
+                      <time datetime={p.date}>{p.date}</time>
+                    </span>
+                  )}
+                  {typeof p.readingTime === "number" && (
+                    <span class="tcard__metaPill">
+                      {p.readingTime} min read
+                    </span>
+                  )}
+                </p>
+              )}
             </div>
           </a>
         </article>
@@ -82,6 +103,8 @@ const {
   )}
 
   <footer class="tgrid__footer">
-    <a href={moreHref} class="tgrid__more">{moreLabel}</a>
+    <a href={moreHref} class="tgrid__more">
+      {moreLabel}
+    </a>
   </footer>
 </section>

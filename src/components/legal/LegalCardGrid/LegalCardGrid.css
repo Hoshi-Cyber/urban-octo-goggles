@@ -1,0 +1,30 @@
+/* src/components/legal/LegalCardGrid/LegalCardGrid.css */
+
+.legal-card-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* 1 column mobile */
+  gap: clamp(var(--space-4, 1rem), 2.5vw, var(--space-6, 1.5rem));
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Remove list styling when used as ul/ol */
+.legal-card-grid:is(ul, ol) {
+  list-style: none;
+}
+
+/* ≥640px: 2 columns */
+@media (min-width: 640px) {
+  .legal-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2-column mid */
+  }
+}
+
+/* ≥1024px: 4 columns */
+@media (min-width: 1024px) {
+  .legal-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4-column desktop */
+  }
+}

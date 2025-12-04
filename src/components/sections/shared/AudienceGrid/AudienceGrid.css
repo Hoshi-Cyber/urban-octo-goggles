@@ -1,21 +1,33 @@
-/* AudienceGrid – reusable "Who we serve" grid
-   - Uses global tokens & utilities only
-   - Layout: 1-col → 2-col (sm/md) → 4-col (lg+)
-   - Premium, compact, high-contrast treatment
+/* AudienceGrid – “Who we serve”
+   Aligns visually with other About page bands:
+   - Light, neutral background band
+   - Solid cards with gold top accent
+   - Clear, high-contrast typography
 */
 
 .audience-grid {
-  padding-block: var(--space-6);
-  background: color-mix(
-    in oklab,
-    var(--color-background) 90%,
-    var(--color-primary) 10%
-  );
+  padding-block: var(--space-8);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        var(--color-accent-soft, var(--color-accent)) 12%
+      )
+    );
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
 }
 
 @media (min-width: 1024px) {
   .audience-grid {
-    padding-block: var(--space-8);
+    padding-block: var(--space-10);
   }
 }
 
@@ -23,34 +35,40 @@
   align-items: stretch;
 }
 
-/* Header – left-aligned, stacked */
-
+/* Header – intro stacked under title, full-width, left-aligned */
 .audience-grid__head {
   margin-bottom: var(--space-5);
   text-align: left;
-  display: block;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 
-.audience-grid__head .section-title {
-  margin: 0 0 var(--space-2);
+.audience-grid__title {
+  margin: 0;
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
 }
 
-/* Intro should span the full section width */
 .audience-grid__intro {
   margin: 0;
-  max-width: none;
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--fs-base);
+  color: var(
+    --color-muted,
+    color-mix(in oklab, var(--color-text) 70%, transparent)
+  );
 }
 
-/* Grid layout
-   - 1 column on mobile
-   - 2 columns on small/medium
-   - 4 columns on large+
-*/
-
+/* Grid: 1 / 2 / 4 layout */
 .audience-grid__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 @media (min-width: 640px) {
@@ -65,80 +83,98 @@
   }
 }
 
-/* Cards */
-
+/* Cards – mirror “What we specialise in” / “Where to go next” tiles */
 .audience-grid__card {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl, 1rem);
   background:
     linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--color-surface) 92%, var(--color-primary) 8%),
-      var(--color-surface)
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
     );
-  color: var(--color-text);
-  font-family: var(--font-sans);
   border: 1px solid
-    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      transparent
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 24px rgba(15, 23, 42, 0.06)
+  );
   overflow: hidden;
   transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    background 150ms ease-out;
+    transform 140ms ease-out,
+    box-shadow 140ms ease-out,
+    border-color 140ms ease-out,
+    background 140ms ease-out;
 }
 
-/* Accent strip */
-
+/* Gold top accent line, consistent with other tiles */
 .audience-grid__card::before {
   content: "";
   position: absolute;
   inset-inline: 0;
-  inset-block-start: 0;
+  top: 0;
   height: 3px;
   background: linear-gradient(
     90deg,
-    var(--color-primary),
-    var(--color-accent)
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 40%,
+      var(--color-accent, #d4ab18)
+    )
   );
 }
 
-/* Hover / focus within (no JS) */
-
+/* Hover / focus elevation */
 @media (hover: hover) {
   .audience-grid__card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(
+      --shadow-sm,
+      0 16px 32px rgba(15, 23, 42, 0.12)
+    );
     border-color: color-mix(
       in oklab,
-      var(--color-primary) 35%,
-      var(--color-light) 65%
+      var(--color-primary) 20%,
+      transparent
     );
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in oklab, var(--color-surface) 88%, var(--color-primary) 12%),
-        var(--color-surface)
-      );
   }
 }
 
 .audience-grid__card:focus-within {
   outline: 2px solid transparent;
   box-shadow:
-    var(--shadow-md),
-    0 0 0 3px color-mix(in oklab, var(--color-primary) 65%, #ffffff);
+    var(
+      --shadow-sm,
+      0 16px 32px rgba(15, 23, 42, 0.12)
+    ),
+    0 0 0 3px color-mix(
+      in oklab,
+      var(--color-primary) 60%,
+      #ffffff 40%
+    );
 }
 
-/* Card heading – rely on global .h3 scale, slightly reduced */
-
+/* Card heading */
 .audience-grid__card-title {
   margin: 0 0 var(--space-2);
+  color: var(--color-primary-strong, var(--color-primary));
   font-size: var(--fs-md);
 }
 
@@ -148,29 +184,16 @@
   }
 }
 
-/* Card body – bullet-style paragraphs for clear separation */
-
+/* Card body text */
 .audience-grid__card-body {
   flex: 1 1 auto;
 }
 
 .audience-grid__card-text {
-  position: relative;
   margin: 0;
-  padding-left: 1.25rem;
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm, 0.95rem);
   line-height: 1.6;
-  color: var(--color-muted);
-}
-
-/* Bullet marker */
-.audience-grid__card-text::before {
-  content: "•";
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block-start: 0.45em;
-  font-size: 0.75em;
-  color: var(--color-primary);
+  color: var(--color-text, #111827);
 }
 
 /* Vertical rhythm between statements */
@@ -178,26 +201,36 @@
   margin-top: var(--space-1);
 }
 
-.audience-grid__card-text:last-of-type {
-  margin-bottom: 0;
-}
-
-/* Footer / CTA – visually separated paragraph block */
-
+/* Footer / CTA */
 .audience-grid__card-footer {
   margin-top: var(--space-3);
   padding-top: var(--space-2);
   border-top: 1px solid
-    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
+    color-mix(
+      in oklab,
+      var(--color-border-soft, #e5e7eb) 90%,
+      transparent
+    );
 }
 
+/* CTA button – intrinsic width, pill shape via global .btn */
 .audience-grid__link {
-  /* Rely on .btn + .btn-accent for contrast, hover, focus */
   white-space: nowrap;
+  border-radius: 999px;
+}
+
+/* Small-screen tweaks */
+@media (max-width: 639.98px) {
+  .audience-grid {
+    padding-block: var(--space-7);
+  }
+
+  .audience-grid__card {
+    padding: var(--space-4);
+  }
 }
 
 /* Reduced motion */
-
 @media (prefers-reduced-motion: reduce) {
   .audience-grid__card {
     transition: none;

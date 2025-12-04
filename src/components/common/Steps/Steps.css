@@ -5,7 +5,11 @@
 .steps {
   padding-block: var(--space-10);
   color: var(--color-text);
-  background: var(--color-background);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
 }
 
 @media (min-width: 768px) {
@@ -44,10 +48,12 @@
 
 .steps__eyebrow {
   margin: 0;
-  color: var(--color-muted);
+  font-family: var(--font-sans);
+  color: var(--color-accent);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: var(--fs-sm);
+  font-weight: 600;
 }
 
 .steps__title {
@@ -106,27 +112,29 @@
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface));
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
   background-color: color-mix(
     in oklab,
-    var(--color-primary) 4%,
-    var(--color-surface)
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
   );
   box-shadow: var(--shadow-sm);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 /* Hover/active – subtle, no layout shift */
 .steps__item:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
-  border-color: color-mix(
+  border-color: var(--color-accent);
+  background-color: color-mix(
     in oklab,
-    var(--color-primary) 26%,
-    var(--color-surface)
+    var(--color-surface) 86%,
+    var(--color-primary-soft, var(--color-primary)) 14%
   );
 }
 
@@ -148,7 +156,8 @@
   font-size: var(--fs-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
 .steps__itemTitle {
@@ -156,7 +165,7 @@
   font-weight: 600;
   font-size: var(--fs-lg);
   line-height: 1.35;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 /* Summary and description */
@@ -164,13 +173,13 @@
   margin: 0;
   font-size: var(--fs-sm);
   font-weight: 500;
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 .steps__itemDesc {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 /* Roles block */
@@ -190,7 +199,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-accent);
 }
 
 .steps__roleList {
@@ -199,7 +208,7 @@
   display: grid;
   gap: var(--space-1);
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 .steps__roleItem {

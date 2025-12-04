@@ -14,6 +14,21 @@ import { getCollection } from "astro:content";
 export const prerender = false;
 
 const PER_PAGE = 8;
+const PLACEHOLDER = "/images/blog/hero/blog-home-hero.webp";
+
+const slugify = (s: string) =>
+  String(s || "uncategorized")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+// Heuristic validator to weed out obviously bad image values
+const isBad = (v: unknown) =>
+  v === null ||
+  v === undefined ||
+  (typeof v === "string" &&
+    (!v.trim() || v.includes("undefined") || v.includes("null")));
 
 // Load all non-draft posts
 const all = await getCollection("blog", ({ data }) => !data.draft);
@@ -23,22 +38,43 @@ const posts = all
   .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
   .map((entry) => {
     const data = entry.data as any;
+    const postSlug = entry.slug.split("/").pop()!;
+    const categorySlug = slugify(data.category ?? "uncategorized");
+
+    // Prefer cover.src, then cover (string), then ogImage.src
+    let coverSrc: string | null = null;
+    const cover = data.cover;
+    const ogImage = data.ogImage;
+
+    if (cover && typeof cover === "object" && typeof cover.src === "string") {
+      coverSrc = cover.src;
+    } else if (typeof cover === "string") {
+      coverSrc = cover;
+    } else if (ogImage && typeof ogImage === "object" && typeof ogImage.src === "string") {
+      coverSrc = ogImage.src;
+    }
+
+    if (isBad(coverSrc)) coverSrc = PLACEHOLDER;
+
     return {
+      slug: postSlug,
       title: data.title,
       description: data.description,
-      // Use the collection slug directly (e.g. "cv-tips/2025-cv-format-...")
-      href: `/blog/${entry.slug}/`,
+      excerpt: data.description ?? data.metaDescription,
+      href: `/blog/${categorySlug}/${postSlug}/`,
       date: new Date(data.date),
       author: data.author,
       tags: data.tags ?? [],
-      cover:
-        typeof data.cover === "string"
-          ? data.cover
-          : (data.cover?.src ?? data.ogImage ?? null),
-      category: data.category,
-      readingTime: data.readingTimeMinutes ?? data.readingTime ?? undefined,
+      cover: coverSrc,
+      category: data.category ?? "Uncategorized",
+      categorySlug,
+      readingTime:
+        data.readingTimeMinutes ??
+        data.readingTime ??
+        undefined,
     };
   })
+  .filter((p) => !isBad(p.cover))
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
 // Featured is the latest post; the rest are paginated
@@ -65,17 +101,17 @@ const start = (page - 1) * PER_PAGE;
 const end = start + PER_PAGE;
 const pageItems = rest.slice(start, end);
 
-// Adapt shape for PostFeedLatest (url + frontmatter)
+// Adapt shape for PostFeedLatest (original contract)
 const feedPosts = pageItems.map((p) => ({
-  url: p.href,
-  frontmatter: {
-    title: p.title,
-    description: p.description,
-    date: p.date,
-    readingTime: p.readingTime,
-    category: p.category,
-    cover: p.cover ? { src: p.cover, alt: p.title } : undefined,
-  },
+  slug: p.slug,
+  title: p.title,
+  category: p.category,
+  categorySlug: p.categorySlug,
+  date: p.date,
+  href: p.href,
+  readingTime: p.readingTime,
+  excerpt: p.excerpt,
+  thumbnail: p.cover ? { src: p.cover, alt: p.title } : undefined,
 }));
 
 // SEO links (respect trailingSlash: "always")

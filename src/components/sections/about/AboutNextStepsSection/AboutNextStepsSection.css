@@ -1,42 +1,73 @@
 /* src/components/sections/about/AboutNextStepsSection/AboutNextStepsSection.css */
 
 .about-next-steps {
-  padding-block: var(--space-8);
+  /* Internal vertical padding + one-row gap after the band */
+  padding-block: var(--space-6);
+  margin-block-end: var(--space-6); /* one-row vertical gap after section */
   background:
     radial-gradient(
       circle at top left,
-      color-mix(in oklab, var(--color-primary) 8%, #ffffff),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 14%,
+        #ffffff
+      ),
       transparent 55%
     ),
     radial-gradient(
       circle at bottom right,
-      color-mix(in oklab, var(--color-accent) 7%, #ffffff),
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 12%,
+        #ffffff
+      ),
       transparent 55%
     ),
-    var(--color-light-alt);
+    color-mix(
+      in oklab,
+      var(--color-light-alt, var(--color-light)) 90%,
+      #ffffff
+    );
 }
 
 @media (min-width: 768px) {
+  .about-next-steps {
+    padding-block: var(--space-8);
+  }
+}
+
+@media (min-width: 1280px) {
   .about-next-steps {
     padding-block: var(--space-10);
   }
 }
 
+/* Inner stack – small vertical gap between header and content */
 .about-next-steps__inner {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  gap: var(--space-3);      /* small vertical gap */
+  row-gap: var(--space-3);  /* hard override in case .stack sets row-gap */
+}
+
+/* Stronger override if .stack utility also defines gap */
+.about-next-steps__inner.stack {
+  gap: var(--space-3);
+  row-gap: var(--space-3);
 }
 
 /* Header – left aligned, intro full-width */
 
 .about-next-steps__header {
   width: 100%;
-  max-width: none;
+  max-width: 44rem;
   text-align: left;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  margin-bottom: 0; /* rely on inner gap */
 }
 
 /* Override global section-head grid so title + intro stay stacked */
@@ -52,20 +83,25 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
-  opacity: 0.9;
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #0b57d0) 70%,
+    var(--color-text, #6b7280)
+  );
+  opacity: 0.95;
 }
 
 .about-next-steps__intro {
   margin: 0;
-  color: var(--color-muted);
-  max-width: none; /* intro spans full section width */
+  color: var(--color-text);
+  max-width: 52rem;
 }
 
 /* Content stack */
 
 .about-next-steps__content {
   width: 100%;
+  margin-top: 0; /* ensure no extra offset from .stack utilities */
 }
 
 /* Next steps grid */
@@ -114,11 +150,24 @@
   border-radius: var(--radius-lg);
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--color-surface) 85%, #ffffff),
-    color-mix(in oklab, var(--color-light) 85%, #ffffff)
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 88%,
+      var(--color-light, #f3f4f6)
+    ),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #0b57d0)) 4%,
+      var(--color-surface, #ffffff)
+    )
   );
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 80%,
+      transparent
+    );
   text-decoration: none;
   color: var(--color-text);
   position: relative;
@@ -130,49 +179,108 @@
     background-color 0.18s ease-out;
 }
 
+/* Top accent ribbon */
 .about-next-steps__link-card::before {
   content: "";
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset-inline: var(--space-4);
+  top: 0.45rem;
   height: 3px;
+  border-radius: 999px;
   background: linear-gradient(
     to right,
-    var(--color-primary),
-    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary))
+    var(--color-primary, #0b57d0),
+    color-mix(
+      in oklab,
+      var(--color-accent, #0ea5e9) 70%,
+      var(--color-primary, #0b57d0)
+    )
   );
+  opacity: 0.9;
+}
+
+/* Subtle corner glow */
+.about-next-steps__link-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -40% -60% auto;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(
+    circle at top right,
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 14%,
+      transparent
+    ),
+    transparent 55%
+  );
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 /* Optional subtle tint per key for extra contrast */
 .about-next-steps__link-card[data-next-step-key="pricing"] {
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--color-light) 90%, #ffffff),
-    color-mix(in oklab, var(--color-primary) 6%, var(--color-surface))
+    color-mix(
+      in oklab,
+      var(--color-light, #f3f4f6) 92%,
+      #ffffff
+    ),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #0b57d0)) 12%,
+      var(--color-surface, #ffffff)
+    )
   );
 }
 
 .about-next-steps__link-card[data-next-step-key="services"] {
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--color-surface) 90%, #ffffff),
-    color-mix(in oklab, var(--color-accent) 6%, var(--color-surface))
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 92%,
+      #ffffff
+    ),
+    color-mix(
+      in oklab,
+      var(--color-accent-soft, var(--color-accent, #0ea5e9)) 12%,
+      var(--color-surface, #ffffff)
+    )
   );
 }
 
 .about-next-steps__link-card[data-next-step-key="samples"] {
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--color-surface) 92%, #ffffff),
-    color-mix(in oklab, var(--color-primary) 4%, var(--color-light))
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 94%,
+      #ffffff
+    ),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #0b57d0)) 8%,
+      var(--color-light, #f3f4f6)
+    )
   );
 }
 
 .about-next-steps__link-card[data-next-step-key="contact"] {
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--color-light) 92%, #ffffff),
-    color-mix(in oklab, var(--color-accent) 4%, var(--color-light))
+    color-mix(
+      in oklab,
+      var(--color-light, #f3f4f6) 94%,
+      #ffffff
+    ),
+    color-mix(
+      in oklab,
+      var(--color-accent-soft, var(--color-accent, #0ea5e9)) 8%,
+      var(--color-light, #f3f4f6)
+    )
   );
 }
 
@@ -184,53 +292,34 @@
 
 .about-next-steps__link-description {
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
+}
+
+/* CTA inside card – smaller and inline for balance */
+.about-next-steps__link-cta {
+  margin-top: var(--space-3);
+  align-self: flex-start; /* shrink to content, not full-width */
 }
 
 /* Hover + focus states */
 
 .about-next-steps__link-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-  border-color: color-mix(in oklab, var(--color-primary) 40%, #e5e7eb);
+  transform: translateY(-2px);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #0b57d0) 30%,
+    var(--color-border-subtle, #e5e7eb)
+  );
 }
 
 .about-next-steps__link-card:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 80%, #ffffff);
+  outline: 2px solid
+    color-mix(in oklab, var(--color-primary, #0b57d0) 80%, #ffffff);
   outline-offset: 3px;
 }
 
-/* LeadCapture CTA – compact horizontal card */
-
-.about-next-steps__cta {
-  margin-top: var(--space-6);
-  padding: var(--space-4) var(--space-5);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  background: linear-gradient(
-    120deg,
-    color-mix(in oklab, var(--color-primary) 22%, #ffffff),
-    color-mix(in oklab, var(--color-primary) 16%, var(--color-accent))
-  );
-  color: #ffffff;
-  border-radius: var(--radius-xl);
-  border: none; /* remove outline/border from the card wrapper */
-}
-
-/* Ensure inner LeadCaptureBanner respects horizontal layout */
-.about-next-steps__cta > * {
-  width: 100%;
-}
-
-@media (max-width: 639px) {
-  .about-next-steps__cta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .about-next-steps__link-card {
     transition: none;

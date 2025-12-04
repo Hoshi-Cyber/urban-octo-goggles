@@ -15,6 +15,19 @@ import processPage from "../../data/pages/process";
 const { title, description, seo, hero, steps, deliverables, timeline, cta } =
   processPage;
 
+// Ensure we always have a valid hero image + alt, even if data file is missing them
+const heroImage =
+  typeof hero?.image === "string" && hero.image.trim().length > 0
+    ? hero.image
+    : "/assets/images/services/main-services-overview-hero.webp";
+
+const heroAlt =
+  (typeof hero?.imageAlt === "string" && hero.imageAlt.trim().length > 0
+    ? hero.imageAlt
+    : typeof hero?.alt === "string" && hero.alt.trim().length > 0
+    ? hero.alt
+    : "Illustration of CV, cover letter and LinkedIn profile across screens") || "";
+
 const PLACEHOLDER = "/assets/images/placeholder/blog-hero.webp";
 
 const slugify = (s: string) =>
@@ -121,13 +134,15 @@ const showTrust = false;
 ---
 
 <BaseLayout {title} {description} {seo}>
-  <!-- Process hero -->
+  <!-- Process hero with image wired into ServiceHero -->
   <ServiceHero
     title={hero.title}
     sub={hero.sub}
     eyebrow={hero.eyebrow}
     actions={hero.actions}
     meta={hero.meta}
+    image={heroImage}
+    alt={heroAlt}
   />
 
   <!-- Step-by-step process -->

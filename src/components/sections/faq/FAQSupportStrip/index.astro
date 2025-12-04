@@ -16,13 +16,21 @@ export interface Props {
 
 const { title, copy, primaryCta, secondaryCta } = Astro.props as Props;
 
-const headingId = "faq-support-strip-title";
+const safeIdSlug = String(title || "faq-support")
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/(^-|-$)+/g, "");
+
+const headingId = `faq-support-strip-title-${safeIdSlug}`;
 ---
 
 <section class="faq-support-strip" aria-labelledby={headingId}>
   <div class="faq-support-strip__inner container">
     <div class="faq-support-strip__content stack">
-      <h2 id={headingId} class="section-title faq-support-strip__title">
+      <h2
+        id={headingId}
+        class="section-title faq-support-strip__title"
+      >
         {title}
       </h2>
       <p class="faq-support-strip__copy text-muted">

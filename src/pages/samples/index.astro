@@ -5,6 +5,7 @@ import SampleCard from "../../components/cards/SampleCard/index.astro";
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
 import SamplesFilterBar from "../../components/filters/SamplesFilterBar/index.astro";
 import SamplePreviewModal from "../../components/modals/SamplePreviewModal/index.astro";
+import PageHeader from "../../components/sections/shared/PageHeader/index.astro";
 
 import samples from "../../data/pages/samples";
 
@@ -12,14 +13,18 @@ const { title, description, seo, filters, items } = samples;
 ---
 
 <BaseLayout title={title} description={description} seo={seo}>
-  <!-- Header -->
-  <section class="container py-8">
-    <h1>{title}</h1>
-    <p>{description}</p>
+  <!-- Page header -->
+  <PageHeader title={title} id="samples-page-title" />
+
+  <!-- Short description under header -->
+  <section class="container mt-4">
+    <p class="fs-base text-left max-w-prose">
+      {description}
+    </p>
   </section>
 
   <!-- Filters -->
-  <section class="container">
+  <section class="container mt-8">
     <SamplesFilterBar levels={filters.levels} industries={filters.industries} />
   </section>
 

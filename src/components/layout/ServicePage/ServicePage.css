@@ -2,15 +2,22 @@
 
 /* Root */
 .service {
-  color: var(--color-text, #111827);
-  background: var(--color-background, #fff);
+  color: var(--color-text);
+  background: var(--color-surface);
 }
 
-/* Hero */
+/* Hero band – subtle brand tint, spacing still via utilities in markup */
 .service__hero {
-  /* section spacing handled by utilities in markup (py-10 xs:py-12 md:py-16 lg:py-20) */
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
 }
 
+/* Header block */
 .service__head {
   display: grid;
   gap: var(--space-3, 0.75rem);
@@ -19,14 +26,17 @@
   text-align: center;
 }
 
+/* Eyebrow – use brand colour, no faded look */
 .service__eyebrow {
+  margin: 0;
   font-size: var(--fs-sm, 0.9375rem);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted, #6b7280);
-  margin: 0;
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
+/* Title */
 .service__title {
   margin: 0;
   font-weight: 800;
@@ -40,10 +50,11 @@
   letter-spacing: -0.01em;
 }
 
+/* Subheading – full-strength text, not muted */
 .service__sub {
   margin: 0;
   max-width: 70ch;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-text);
   font-size: var(--fs-base, 1rem);
   line-height: 1.7;
 }
@@ -52,12 +63,13 @@
 .service__cover {
   margin-top: var(--space-4, 1rem);
 }
+
 .service__cover img {
   display: block;
   width: 100%;
   height: auto;
   border-radius: var(--radius-xl, 16px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.06));
+  box-shadow: var(--shadow-md);
   content-visibility: auto; /* skip off-screen work */
   contain-intrinsic-size: 720px 1280px; /* reserve space to avoid CLS */
   aspect-ratio: 16 / 9; /* explicit ratio as a fallback */
@@ -69,6 +81,7 @@
   justify-content: center;
   margin-top: var(--space-6, 1.5rem);
 }
+
 .service__cta .btn {
   min-height: 44px;
 }
@@ -87,9 +100,11 @@
   line-height: 1.3;
   font-weight: 700;
 }
+
 .service__body > h2 {
   font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.75rem);
 }
+
 .service__body > h3 {
   font-size: clamp(1.125rem, 1rem + 0.4vw, 1.375rem);
 }
@@ -97,8 +112,9 @@
 .service__body > p {
   margin: 0;
   line-height: 1.75;
-  color: var(--color-text, #111827);
+  color: var(--color-text);
 }
+
 .service__body :where(ul, ol) {
   padding-inline-start: 1.25rem;
   display: grid;
@@ -110,7 +126,7 @@
 .service :where(a, button):focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary, #0b57d0) 35%, white);
+    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
   border-radius: 0.25rem;
 }
 
@@ -121,6 +137,7 @@
   .service__head {
     margin-bottom: var(--space-8, 2rem);
   }
+
   .service__title {
     font-size: clamp(
       var(--fs-3xl, 1.875rem),
@@ -128,6 +145,7 @@
       var(--fs-5xl, 3rem)
     );
   }
+
   .service__sub {
     font-size: clamp(1rem, 0.96rem + 0.3vw, 1.125rem);
   }
@@ -139,6 +157,7 @@
     max-width: 75ch;
     gap: var(--space-6, 1.5rem);
   }
+
   .service__cover {
     margin-top: var(--space-6, 1.5rem);
   }
@@ -149,6 +168,7 @@
   .service__title {
     letter-spacing: -0.015em;
   }
+
   .service__body {
     max-width: 78ch;
   }

@@ -1,15 +1,16 @@
 .footer {
-  color: var(--color-text, #111827);
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, #2563eb 3%, #fff) 0%,
-    #fff 100%
+  color: var(--color-text);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
   );
   border-top: 1px solid
-    color-mix(in oklab, var(--color-text, #111827) 10%, transparent);
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface));
 }
+
 .footer .container {
-  padding-block: var(--space-8, 2rem);
+  padding-block: var(--space-8);
 }
 
 .footer a {
@@ -22,15 +23,17 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2, 0.5rem);
-  margin-bottom: var(--space-6, 1.5rem);
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
 }
 
 .footer__socialLabel {
   margin: 0;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-muted, #6b7280);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 .footer__social {
@@ -51,13 +54,14 @@
 
 .sociallink {
   --_size: 2.25rem;
-  --_fg: var(--color-muted, #6b7280);
+  --_fg: var(--color-muted);
   --_bg: color-mix(
     in oklab,
-    var(--color-background, #fff) 95%,
-    var(--color-primary, #2563eb)
+    var(--color-surface) 92%,
+    var(--color-primary-soft, var(--color-primary)) 8%
   );
-  --_bd: color-mix(in oklab, var(--color-text, #111827) 12%, transparent);
+  --_bd: color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,21 +74,27 @@
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
-    transform 0.06s ease;
+    transform 0.06s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
-/* Hover: keep neutral background, no blue fill – tooltip comes from title="" */
+/* Hover: subtle brand lift */
 .sociallink:hover,
 .sociallink:focus-visible {
-  color: var(--_fg);
-  background: var(--_bg); /* no blue */
+  color: var(--color-primary);
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 24%,
+    var(--color-surface) 76%
+  );
   border-color: color-mix(
     in oklab,
-    var(--color-text, #111827) 20%,
-    transparent
+    var(--color-primary) 32%,
+    var(--color-surface) 68%
   );
-  box-shadow: 0 0 0 2px
-    color-mix(in oklab, var(--color-text, #111827) 6%, transparent);
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 22%, var(--color-surface) 78%);
 }
 
 .sociallink:active {
@@ -107,19 +117,22 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--gap, 1rem);
-  margin-block: var(--space-6, 1.5rem);
+  margin-block: var(--space-6);
 }
+
 .footer__col {
   display: grid;
   gap: 0.5rem;
 }
+
 .footer__colTitle {
   margin: 0;
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--color-text, #111827);
+  color: var(--color-primary);
   white-space: nowrap;
 }
+
 .footer__links {
   list-style: none;
   margin: 0;
@@ -127,44 +140,61 @@
   display: grid;
   gap: 0.375rem;
 }
+
 .footer__link {
-  color: var(--color-muted, #6b7280);
+  color: var(--color-muted);
   font-size: 0.875rem;
 }
+
 .footer__link:hover {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
 }
 
 /* Bottom */
 .footer__bottom {
-  margin-top: var(--space-6, 1.5rem);
-  padding-top: var(--space-4, 1rem);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
   border-top: 1px solid
-    color-mix(in oklab, var(--color-text, #111827) 10%, transparent);
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface));
   display: grid;
   gap: 0.75rem;
   align-items: center;
 }
+
 .footer__copy {
   margin: 0;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-muted);
   font-size: 0.875rem;
 }
+
 .footer__legal {
   display: inline-flex;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+
 .footer__legal .footer__link {
   font-size: 0.875rem;
 }
+
 .footer__credit {
   margin: 0;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-muted);
   font-size: 0.875rem;
 }
+
 .footer__creditLink {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
+}
+
+/* Focus for text links */
+.footer__link:focus-visible,
+.footer__creditLink:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--color-primary) 30%, var(--color-surface));
+  border-radius: var(--radius-sm, 0.25rem);
 }
 
 /* Breakpoints */
@@ -177,6 +207,7 @@
     column-gap: 1rem;
   }
 }
+
 @media (min-width: 1024px) {
   .footer__cols {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -186,19 +217,23 @@
     gap: 1rem;
   }
 }
+
 @media (min-width: 1280px) {
   .footer .container {
     padding-block: var(--space-12, 3rem);
   }
 }
+
 @media (min-width: 1536px) {
   .footer__cols {
     gap: var(--gap, 2rem);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .sociallink,
-  .footer__link {
+  .footer__link,
+  .footer__creditLink {
     transition: none;
   }
 }

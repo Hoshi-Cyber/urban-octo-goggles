@@ -1,0 +1,86 @@
+[
+  {
+    "id": "linkedin-revamp",
+    "category": "addons",
+    "type": "addon",
+    "name": "Full LinkedIn revamp",
+    "description": "Complete LinkedIn profile rewrite with recruiter-focused keywords across headline, about, experience and skills.",
+    "priceLabel": "KSh 2,000",
+    "badge": "High impact",
+    "highlight": true,
+    "sortOrder": 10,
+    "isVisible": true
+  },
+  {
+    "id": "extra-cover-letter",
+    "category": "addons",
+    "type": "addon",
+    "name": "Extra cover letter",
+    "description": "Additional tailored cover letter for a second role or application.",
+    "priceLabel": "KSh 1,500",
+    "badge": null,
+    "highlight": false,
+    "sortOrder": 20,
+    "isVisible": true
+  },
+  {
+    "id": "ats-score-report",
+    "category": "addons",
+    "type": "addon",
+    "name": "ATS score & optimisation report",
+    "description": "Before/after ATS scan showing how your CV improved for typical Kenyan job boards.",
+    "priceLabel": "KSh 1,000",
+    "badge": null,
+    "highlight": false,
+    "sortOrder": 30,
+    "isVisible": true
+  },
+  {
+    "id": "niche-keywords",
+    "category": "addons",
+    "type": "addon",
+    "name": "Niche keyword enhancement",
+    "description": "Extra keyword research for specialised sectors such as tech, NGO, banking and consulting.",
+    "priceLabel": "KSh 1,000",
+    "badge": "Great for specialised roles",
+    "highlight": false,
+    "sortOrder": 40,
+    "isVisible": true
+  },
+  {
+    "id": "annual-refresh",
+    "category": "addons",
+    "type": "addon",
+    "name": "Annual CV refresh",
+    "description": "One CV update within 12 months for promotions, role changes or new achievements.",
+    "priceLabel": "KSh 3,000",
+    "badge": "Future-proof",
+    "highlight": false,
+    "sortOrder": 50,
+    "isVisible": true
+  },
+  {
+    "id": "express-48h",
+    "category": "speed",
+    "type": "speed",
+    "name": "Express – 48 hours",
+    "description": "For upcoming deadlines or shortlisting windows where you need a fast turnaround.",
+    "priceLabel": "+25%",
+    "badge": "Popular",
+    "highlight": false,
+    "sortOrder": 10,
+    "isVisible": true
+  },
+  {
+    "id": "priority-24h",
+    "category": "speed",
+    "type": "speed",
+    "name": "Priority – 24 hours",
+    "description": "For senior roles and urgent recruitment cycles where every hour counts.",
+    "priceLabel": "+40%",
+    "badge": "Best for senior roles",
+    "highlight": true,
+    "sortOrder": 20,
+    "isVisible": true
+  }
+]

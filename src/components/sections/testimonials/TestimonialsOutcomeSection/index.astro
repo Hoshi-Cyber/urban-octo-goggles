@@ -60,20 +60,26 @@ const ariaLabelFallback = "Outcomes our clients report";
 
     <div class="testimonials-outcome-section__body">
       {stats.length > 0 && (
-        <div class="testimonials-outcome-section__metrics">
+        <section
+          class="testimonials-outcome-section__panel testimonials-outcome-section__metrics"
+          aria-label="Client results at a glance"
+        >
           <StatStrip stats={stats} compact={true} />
-        </div>
+        </section>
       )}
 
       {reasons.length > 0 && (
-        <div class="testimonials-outcome-section__reasons">
+        <section
+          class="testimonials-outcome-section__panel testimonials-outcome-section__reasons"
+          aria-label="Why clients recommend us"
+        >
           <Checklist
             items={reasons.map((reason) => ({
               label: reason,
               checked: true,
             }))}
           />
-        </div>
+        </section>
       )}
     </div>
   </div>

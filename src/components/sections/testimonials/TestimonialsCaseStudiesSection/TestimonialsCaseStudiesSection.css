@@ -4,14 +4,52 @@
 @import "../../../../styles/breakpoints.css";
 @import "../../../../styles/sections.css";
 
-/* Root section – subtle premium surface */
+/* Root section – premium band with subtle primary + accent tint */
 .testimonials-case-studies-section {
-  background: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 94%,
-    var(--color-primary-soft, var(--color-primary, #2563eb)) 6%
-  );
+  padding-block: var(--space-8);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 12%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 10%,
+        transparent
+      ),
+      transparent 65%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 95%,
+        #ffffff 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        transparent
+      )
+    );
   color: var(--color-text);
+  border-block-start: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  border-block-end: 1px solid
+    color-mix(in oklab, var(--color-border-soft, #e5e7eb) 90%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .testimonials-case-studies-section {
+    padding-block: var(--space-10);
+  }
 }
 
 /* Slightly tighter stack between header and grid */
@@ -19,31 +57,67 @@
   gap: var(--space-5, 1.25rem);
 }
 
-/* Header: force full-width, stacked, left-aligned title + intro */
-.testimonials-case-studies-section .testimonials-case-studies-section__head {
-  /* override global .section-head flex row behaviour */
-  display: block;
-  text-align: left;
+/* Header: full-width, stacked, left-aligned title + intro
+   Explicitly overrides shared .section-head grid/centering behaviour.
+   NOTE: we include .section-head here for higher specificity. */
+.testimonials-case-studies-section__head.section-head {
   width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: var(--space-2);
 }
 
+/* Title spans full section width */
 .testimonials-case-studies-section__title {
   margin: 0;
   width: 100%;
+  max-width: 100%;
   text-align: left;
-  /* h2 typography comes from .section-title / typography.css */
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
+  position: relative;
+  padding-bottom: var(--space-2);
 }
 
-.testimonials-case-studies-section__intro {
+/* Gradient underline under the section title */
+.testimonials-case-studies-section__title::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
+  );
+}
+
+/* Intro stacked under title, left-aligned, full-width
+   Overrides shared .section-sub behaviour (centre + max-width). */
+.testimonials-case-studies-section__intro.section-sub {
   margin: 0;
-  margin-top: var(--space-2, 0.5rem);
+  margin-top: var(--space-1);
   width: 100%;
+  max-width: 100%;
+  align-self: stretch;
   text-align: left;
-  font-size: var(--fs-sm, 0.95rem);
+  font-size: var(--fs-base, 0.95rem);
   color: var(--color-muted, #6b7280);
+  justify-self: flex-start;
 }
 
-/* Grid – slightly reduced top offset for a tighter layout */
+/* Grid – tighter top offset for a compact layout */
 .testimonials-case-studies-section__grid {
   margin-top: var(--space-2, 0.5rem);
   display: grid;
@@ -51,22 +125,65 @@
   gap: var(--space-5, 1.25rem);
 }
 
-/* Card (preserved styling) */
+/* Card – premium tiles with brand gradient + glow */
 .testimonials-case-studies-section__card {
   position: relative;
   padding: var(--space-5, 1.25rem) var(--space-5, 1.25rem)
     var(--space-4, 1rem);
-  border-radius: var(--radius-lg, 1rem);
+  border-radius: var(--radius-xl, 1rem);
   border: 1px solid
-    var(--color-border-soft, var(--color-border-1));
-  background: var(--color-surface, #ffffff);
-  box-shadow: var(--shadow-md, 0 18px 45px rgba(15, 23, 42, 0.06));
+    color-mix(
+      in oklab,
+      var(--color-border-soft, var(--color-border-1)) 80%,
+      var(--color-primary) 20%
+    );
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 14%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 12%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 92%,
+        transparent
+      )
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 12px 30px rgba(15, 23, 42, 0.10)
+  );
   display: grid;
   gap: var(--space-3, 0.75rem);
   overflow: hidden;
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out,
+    background 160ms ease-out;
 }
 
-/* Premium top accent bar (unchanged) */
+/* Premium top accent bar */
 .testimonials-case-studies-section__card::before {
   content: "";
   position: absolute;
@@ -75,13 +192,75 @@
   height: 3px;
   background: linear-gradient(
     90deg,
-    var(--color-primary-soft, var(--color-primary, #2563eb)),
+    var(--color-accent, #d4ab18),
     color-mix(
       in oklab,
-      var(--color-primary-strong, var(--color-primary, #2563eb)) 80%,
-      var(--color-accent, #0ea5e9)
+      var(--color-primary-soft, var(--color-primary)) 60%,
+      var(--color-accent, #d4ab18)
     )
   );
+}
+
+/* Soft glow chip in top-right corner */
+.testimonials-case-studies-section__card::after {
+  content: "";
+  position: absolute;
+  top: -1.6rem;
+  right: -1.6rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #ffffff 0,
+      #ffffff 45%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 210deg,
+      var(--color-primary),
+      var(--color-accent),
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 60%,
+        var(--color-accent)
+      ),
+      var(--color-primary)
+    );
+  opacity: 0.20;
+  filter: blur(1px);
+}
+
+/* Hover / focus elevation */
+@media (hover: hover) {
+  .testimonials-case-studies-section__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(
+      --shadow-sm,
+      0 18px 40px rgba(15, 23, 42, 0.16)
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 26%,
+      transparent
+    );
+  }
+}
+
+.testimonials-case-studies-section__card:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    var(
+      --shadow-sm,
+      0 18px 40px rgba(15, 23, 42, 0.16)
+    ),
+    0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--color-primary) 55%,
+        #ffffff 45%
+      );
 }
 
 /* Case label */
@@ -131,14 +310,14 @@
   border-radius: var(--radius-md, 0.75rem);
   background: color-mix(
     in oklab,
-    var(--color-primary-soft, var(--color-primary, #2563eb)) 10%,
-    var(--color-surface, #ffffff) 90%
+    var(--color-primary-soft, var(--color-primary, #2563eb)) 12%,
+    var(--color-surface, #ffffff) 88%
   );
   border: 1px solid
     color-mix(
       in oklab,
-      var(--color-primary-soft, var(--color-primary, #2563eb)) 40%,
-      transparent 60%
+      var(--color-primary-soft, var(--color-primary, #2563eb)) 45%,
+      transparent 55%
     );
 }
 

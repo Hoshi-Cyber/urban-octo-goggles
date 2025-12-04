@@ -1,20 +1,77 @@
 /* CategoryHero — mobile-first, tokenized
-   Fix Plan 158: no inner horizontal gutters; block padding only; grid >= lg when media exists. */
+   Fix Plan 158 baseline, updated per latest requirements:
+   - Smooth rounded container with premium gradient band
+   - Clear vertical gap before hero (margin-top = one section row)
+   - Comfortable left/right padding on all screens
+   - Slightly smaller stats chips
+   - No heading underline accent
+   - Strictly no var(--color-muted) on hero content
+*/
 
-/* Section wrapper stays neutral; page .container owns gutters */
+/* SECTION WRAPPER (band only – no horizontal gutters on outer container)
+   .container controls page gutters; .stack controls section gaps between siblings.
+   We add a margin-top equal to one "row" via --section-gap.
+*/
 .category-hero {
-  background: transparent;
+  margin-block-start: var(--section-gap);
   padding-block: clamp(var(--space-8), 3vw, var(--space-12));
+
+  border-radius: var(--radius-3xl);
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 14%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent, #d4ab18)) 10%,
+        transparent
+      ),
+      transparent 65%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 95%,
+        #ffffff 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 88%,
+        transparent
+      )
+    );
+
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      transparent
+    );
 }
 
-/* Grid wrapper: single column by default; becomes two-column only on lg+ when media is present */
+/* Inner grid wrapper:
+   - Caps content width
+   - Adds comfortable left/right padding across breakpoints
+*/
 .category-hero__grid {
   display: block;
   max-width: 72rem;
   margin-inline: auto;
+  padding-inline: clamp(var(--space-4), 4vw, var(--space-10));
 }
 
-/* Activate grid only when a media pane exists (component adds .has-media) */
+/* Activate two-column grid at lg+ */
 @media (min-width: 1024px) {
   .category-hero__grid.has-media {
     display: grid;
@@ -30,31 +87,65 @@
   gap: var(--space-4);
 }
 
-/* Eyebrow */
+/* Eyebrow
+   - Smaller than h1 at all breakpoints
+   - Uses primary/text tones, not muted
+*/
 .category-hero__eyebrow {
   margin: 0;
-  font-size: clamp(0.75rem, 0.22vw + 0.7rem, 0.9rem);
+  font-size: clamp(var(--fs-xs), 0.2vw + 0.65rem, var(--fs-sm));
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  font-weight: 600;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 55%,
+    var(--color-text, #020617)
+  );
 }
 
-/* Title + dek */
+/* h1 title
+   - Uses global h1 tokens via "h1" utility
+   - No underline accent
+*/
 .category-hero__title {
   margin: 0;
   font-size: clamp(var(--fs-2xl), 4vw, var(--fs-5xl));
   line-height: 1.15;
   font-weight: 800;
-  color: var(--color-text);
+  letter-spacing: 0.01em;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
+
+  position: relative;
+  padding-bottom: 0;
 }
+
+/* Explicitly remove any underline accent */
+.category-hero__title::after {
+  content: none !important;
+}
+
+/* Dek / subheading
+   - Soft text colour, no muted token
+*/
 .category-hero__dek {
   margin: 0;
   font-size: clamp(1rem, 1.1vw + 0.6rem, var(--fs-xl));
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 80%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
+  );
   max-width: 60ch;
 }
 
-/* Metrics — compact pills */
+/* Metrics — slightly smaller premium pills (no muted token) */
 .category-hero__stats {
   margin: 0;
   padding: 0;
@@ -62,19 +153,37 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-size: clamp(0.75rem, 0.2vw + 0.72rem, 0.875rem);
+  font-size: clamp(0.7rem, 0.18vw + 0.68rem, 0.8rem);
 }
+
 .category-hero__stat {
   display: inline-flex;
   align-items: center;
-  gap: 0.45ch;
-  padding: 0.34rem 0.65rem;
+  gap: 0.4ch;
+  padding: 0.28rem 0.6rem;
   border-radius: 9999px;
-  background: var(--color-light);
-  color: var(--color-muted);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent);
+
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 92%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 65%,
+    var(--color-text, #020617)
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 40%,
+      var(--color-border-subtle, #e5e7eb)
+    );
 }
-.category-hero__stat + .category-hero__stat::before { content: none; }
+
+.category-hero__stat + .category-hero__stat::before {
+  content: none;
+}
 
 /* CTAs: stack on mobile, row on ≥640px */
 .category-hero__ctas {
@@ -82,26 +191,132 @@
   grid-auto-flow: row;
   gap: var(--space-3);
 }
-.category-hero__ctas .btn { width: 100%; }
+
+.category-hero__ctas .btn {
+  width: 100%;
+}
+
+/* Premium but calm CTA treatment */
+.category-hero__ctas .btn-primary {
+  box-shadow: var(--shadow-sm, 0 12px 30px rgb(15 23 42 / 0.12));
+}
+
+.category-hero__ctas .btn-accent {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 30%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+.category-hero__ctas .btn-accent:hover,
+.category-hero__ctas .btn-accent:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%,
+    var(--color-surface, #ffffff)
+  );
+}
 
 @media (min-width: 640px) {
   .category-hero__ctas {
     grid-auto-flow: column;
-    justify-content: start;
+    justify-content: flex-start;
   }
-  .category-hero__ctas .btn { width: auto; }
+
+  .category-hero__ctas .btn {
+    width: auto;
+  }
 }
 
-/* Optional media pane */
+/* HERO IMAGE
+   - Always present: slot content or fallback image
+   - Premium, minimal framing using brand colours
+*/
+.category-hero__media {
+  margin-top: clamp(var(--space-5), 3vw, var(--space-8));
+  border-radius: var(--radius-2xl, 1.5rem);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .category-hero__grid.has-media .category-hero__media {
+    margin-top: 0;
+  }
+}
+
+.category-hero__media-frame {
+  position: relative;
+  isolation: isolate;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* Subtle layered gradient behind the image */
+.category-hero__media-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 15% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 24%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 85% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent, #d4ab18)) 20%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 94%,
+        transparent
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 94%,
+        transparent
+      )
+    );
+  z-index: 0;
+}
+
 .category-hero__media img,
 .category-hero__media svg,
 .category-hero__media picture {
+  position: relative;
+  z-index: 1;
+
   display: block;
   max-width: 100%;
   height: auto;
+  object-fit: cover;
+}
+
+/* Card-like shadow for the whole visual */
+.category-hero__media-frame {
+  box-shadow: var(--shadow-md, 0 18px 45px rgb(15 23 42 / 0.16));
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .category-hero__ctas { transition: none; }
+  .category-hero__ctas,
+  .category-hero__media {
+    transition: none;
+  }
 }

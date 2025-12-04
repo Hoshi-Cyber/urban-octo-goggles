@@ -1,24 +1,40 @@
-/* src/components/blog/compose/RelatedCategories/RelatedCategories.css */
+/* src/components/blog/compose/RelatedCategories/RelatedCategories.css
 
-/*
   RelatedCategories – related articles block for single post page.
-  Mobile-first, token-driven, visually aligned with blog listing cards.
+  Mobile-first, token-driven, visually aligned with premium blog cards.
   FP-190.1: Single-column base, progressive grid at 640 / 1024 / 1280.
 */
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
 
 /* Wrapper inside single post */
 .post .post__related .relatedPosts,
 .related {
-  padding-block: var(--space-6);
-  border-top: 1px solid var(--color-light-alt);
+  padding-block: clamp(var(--space-6), 4vw, var(--space-9));
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
 }
 
 /* Heading */
 .post .post__related .relatedPosts__title,
 .related__title {
   margin: 0 0 var(--space-4);
-  font-size: var(--fs-lg);
   font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 75%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Grid layout */
@@ -27,9 +43,10 @@
   margin: 0;
   padding: 0;
   list-style: none;
+
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: clamp(var(--space-4), 3vw, var(--space-6));
 }
 
 .post .post__related .relatedPosts__item {
@@ -40,20 +57,64 @@
 .post .post__related .relatedPosts__card,
 .related-card {
   display: block;
+  height: 100%;
+
   padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-background);
+  border-radius: var(--radius-2xl, 1.25rem);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 94%,
+    var(--color-surface-alt, #f9fafb) 6%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
   box-shadow: var(--shadow-sm);
+
   text-decoration: none;
   color: inherit;
+
+  transition:
+    background-color 0.16s ease-out,
+    border-color 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    transform 0.14s ease-out;
+}
+
+.post .post__related .relatedPosts__card:hover,
+.post .post__related .relatedPosts__card:focus-visible,
+.related-card:hover,
+.related-card:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  outline: none;
 }
 
 /* Optional media thumbnail */
 .post .post__related .relatedPosts__media {
-  margin-bottom: var(--space-2);
-  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-xl, 1rem);
   overflow: hidden;
-  background: var(--color-light);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f3f4f6) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
   aspect-ratio: 16 / 9;
 }
 
@@ -62,16 +123,29 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.22s ease-out;
+}
+
+@media (hover: hover) {
+  .post .post__related .relatedPosts__card:hover .relatedPosts__media img,
+  .post .post__related .relatedPosts__card:focus-visible .relatedPosts__media img {
+    transform: scale(1.03);
+  }
 }
 
 /* Category label */
 .post .post__related .relatedPosts__cat,
 .related-card__category {
   margin: 0 0 var(--space-1);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-muted);
+  letter-spacing: 0.08em;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Title */
@@ -80,28 +154,23 @@
   margin: 0 0 var(--space-1);
   font-weight: 600;
   line-height: 1.35;
-}
-
-.post .post__related .relatedPosts__postTitle a,
-.related-card__title a {
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.post .post__related .relatedPosts__postTitle a:hover,
-.post .post__related .relatedPosts__postTitle a:focus-visible,
-.related-card__title a:hover,
-.related-card__title a:focus-visible {
-  color: var(--color-primary);
-  outline: none;
-  text-decoration: underline;
+  font-size: clamp(var(--fs-sm), 1.02rem, var(--fs-md));
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 88%,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 12%
+  );
 }
 
 /* Meta: date + reading time */
 .post .post__related .relatedPosts__meta {
   margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--color-muted);
+  font-size: var(--fs-xs);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 78%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 22%
+  );
 }
 
 /* Columns by breakpoint: 1 → 2 → 3 → 4 */
@@ -131,5 +200,12 @@
   .post .post__related .relatedPosts__card,
   .related-card {
     transition: none;
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .post .post__related .relatedPosts__media img {
+    transition: none;
+    transform: none;
   }
 }

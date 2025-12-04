@@ -46,7 +46,10 @@ const headingId = `brand-snapshot-${makeSlug(title)}`;
 >
   <div class="container brand-snapshot__inner stack">
     <header class="section-head brand-snapshot__head stack">
-      <HeadingTag id={headingId} class="section-title">
+      <HeadingTag
+        id={headingId}
+        class="section-title brand-snapshot__title"
+      >
         {title}
       </HeadingTag>
 

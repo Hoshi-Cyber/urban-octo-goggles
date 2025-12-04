@@ -1,183 +1,407 @@
-/* ComparisonMatrix — accessible, mobile-first, zero-JS */
+/* ComparisonMatrix — accessible, mobile-first, brand-aligned, zero-JS */
 
-/* Shell */
+/* -------------------- */
+/* Shell / section      */
+/* -------------------- */
+
 .cmatrix {
   font-family: var(--font-sans);
-  background: var(--color-surface);
+  background: color-mix(in oklab, var(--color-surface) 96%, var(--color-primary) 4%);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 20%, var(--color-light-alt) 80%);
   padding: var(--space-6) var(--space-4);
 }
 
+/* Keep API-compatible compact modifier */
 .cmatrix--compact {
   padding: var(--space-4) var(--space-3);
+  box-shadow: var(--shadow-xs);
 }
 
-/* Wider container option for desktop to avoid huge right gutter */
-.cmatrix--wide .container {
-  max-width: min(72rem, 100%);
-} /* ~1152px */
-
-@media (min-width: 1280px) {
-  .cmatrix--wide .container {
-    max-width: min(80rem, 100%);
-  } /* ~1280px */
+/* Wide flag kept for API compatibility */
+.cmatrix--wide {
+  /* Intentionally light-touch: allow internal elements to use full container width */
 }
 
-/* Head */
+/* -------------------- */
+/* Section head         */
+/* -------------------- */
+
 .cmatrix__head {
   display: grid;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-5);
 }
 
 .cmatrix__eyebrow {
   margin: 0;
   font-size: var(--fs-sm);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
-/* Scroll wrapper for small screens */
+.cmatrix__title {
+  margin: 0;
+}
+
+/* -------------------- */
+/* Scroll wrapper       */
+/* -------------------- */
+
 .cmatrix__wrap {
+  position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-lg);
-  background: var(--color-background);
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.04);
+  background: var(--color-light);
+  box-shadow:
+    inset 0 0 0 1px
+      color-mix(in oklab, var(--color-light-alt) 80%, transparent);
   padding-bottom: 2px; /* prevent last-row shadow clipping */
 }
 
-/* Table */
+/* Small visual hint: fade on the right edge on narrow screens */
+.cmatrix__wrap::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: 32px;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--color-light) 30%, var(--color-surface))
+  );
+  opacity: 1;
+}
+
+.cmatrix__scrollhint {
+  margin-top: var(--space-3);
+  margin-bottom: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+/* Hide visual scroll hint on medium+ where the table typically fits view */
+@media (min-width: 768px) {
+  .cmatrix__wrap::after {
+    display: none;
+  }
+
+  .cmatrix__scrollhint {
+    display: none;
+  }
+}
+
+/* -------------------- */
+/* Table layout         */
+/* -------------------- */
+
 .cmatrix__table {
   width: 100%;
-  min-width: 640px; /* allow horizontal scroll when needed */
+  min-width: 720px; /* give each plan column more breathing room */
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed; /* lock column grid so headers align with cells */
+  table-layout: fixed; /* keep headers aligned with cells */
+  color: var(--color-text);
 }
 
 /* Column model from <colgroup> */
+.cmatrix__col {
+  /* shared hook if we need future tweaks */
+}
+
+/* Narrower feature column → wider plans */
 .cmatrix__col--feat {
-  width: 42%;
-} /* default feature column width */
+  width: 36%;
+}
 
 .cmatrix__col--plan {
-  width: auto;
-} /* remaining width is split evenly across plans */
+  width: auto; /* remaining space divided evenly across plans */
+}
 
-.cmatrix__table thead th {
+/* -------------------- */
+/* Table head           */
+/* -------------------- */
+
+.cmatrix__thead {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 80%,
+    var(--color-primary) 20%
+  );
+}
+
+.cmatrix__headcell {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--color-background);
-  color: var(--color-text);
-  text-align: left;
-  font-weight: 600;
-  font-size: var(--fs-base);
   padding: var(--space-3) var(--space-4);
-  box-shadow: inset 0 -1px 0 rgba(17, 24, 39, 0.06);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  text-align: left;
+  color: var(--color-text-strong, var(--color-text));
+  background: inherit;
+  box-shadow:
+    inset 0 -1px 0
+      color-mix(in oklab, var(--color-light-alt) 90%, transparent);
 }
 
 .cmatrix__featcol {
   text-align: left;
 }
 
+.cmatrix__headlabel {
+  display: inline-block;
+}
+
+/* Plan headers */
+
 .cmatrix__plancol {
   text-align: center;
+  vertical-align: bottom;
 }
 
-.cmatrix__feat {
+/* Keep plan titles on a single line so they do not wrap like in screenshot A */
+.cmatrix__plan-name {
+  display: block;
+  font-size: var(--fs-xs);
   font-weight: 600;
-  color: var(--color-text);
-  text-align: left;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-background);
-  border-right: 1px solid rgba(17, 24, 39, 0.06);
+  line-height: 1.2;
+  color: var(--color-text-strong, var(--color-text));
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.cmatrix__cell {
-  text-align: center;
-  padding: var(--space-3) var(--space-4);
-  color: var(--color-text);
+/* “Most popular” treatment */
+
+.cmatrix__plan-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-2);
+  padding-block: 0.25rem;
+  margin-bottom: var(--space-2);
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: color-mix(
+    in oklab,
+    var(--color-accent) 20%,
+    var(--color-light)
+  );
+  box-shadow: var(--shadow-xs);
 }
 
-/* Row stripes and separators */
-.cmatrix__table tbody tr:nth-child(odd) .cmatrix__cell,
-.cmatrix__table tbody tr:nth-child(odd) .cmatrix__feat {
+.cmatrix__plancol--popular {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 82%,
+    var(--color-accent) 18%
+  );
+  box-shadow:
+    inset 0 -1px 0
+      color-mix(in oklab, var(--color-accent) 30%, transparent);
+}
+
+/* Hover elevation for plan headers */
+
+.cmatrix__plancol:hover {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-primary) 12%
+  );
+}
+
+.cmatrix__plancol--popular:hover {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 76%,
+    var(--color-accent) 24%
+  );
+}
+
+/* -------------------- */
+/* Body rows & cells    */
+/* -------------------- */
+
+/* Higher contrast striping for readability (addresses “engulfed” text) */
+.cmatrix__row:nth-child(odd) .cmatrix__feat,
+.cmatrix__row:nth-child(odd) .cmatrix__cell {
   background: var(--color-light);
 }
 
-.cmatrix__table tbody tr + tr .cmatrix__cell,
-.cmatrix__table tbody tr + tr .cmatrix__feat {
-  box-shadow: inset 0 1px 0 rgba(17, 24, 39, 0.06);
+.cmatrix__row:nth-child(even) .cmatrix__feat,
+.cmatrix__row:nth-child(even) .cmatrix__cell {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 90%,
+    var(--color-primary) 10%
+  );
 }
 
-/* Indicators */
+/* Subtle separators between rows */
+.cmatrix__row + .cmatrix__row .cmatrix__feat,
+.cmatrix__row + .cmatrix__row .cmatrix__cell {
+  box-shadow:
+    inset 0 1px 0
+      color-mix(in oklab, var(--color-light-alt) 90%, transparent);
+}
+
+/* Feature column (first column) */
+.cmatrix__feat {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--color-text-strong, var(--color-text));
+  border-right: 1px solid
+    color-mix(in oklab, var(--color-light-alt) 85%, transparent);
+}
+
+.cmatrix__feature-label {
+  display: block;
+  line-height: 1.5;
+}
+
+/* Plan value cells */
+.cmatrix__cell {
+  text-align: center;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-base);
+  color: var(--color-text-strong, var(--color-text));
+}
+
+/* Popular column cells receive a soft vertical ring */
+.cmatrix__cell--popular {
+  box-shadow:
+    inset 1px 0 0 color-mix(in oklab, var(--color-accent) 20%, transparent),
+    inset -1px 0 0 color-mix(in oklab, var(--color-accent) 20%, transparent);
+}
+
+/* Hover state – help tracking rows on desktop without noise */
+@media (min-width: 768px) {
+  .cmatrix__row:hover .cmatrix__cell,
+  .cmatrix__row:hover .cmatrix__feat {
+    background: color-mix(
+      in oklab,
+      var(--color-card-hover) 40%,
+      var(--color-light)
+    );
+  }
+}
+
+/* Text values */
+.cmatrix__text {
+  display: block;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-text-strong, var(--color-text));
+}
+
+/* -------------------- */
+/* Check / cross icons  */
+/* -------------------- */
+
+/* Make ticks and Xs much more legible (screenshots B & C) */
+
 .cmatrix__check,
 .cmatrix__cross {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-md);
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--color-light);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid transparent;
 }
 
 .cmatrix__check {
-  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent) 60%,
+    var(--color-light) 40%
+  );
 }
 
 .cmatrix__check svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   fill: var(--color-accent);
 }
 
 .cmatrix__cross {
-  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  border-color: color-mix(
+    in oklab,
+    var(--color-error) 65%,
+    var(--color-light) 35%
+  );
 }
 
 .cmatrix__cross svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   fill: var(--color-error);
 }
 
-.cmatrix__text {
-  font-size: var(--fs-base);
-  color: var(--color-muted);
-}
+/* -------------------- */
+/* Responsive tweaks    */
+/* -------------------- */
 
 /* sm ≥640px */
 @media (min-width: 640px) {
   .cmatrix {
-    padding: var(--space-8);
+    padding: var(--space-8) var(--space-6);
   }
 }
 
 /* md ≥768px: sticky first column for fast scanning */
 @media (min-width: 768px) {
-  .cmatrix__feat {
+  .cmatrix__feat,
+  .cmatrix__featcol {
     position: sticky;
     left: 0;
-    z-index: 1;
+    z-index: 2;
   }
-}
 
-/* lg ≥1024px */
-@media (min-width: 1024px) {
+  /* Top-left corner cell should sit above other sticky cells */
+  .cmatrix__featcol {
+    z-index: 3;
+  }
+
   .cmatrix__table {
-    min-width: 0;
+    min-width: 0; /* viewport is wide enough now */
   }
 
   .cmatrix__col--feat {
-    width: 36%;
-  } /* tighter feature column on desktop */
+    width: 32%;
+  }
 }
 
-/* Screen reader utility */
+/* lg ≥1024px – even more room for packages on desktop */
+@media (min-width: 1024px) {
+  .cmatrix__col--feat {
+    width: 30%;
+  }
+}
+
+/* -------------------- */
+/* Screen reader helper */
+/* -------------------- */
+
 .sr-only {
   position: absolute !important;
   width: 1px;
@@ -188,4 +412,30 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* -------------------- */
+/* Reduced motion       */
+/* -------------------- */
+
+.cmatrix__wrap,
+.cmatrix__table,
+.cmatrix__plancol,
+.cmatrix__cell,
+.cmatrix__plan-pill {
+  transition:
+    background-color 0.18s ease-out,
+    box-shadow 0.18s ease-out,
+    transform 0.18s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmatrix__wrap,
+  .cmatrix__table,
+  .cmatrix__plancol,
+  .cmatrix__cell,
+  .cmatrix__plan-pill {
+    transition: none !important;
+    transform: none !important;
+  }
 }

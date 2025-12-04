@@ -2,24 +2,46 @@
 /*
   src/components/blog/post/KeyTakeaways/index.astro
 
-  FP-205.5:
-  - Top-of-article “Key Takeaways” box, 3–5 bullets.
-  - Uses global tokens and spacing.
-  - No global resets; layout-only component.
+  FP-205.5 + FP-213.2 + FP-213.3:
+  - Top-of-body “Key takeaways” box in the main reading column.
+  - Enforces a concise, insight-focused summary (3–5 bullets).
+  - Explicitly separate from the implementation checklist band.
+  - Uses global tokens and spacing; layout-only component.
 */
 
 import "./KeyTakeaways.css";
 
-export interface KeyTakeawaysProps {
-  /** 3–5 concise bullet points */
+type KeyTakeawaysProps = {
+  /**
+   * 3–5 concise, insight-focused bullet points.
+   * - Each is a short, declarative summary of what the article teaches.
+   * - Avoid verb-first, task-style language (“Do X / Start Y”) – those belong
+   *   in ChecklistSection instead.
+   * - Do not duplicate the same text used in the implementation checklist.
+   */
   items: string[];
-  /** Optional custom heading; defaults to "Key takeaways" */
+  /** Optional custom heading; defaults to "Key takeaways". */
   title?: string;
-}
+};
 
 const { items, title = "Key takeaways" } = Astro.props as KeyTakeawaysProps;
 
-const hasItems = Array.isArray(items) && items.length > 0;
+// Normalise, trim, and cap items to a maximum of 5.
+const normalisedItems = Array.isArray(items)
+  ? items
+      .map((item) => (typeof item === "string" ? item.trim() : ""))
+      .filter((item) => item.length > 0)
+  : [];
+
+const cappedItems = normalisedItems.slice(0, 5);
+
+/**
+ * Fix Plan 213 + 213.3 – content contract:
+ * - Only render when we have a “real” summary: 3–5 concise bullets.
+ * - If there are fewer than 3 items, skip the component to keep the layout lean.
+ * - This is a summary band only; implementation steps must live in ChecklistSection.
+ */
+const hasItems = cappedItems.length >= 3;
 ---
 
 {hasItems && (
@@ -27,15 +49,18 @@ const hasItems = Array.isArray(items) && items.length > 0;
     <div class="key-takeaways__inner">
       <header class="key-takeaways__header">
         <p class="key-takeaways__eyebrow">Summary</p>
-        <h2 id="key-takeaways-title" class="key-takeaways__title">
+        <h2
+          id="key-takeaways-title"
+          class="key-takeaways__title h2 section-title"
+        >
           {title}
         </h2>
       </header>
 
       <ul class="key-takeaways__list">
-        {items.map((item) => (
+        {cappedItems.map((item) => (
           <li class="key-takeaways__item">
-            <span class="key-takeaways__bullet" aria-hidden="true">•</span>
+            <span class="key-takeaways__bullet" aria-hidden="true">✓</span>
             <span class="key-takeaways__text">{item}</span>
           </li>
         ))}

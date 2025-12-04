@@ -1,0 +1,179 @@
+---
+import "./Addons.css";
+import AddOnItem from "./AddOnItem.astro";
+import addonsData from "../../../data/addons.json";
+
+export type AddOnType = "addon" | "speed";
+
+export interface AddOn {
+  id: string;
+  category: string;
+  type: AddOnType;
+  name: string;
+  description: string;
+  priceLabel: string;
+  badge?: string | null;
+  highlight?: boolean;
+  sortOrder?: number;
+  isVisible?: boolean;
+}
+
+export interface AddonsProps {
+  sectionId?: string;
+  categories?: string[];
+  compact?: boolean;
+  showIntro?: boolean;
+  ctaHref?: string;
+  ctaLabel?: string;
+  ctaVariant?: "primary" | "accent" | "ghost" | "link";
+}
+
+const {
+  sectionId = "addons",
+  categories = ["addons", "speed"],
+  compact = false,
+  showIntro = true,
+  // We keep these props but the CTA will be a small text link, not a big button
+  ctaHref = "/contact/",
+  ctaLabel = "Add this option",
+  ctaVariant = "link",
+} = Astro.props as AddonsProps;
+
+const headingId = sectionId;
+
+const sectionEyebrow = "Optional extras";
+const sectionTitle = "Add-ons & faster turnaround";
+const sectionSub =
+  "Keep your base package simple, then layer on high-impact extras only if you need them.";
+
+const CATEGORY_CONFIG: Record<
+  string,
+  {
+    heading: string;
+    note?: string;
+  }
+> = {
+  addons: {
+    heading: "Add-ons (optional)",
+  },
+  speed: {
+    heading: "Faster delivery",
+    note:
+      "Speed options apply to the base package price and are confirmed during booking, subject to availability.",
+  },
+};
+
+const rawAddons = (addonsData as AddOn[]).filter(
+  (item) => item.isVisible !== false
+);
+
+const requestedCategories = new Set(categories);
+
+// Group visible add-ons by category and sort within each group
+const grouped = new Map<string, AddOn[]>();
+
+for (const item of rawAddons) {
+  if (requestedCategories.size && !requestedCategories.has(item.category)) {
+    continue;
+  }
+
+  const list = grouped.get(item.category) ?? [];
+  list.push(item);
+  grouped.set(item.category, list);
+}
+
+for (const [, list] of grouped) {
+  list.sort((a, b) => {
+    const aOrder = a.sortOrder ?? 0;
+    const bOrder = b.sortOrder ?? 0;
+    return aOrder - bOrder;
+  });
+}
+---
+
+<section
+  class={"section section--tight addons" + (compact ? " addons--compact" : "")}
+  aria-labelledby={headingId}
+>
+  <div class="container">
+    <header class="addons__head">
+      {showIntro && <p class="addons__eyebrow">{sectionEyebrow}</p>}
+      <h2 id={headingId} class="h2 addons__title">
+        {sectionTitle}
+      </h2>
+      {showIntro && <p class="addons__sub">{sectionSub}</p>}
+    </header>
+
+    <div class="addons__grid">
+      {Array.from(grouped.entries()).map(([category, items]) => {
+        const config = CATEGORY_CONFIG[category] ?? {
+          heading: category,
+        };
+        const note = config.note;
+
+        const columnClass =
+          "addons__column" +
+          (category === "speed"
+            ? " addons__column--speed"
+            : " addons__column--addons");
+
+        const tableId = `${headingId}-${category}`;
+
+        return (
+          <section class={columnClass} aria-labelledby={tableId}>
+            <h3 id={tableId} class="h3 addons__column-title">
+              {config.heading}
+            </h3>
+
+            <div class="addons__table-wrap">
+              <table class="addons__table">
+                <caption class="sr-only">{config.heading}</caption>
+                <colgroup>
+                  <col class="addons__col addons__col--info" />
+                  <col class="addons__col addons__col--meta" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" class="addons__th addons__th--info">
+                      Option
+                    </th>
+                    <th scope="col" class="addons__th addons__th--meta">
+                      Price / action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item) => (
+                    <AddOnItem
+                      id={item.id}
+                      category={item.category}
+                      type={item.type}
+                      name={item.name}
+                      description={item.description}
+                      priceLabel={item.priceLabel}
+                      badge={item.badge}
+                      highlight={item.highlight}
+                      compact={compact}
+                      ctaHref={ctaHref}
+                      ctaLabel={ctaLabel}
+                      ctaVariant={ctaVariant}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {note && <p class="addons__note">{note}</p>}
+          </section>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  @import "../../../styles/tokens.css";
+  @import "../../../styles/typography.css";
+  @import "../../../styles/utilities.css";
+  @import "../../../styles/breakpoints.css";
+</style>

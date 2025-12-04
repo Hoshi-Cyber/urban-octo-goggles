@@ -1,17 +1,19 @@
 /* src/components/blog/compose/PostMeta/PostMeta.css */
 /*
   Post meta row – published date, updated date, author, reading time.
-  Mobile-first, compact, and aligned with global tokens.
+  Mobile-first, compact, and aligned with global tokens + brand colours.
 */
 
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
+/* Meta strip aligned to reading column */
 .post .post__meta {
-  /* Align with main content column */
   width: 100%;
   max-width: var(--container-max);
   margin-block: 0 var(--space-4);
   margin-inline: auto;
 
-  /* Mobile-first: tighter horizontal padding and gap */
   padding-inline: var(--space-3);
 
   display: flex;
@@ -19,12 +21,15 @@
   align-items: center;
   gap: var(--space-1);
 
-  color: var(--color-muted);
-  /* Slightly smaller on mobile, fallback to fs-sm if fs-xs is not defined */
   font-size: var(--fs-xs, var(--fs-sm));
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 80%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
+  );
 }
 
-/* Keep semantics readable for screen readers but visually minimal */
+/* Visually hidden dt labels – keep semantics for SRs */
 .post .post__meta dt {
   position: absolute;
   width: 1px;
@@ -37,65 +42,75 @@
   border: 0;
 }
 
-/* Chip-style meta items */
+/* Premium pill-style meta items */
 .post .post__meta dd {
   margin: 0;
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
 
-  /* Mobile-first: compact chip padding */
   padding-inline: var(--space-2);
   padding-block: calc(var(--space-1) * 0.5);
 
   border-radius: var(--radius-full, 9999px);
 
-  /* Very light tinted background to separate from page */
   background-color: color-mix(
-    in srgb,
-    var(--color-surface) 85%,
-    var(--color-light-alt) 15%
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
   );
-
-  /* Slightly stronger, but still subtle, border outline */
-  border: 1px solid color-mix(
-    in srgb,
-    var(--color-light-alt) 70%,
-    var(--color-border, #d0d7e2) 30%
-  );
-
-  box-shadow: 0 0 0 1px
+  border: 1px solid
     color-mix(
-      in srgb,
-      var(--color-light-alt) 50%,
-      var(--color-border, #d0d7e2) 50%
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
     );
+  box-shadow: var(
+    --shadow-xxs,
+    0 0 0 1px
+      color-mix(
+        in oklab,
+        var(--color-border-subtle, #e5e7eb) 70%,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 30%
+      )
+  );
 
   line-height: 1.3;
 }
 
-/* Link styling inside meta chips (e.g. authorUrl) */
+/* Links inside chips (author URL) */
 .post .post__meta dd a {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   text-decoration: none;
   color: inherit;
+  font-weight: 500;
 }
 
-/* Subtle hover/focus state for clickable meta chips */
+/* Subtle colour shift on hover/focus – no underlines */
 .post .post__meta dd:hover,
 .post .post__meta dd:focus-within {
   background-color: color-mix(
-    in srgb,
-    var(--color-surface) 80%,
-    var(--color-light-alt) 20%
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 76%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 24%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 55%,
+    var(--color-border-subtle, #e5e7eb) 45%
   );
 }
 
 .post .post__meta dd a:hover,
 .post .post__meta dd a:focus-visible {
-  text-decoration: none;
-  color: var(--color-foreground);
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 85%,
+    var(--color-text, #020617) 15%
+  );
+  outline: none;
 }
 
 /* Dates stay on a single line to avoid awkward wrapping */
@@ -114,5 +129,13 @@
   .post .post__meta dd {
     padding-inline: var(--space-3);
     padding-block: calc(var(--space-1) * 0.75);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post .post__meta dd,
+  .post .post__meta dd a {
+    transition: none;
   }
 }

@@ -52,7 +52,10 @@ const Heading = headingLevel === "h3" ? "h3" : "h2";
   <div class="container stack brand-pillars__inner">
     {hasHeader && (
       <header class="section-head brand-pillars__head stack">
-        <Heading id={headingId} class="section-title">
+        <Heading
+          id={headingId}
+          class="section-title brand-pillars__title"
+        >
           {resolvedTitle}
         </Heading>
         {intro && (

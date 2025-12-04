@@ -1,5 +1,5 @@
 ---
-/** 
+/**
  * File: src/components/layout/BaseLayout.astro
  * Fix Plan 187: Robust canonical resolver + unified usage
  * Fix Plan 204: OG image + dimensions + Twitter image support
@@ -10,8 +10,8 @@ import Footer from "./Footer/index.astro";
 // CookieBanner intentionally not imported while banner is disabled
 import siteConfig from "@/site.config";
 
-// Global CSS emitted URL (fixes CSS 404 from hardcoded public path)
-import globalCssUrl from "../../styles/index.css?url";
+// Global CSS – processed and injected by Astro/Vite
+import "../../styles/index.css";
 
 export interface SEO {
   canonical?: string;
@@ -162,9 +162,6 @@ const gtmId: string | undefined = (siteConfig as any).gtmId;
     <link rel="canonical" href={pageCanonical} />
     {prevHref && <link rel="prev" href={prevHref} />}
     {nextHref && <link rel="next" href={nextHref} />}
-
-    <!-- Global CSS (served from emitted URL) -->
-    <link rel="stylesheet" href={globalCssUrl} />
 
     <!-- Hints -->
     <link

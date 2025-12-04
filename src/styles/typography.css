@@ -101,7 +101,8 @@ h4,
 p {
   font-size: var(--fs-base);
   line-height: 1.6;
-  color: var(--color-text); /* Neutral 600 – primary body colour */
+  /* Neutral 600 – primary body colour, strong contrast on light surfaces */
+  color: var(--color-neutral-600);
   margin-top: 0;
   margin-bottom: var(--space-4);
   max-width: 70ch;
@@ -131,7 +132,8 @@ li {
 
 strong {
   font-weight: 600;
-  color: var(--color-text);
+  /* Slightly stronger than body for emphasis */
+  color: var(--color-neutral-800);
 }
 
 /* ==========================================================================

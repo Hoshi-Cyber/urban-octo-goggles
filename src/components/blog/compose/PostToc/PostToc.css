@@ -1,27 +1,50 @@
-/* src/components/blog/compose/PostToc/PostToc.css */
-
-/*
-  Post table of contents for single blog post.
-  Mobile-first, token-driven, scoped to .post.
-  FP-190.1: Full-width stacked block above body (no sidebar behaviour).
+/* src/components/blog/compose/PostToc/PostToc.css
+   Post table of contents for single blog post.
+   Mobile-first, token-driven, scoped to .post.
+   FP-190.1: Full-width stacked block above body (no sidebar behaviour).
 */
 
-/* Wrapper: full-width block, soft surface */
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
+/* Wrapper: full-width block, soft premium surface */
 .post .post__toc,
 .post-toc {
-  margin-block: var(--space-4);
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-light-alt);
+  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
+  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-4));
+
+  border-radius: var(--radius-2xl, 1.25rem);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
+  box-shadow: var(--shadow-sm);
+
   font-size: var(--fs-sm);
 }
 
-/* TOC title */
+/* TOC title – compact eyebrow-style heading */
 .post .post__toc-title,
 .post-toc__title {
   margin: 0 0 var(--space-2);
+
   font-weight: 600;
-  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 80%,
+    var(--color-text, #020617)
+  );
 }
 
 /* List reset and layout */
@@ -30,9 +53,10 @@
   margin: 0;
   padding: 0;
   list-style: none;
+
   display: flex;
   flex-direction: column;
-  gap: calc(var(--space-1) * 0.75);
+  gap: calc(var(--space-1) * 0.9);
 }
 
 /* Items */
@@ -41,45 +65,124 @@
   margin: 0;
 }
 
-/* Links */
+/* Base link styling */
 .post .post__toc-link,
 .post-toc__link {
-  display: inline-block;
-  padding-block: 0.125rem;
+  position: relative;
+
+  display: block;
+  padding-block: 0.25rem;
+  padding-inline: var(--space-1);
+
+  border-radius: var(--radius-md, 0.5rem);
+
   text-decoration: none;
-  color: var(--color-muted);
-  border-radius: var(--radius-md);
+  line-height: 1.4;
+
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
+  );
+
   transition:
     color 150ms ease-out,
-    text-decoration-color 150ms ease-out;
+    background-color 150ms ease-out,
+    transform 100ms ease-out;
 }
 
+/* Hover / focus states – colour + subtle lift, no underline */
 .post .post__toc-link:hover,
 .post-toc__link:hover,
 .post .post__toc-link:focus-visible,
 .post-toc__link:focus-visible {
-  color: var(--color-primary);
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 86%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  transform: translateY(-1px);
   outline: none;
-  text-decoration: underline;
 }
 
-/* Indentation by depth */
+/* Depth-based indentation */
 .post .post__toc-item--d3 .post__toc-link,
 .post-toc__item--d3 .post-toc__link {
-  padding-inline-start: var(--space-3);
-  color: var(--color-muted);
+  padding-inline-start: calc(var(--space-3) + var(--space-1));
+  font-size: 0.94em;
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 78%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 22%
+  );
 }
 
-/* Slight refinements on larger screens */
+/* Left accent guide for all items for visual rhythm */
+.post .post__toc-list,
+.post-toc__list {
+  border-left: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 30%,
+      var(--color-border-subtle, #e5e7eb) 70%
+    );
+  padding-left: var(--space-2);
+}
+
+/* Small bullet accent */
+.post .post__toc-item::before,
+.post-toc__item::before {
+  content: "";
+  display: inline-block;
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-right: 0.4rem;
+
+  border-radius: 999px;
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 80%,
+    var(--color-accent, #d4ab18) 20%
+  );
+}
+
+/* Align bullet + link */
+.post .post__toc-item,
+.post-toc__item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.post .post__toc-item .post__toc-link,
+.post-toc__item .post-toc__link {
+  flex: 1;
+}
+
+/* Larger screens: slightly more breathing room */
 @media (min-width: 1024px) {
   .post .post__toc,
   .post-toc {
     margin-block: var(--space-6);
-    padding: var(--space-4);
+    padding-block: var(--space-4);
+    padding-inline: var(--space-4);
   }
 
   .post .post__toc-title,
   .post-toc__title {
     margin-bottom: var(--space-3);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post .post__toc-link,
+  .post-toc__link {
+    transition: none;
+    transform: none;
   }
 }

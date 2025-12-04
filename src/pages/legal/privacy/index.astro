@@ -1,235 +1,490 @@
 ---
 import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import {
+  LegalLayout,
+  LegalPageHeader,
+  LegalTOC,
+  LegalSection,
+  LegalFooterNav,
+} from "../../../components/legal";
 
 const pageTitle = "Privacy Policy";
 const pageDescription =
   "How CVWriting.co.ke collects, uses, stores, and protects your personal data in line with the Kenya Data Protection Act, 2019.";
+
+const lastUpdated = "24 November 2025";
+
+const tocItems = [
+  { id: "who-we-are", label: "1. Who we are and contact details" },
+  { id: "scope", label: "2. Scope of this Policy" },
+  { id: "personal-data-we-collect", label: "3. Personal data we collect" },
+  { id: "how-we-collect-data", label: "4. How we collect personal data" },
+  { id: "legal-bases", label: "5. Legal bases for processing" },
+  { id: "how-we-use-data", label: "6. How we use your personal data" },
+  { id: "sharing-of-data", label: "7. Sharing of personal data" },
+  { id: "international-transfers", label: "8. International data transfers" },
+  { id: "data-retention", label: "9. Data retention" },
+  { id: "security", label: "10. Security of your data" },
+  { id: "children", label: "11. Children’s data" },
+  { id: "your-rights", label: "12. Your rights under Kenyan law" },
+  { id: "cookies", label: "13. Cookies and similar technologies" },
+  { id: "changes", label: "14. Changes to this Privacy Policy" },
+];
+
+const relatedPolicies = [
+  {
+    slug: "cookies",
+    href: "/legal/cookies/",
+    label: "Cookies & Preferences Policy",
+    description: "How we use cookies and how you can manage your preferences.",
+  },
+  {
+    slug: "terms",
+    href: "/legal/terms/",
+    label: "Terms of Service",
+    description: "The terms that govern use of CVWriting.co.ke and our services.",
+  },
+  {
+    slug: "refunds-revisions",
+    href: "/legal/refunds-revisions/",
+    label: "Refund & Revisions Policy",
+    description: "How refunds, revisions, and order changes are handled.",
+  },
+];
 ---
 
 <BaseLayout title={`${pageTitle} – CVWriting.co.ke`} description={pageDescription}>
-  <main class="page-gap-after">
-    <div class="container">
-      <header class="page-header">
-        <h1 class="h1">{pageTitle}</h1>
-        <p class="page-lead">
-          This Policy explains how we handle your personal data when you visit cvwriting.co.ke or use our CV
-          writing and related services.
-        </p>
-      </header>
+  <LegalLayout
+    showSidebar={true}
+    sidebarPosition="right"
+    tocLabel="Privacy policy sections"
+  >
+    <LegalPageHeader
+      slot="header"
+      title={pageTitle}
+      intro="This Privacy Policy explains how we collect, use, share, and protect your personal data when you use CVWriting.co.ke or engage our CV-writing and related career services."
+      lastUpdated={lastUpdated}
+      governingLaw="Kenya Data Protection Act, 2019"
+    />
 
-      <p class="text-muted">Last updated: [insert date]</p>
+    <LegalTOC slot="toc" items={tocItems} />
 
-      <div class="prose">
-        <h2 id="who-we-are">1. Who we are</h2>
+    <div class="prose stack">
+      <LegalSection id="who-we-are" heading="1. Who we are and contact details">
         <p>
-          CVWriting.co.ke (“CVWriting”, “we”, “us”, “our”) provides CV writing and related professional branding
-          services to clients in Kenya and abroad. We are the data controller for personal data collected through
-          the cvwriting.co.ke website, email, and our client onboarding process, in line with the Kenya Data
-          Protection Act, 2019 and its regulations.
+          CVWriting.co.ke (“CVWriting”, “we”, “us”, “our”) is a Kenya-based, online-first CV and career support
+          service. We mainly operate through our website, email, and other digital channels, with little to no
+          in-person engagement. For the purposes of the Kenya Data Protection Act, 2019, we are the data controller
+          for personal data described in this Policy.
         </p>
         <p>If you have questions about this Policy or how we handle your data, contact us at:</p>
         <ul>
-          <li>Email: [insert data protection / support email]</li>
-          <li>Phone/WhatsApp: [insert number]</li>
-          <li>Postal address: [insert physical/postal address, Nairobi, Kenya]</li>
+          <li>
+            <strong>a)</strong> Email: [INSERT PRIMARY PRIVACY / SUPPORT EMAIL, e.g. privacy@cvwriting.co.ke]
+          </li>
+          <li>
+            <strong>b)</strong> Phone / WhatsApp: [INSERT BUSINESS PHONE / WHATSAPP NUMBER]
+          </li>
+          <li>
+            <strong>c)</strong> Postal / Registered Address: [INSERT POSTAL OR REGISTERED ADDRESS]
+          </li>
         </ul>
+      </LegalSection>
 
-        <h2 id="scope">2. Scope of this Policy</h2>
+      <LegalSection id="scope" heading="2. Scope of this Policy">
         <p>
-          This Privacy Policy explains how we collect, use, store, share, and protect your personal data when you
-          visit or use cvwriting.co.ke, submit an enquiry or order our services, or communicate with us via email,
-          phone, WhatsApp, or social media. By using our website or services, you agree to the practices described
-          in this Policy.
+          This Privacy Policy applies to personal data we collect and process when you visit or use CVWriting.co.ke,
+          submit an enquiry, place an order, communicate with us via email, phone, WhatsApp or other messaging
+          channels, or subscribe to our marketing communications or resources.
+        </p>
+        <p>
+          It does not cover the privacy practices of third-party websites, platforms, or services that we do not
+          control (for example, payment providers or job portals). If you follow a link to a third-party site, their
+          privacy and cookie policies will apply.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="personal-data-we-collect" heading="3. Personal data we collect">
+        <p>
+          The personal data we collect depends on how you interact with us and the services you request. We may
+          collect the following categories:
         </p>
 
-        <h2 id="personal-data-we-collect">3. Personal data we collect</h2>
-        <p>We may collect and process the following categories of personal data:</p>
-        <p><strong>Identity and contact data:</strong></p>
-        <ul>
-          <li>Full name</li>
-          <li>Email address</li>
-          <li>Phone number</li>
-          <li>City/country of residence</li>
-        </ul>
-
-        <p><strong>Professional and CV-related data:</strong></p>
-        <ul>
-          <li>CV/resume and cover letters</li>
-          <li>Employment history, roles, responsibilities</li>
-          <li>Education and certifications</li>
-          <li>Skills, achievements, professional summaries</li>
-          <li>LinkedIn profile link and profile content</li>
-        </ul>
-
-        <p><strong>Transactional data:</strong></p>
-        <ul>
-          <li>Services ordered and package details</li>
-          <li>Payment confirmations and transaction references</li>
-          <li>Invoicing details (where applicable)</li>
-        </ul>
-
-        <p><strong>Technical and usage data:</strong></p>
-        <ul>
-          <li>IP address, browser type, device information</li>
-          <li>Pages viewed, time spent, referring URLs</li>
-          <li>Cookie identifiers and similar tracking data</li>
-        </ul>
-
-        <p><strong>Communication data:</strong></p>
-        <ul>
-          <li>Email and chat correspondence</li>
-          <li>Feedback, testimonials, and survey responses</li>
-        </ul>
-
-        <p>
-          We do not knowingly collect sensitive personal data such as health records, political opinions, or
-          biometric data. If you voluntarily include highly sensitive information in your CV, we will treat it with
-          heightened care but may request that you remove it where unnecessary.
-        </p>
-
-        <h2 id="how-we-collect-data">4. How we collect personal data</h2>
-        <p>We collect personal data through:</p>
-        <ul>
-          <li>Forms on our website (contact form, order/intake forms).</li>
-          <li>Direct communication via email, phone, WhatsApp, or social media.</li>
-          <li>Files you upload (existing CVs, job descriptions, supporting documents).</li>
-          <li>Automated tracking technologies such as cookies and similar tools.</li>
-          <li>Payment processors that confirm your payment and transaction status.</li>
-        </ul>
-
-        <h2 id="legal-bases">5. Legal bases for processing</h2>
-        <p>We process personal data on the following legal bases:</p>
+        <p><strong>3.1 Identity and contact information</strong></p>
         <ul>
           <li>
-            <strong>Performance of a contract</strong> – to provide CV writing and related services you request.
+            <strong>a)</strong> Full name
           </li>
           <li>
-            <strong>Consent</strong> – for certain marketing communications and optional analytics/marketing cookies.
+            <strong>b)</strong> Email address(es)
           </li>
           <li>
-            <strong>Legitimate interests</strong> – to improve our services, maintain security, and manage our business,
-            provided your rights are not overridden.
+            <strong>c)</strong> Phone / WhatsApp number(s)
           </li>
           <li>
-            <strong>Legal obligations</strong> – to comply with applicable tax, accounting, and regulatory requirements.
+            <strong>d)</strong> Country / location and, where relevant, time zone
           </li>
         </ul>
 
-        <h2 id="how-we-use-data">6. How we use your personal data</h2>
-        <p>We use your personal data to:</p>
-        <p><strong>Provide and manage services:</strong></p>
-        <ul>
-          <li>Review and analyse your CV and professional background.</li>
-          <li>Prepare CVs, cover letters, LinkedIn profiles, and related documents.</li>
-          <li>Communicate with you about drafts, revisions, and delivery.</li>
-        </ul>
-
-        <p><strong>Customer support and communication:</strong></p>
-        <ul>
-          <li>Respond to enquiries, complaints, and feedback.</li>
-          <li>Send service-related updates and reminders.</li>
-        </ul>
-
-        <p><strong>Payments and administration:</strong></p>
-        <ul>
-          <li>Process and confirm payments via third-party payment providers.</li>
-          <li>Issue invoices and maintain financial records.</li>
-        </ul>
-
-        <p><strong>Website performance and improvements:</strong></p>
-        <ul>
-          <li>Monitor website usage and performance.</li>
-          <li>Improve user experience and content relevance.</li>
-        </ul>
-
-        <p><strong>Marketing (where permitted):</strong></p>
-        <ul>
-          <li>Send you curated content, service updates, and offers.</li>
-          <li>Use anonymised or aggregated data for reporting and analytics.</li>
-        </ul>
-        <p>
-          You may opt out of non-essential marketing at any time by following the unsubscribe link or contacting
-          us directly.
-        </p>
-
-        <h2 id="sharing-of-data">7. Sharing of personal data</h2>
-        <p>We do not sell your personal data. We may share it with:</p>
+        <p><strong>3.2 Professional, CV and job-related information</strong></p>
         <ul>
           <li>
-            Service providers and processors, such as payment processors and mobile money providers, email and CRM
-            platforms, website hosting and analytics providers.
+            <strong>a)</strong> Current and previous job titles, employers, responsibilities and achievements
           </li>
           <li>
-            Professional subcontractors, such as vetted CV writers or editors working under our instructions and
-            confidentiality obligations.
+            <strong>b)</strong> Employment history, education, qualifications, certifications and skills
           </li>
           <li>
-            Regulators, authorities, or law enforcement where required by law or to protect our legal rights.
+            <strong>c)</strong> Career goals, target roles, industries and preferred locations
+          </li>
+          <li>
+            <strong>d)</strong> Job descriptions or vacancies you share for CV or cover letter tailoring
+          </li>
+          <li>
+            <strong>e)</strong> Any content you include in your CV, cover letter, LinkedIn profile or supporting documents
           </li>
         </ul>
 
-        <h2 id="international-transfers">8. International data transfers</h2>
-        <p>
-          Our website and tools may be hosted or processed outside Kenya (for example, in the EU, UK, or US). Where
-          this happens, we take reasonable steps to ensure that data is protected by appropriate contractual and
-          technical safeguards and that transfers are limited to reputable service providers with suitable standards.
-        </p>
-
-        <h2 id="data-retention">9. Data retention</h2>
-        <p>
-          We keep personal data only for as long as necessary for delivering our services and managing the client
-          relationship, meeting our legal and accounting obligations, and handling disputes and enforcing our rights.
-        </p>
-        <p>Typical retention periods include:</p>
+        <p><strong>3.3 Transactional and billing information</strong></p>
         <ul>
           <li>
-            CV project files and communication: up to three (3) years after final delivery, unless you request
-            earlier deletion (subject to legal obligations).
+            <strong>a)</strong> Records of services purchased or requested
           </li>
-          <li>Invoices and financial records: seven (7) years or as required by Kenyan law.</li>
+          <li>
+            <strong>b)</strong> Invoices, billing information and payment confirmations
+          </li>
+          <li>
+            <strong>c)</strong> Transaction references and basic payment metadata (such as payment date, method and amount)
+          </li>
+        </ul>
+        <p>
+          We do not store full card or mobile money details where payments are processed via third-party providers.
+          Those payment details are handled directly by the relevant provider under their own policies.
+        </p>
+
+        <p><strong>3.4 Technical and usage information</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> IP address, browser type, device type and operating system
+          </li>
+          <li>
+            <strong>b)</strong> Pages viewed, referring URLs and time spent on the website
+          </li>
+          <li>
+            <strong>c)</strong> Cookie identifiers and similar online identifiers
+          </li>
         </ul>
 
-        <h2 id="security">10. Security</h2>
-        <p>
-          We implement reasonable technical and organisational measures to protect your data, including access
-          controls, use of reputable platforms for communication and payments, and regular reviews of who has access
-          to client files. However, no system is 100% secure. You are responsible for keeping your devices and any
-          login details secure when accessing documents or communications we share.
-        </p>
+        <p><strong>3.5 Communication and preference information</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Records of communications between you and us (emails, messages, calls and notes)
+          </li>
+          <li>
+            <strong>b)</strong> Your language and contact preferences
+          </li>
+          <li>
+            <strong>c)</strong> Your marketing preferences and consents
+          </li>
+        </ul>
 
-        <h2 id="children">11. Children’s data</h2>
         <p>
-          Our services are aimed at individuals aged 18 and above. We do not knowingly collect personal data from
-          children. If you believe a child’s data has been provided to us, contact us and we will take appropriate
-          steps to delete or regularise it.
+          We do not intentionally seek to collect sensitive personal data (such as health information, religious
+          beliefs, political opinions, trade union membership, or information about children). We ask that you avoid
+          including such information in your CV or supporting documents unless strictly necessary and clearly
+          communicated. If we become aware that we hold unnecessary sensitive data, we aim to minimise or delete it
+          where appropriate.
         </p>
+      </LegalSection>
 
-        <h2 id="your-rights">12. Your rights under Kenyan law</h2>
+      <LegalSection id="how-we-collect-data" heading="4. How we collect personal data">
+        <p>We collect personal data from the following main sources:</p>
+        <ul>
+          <li>
+            <strong>a)</strong> Directly from you when you complete forms on our website, send us emails or messages, or
+            upload documents.
+          </li>
+          <li>
+            <strong>b)</strong> During service delivery, when you share additional background information, job
+            descriptions or feedback.
+          </li>
+          <li>
+            <strong>c)</strong> Automatically when you use our website, through cookies and similar technologies (see
+            our Cookies &amp; Preferences Policy).
+          </li>
+          <li>
+            <strong>d)</strong> From payment providers when we receive payment confirmations or transaction references.
+          </li>
+        </ul>
         <p>
-          Under the Kenya Data Protection Act and related regulations, you may have rights including the right to be
-          informed, right of access, rectification, erasure, objection or restriction, data portability (where
-          applicable), and the right to withdraw consent where processing is based on consent.
+          In most cases, the onboarding and service delivery process happens online via our website, email, and other
+          digital channels.
         </p>
-        <p>
-          To exercise these rights, contact us at [insert DPO/support email]. We may ask you to verify your identity
-          before processing your request. You also have the right to lodge a complaint with the Office of the Data
-          Protection Commissioner (ODPC) in Kenya.
-        </p>
+      </LegalSection>
 
-        <h2 id="cookies">13. Cookies and tracking technologies</h2>
-        <p>
-          We use cookies and similar technologies on our website. For details about the types of cookies we use and
-          how to manage your preferences, see our{" "}
-          <a href="/legal/cookies">Cookies &amp; Preferences Policy</a>.
-        </p>
+      <LegalSection id="legal-bases" heading="5. Legal bases for processing">
+        <p>We process personal data under one or more of the following legal bases:</p>
+        <ul>
+          <li>
+            <strong>a)</strong> <strong>Performance of a contract:</strong> to provide our services or take steps at your
+            request before entering into a contract (for example, assessing your CV and preparing a quotation).
+          </li>
+          <li>
+            <strong>b)</strong> <strong>Consent:</strong> where we rely on your explicit consent, for example for certain
+            marketing communications or non-essential cookies. You can withdraw your consent at any time.
+          </li>
+          <li>
+            <strong>c)</strong> <strong>Legitimate interests:</strong> where processing is necessary for our legitimate
+            interests or those of a third party and does not override your rights and freedoms. This includes
+            improving our services, maintaining security, preventing fraud, managing our business and understanding
+            how clients use our site.
+          </li>
+          <li>
+            <strong>d)</strong> <strong>Legal obligations:</strong> where we must process data to comply with legal or
+            regulatory duties, such as keeping accounting records or responding to lawful requests from authorities.
+          </li>
+        </ul>
+      </LegalSection>
 
-        <h2 id="changes">14. Changes to this Policy</h2>
+      <LegalSection id="how-we-use-data" heading="6. How we use your personal data">
+        <p>We use personal data for the following purposes:</p>
+
+        <p><strong>6.1 Service delivery</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Assessing your needs and professional background to prepare or refine your CV, cover
+            letter, LinkedIn profile and related documents.
+          </li>
+          <li>
+            <strong>b)</strong> Providing interview coaching or other agreed services.
+          </li>
+        </ul>
+
+        <p><strong>6.2 Client support and communication</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Responding to enquiries, providing updates, and managing requests or complaints.
+          </li>
+          <li>
+            <strong>b)</strong> Communicating about drafts, revisions and delivery timelines.
+          </li>
+        </ul>
+
+        <p><strong>6.3 Quotations, contracts and payments</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Preparing proposals and confirming orders.
+          </li>
+          <li>
+            <strong>b)</strong> Issuing invoices, processing payments and maintaining financial records.
+          </li>
+        </ul>
+
+        <p><strong>6.4 Service improvement and quality control</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Analysing feedback and usage data to improve our services and processes.
+          </li>
+          <li>
+            <strong>b)</strong> Using anonymised or appropriately minimised client content for internal training,
+            template development or quality assurance, where permitted.
+          </li>
+        </ul>
+
+        <p><strong>6.5 Website operation and analytics</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Operating and securing our website.
+          </li>
+          <li>
+            <strong>b)</strong> Understanding how the site is used and making improvements.
+          </li>
+        </ul>
+
+        <p><strong>6.6 Marketing (where permitted)</strong></p>
+        <ul>
+          <li>
+            <strong>a)</strong> Sending career tips, updates about our services, offers or resources you may find
+            useful.
+          </li>
+          <li>
+            <strong>b)</strong> Using anonymised or aggregated data for reporting and analytics.
+          </li>
+        </ul>
         <p>
-          We may update this Privacy Policy from time to time. The latest version will always be available on
-          cvwriting.co.ke, with the “Last updated” date at the top. Where changes are material, we may notify you
-          via email or prominent notice on the website.
+          You may opt out of non-essential marketing at any time by using the unsubscribe link in our emails or by
+          contacting us directly. We do not share your personal data with third parties for their own independent
+          marketing purposes.
         </p>
-      </div>
+      </LegalSection>
+
+      <LegalSection id="sharing-of-data" heading="7. Sharing of personal data">
+        <p>We do not sell your personal data. We may share it with trusted third parties, including:</p>
+        <ul>
+          <li>
+            <strong>a)</strong> Service providers and subcontractors (for example, experienced CV writers or editors)
+            who work under confidentiality obligations and only access data they need to perform their tasks.
+          </li>
+          <li>
+            <strong>b)</strong> IT, hosting and support providers, including website hosting, email, cloud storage,
+            project management and analytics tools.
+          </li>
+          <li>
+            <strong>c)</strong> Payment processors, to process payments securely and provide payment confirmations and
+            references.
+          </li>
+          <li>
+            <strong>d)</strong> Professional advisers, such as accountants, auditors or legal advisers, where needed for
+            our legitimate business needs.
+          </li>
+          <li>
+            <strong>e)</strong> Regulators and law enforcement, where required by law or in response to valid legal
+            processes or requests.
+          </li>
+        </ul>
+        <p>
+          Where third parties act as data processors on our behalf, we seek to ensure appropriate contractual and
+          security safeguards are in place.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="international-transfers" heading="8. International data transfers">
+        <p>
+          Because we operate online and may use cloud-based tools, your personal data may be transferred to and
+          processed in countries outside Kenya (for example, where hosting, email, backup, analytics or collaboration
+          tools are located).
+        </p>
+        <p>
+          When we transfer personal data internationally, we aim to use providers that implement appropriate security
+          measures and, where applicable, contractual safeguards. We also seek to minimise transfers where possible
+          and rely on reputable services with strong privacy and security standards.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="data-retention" heading="9. Data retention">
+        <p>
+          We retain personal data only for as long as reasonably necessary to fulfil the purposes described in this
+          Policy, including to meet legal, accounting and reporting requirements.
+        </p>
+        <p>In general, we apply the following retention practices:</p>
+        <ul>
+          <li>
+            <strong>a)</strong> CV project files and related communication: typically up to three (3) years from the
+            date of last active interaction with you, to support follow-up requests and continuity if you return for
+            updates.
+          </li>
+          <li>
+            <strong>b)</strong> Invoices, financial records and payment-related data: retained for up to seven (7) years
+            or as required by applicable tax and accounting laws.
+          </li>
+          <li>
+            <strong>c)</strong> Marketing contact details: retained until you unsubscribe or withdraw consent, after
+            which we may keep a minimal suppression record to ensure we do not contact you again in error.
+          </li>
+        </ul>
+        <p>
+          We may retain certain information for longer where we have a legal obligation to do so, where necessary for
+          the establishment, exercise or defence of legal claims, or where we have a strong legitimate interest that is
+          compatible with your rights and freedoms.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="security" heading="10. Security of your data">
+        <p>
+          We take reasonable technical and organisational measures to protect personal data against unauthorised or
+          unlawful processing, and against accidental loss, destruction or damage. These measures include using
+          reputable hosting and cloud service providers, restricting access to client data to those who need it for
+          their role, and regularly reviewing access rights.
+        </p>
+        <p>
+          No method of transmission over the internet or method of electronic storage is completely secure. While we
+          strive to use commercially acceptable means to protect personal data, we cannot guarantee absolute security.
+        </p>
+        <p>
+          You are also responsible for keeping your devices, email accounts and logins secure, and for notifying us
+          promptly if you suspect unauthorised access to your information in connection with our services.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="children" heading="11. Children’s data">
+        <p>
+          Our services are aimed at adults and working professionals. We do not knowingly collect personal data from
+          children under 18 years of age. If we discover that we have inadvertently collected personal data from a
+          child, we will take reasonable steps to delete such data as soon as practicable or to regularise our
+          handling of it in line with applicable law.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="your-rights" heading="12. Your rights under Kenyan law">
+        <p>
+          Under the Kenya Data Protection Act, 2019 and other applicable data protection laws, you may have rights in
+          relation to your personal data, including:
+        </p>
+        <ul>
+          <li>
+            <strong>a)</strong> Right to be informed about how we collect and use your personal data.
+          </li>
+          <li>
+            <strong>b)</strong> Right of access to certain personal data we hold about you.
+          </li>
+          <li>
+            <strong>c)</strong> Right to rectification of inaccurate or incomplete data.
+          </li>
+          <li>
+            <strong>d)</strong> Right to erasure in certain circumstances.
+          </li>
+          <li>
+            <strong>e)</strong> Right to restriction of processing in certain circumstances.
+          </li>
+          <li>
+            <strong>f)</strong> Right to object to certain types of processing, including direct marketing.
+          </li>
+          <li>
+            <strong>g)</strong> Right to data portability, where technically feasible and applicable, for data you have
+            provided to us.
+          </li>
+          <li>
+            <strong>h)</strong> Right to withdraw consent at any time where processing is based on consent (for example,
+            marketing or certain cookies).
+          </li>
+        </ul>
+        <p>
+          To exercise these rights or ask questions about how we handle your personal data, contact us at
+          [INSERT PRIMARY PRIVACY / SUPPORT EMAIL FOR RIGHTS REQUESTS]. We may need to request information to confirm
+          your identity before responding. We aim to respond to verified requests within the timelines required by
+          applicable law.
+        </p>
+        <p>
+          If you are not satisfied with our response, you have the right to lodge a complaint with the Office of the
+          Data Protection Commissioner (ODPC) in Kenya or another competent supervisory authority, where applicable.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="cookies" heading="13. Cookies and similar technologies">
+        <p>
+          We use cookies and similar technologies on our website to support functionality, analyse usage and, where
+          applicable, support marketing activities. For more detail about the types of cookies we use, the purposes
+          for which we use them, and how you can manage your preferences, see our{" "}
+          <a href="/legal/cookies/">Cookies &amp; Preferences Policy</a>.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="changes" heading="14. Changes to this Privacy Policy">
+        <p>
+          We may update this Privacy Policy from time to time to reflect changes in our practices, technologies, legal
+          requirements or other factors. When we make changes, we will update the “Last updated” date at the top of
+          this Policy and, where appropriate, provide additional notice (for example, on our website or via email).
+        </p>
+        <p>
+          We encourage you to review this Policy periodically to stay informed about how we handle your personal data.
+        </p>
+      </LegalSection>
     </div>
-  </main>
+
+    <LegalFooterNav
+      slot="footerNav"
+      currentSlug="privacy"
+      related={relatedPolicies}
+    />
+  </LegalLayout>
 </BaseLayout>

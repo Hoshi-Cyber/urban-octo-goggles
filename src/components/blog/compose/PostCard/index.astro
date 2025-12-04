@@ -51,13 +51,11 @@ const cover: Required<Cover> =
         alt: (explicitCover.alt ?? title) as string,
         width: toNumber(explicitCover.width, 1200),
         height: toNumber(explicitCover.height, 675),
-        // Step 4: allow parent to pass loading hint; default to lazy
         loading: (explicitCover.loading === "eager" ? "eager" : "lazy"),
       }
     : {
         src: (thumbnailSrc ?? "/assets/logos/logo-wide-1200.png") as string,
         alt: (thumbnailAlt ?? "Post thumbnail") as string,
-        // 16:9 fallback to prevent CLS if dimensions missing
         width: 1200,
         height: 675,
         loading: "lazy",
@@ -93,14 +91,19 @@ const sizes =
 
   <figure class="pcard__media" aria-hidden={cover.alt ? "false" : "true"}>
     {stage && <span class="pcard__badge">{stage}</span>}
-    <a class="pcard__mediaLink" href={canonicalHref} data-event="card_media_click">
+    <a
+      class="pcard__mediaLink"
+      href={canonicalHref}
+      data-event="card_media_click"
+      aria-label={title}
+    >
       <img
         src={cover.src}
         alt={cover.alt}
         width={cover.width}
         height={cover.height}
-        loading={cover.loading}            /* Step 4: eager for first-fold, lazy otherwise */
-        fetchpriority={fetchPriority}      /* high when eager to improve LCP */
+        loading={cover.loading}
+        fetchpriority={fetchPriority}
         decoding="async"
         sizes={sizes}
       />
@@ -110,23 +113,43 @@ const sizes =
   <div class="pcard__content">
     {category && (
       <div class="pcard__kicker">
-        {categoryHref
-          ? <a class="pcard__category" href={categoryHref} data-cta="card_category">{category}</a>
-          : <span class="pcard__category" aria-current="true">{category}</span>}
+        {categoryHref ? (
+          <a
+            class="pcard__category"
+            href={categoryHref}
+            data-cta="card_category"
+          >
+            {category}
+          </a>
+        ) : (
+          <span class="pcard__category" aria-current="true">
+            {category}
+          </span>
+        )}
       </div>
     )}
 
     <h3 id={titleId} class="pcard__title line-clamp-2">
-      <a class="pcard__link" href={canonicalHref} data-event="card_title_click">
+      <a
+        class="pcard__link"
+        href={canonicalHref}
+        data-event="card_title_click"
+      >
         {title}
       </a>
     </h3>
 
-    {excerpt && <p class="pcard__excerpt line-clamp-3" id={titleId + "-desc"}>{excerpt}</p>}
+    {excerpt && (
+      <p class="pcard__excerpt line-clamp-3" id={titleId + "-desc"}>
+        {excerpt}
+      </p>
+    )}
 
     <p class="pcard__meta">
       {dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
-      {readMin && <span aria-label={readMin + ' minute read'}>{readMin} min read</span>}
+      {readMin && (
+        <span aria-label={readMin + " minute read"}>{readMin} min read</span>
+      )}
     </p>
   </div>
 </article>

@@ -1,13 +1,114 @@
+/* src/components/blog/mdx/Warn/Warn.css
+   MDX Warning – high-salience, premium warning block.
+   Mobile-first, token-driven, aligned with CVWriting brand colours.
+*/
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
 .mdx-warn {
-  padding: var(--space-3) var(--space-4);
-  border-left: 4px solid var(--color-warning);
-  background: color-mix(in oklab, var(--color-warning) 10%, var(--color-surface));
-  border-radius: var(--radius-md);
-  color: var(--color-text);
+  position: relative;
+
+  margin-block: clamp(var(--space-3), 2.7vw, var(--space-5));
+  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-5));
+
+  border-radius: var(--radius-2xl, 1.25rem);
+
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-warning, #f97316) 45%,
+      var(--color-border-subtle, #e5e7eb)
+    );
+
+  background: color-mix(
+    in oklab,
+    var(--color-warning, #f97316) 16%,
+    var(--color-surface-alt, #fff7ed)
+  );
+
+  box-shadow: var(--shadow-sm);
+
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 86%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
+  );
 }
 
-.mdx-warn a:focus-visible,
-.mdx-warn button:focus-visible {
-  outline: 2px solid var(--color-warning);
+/* Vertical accent bar – strong warning signal with brand primary support */
+.mdx-warn::before {
+  content: "";
+  position: absolute;
+  inset-block: clamp(var(--space-2), 1.4vw, var(--space-3));
+  inset-inline-start: 0;
+
+  width: 3px;
+  border-radius: 0 var(--radius-xl, 1rem) var(--radius-xl, 1rem) 0;
+
+  background: color-mix(
+    in oklab,
+    var(--color-warning, #f97316) 82%,
+    var(--color-primary, #1b3637) 18%
+  );
+}
+
+/* Content rhythm */
+.mdx-warn > *:first-child {
+  margin-top: 0;
+}
+
+.mdx-warn > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdx-warn p {
+  margin-block: var(--space-1);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.mdx-warn ul,
+.mdx-warn ol {
+  margin-block: var(--space-2);
+  padding-left: var(--space-4);
+}
+
+/* Links – clearly interactive but still on-brand */
+.mdx-warn :where(a) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.mdx-warn :where(a:hover) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 96%,
+    #000000
+  );
+}
+
+/* Focus states for interactive elements (accessibility) */
+.mdx-warn :where(a, button):focus-visible {
+  outline: 2px solid
+    color-mix(
+      in oklab,
+      var(--color-warning, #f97316) 70%,
+      var(--color-primary, #1b3637) 30%
+    );
   outline-offset: 2px;
+}
+
+/* Reduced motion – visual stillness while keeping hierarchy */
+@media (prefers-reduced-motion: reduce) {
+  .mdx-warn {
+    transition: none;
+  }
 }

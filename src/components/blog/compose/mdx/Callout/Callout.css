@@ -1,43 +1,199 @@
+/* src/components/blog/mdx/Callout/Callout.css
+   MDX Callout – premium, brand-aligned note blocks for blog content.
+   Mobile-first, token-driven, using global colour + spacing system.
+*/
+
 .mdx-callout {
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-light);
-  background: var(--color-surface);
+  position: relative;
+
+  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
+  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
+  padding-inline: clamp(var(--space-4), 3vw, var(--space-5));
+
+  border-radius: var(--radius-2xl, 1.25rem);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 88%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+    );
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-surface, #ffffff) 10%
+  );
+  box-shadow: var(--shadow-sm);
+
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
 }
 
+/* Vertical accent bar – colour comes from variant rules below */
+.mdx-callout::before {
+  content: "";
+  position: absolute;
+  inset-block: clamp(var(--space-2), 1.4vw, var(--space-3));
+  inset-inline-start: 0;
+
+  width: 3px;
+  border-radius: 0 var(--radius-xl, 1rem) var(--radius-xl, 1rem) 0;
+
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-accent, #d4ab18) 30%
+  );
+}
+
+/* Title – compact eyebrow-style, slightly smaller than body headings */
 .mdx-callout__title {
   margin: 0 0 var(--space-2);
-  font-weight: 700;
-  color: var(--color-text);
+
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 80%,
+    var(--color-text, #020617)
+  );
 }
 
+/* Body rhythm */
 .mdx-callout__body > * + * {
   margin-top: var(--space-2);
 }
 
-/* Variants driven by tokens only */
+.mdx-callout__body p {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+.mdx-callout__body ul,
+.mdx-callout__body ol {
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+/* Variant surfaces – tint border + background using brand tokens only */
 .mdx-callout[data-type="info"] {
-  border-color: color-mix(in oklab, var(--color-primary) 24%, transparent);
-  background: color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+    var(--color-surface-alt, #f9fafb)
+  );
+}
+
+.mdx-callout[data-type="info"]::before {
+  background: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 80%,
+    var(--color-primary-soft, #1b3637) 20%
+  );
 }
 
 .mdx-callout[data-type="success"] {
-  border-color: color-mix(in oklab, var(--color-accent) 24%, transparent);
-  background: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 12%,
+    var(--color-surface-alt, #f9fafb)
+  );
+}
+
+.mdx-callout[data-type="success"]::before {
+  background: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 85%,
+    var(--color-primary, #1b3637) 15%
+  );
 }
 
 .mdx-callout[data-type="warn"] {
-  border-color: color-mix(in oklab, var(--color-warning) 28%, transparent);
-  background: color-mix(in oklab, var(--color-warning) 8%, var(--color-surface));
+  border-color: color-mix(
+    in oklab,
+    var(--color-warning, #f97316) 42%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-warning, #f97316) 14%,
+    var(--color-surface-alt, #fff7ed)
+  );
+}
+
+.mdx-callout[data-type="warn"]::before {
+  background: color-mix(
+    in oklab,
+    var(--color-warning, #f97316) 80%,
+    var(--color-primary, #1b3637) 20%
+  );
 }
 
 .mdx-callout[data-type="danger"] {
-  border-color: color-mix(in oklab, var(--color-error) 28%, transparent);
-  background: color-mix(in oklab, var(--color-error) 8%, var(--color-surface));
+  border-color: color-mix(
+    in oklab,
+    var(--color-error, #ef4444) 45%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-error, #ef4444) 14%,
+    var(--color-surface-alt, #fef2f2)
+  );
+}
+
+.mdx-callout[data-type="danger"]::before {
+  background: color-mix(
+    in oklab,
+    var(--color-error, #ef4444) 82%,
+    var(--color-primary, #1b3637) 18%
+  );
+}
+
+/* Links and interactive elements inside the callout */
+.mdx-callout :where(a) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 88%,
+    var(--color-text, #020617)
+  );
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.mdx-callout :where(a:hover) {
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 96%,
+    #000000
+  );
 }
 
 /* Focus safety for any interactive children */
 .mdx-callout :where(a, button):focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary, #1b3637);
   outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .mdx-callout {
+    transition: none;
+  }
 }

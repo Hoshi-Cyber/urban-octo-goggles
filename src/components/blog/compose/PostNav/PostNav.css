@@ -1,42 +1,83 @@
-/* src/components/blog/compose/PostNav/PostNav.css */
+/* src/components/blog/compose/PostNav/PostNav.css
 
-/*
   PostNav – previous/next article navigation.
   Mobile-first, token-driven, aligned with global blog styling.
   FP-190.1: Stack on mobile, split left/right at desktop, no sidebar.
 */
 
-/* Wrapper: sits inside .post__nav section */
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
+/* Wrapper: sits inside .post__nav section, constrained to reading width */
 .post .post__nav .postNav,
 .post-nav {
+  max-width: var(--container-max, 72rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-5));
+  padding-block: clamp(var(--space-5), 3vw, var(--space-7));
+
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-block: var(--space-4);
-  border-top: 1px solid var(--color-light-alt);
+
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
 }
 
-/* Card / item container */
+/* Card / item container – premium band using brand neutrals */
 .post .postNav__card,
 .post-nav__item {
+  position: relative;
   display: block;
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-light);
+
+  padding: var(--space-4);
+  border-radius: var(--radius-2xl, 1.25rem);
+
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 92%,
+    var(--color-surface-alt, #f9fafb) 8%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  box-shadow: var(--shadow-sm);
+
   text-decoration: none;
+
   transition:
     background-color 140ms ease-out,
     color 140ms ease-out,
-    box-shadow 80ms ease-out,
-    transform 80ms ease-out;
+    box-shadow 120ms ease-out,
+    border-color 120ms ease-out,
+    transform 120ms ease-out;
 }
 
 /* Hover/active states – light, secondary hierarchy */
 .post .postNav__card:hover,
-.post-nav__item:hover {
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-0.5px);
+.post-nav__item:hover,
+.post .postNav__card:focus-visible,
+.post-nav__item:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface, #ffffff) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  outline: none;
 }
 
 .post .postNav__card:active,
@@ -45,15 +86,58 @@
   box-shadow: none;
 }
 
+/* Direction badges (arrow hints) */
+.post .postNav__card--prev::before,
+.post .postNav__card--next::before {
+  position: absolute;
+  top: var(--space-4);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  padding-inline: 0.5rem;
+  padding-block: 0.15rem;
+
+  border-radius: 999px;
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%,
+    var(--color-surface, #ffffff)
+  );
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 80%,
+    var(--color-text, #020617)
+  );
+}
+
+.post .postNav__card--prev::before {
+  content: "← PREVIOUS";
+  left: var(--space-4);
+}
+
+.post .postNav__card--next::before {
+  content: "NEXT →";
+  right: var(--space-4);
+}
+
 /* Label above the title/link */
 .post .postNav__label,
 .post-nav__label {
   display: block;
+  margin-top: var(--space-4); /* below the direction badge */
   margin-bottom: var(--space-1);
-  font-size: var(--fs-sm);
-  letter-spacing: 0.08em;
+
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-muted);
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-text, #020617)
+  );
 }
 
 /* Title / link text */
@@ -61,17 +145,27 @@
 .post-nav__link {
   display: block;
   font-weight: 600;
-  line-height: 1.35;
-  color: var(--color-primary);
+  line-height: 1.4;
+  font-size: clamp(var(--fs-sm), 1.05rem, var(--fs-md));
+
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 88%,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 12%
+  );
   text-decoration: none;
 }
 
-/* Title/link hover + focus states */
+/* Title/link hover + focus states – colour only, no underline */
 .post .postNav__card:hover .postNav__title,
 .post-nav__link:hover,
 .post-nav__link:focus-visible {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 90%,
+    var(--color-text, #020617)
+  );
+  text-decoration: none;
   outline: none;
 }
 
@@ -91,13 +185,11 @@
 
   .post .postNav__card--prev,
   .post-nav__item--prev {
-    margin-right: var(--space-2);
     text-align: left;
   }
 
   .post .postNav__card--next,
   .post-nav__item--next {
-    margin-left: var(--space-2);
     text-align: right;
   }
 }

@@ -1,9 +1,14 @@
 ---
 import "./DataPrivacyNote.css";
 
-interface DataPrivacyNoteProps {
+export interface DataPrivacyNoteProps {
   heading?: string;
   bullets?: string[];
+  /**
+   * Controls heading level for the section title.
+   * Defaults to "h2"; use "h3" when nested under another section heading.
+   */
+  headingLevel?: "h2" | "h3";
 }
 
 const {
@@ -13,28 +18,45 @@ const {
     "Identifying details are masked where needed.",
     "CVs are never published publicly without explicit permission.",
   ],
+  headingLevel = "h2",
 } = Astro.props as DataPrivacyNoteProps;
+
+const HeadingTag = headingLevel === "h3" ? "h3" : "h2";
+
+const makeSlug = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "") || "data-privacy";
+
+const headingId = `data-privacy-note-${makeSlug(heading)}`;
+const hasBullets = Array.isArray(bullets) && bullets.length > 0;
 ---
 
 <section
   class="data-privacy-note"
-  aria-label="Data protection notice"
+  aria-labelledby={headingId}
 >
   <div class="container">
     <div class="data-privacy-note__inner card stack">
-      <h2 class="data-privacy-note__heading">
+      <HeadingTag
+        id={headingId}
+        class="data-privacy-note__heading"
+      >
         {heading}
-      </h2>
+      </HeadingTag>
 
-      <ul class="data-privacy-note__list">
-        {bullets.map((item) => (
-          <li class="data-privacy-note__item">
-            <p class="data-privacy-note__text">
-              {item}
-            </p>
-          </li>
-        ))}
-      </ul>
+      {hasBullets && (
+        <ul class="data-privacy-note__list">
+          {bullets.map((item) => (
+            <li class="data-privacy-note__item">
+              <p class="data-privacy-note__text">
+                {item}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   </div>
 </section>

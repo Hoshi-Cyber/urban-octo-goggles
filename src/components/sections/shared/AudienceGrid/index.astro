@@ -44,7 +44,10 @@ const Heading = headingLevel === "h3" ? "h3" : "h2";
   <div class="container stack audience-grid__inner">
     {hasHeader && (
       <header class="section-head audience-grid__head stack">
-        <Heading id={headingId} class="section-title">
+        <Heading
+          id={headingId}
+          class="section-title audience-grid__title"
+        >
           {title}
         </Heading>
         {intro && (
@@ -81,7 +84,7 @@ const Heading = headingLevel === "h3" ? "h3" : "h2";
               <div class="audience-grid__card-footer">
                 <a
                   href={audience.href}
-                  class="btn btn-accent audience-grid__link"
+                  class="btn btn-primary audience-grid__link"
                 >
                   {audience.hrefLabel ?? "Learn more"}
                 </a>

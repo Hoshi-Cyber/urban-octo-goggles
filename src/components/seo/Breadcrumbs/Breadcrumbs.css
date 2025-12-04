@@ -1,3 +1,12 @@
+/* Breadcrumbs — mobile-first, token-driven, accessible */
+
+.breadcrumbs {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+/* List layout */
 .breadcrumbs ol {
   list-style: none;
   padding: 0;
@@ -6,23 +15,49 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+
+/* Items */
 .breadcrumbs li {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
 }
+
+/* Separator */
 .breadcrumbs li + li::before {
   content: "/";
-  color: var(--color-muted);
+  color: var(--color-light-alt, var(--color-muted));
 }
+
+/* Links – strong enough for nav, use brand accent on hover */
 .breadcrumbs a {
-  color: var(--color-muted);
+  color: var(--color-text);
   text-decoration: none;
+  font-weight: 500;
 }
+
 .breadcrumbs a:hover {
+  color: var(--color-primary);
   text-decoration: underline;
 }
+
+/* Current page – highlight with brand colour */
 .breadcrumbs [aria-current="page"] {
-  color: var(--color-text);
+  color: var(--color-primary);
   font-weight: 600;
+}
+
+/* Focus visibility for keyboard users */
+.breadcrumbs a:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px
+    var(--color-focus-ring, color-mix(in oklab, var(--color-primary) 35%, white));
+  border-radius: var(--radius-sm, 0.25rem);
+}
+
+/* Reduced motion – defensive no-op */
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumbs a {
+    transition: none;
+  }
 }

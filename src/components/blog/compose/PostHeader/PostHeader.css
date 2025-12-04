@@ -5,131 +5,174 @@
   Mobile-first, constrained to reading width, aligned with global tokens.
 */
 
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
+
+/* Outer header region */
 .post .post__header {
   width: 100%;
   max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: var(--space-4);
 
-  /* slightly tighter to support overall compact vertical rhythm */
-  margin-block-end: var(--space-3);
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-6));
+  padding-block-end: var(--space-4);
+
+  /* Compact vertical rhythm into the body content */
+  margin-block-end: clamp(var(--space-3), 2.5vw, var(--space-5));
 }
 
 /* Inner header block */
-
 .post .postHeader__inner {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+
+  padding-block: var(--space-2);
+
+  border-bottom: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
 }
 
 /* Eyebrow / category label above title */
-
 .post .postHeader__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   margin: 0;
+
   font-size: var(--fs-sm);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 70%,
+    var(--color-text, #020617)
+  );
 }
 
+.post .postHeader__eyebrow::before {
+  content: "●";
+  font-size: 0.55rem;
+  color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 75%,
+    var(--color-accent, #d4ab18) 25%
+  );
+}
+
+/* Eyebrow link – subtle primary accent, no pill */
 .post .postHeader__eyebrowLink {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding-inline: var(--space-2);
-  padding-block: calc(var(--space-1) / 2);
-  border-radius: 999px;
+
+  padding-inline: 0;
+  padding-block: 0;
+
+  border-radius: 0;
+  border-bottom: 1px solid transparent;
+
   text-decoration: none;
-  font-size: var(--fs-sm);
-  color: var(--color-primary);
-  background-color: color-mix(
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  color: color-mix(
     in oklab,
-    var(--color-primary) 6%,
-    var(--color-surface)
+    var(--color-primary, #1b3637) 85%,
+    var(--color-text, #020617)
   );
+
   transition:
     color 150ms ease-out,
-    background-color 150ms ease-out,
-    box-shadow 150ms ease-out;
+    border-color 150ms ease-out;
 }
 
 .post .postHeader__eyebrowLink:hover,
 .post .postHeader__eyebrowLink:focus-visible {
-  background-color: color-mix(
+  color: color-mix(
     in oklab,
-    var(--color-primary) 10%,
-    var(--color-surface)
+    var(--color-primary, #1b3637) 95%,
+    var(--color-accent, #d4ab18) 5%
   );
-  box-shadow: var(--shadow-sm);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-accent, #d4ab18) 30%
+  );
   outline: none;
 }
 
 /* Title – main post H1
-   - Fluid type using global tokens
-   - Scales between H2-ish size on very small screens
-     and a larger-than-default H1 on large screens.
+   - Uses global .h1 plus local width + colour refinements
 */
-
 .post .postHeader__title {
   margin: 0;
-  max-width: 26rem; /* keeps multi-line titles readable on very narrow screens */
+  max-width: 32rem; /* keeps multi-line titles readable on narrow screens */
   font-weight: 700;
 
-  /* fluid, token-based font size */
-  font-size: clamp(
-    var(--fs-2xl),              /* minimum size on the smallest viewports */
-    5vw,                        /* fluid growth through mid-range widths */
-    calc(var(--fs-3xl) * 1.25)  /* upper cap on large screens */
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 85%,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 15%
   );
 }
 
 /* Dek – short summary under the title */
-
 .post .postHeader__dek {
   margin: 0;
   margin-block-start: var(--space-3);
   max-width: 65ch;
   line-height: 1.5;
+
   font-size: var(--fs-base);
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 82%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
+  );
 }
 
 /* Responsive refinements – layout only */
-
 @media (min-width: 640px) {
-  .post .postHeader__title {
-    max-width: 32rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .post .post__header {
-    padding-inline: var(--space-6);
-
-    /* keep header-to-next-section spacing compact on tablet+ */
-    margin-block-end: var(--space-4);
-  }
-
   .post .postHeader__title {
     max-width: 36rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
+  .post .post__header {
+    padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
+    margin-block-end: var(--space-4);
+  }
+
   .post .postHeader__inner {
     gap: var(--space-3);
   }
 
-  /* Desktop: allow full content width; font-size already capped by clamp() */
   .post .postHeader__title {
-    max-width: none;
+    max-width: 40rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: allow wider titles; h1 clamp in global tokens handles size */
+  .post .postHeader__title {
+    max-width: 46rem;
   }
 
   .post .postHeader__dek {
     font-size: var(--fs-lg);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .post .postHeader__eyebrowLink {
+    transition: none;
   }
 }

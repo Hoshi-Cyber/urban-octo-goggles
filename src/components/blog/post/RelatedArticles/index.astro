@@ -2,17 +2,7 @@
 /*
   src/components/blog/post/RelatedArticles/index.astro
 
-  Fix Plan 205.1.6 – Implement RelatedArticles Selection Logic
-
-  Responsibilities:
-  - Pure presentation for the "Related articles" strip at the bottom of a post.
-  - Consumes a pre-selected, deterministic items[] payload from:
-      - src/lib/blog/related.getRelatedArticles (canonical helper), or
-      - Legacy fallback mapping in src/components/blog/base/BlogPost.astro.
-  - Renders a compact PostGrid using PostCard for each related article.
-
-  Selection, scoring, and overrides (relatedPosts in frontmatter) are handled
-  upstream. This component must remain display-only and accept items as-is.
+  RelatedArticles presentation strip
 */
 
 import PostCard from "@/components/blog/compose/PostCard";
@@ -25,7 +15,6 @@ export interface RelatedArticle {
   href: string;
   category: string;
   readingTimeMinutes?: number;
-  /** Optional extras if available */
   excerpt?: string;
   dateISO?: string;
 }
@@ -33,13 +22,18 @@ export interface RelatedArticle {
 export interface RelatedArticlesProps {
   items: RelatedArticle[];
   title?: string;
-  eyebrow?: string;
+  /**
+   * Band variant hook used by BlogPostLayout presets.
+   * "tinted" keeps the soft band; "flat" prefers a neutral background.
+   * The actual band background is owned by BlogPostLayout.
+   */
+  bandVariant?: "tinted" | "flat";
 }
 
 const {
   items,
   title = "Related articles",
-  eyebrow = "Keep learning",
+  bandVariant = "tinted",
 } = Astro.props as RelatedArticlesProps;
 
 const hasItems = Array.isArray(items) && items.length > 0;
@@ -49,36 +43,34 @@ const hasItems = Array.isArray(items) && items.length > 0;
   <section
     class="related-articles"
     aria-labelledby="related-articles-title"
+    data-band-variant={bandVariant}
   >
     <link rel="stylesheet" href={postGridCss} />
 
-    <header class="related-articles__header">
-      {eyebrow && (
-        <p class="related-articles__eyebrow">
-          {eyebrow}
-        </p>
-      )}
-      <h2
-        id="related-articles-title"
-        class="related-articles__title"
-      >
-        {title}
-      </h2>
-    </header>
+    <div class="related-articles__inner">
+      <header class="related-articles__header">
+        <h2
+          id="related-articles-title"
+          class="related-articles__title h2 section-title"
+        >
+          {title}
+        </h2>
+      </header>
 
-    <ul class="post-grid related-articles__grid">
-      {items.map((item) => (
-        <li>
-          <PostCard
-            url={item.href}
-            title={item.title}
-            category={item.category}
-            readMin={item.readingTimeMinutes}
-            excerpt={item.excerpt}
-            dateISO={item.dateISO}
-          />
-        </li>
-      ))}
-    </ul>
+      <ul class="post-grid related-articles__grid">
+        {items.map((item) => (
+          <li>
+            <PostCard
+              url={item.href}
+              title={item.title}
+              category={item.category}
+              readMin={item.readingTimeMinutes}
+              excerpt={item.excerpt}
+              dateISO={item.dateISO}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   </section>
 )}

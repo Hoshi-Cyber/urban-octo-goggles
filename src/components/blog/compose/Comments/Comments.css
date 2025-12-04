@@ -1,38 +1,185 @@
-/* Accessible, performant comment region. Mobile-first. */
+/* Comments — premium, mobile-first comment region
+   - Soft band with container alignment
+   - Elevated inner card using brand neutrals + primary tint
+   - Section title: h2 with global styles + case-studies underline accent
+   - Accessible focus treatment for any embedded widgets
+*/
 
 .comments {
-  padding-block: var(--space-6);
+  padding-block: clamp(var(--space-8), 3vw, var(--space-10));
+  margin-block: clamp(var(--space-6), 3vw, var(--space-10));
+
+  border-radius: var(--radius-3xl);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
+    );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+    );
 }
 
+/* Header */
+.comments__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: clamp(var(--space-4), 2vw, var(--space-5));
+}
+
+@media (min-width: 768px) {
+  .comments__head {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+/* h2 title: global h2 via .h2 + local underline accent
+   (same visual logic as case-studies heading) */
+.comments__title {
+  margin: 0;
+  position: relative;
+  padding-bottom: var(--space-2);
+}
+
+.comments__title::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary, #1b3637),
+    color-mix(
+      in oklab,
+      var(--color-accent, #d4ab18) 80%,
+      var(--color-primary, #1b3637)
+    )
+  );
+}
+
+.comments__head .section-sub {
+  margin: 0;
+  max-width: 36rem;
+}
+
+/* Inner card */
 .comments__body {
-  border: 1px solid var(--color-light);
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-}
+  border-radius: var(--radius-2xl);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 8%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface, #ffffff) 94%,
+      var(--color-surface-alt, #f9fafb) 6%
+    );
+  box-shadow: var(--shadow-sm, 0 14px 32px rgb(15 23 42 / 0.10));
 
-.comments__mount {
-  min-height: 56px; /* reserve space to prevent layout shift when provider hydrates */
-}
-
-/* Placeholder style */
-.comments__placeholder {
-  margin-top: var(--space-3);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--color-primary) 6%, #fff);
-  border: 1px dashed color-mix(in oklab, var(--color-primary) 22%, transparent);
+  padding: clamp(var(--space-4), 2vw, var(--space-6));
 }
 
 /* md+: more breathing room */
 @media (min-width: 768px) {
   .comments__body {
-    padding: var(--space-6);
+    padding: clamp(var(--space-5), 2.5vw, var(--space-7));
   }
+}
+
+/* Mount target: reserve space to prevent layout shift when provider hydrates */
+.comments__mount {
+  min-height: 56px;
+}
+
+/* Placeholder style */
+.comments__placeholder {
+  margin-top: var(--space-4);
+  padding: clamp(var(--space-3), 1.4vw, var(--space-4));
+  border-radius: var(--radius-xl);
+
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary, #1b3637)) 12%,
+        var(--color-surface, #ffffff)
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f9fafb) 92%,
+        transparent
+      )
+    );
+  border: 1px dashed
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 28%,
+      transparent
+    );
+}
+
+.comments__placeholder-title {
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 75%,
+    var(--color-text, #020617)
+  );
+}
+
+.comments__placeholder-text {
+  margin: 0;
+  font-size: var(--fs-sm);
 }
 
 /* Focus safety for any embedded widgets */
 .comments :where(a, button, input, textarea, iframe):focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, #000);
+  outline: 2px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 65%,
+      #000
+    );
   outline-offset: 2px;
 }

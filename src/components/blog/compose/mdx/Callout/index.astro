@@ -3,10 +3,19 @@ interface Props {
   type?: "info" | "success" | "warn" | "danger";
   title?: string;
 }
+
 const { type = "info", title } = Astro.props as Props;
+
+const ariaLabel = title ? `Callout: ${title}` : "Callout";
 ---
-<section class="mdx-callout" data-type={type} role="note" aria-label={title ? `Callout: ${title}` : "Callout"}>
+<section
+  class="mdx-callout"
+  data-type={type}
+  role="note"
+  aria-label={ariaLabel}
+>
   {title && <p class="mdx-callout__title">{title}</p>}
+
   <div class="mdx-callout__body">
     <slot />
   </div>

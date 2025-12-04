@@ -1,5 +1,7 @@
 ---
 // src/components/blog/compose/CategoryGrid/index.astro
+// Premium blog category grid – 1/2/4 layout with equal-height cards,
+// width-aligned to other sections via a shared .container wrapper.
 
 import "./CategoryGrid.css";
 
@@ -31,78 +33,77 @@ const resolvedTitle =
 const sectionId =
   resolvedTitle === "Explore categories"
     ? baseId
-    : `${baseId}-${resolvedTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+    : `${baseId}-${resolvedTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")}`;
 ---
 
 <section
-  class={`catgrid ${className ?? ""}`}
+  class={`catgrid section ${className ?? ""}`.trim()}
+  data-section="blog-category-grid"
   aria-labelledby={sectionId}
 >
-  {/* Header: left-aligned, eyebrow directly above title, width constrained by container */}
-  <header class="catgrid__head container stack section-head">
-    {eyebrow && <p class="catgrid__eyebrow">{eyebrow}</p>}
+  <div class="container">
+    {/* Header: left-aligned, eyebrow directly above title, aligned to container */}
+    <header class="catgrid__head stack section-head">
+      {eyebrow && <p class="catgrid__eyebrow">{eyebrow}</p>}
 
-    <h2 id={sectionId} class="section-title catgrid__title">
-      {resolvedTitle}
-    </h2>
-  </header>
+      {/* h2 with global section-title styling + local underline accent */}
+      <h2 id={sectionId} class="section-title catgrid__title">
+        {resolvedTitle}
+      </h2>
+    </header>
 
-  {/* Grid: full-width across the section, no container wrapping the cards */}
-  {items?.length > 0 && (
-    <ul
-      class="cat-grid"
-      role="list"
-      aria-label={resolvedTitle}
-    >
-      {items.map((item, index) => {
-        const variant = VARIANTS[index % VARIANTS.length];
-        const hasCount =
-          typeof item.count === "number" && item.count > 0;
-        const countLabel = hasCount
-          ? `${item.count} ${item.count === 1 ? "post" : "posts"}`
-          : "";
-        const cardLabel = hasCount
-          ? `${item.title}, ${countLabel}`
-          : item.title;
+    {/* Grid: aligned to the same container width as other sections */}
+    {items?.length > 0 && (
+      <ul class="cat-grid" role="list" aria-label={resolvedTitle}>
+        {items.map((item, index) => {
+          const variant = VARIANTS[index % VARIANTS.length];
+          const hasCount = typeof item.count === "number" && item.count > 0;
+          const countLabel = hasCount
+            ? `${item.count} ${item.count === 1 ? "post" : "posts"}`
+            : "";
+          const cardLabel = hasCount
+            ? `${item.title}, ${countLabel}`
+            : item.title;
 
-        return (
-          <li class={`cat cat--${variant}`}>
-            <a
-              href={item.href}
-              class="cat__link card"
-              aria-label={cardLabel}
-            >
-              {item.icon && (
-                <div
-                  class="cat__icon"
-                  aria-hidden="true"
-                  set:html={item.icon}
-                />
-              )}
-
-              <div class="cat__body">
-                <h3 class="cat__title">{item.title}</h3>
-
-                {item.blurb && (
-                  <p class="cat__desc">
-                    {item.blurb}
-                  </p>
+          return (
+            <li class={`cat cat--${variant}`}>
+              <a
+                href={item.href}
+                class="cat__link card"
+                aria-label={cardLabel}
+                data-cta="blog-category"
+              >
+                {item.icon && (
+                  <div
+                    class="cat__icon"
+                    aria-hidden="true"
+                    set:html={item.icon}
+                  />
                 )}
 
-                {hasCount && (
-                  <span class="cat__count">
-                    {countLabel}
-                  </span>
-                )}
-              </div>
+                <div class="cat__body">
+                  <h3 class="cat__title">{item.title}</h3>
 
-              <span class="cat__chev" aria-hidden="true">
-                →
-              </span>
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  )}
+                  {item.blurb && (
+                    <p class="cat__desc">
+                      {item.blurb}
+                    </p>
+                  )}
+
+                  {hasCount && <span class="cat__count">{countLabel}</span>}
+                </div>
+
+                <span class="cat__chev" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
 </section>

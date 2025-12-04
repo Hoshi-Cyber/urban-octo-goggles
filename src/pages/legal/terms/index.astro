@@ -1,210 +1,456 @@
 ---
 import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import {
+  LegalLayout,
+  LegalPageHeader,
+  LegalTOC,
+  LegalSection,
+  LegalFooterNav,
+} from "../../../components/legal";
 
 const pageTitle = "Terms of Service";
 const pageDescription =
   "Terms governing your use of CVWriting.co.ke and our CV writing and related professional services.";
+
+const lastUpdated = "24 November 2025";
+
+const tocItems = [
+  { id: "eligibility-and-agreement", label: "1. Eligibility and agreement" },
+  { id: "who-we-are", label: "2. Who we are and how to contact us" },
+  { id: "our-services", label: "3. Our services" },
+  { id: "ordering-process", label: "4. Ordering process and service delivery" },
+  { id: "client-responsibilities", label: "5. Your responsibilities" },
+  { id: "pricing-and-payments", label: "6. Pricing, payment and taxes" },
+  {
+    id: "delivery-and-communication",
+    label: "7. Service delivery, timelines and communication",
+  },
+  { id: "revisions", label: "8. Revisions" },
+  { id: "refunds-and-cancellations", label: "9. Refunds and cancellations" },
+  { id: "no-guarantee-of-outcomes", label: "10. No guarantee of outcomes" },
+  { id: "intellectual-property", label: "11. Intellectual property" },
+  { id: "acceptable-use", label: "12. Acceptable use" },
+  { id: "third-party-tools", label: "13. Third-party tools and links" },
+  { id: "limitation-of-liability", label: "14. Limitation of liability" },
+  { id: "indemnity", label: "15. Indemnity" },
+  { id: "governing-law", label: "16. Governing law and jurisdiction" },
+  { id: "changes-to-terms", label: "17. Changes to these Terms" },
+  { id: "contact", label: "18. Contact" },
+];
+
+const relatedPolicies = [
+  {
+    slug: "privacy",
+    href: "/legal/privacy/",
+    label: "Privacy Policy",
+    description: "How we collect, use, and protect your personal data.",
+  },
+  {
+    slug: "cookies",
+    href: "/legal/cookies/",
+    label: "Cookies & Preferences Policy",
+    description: "How we use cookies and how you can manage your preferences.",
+  },
+  {
+    slug: "refunds-revisions",
+    href: "/legal/refunds-revisions/",
+    label: "Refund & Revisions Policy",
+    description: "How refunds, revisions and project changes are handled.",
+  },
+];
 ---
 
 <BaseLayout title={`${pageTitle} – CVWriting.co.ke`} description={pageDescription}>
-  <main class="page-gap-after">
-    <div class="container">
-      <header class="page-header">
-        <h1 class="h1">{pageTitle}</h1>
-        <p class="page-lead">
-          Please read these Terms carefully. By using cvwriting.co.ke or engaging our services,
-          you agree to be bound by them.
-        </p>
-      </header>
+  <LegalLayout
+    showSidebar={true}
+    sidebarPosition="right"
+    tocLabel="Terms of Service sections"
+  >
+    <LegalPageHeader
+      slot="header"
+      title={pageTitle}
+      intro="These Terms of Service govern your use of the CVWriting.co.ke website and all CV-writing and related career support services we provide. By using our website, submitting an enquiry or purchasing any of our services, you agree to be bound by these Terms and the related policies referenced here."
+      lastUpdated={lastUpdated}
+      governingLaw="Laws of Kenya"
+    />
 
-      <p class="text-muted">Last updated: [insert date]</p>
+    <LegalTOC slot="toc" items={tocItems} />
 
-      <div class="prose">
-        <h2 id="agreement-to-terms">1. Agreement to terms</h2>
+    <div class="prose stack">
+      <LegalSection
+        id="eligibility-and-agreement"
+        heading="1. Eligibility and agreement"
+      >
         <p>
-          These Terms of Service (“Terms”) govern your use of cvwriting.co.ke and our CV writing and related
-          services. By accessing our website, placing an order, or using our services, you agree to be bound
-          by these Terms. If you do not agree, you must not use the website or our services.
+          By using our website or purchasing our services, you confirm that you are at least 18 years old and have
+          legal capacity to enter into a binding contract. If you are using our services on behalf of another
+          individual (for example, helping a family member with their CV), you confirm that you have their authority
+          to share their information and make decisions on their behalf in connection with our services.
         </p>
-
-        <h2 id="who-we-are">2. Who we are</h2>
         <p>
-          CVWriting.co.ke (“CVWriting”, “we”, “us”, “our”) provides CV writing, cover letters, LinkedIn profile
-          optimisation, and related professional branding services.
+          If you do not meet these requirements, or if you do not agree to these Terms, you must not use our website
+          or services.
         </p>
-        <p>Contact details:</p>
+        <p>
+          These Terms should be read together with our{" "}
+          <a href="/legal/privacy/">Privacy Policy</a>,{" "}
+          <a href="/legal/cookies/">Cookies &amp; Preferences Policy</a> and{" "}
+          <a href="/legal/refunds-revisions/">Refund &amp; Revisions Policy</a>. Together, they form the overall
+          agreement between you and us regarding your use of CVWriting.co.ke and our services.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="who-we-are" heading="2. Who we are and how to contact us">
+        <p>
+          CVWriting.co.ke (“CVWriting”, “we”, “us”, “our”) is a Kenya-based, online-first CV and career support
+          service. We operate primarily via our website and deliver our services digitally, mainly through email and
+          other agreed online channels.
+        </p>
+        <p>You can contact us using the following details:</p>
         <ul>
-          <li>Email: [insert support email]</li>
-          <li>Website: <a href="https://cvwriting.co.ke" rel="noopener noreferrer">https://cvwriting.co.ke</a></li>
+          <li>
+            <strong>a)</strong> Email: [INSERT PRIMARY SUPPORT EMAIL, e.g. support@cvwriting.co.ke]
+          </li>
+          <li>
+            <strong>b)</strong> Phone / WhatsApp: [INSERT BUSINESS PHONE / WHATSAPP NUMBER]
+          </li>
+          <li>
+            <strong>c)</strong> Postal / Registered Address: [INSERT POSTAL OR REGISTERED ADDRESS IN KENYA]
+          </li>
         </ul>
+      </LegalSection>
 
-        <h2 id="services-we-provide">3. Services we provide</h2>
-        <p>We offer, among others:</p>
+      <LegalSection id="our-services" heading="3. Our services">
+        <p>We provide professional, knowledge-based services, including (but not limited to):</p>
         <ul>
-          <li>CV/resume writing and optimisation;</li>
-          <li>Cover letter drafting;</li>
-          <li>LinkedIn profile optimisation;</li>
-          <li>Other career-related document services as listed on the website.</li>
+          <li>
+            <strong>a)</strong> CV / resume writing and optimisation;
+          </li>
+          <li>
+            <strong>b)</strong> Cover letter drafting and editing;
+          </li>
+          <li>
+            <strong>c)</strong> LinkedIn profile optimisation;
+          </li>
+          <li>
+            <strong>d)</strong> Interview preparation and coaching;
+          </li>
+          <li>
+            <strong>e)</strong> Other related career support services as described on our website or in custom proposals.
+          </li>
         </ul>
         <p>
-          Service descriptions, deliverables, and prices are displayed on the website or communicated in writing.
+          Full details of each service or package (including deliverables, number of revisions and the general
+          process) are set out on our website or in written proposals or invoices we send you. We may update, modify
+          or discontinue services or packages at any time for future orders. Changes do not affect orders that have
+          already been accepted and paid for, except as agreed with you.
         </p>
+      </LegalSection>
 
-        <h2 id="ordering-process">4. Ordering process</h2>
-        <p>The typical ordering process is as follows:</p>
+      <LegalSection
+        id="ordering-process"
+        heading="4. Ordering process and service delivery"
+      >
+        <p>In general, our ordering and delivery process works as follows:</p>
         <ol>
-          <li>You submit an enquiry or place an order via our website or direct channels.</li>
-          <li>We confirm the package, price, and timelines.</li>
-          <li>You make payment via the approved methods.</li>
-          <li>We send you an intake form or request for information.</li>
-          <li>We prepare and deliver drafts and revisions according to the package terms.</li>
+          <li>
+            <strong>4.1</strong> You review our services and packages on our website or via a custom proposal.
+          </li>
+          <li>
+            <strong>4.2</strong> You place an order or confirm acceptance of a proposal (usually in writing via email,
+            form or messaging).
+          </li>
+          <li>
+            <strong>4.3</strong> We confirm the service scope, price and any key timelines.
+          </li>
+          <li>
+            <strong>4.4</strong> You make payment in full (unless otherwise agreed in writing).
+          </li>
+          <li>
+            <strong>4.5</strong> You complete an intake form and/or send us your existing CV and other relevant
+            information.
+          </li>
+          <li>
+            <strong>4.6</strong> We review your information, create or refine your documents, and deliver drafts by
+            email or another agreed method.
+          </li>
+          <li>
+            <strong>4.7</strong> You provide feedback within the agreed revision timeframe and we carry out the
+            included revision rounds.
+          </li>
+          <li>
+            <strong>4.8</strong> We deliver final documents once revisions are complete or the revision window has
+            expired.
+          </li>
         </ol>
         <p>
-          We reserve the right to accept or decline any order at our discretion.
+          Our services are delivered digitally. We do not usually offer in-person consultations or physical document
+          delivery. Any timelines we provide are good-faith estimates and depend on factors such as your
+          responsiveness, the complexity of your profile and our workload at the time.
         </p>
+      </LegalSection>
 
-        <h2 id="client-responsibilities">5. Client responsibilities</h2>
-        <p>You agree to:</p>
+      <LegalSection
+        id="client-responsibilities"
+        heading="5. Your responsibilities"
+      >
+        <p>You are responsible for:</p>
         <ul>
           <li>
-            Provide accurate and complete information, including truthful employment history, education, and
-            achievements.
+            <strong>a)</strong> Providing accurate, complete and truthful information about your work history,
+            education, skills and achievements.
           </li>
           <li>
-            Respond in a timely manner to requests for information and feedback so we can deliver on time.
+            <strong>b)</strong> Carefully reviewing drafts to ensure they correctly reflect your background and informing
+            us promptly of any errors or changes needed.
           </li>
           <li>
-            Review drafts carefully and inform us of any errors or changes needed during the revision window.
+            <strong>c)</strong> Responding to our questions, clarification requests and draft documents within a
+            reasonable timeframe so we can deliver the service efficiently.
           </li>
           <li>
-            Use documents responsibly and remain accountable for all statements you make to employers.
+            <strong>d)</strong> Keeping copies of all final documents we deliver to you and using them responsibly with
+            employers and third parties.
           </li>
         </ul>
         <p>
-          We reserve the right to decline or terminate services where information is clearly false or misleading.
+          You remain solely responsible for the truthfulness of all information in your CV and other documents. We
+          will not knowingly include false or misleading information and may refuse requests that would require us to
+          do so. We may decline or terminate services where information provided is clearly false, misleading or
+          incompatible with our professional standards; in such cases, refunds are handled in line with our Refund
+          &amp; Revisions Policy.
         </p>
+      </LegalSection>
 
-        <h2 id="pricing-and-payments">6. Pricing and payments</h2>
+      <LegalSection
+        id="pricing-and-payments"
+        heading="6. Pricing, payment and taxes"
+      >
         <p>
-          Prices are displayed on cvwriting.co.ke or in written proposals. Payment is due in full upfront unless
-          otherwise agreed. Accepted payment methods may include mobile money, card payments, or bank transfer,
-          processed through third-party providers.
+          Current prices for standard packages are displayed on our website or provided in specific quotations. We
+          reserve the right to change prices at any time for future orders.
         </p>
         <p>
-          All fees are in Kenyan Shillings (KES) unless stated otherwise and may be subject to applicable taxes.
-          If your payment is reversed or disputed without valid reason, we may suspend ongoing work and restrict
-          future access to our services.
+          Unless otherwise stated, all fees are payable in our primary operating currency (for example, Kenyan
+          Shillings (KES)). Payment is typically required in full before work begins, unless we have agreed
+          alternative terms in writing.
         </p>
+        <p>
+          We may use third-party payment processors (for example, card, mobile money or online payment platforms).
+          By making a payment, you may also be subject to the terms and privacy policies of those providers. If a
+          payment is reversed, charged back or cancelled after work has started, we may suspend or terminate services
+          and reserve the right to recover amounts due for work already completed.
+        </p>
+      </LegalSection>
 
-        <h2 id="delivery-timelines">7. Delivery timelines</h2>
+      <LegalSection
+        id="delivery-and-communication"
+        heading="7. Service delivery, timelines and communication"
+      >
         <p>
-          We aim to meet the turnaround times indicated on our website or agreed in writing. Timelines may be
-          adjusted if you delay in providing information or feedback, if we agree to additional services or major
-          changes mid-project, or if there are unforeseen events outside our reasonable control. We will communicate
-          changes to timelines promptly.
+          We aim to deliver drafts and final documents within the timeframes discussed with you. These timeframes are
+          estimates and depend on your responsiveness, the complexity of your profile and workload at the time.
         </p>
+        <p>
+          We will communicate with you primarily via email and, where agreed, other digital channels such as
+          WhatsApp or online meeting tools. If you require work by a specific deadline, you must clearly communicate
+          this before purchasing the service. We will confirm whether the deadline is realistic and may charge a rush
+          or priority fee where appropriate.
+        </p>
+      </LegalSection>
 
-        <h2 id="revisions">8. Revisions</h2>
+      <LegalSection id="revisions" heading="8. Revisions">
         <p>
-          Each package includes a specified number of revision rounds and a defined revision window (for example,
-          up to 2–3 rounds within 7–14 days of first draft delivery). Revisions are intended for clarifying
-          information, adjusting tone or emphasis, and refining structure and content.
+          Each service or package includes a defined number of revision rounds and a revision timeframe, as stated
+          on our website or in your specific proposal. Revisions are intended to refine and improve the documents
+          based on your feedback.
         </p>
         <p>
-          Revisions are not intended for completely changing your role, industry, or seniority target (which may
-          require an upgraded service), or for frequent, ongoing tweaks beyond the agreed period.
+          Typical revisions include clarifying responsibilities and achievements, adjusting wording and tone,
+          reordering sections and making minor adjustments within the same general role/industry and seniority
+          level. Revisions are not intended to cover fundamental changes in scope, such as switching to a completely
+          different role or industry, or moving from entry-level to executive-level targeting. Such requests may be
+          treated as a new service or an upgrade.
         </p>
         <p>
-          Specific revision rules are detailed in our Refund &amp; Revisions Policy, which is incorporated into
-          these Terms by reference.
+          Revision rounds must be used within the stated timeframe from the date of first draft delivery, unless we
+          agree otherwise in writing. If the revision window expires without feedback, the project may be considered
+          complete and closed.
         </p>
+        <p>
+          Further detail is provided in our{" "}
+          <a href="/legal/refunds-revisions/">Refund &amp; Revisions Policy</a>, which forms part of these Terms.
+        </p>
+      </LegalSection>
 
-        <h2 id="refunds-and-credits">9. Refunds and credits</h2>
+      <LegalSection
+        id="refunds-and-cancellations"
+        heading="9. Refunds and cancellations"
+      >
         <p>
-          Our approach to refunds and credits is defined in the Refund &amp; Revisions Policy – CVWriting.co.ke
-          (Kenya). Refund eligibility depends on the stage of your project. Once the first draft is delivered,
-          monetary refunds are generally not available; we focus on revisions and, where appropriate, credits. We
-          do not offer refunds based on job outcomes.
+          Because our services involve personalised professional work, refunds are limited and depend on the stage of
+          the project at the time you request a refund. In general, once substantive work has started or drafts have
+          been delivered, monetary refunds are restricted and we focus on revisions and, where appropriate, service
+          credits.
         </p>
+        <p>
+          Our detailed framework for refunds, cancellations, partial credits and project closure is set out in the{" "}
+          <a href="/legal/refunds-revisions/">Refund &amp; Revisions Policy – CVWriting.co.ke (Kenya)</a>, which forms
+          part of these Terms.
+        </p>
+      </LegalSection>
 
-        <h2 id="no-guarantee-of-employment">10. No guarantee of employment or outcomes</h2>
+      <LegalSection
+        id="no-guarantee-of-outcomes"
+        heading="10. No guarantee of outcomes"
+      >
         <p>
-          We aim to significantly improve the quality and presentation of your professional documents. However,
-          we do not guarantee any job offer, interview, or recruiter response. Hiring decisions depend on many
-          factors beyond our control, including market conditions, employer preferences, and your performance in
-          interviews.
+          We aim to improve the quality and presentation of your CV and related documents and to support your career
+          goals. However, we do not and cannot guarantee specific outcomes such as job offers, interviews,
+          promotions or salary increases, as these depend on factors beyond our control.
         </p>
+        <p>
+          You are responsible for how you apply, interview and manage your career decisions. Our role is to support
+          and present your information professionally, not to act as a recruiter or employer.
+        </p>
+      </LegalSection>
 
-        <h2 id="intellectual-property">11. Intellectual property</h2>
+      <LegalSection
+        id="intellectual-property"
+        heading="11. Intellectual property"
+      >
         <p>
-          You are entitled to use the final CV and related documents we produce for your personal, professional
-          job search and career-related purposes. We retain intellectual property rights in our templates,
-          methodologies, and proprietary frameworks. You may not resell, redistribute, or commercially exploit
-          our templates or content as your own service.
+          All content on our website (including text, graphics, logos and layouts) and the underlying templates,
+          structures and methodologies used to create your CV and related documents are owned by or licensed to us.
         </p>
         <p>
-          With your permission, we may use anonymised versions of documents as internal samples or training
-          materials, with all names and identifying details removed.
+          Upon full payment, you are granted a non-exclusive, non-transferable licence to use the final CV, cover
+          letter and other deliverables we provide for your own personal, career-related purposes (for example,
+          applying for jobs or promotions). You may not resell, redistribute or commercially exploit our templates or
+          methodologies, or present them as your own service offering, without our prior written consent.
         </p>
+        <p>
+          We may, with your consent or after fully anonymising documents (removing names and identifying details),
+          use samples of work for internal training, quality assurance or marketing purposes.
+        </p>
+      </LegalSection>
 
-        <h2 id="acceptable-use">12. Acceptable use of the website</h2>
-        <p>You agree not to:</p>
+      <LegalSection id="acceptable-use" heading="12. Acceptable use">
+        <p>You agree not to misuse our website or services. In particular, you will not:</p>
         <ul>
-          <li>Use the website for fraudulent, illegal, or abusive purposes.</li>
-          <li>Attempt to gain unauthorised access to our systems or data.</li>
           <li>
-            Interfere with the normal operation of the site (for example, via automated scraping or attacks).
+            <strong>a)</strong> Use our services for illegal or fraudulent purposes.
+          </li>
+          <li>
+            <strong>b)</strong> Attempt to gain unauthorised access to our systems or data.
+          </li>
+          <li>
+            <strong>c)</strong> Copy, reverse-engineer or reproduce significant parts of our website or services for
+            competing offerings.
+          </li>
+          <li>
+            <strong>d)</strong> Upload or transmit content that is defamatory, offensive, discriminatory or otherwise
+            unlawful.
           </li>
         </ul>
         <p>
-          We may suspend or block access where we reasonably suspect misuse.
+          We reserve the right to suspend or terminate your access to our services if you breach these Acceptable Use
+          requirements.
         </p>
+      </LegalSection>
 
-        <h2 id="third-party-tools">13. Third-party tools and links</h2>
+      <LegalSection
+        id="third-party-tools"
+        heading="13. Third-party tools and links"
+      >
         <p>
-          Our website may use or contain links to third-party tools or websites (for example, analytics, payment
-          processors, social media, external resources). We are not responsible for the content, security, or
-          privacy practices of third-party sites. Your use of such tools is governed by their own terms and policies.
-        </p>
-
-        <h2 id="limitation-of-liability">14. Limitation of liability</h2>
-        <p>
-          To the maximum extent permitted by Kenyan law, we are not liable for any indirect, incidental,
-          consequential, or special damages (including loss of opportunity, loss of income, or reputational harm)
-          arising from the use of our services or website.
+          Our website or communications may include links to third-party websites or tools (for example, payment
+          platforms, job boards, social networks or scheduling tools). We do not control and are not responsible for
+          the content, policies or practices of those third parties.
         </p>
         <p>
-          Our total liability in connection with any service shall not exceed the amount you paid for that specific
-          service. Nothing in these Terms limits liability where it cannot be excluded under applicable law.
+          Your use of third-party tools or websites is at your own risk and subject to their terms and privacy
+          policies.
         </p>
+      </LegalSection>
 
-        <h2 id="indemnity">15. Indemnity</h2>
+      <LegalSection
+        id="limitation-of-liability"
+        heading="14. Limitation of liability"
+      >
         <p>
-          You agree to indemnify and hold harmless CVWriting.co.ke, its owners, and team members from any claims,
-          losses, or expenses arising from your misuse of our services or website, your provision of inaccurate,
-          misleading, or unlawful information, or your breach of these Terms.
+          To the maximum extent permitted by law, we are not liable for any indirect, incidental, special,
+          consequential or punitive damages, or for any loss of profits, revenue, business or data arising out of or
+          in connection with your use of our website or services.
         </p>
-
-        <h2 id="governing-law">16. Governing law and jurisdiction</h2>
         <p>
-          These Terms are governed by the laws of the Republic of Kenya. Any disputes arising out of or in
-          connection with these Terms or our services that cannot be resolved amicably shall be subject to the
-          exclusive jurisdiction of the courts of Kenya, typically located in Nairobi.
+          Our total aggregate liability to you for any claim arising out of or relating to these Terms or our
+          services will not exceed the total amount you paid for the specific service giving rise to that claim.
+          Nothing in these Terms is intended to exclude or limit any liability that cannot legally be excluded or
+          limited under applicable law.
         </p>
+      </LegalSection>
 
-        <h2 id="changes-to-terms">17. Changes to these Terms</h2>
+      <LegalSection id="indemnity" heading="15. Indemnity">
         <p>
-          We may update these Terms periodically. The latest version will always be available on cvwriting.co.ke
-          with the “Last updated” date at the top. Continued use of the website or services after changes are
-          published constitutes acceptance of the updated Terms.
+          You agree to indemnify and hold us harmless from any claims, losses, damages, liabilities, costs and
+          expenses (including reasonable legal fees) arising out of or in connection with:
         </p>
-
-        <h2 id="contact">18. Contact</h2>
-        <p>For any questions about these Terms, contact us at:</p>
         <ul>
-          <li>Email: [insert support email]</li>
+          <li>
+            <strong>a)</strong> Your breach of these Terms.
+          </li>
+          <li>
+            <strong>b)</strong> Your misuse of our website or services.
+          </li>
+          <li>
+            <strong>c)</strong> Your use of documents we prepare that contain information you have provided which is
+            inaccurate, misleading or unlawful.
+          </li>
         </ul>
-      </div>
+      </LegalSection>
+
+      <LegalSection
+        id="governing-law"
+        heading="16. Governing law and jurisdiction"
+      >
+        <p>
+          These Terms and any dispute arising out of or in connection with them are governed by and construed in
+          accordance with the laws of Kenya. You and we agree to submit to the exclusive jurisdiction of the courts
+          of Kenya in relation to any such disputes, without prejudice to any mandatory rights you may have under
+          applicable consumer protection laws.
+        </p>
+      </LegalSection>
+
+      <LegalSection
+        id="changes-to-terms"
+        heading="17. Changes to these Terms"
+      >
+        <p>
+          We may update or modify these Terms from time to time, for example to reflect changes in our services,
+          business practices or legal requirements. When we make material changes, we will update the “Last updated”
+          date at the top of this document and, where reasonable and appropriate, provide additional notice (for
+          example, via our website or email).
+        </p>
+        <p>
+          Your continued use of our website or services after the updated Terms have been published will constitute
+          your acceptance of the changes.
+        </p>
+      </LegalSection>
+
+      <LegalSection id="contact" heading="18. Contact">
+        <p>If you have any questions about these Terms or our services, please contact us at:</p>
+        <ul>
+          <li>Email: [INSERT PRIMARY SUPPORT EMAIL, e.g. support@cvwriting.co.ke]</li>
+        </ul>
+        <p>We will do our best to respond within a reasonable timeframe.</p>
+      </LegalSection>
     </div>
-  </main>
+
+    <LegalFooterNav
+      slot="footerNav"
+      currentSlug="terms"
+      related={relatedPolicies}
+    />
+  </LegalLayout>
 </BaseLayout>

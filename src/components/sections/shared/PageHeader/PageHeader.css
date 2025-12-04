@@ -1,37 +1,142 @@
+/* PageHeader – primary page hero heading
+   Visually aligned with About page hero:
+   - Soft brand-tinted band
+   - Eyebrow label with subtle accent
+   - Gradient underline under the H1
+*/
+
 .page-header {
-  padding-block: var(--space-6);
-  background-color: var(--color-background);
+  padding-block: var(--space-8);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 10%,
+        transparent
+      ),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface, #ffffff) 96%,
+        #ffffff 4%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, #f3f4f6) 90%,
+        transparent
+      )
+    );
   color: var(--color-text);
+  border-block-end: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+}
+
+/* Slightly larger vertical rhythm on wider viewports */
+@media (min-width: 48rem) {
+  .page-header {
+    padding-block: var(--space-10);
+  }
+}
+
+@media (min-width: 64rem) {
+  .page-header {
+    padding-block: var(--space-12, var(--space-10));
+  }
 }
 
 /* Inner layout uses global .container */
 .page-header__inner {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  min-height: 0;
 }
 
 /* Content: eyebrow + title stacked with tight, controlled gap */
 .page-header__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1); /* tight stack using global spacing token */
+  gap: var(--space-1);
   max-width: 44rem;
 }
 
-/* Eyebrow / label – deliberately smaller than the h1 */
+/* Eyebrow / label – small, uppercase, with brand tint */
 .page-header__eyebrow {
   margin: 0;
-  font-size: var(--fs-xs); /* 13px – below body and well below h1 */
+  font-size: var(--fs-xs);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary)) 60%,
+    var(--color-muted) 40%
+  );
+  position: relative;
+  padding-left: 1.5rem;
 }
 
-/* Title – use global section-title scale for full typography compliance */
+/* Small accent bar before the eyebrow */
+.page-header__eyebrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1rem;
+  height: 2px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    var(--color-accent, #d4ab18),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 60%,
+      var(--color-accent, #d4ab18)
+    )
+  );
+}
+
+/* Title – uses global section-title scale; we tune colour + underline */
 .page-header__title {
   margin: 0;
-  /* no font-size here – .section-title handles size + clamp */
+  color: var(--color-primary-strong, var(--color-primary));
+  letter-spacing: 0.01em;
+  position: relative;
+  padding-bottom: var(--space-2);
+}
+
+/* Gradient underline under the H1 */
+.page-header__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.75rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(
+      in oklab,
+      var(--color-accent) 80%,
+      var(--color-primary)
+    )
+  );
 }
 
 /* Center-aligned variant */
@@ -44,22 +149,29 @@
   text-align: center;
 }
 
-/* Responsive adjustments – spacing only; typography is handled globally */
-@media (min-width: 48rem) {
-  .page-header {
-    padding-block: var(--space-8);
-  }
+.page-header--center .page-header__eyebrow {
+  padding-left: 0;
+}
 
+.page-header--center .page-header__eyebrow::before {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2.5rem;
+}
+
+.page-header--center .page-header__title::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Responsive content width only; typography handled globally */
+@media (min-width: 48rem) {
   .page-header__content {
     max-width: 48rem;
   }
 }
 
 @media (min-width: 64rem) {
-  .page-header {
-    padding-block: var(--space-10);
-  }
-
   .page-header__content {
     max-width: 52rem;
   }

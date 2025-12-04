@@ -57,9 +57,12 @@ const normalizedCards: NormalizedCard[] = (cards || []).map((card) => {
       const hasList = Array.isArray(card.list) && card.list.length > 0;
       const hasSecondary = card.secondaryCtas.length > 0;
       const top = stickTop ?? "6rem";
+      const itemClass = card.primaryCta
+        ? "faq-sidebar__item faq-sidebar__item--primary"
+        : "faq-sidebar__item faq-sidebar__item--soft";
 
       return (
-        <div class="faq-sidebar__item">
+        <div class={itemClass}>
           {card.primaryCta ? (
             <StickyAsideCard
               title={card.title}

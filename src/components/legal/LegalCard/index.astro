@@ -1,0 +1,61 @@
+---
+// src/components/legal/LegalCard/index.astro
+import Button from "../../cta/Button";
+import "./LegalCard.css";
+
+interface Props {
+  href: string;
+  title: string;
+  description?: string;
+  lastUpdated?: string;
+  lastUpdatedLabel?: string;
+  as?: "div" | "li";
+}
+
+const {
+  href,
+  title,
+  description,
+  lastUpdated,
+  lastUpdatedLabel = "Last updated",
+  as = "div",
+} = Astro.props as Props;
+
+const RootTag = as;
+---
+
+<RootTag class="legal-card">
+  <div class="legal-card__inner">
+    <div class="legal-card__header">
+      <h3 class="legal-card__title">
+        {title}
+      </h3>
+
+      {lastUpdated && (
+        <p class="legal-card__meta">
+          <span class="legal-card__meta-label">
+            {lastUpdatedLabel}:
+          </span>
+          <span class="legal-card__meta-value">
+            {lastUpdated}
+          </span>
+        </p>
+      )}
+    </div>
+
+    {description && (
+      <p class="legal-card__description">
+        {description}
+      </p>
+    )}
+
+    <Button
+      class="legal-card__cta"
+      label="View policy"
+      href={href}
+      variant="link"
+      size="sm"
+      ariaLabel={`View ${title}`}
+    />
+  </div>
+</RootTag>

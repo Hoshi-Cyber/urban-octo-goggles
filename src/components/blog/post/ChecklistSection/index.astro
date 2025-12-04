@@ -2,33 +2,66 @@
 /*
   src/components/blog/post/ChecklistSection/index.astro
 
-  FP-205.10:
+  FP-205.10 + FP-213.2 + FP-213.3 + FP-213.5:
   - Named wrapper for the “Implementation checklist” section in a single blog post.
-  - Internally reuses the existing ui/Checklist component.
+  - Uses ui/Checklist to present concrete action steps (implementation, not summary).
+  - Semantically distinct from KeyTakeaways (summary vs “what to do next”).
+  - Supports configurable heading level for clean document outline.
 */
 
 import Checklist from "@/components/ui/Checklist";
 import "./ChecklistSection.css";
 
-interface ChecklistSectionProps {
+/**
+ * ChecklistSectionProps
+ *
+ * Content contract (Fix Plan 213 + 213.3):
+ * - Use for action-oriented implementation steps (“Do this next”), not summary bullets.
+ * - Items should be clear, task-like phrases (ideally verb-first).
+ * - Represents an ordered implementation list; visual numbering/checks handled
+ *   by ui/Checklist and CSS.
+ * - HTML in leadHtml is pre-sanitised at the route/content layer.
+ */
+export interface ChecklistSectionProps {
   /** Section title, e.g. “Implementation checklist” */
   title?: string;
-  /** Optional short lead/description above the checklist */
+  /** Optional short lead/description above the checklist (HTML string) */
   leadHtml?: string;
-  /** Checklist items (labels only; all start unchecked by default) */
+  /** Checklist items (action labels only; all start unchecked by default) */
   items: string[];
+  /**
+   * Heading level for the section title.
+   * - 2 → <h2> (default for main bands in BlogPostLayout)
+   * - 3 → <h3> when nested inside another section
+   */
+  headingLevel?: 2 | 3;
 }
 
 const {
   title = "Implementation checklist",
   leadHtml,
   items,
+  headingLevel = 2,
 } = Astro.props as ChecklistSectionProps;
 
+/**
+ * Normalise items:
+ * - Ensure we only render non-empty strings.
+ * - Leave any further semantics (numbering, check state) to ui/Checklist.
+ */
+const normalisedItems = Array.isArray(items)
+  ? items
+      .map((label) => (typeof label === "string" ? label.trim() : ""))
+      .filter((label) => label.length > 0)
+  : [];
+
 const listItems =
-  Array.isArray(items) && items.length > 0
-    ? items.map((label) => ({ label }))
+  normalisedItems.length > 0
+    ? normalisedItems.map((label) => ({ label }))
     : [];
+
+// Heading element based on headingLevel prop
+const HeadingTag = (headingLevel === 3 ? "h3" : "h2") as "h2" | "h3";
 ---
 
 {listItems.length > 0 && (
@@ -38,15 +71,14 @@ const listItems =
   >
     <div class="checklist-section__inner">
       <header class="checklist-section__header">
-        <p class="checklist-section__eyebrow">
-          Action steps
-        </p>
-        <h2
+        <p class="checklist-section__eyebrow">Action steps</p>
+
+        <HeadingTag
           id="checklist-section-title"
-          class="checklist-section__title"
+          class="checklist-section__title h2 section-title"
         >
           {title}
-        </h2>
+        </HeadingTag>
 
         {leadHtml && (
           <div

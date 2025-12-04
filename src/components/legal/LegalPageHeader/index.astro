@@ -1,0 +1,77 @@
+---
+// src/components/legal/LegalPageHeader/index.astro
+import "./LegalPageHeader.css";
+
+interface Props {
+  title: string;
+  intro?: string;
+  eyebrow?: string;
+  lastUpdated?: string;
+  lastUpdatedLabel?: string;
+  governingLaw?: string;
+  governingLawLabel?: string;
+}
+
+const {
+  title,
+  intro,
+  eyebrow,
+  lastUpdated,
+  lastUpdatedLabel = "Last updated",
+  governingLaw,
+  governingLawLabel = "Governing law",
+} = Astro.props;
+
+const showMeta = lastUpdated || governingLaw;
+---
+
+<header class="legal-page-header page-header" data-section="legal-header">
+  <div class="legal-page-header__inner">
+    <div class="legal-page-header__text stack">
+      {eyebrow && (
+        <p class="legal-page-header__eyebrow">
+          {eyebrow}
+        </p>
+      )}
+
+      <h1 class="legal-page-header__title">
+        {title}
+      </h1>
+
+      {intro && (
+        <p class="legal-page-header__intro">
+          {intro}
+        </p>
+      )}
+
+      {showMeta && (
+        <section
+          class="legal-page-header__meta"
+          aria-label="Policy meta information"
+        >
+          {lastUpdated && (
+            <p class="legal-page-header__meta-item legal-page-header__meta-item--date">
+              <span class="legal-page-header__meta-label">
+                {lastUpdatedLabel}:
+              </span>
+              <span class="legal-page-header__meta-value">
+                {lastUpdated}
+              </span>
+            </p>
+          )}
+
+          {governingLaw && (
+            <p class="legal-page-header__meta-item legal-page-header__meta-item--law">
+              <span class="legal-page-header__meta-label">
+                {governingLawLabel}:
+              </span>
+              <span class="legal-page-header__pill">
+                {governingLaw}
+              </span>
+            </p>
+          )}
+        </section>
+      )}
+    </div>
+  </div>
+</header>

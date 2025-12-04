@@ -1,29 +1,18 @@
 ---
 /* File: src/components/blog/base/BlogPost.astro
-   Purpose: Adapter that maps legacy single-post props into BlogPostLayoutProps
-   and appends legacy series/nav/related/lead-magnet/comments/author/inline-ad
-   sections outside the new BlogPostLayout.
+   Purpose: Thin adapter that maps route-level single-post props into
+   BlogPostLayoutProps and delegates ALL visible IA to BlogPostLayout.
 
-   FP-190 / FP-193 / FP-195 (legacy behaviour):
-   - AuthorSlug-based author URL, series handling, conditional cover rendering,
-     inline ad shell for CLS safety.
-
-   FP-205.2 / 205.1.2 / 205.1.6 / 205.1.7:
-   - Delegate core article layout (breadcrumbs, hero, cover, intro, TOC, body,
-     IA slices, conversion blocks, relatedArticles) to BlogPostLayout.
-   - Treat route-level heroImage, IA slices, and relatedArticles as canonical
-     and fall back to legacy fields only for backwards compatibility.
-   - Keep legacy outer blocks (tags/share, series, prev/next, RelatedCategories,
-     lead magnet, comments, author card, inline ad shell) here.
+   Legacy behaviour note:
+   - Older versions appended tags/share, series, prev/next, legacy related,
+     lead magnet, comments, author card, and inline ad shells after the
+     core article layout.
+   - Under Fix Plan 205.2 + 213, those legacy outer blocks are now retired
+     so that the single source of truth for the page IA lives inside
+     BlogPostLayout only.
 */
 
 import "./BlogPost.css";
-
-import PostTags from "@/components/blog/compose/PostTags/index.astro";
-import PostShare from "@/components/blog/base/PostShare/index.astro";
-import PostNav from "@/components/blog/compose/PostNav/index.astro";
-import RelatedCategories from "@/components/blog/compose/RelatedCategories/index.astro";
-import LeadMagnetStrip from "@/components/blog/compose/LeadMagnetStrip/index.astro";
 
 import BlogPostLayout, {
   type BlogPostLayoutProps,
@@ -51,8 +40,8 @@ export interface Props {
   /** Normalized slug used to derive /about/editorial/<authorSlug>/ */
   authorSlug?: string;
   cover?: {
-    /** String path per Fix 195-C (e.g. "/assets/images/blog/<category>/<slug>-hero.webp") */
-    src: string;
+    /** String path per Fix 195-C (e.g. "/images/blog/<category>/<slug>-hero.webp") */
+    src: string | { src: string; width?: number; height?: number };
     alt?: string;
     width?: number;
     height?: number;
@@ -71,13 +60,12 @@ export interface Props {
   related?: Array<{ data: any; slug: string }> | null;
   /**
    * Optional series definition for multi-part content.
-   * When provided and non-empty, "In this series" navigation is rendered.
+   * Kept in the props for backwards compatibility, but no longer rendered.
    */
   series?: SeriesItem[] | null;
   /**
    * Controls whether inline ad content is actually rendered
-   * into the reserved ad shell. The shell footprint remains
-   * present either way for CLS safety.
+   * into the reserved ad shell. Retained for type compatibility only.
    */
   showInlineAd?: boolean;
 
@@ -88,7 +76,7 @@ export interface Props {
    */
   heroTagline?: BlogPostLayoutProps["heroTagline"];
   heroSoftCta?: BlogPostLayoutProps["heroSoftCta"];
-  heroImage?: BlogPostLayoutProps["heroImage"];
+  heroImage?: BlogPostLayoutProps["heroImage"] | string;
   introHtml?: BlogPostLayoutProps["introHtml"];
   keyTakeaways?: BlogPostLayoutProps["keyTakeaways"];
   inlineOffer?: BlogPostLayoutProps["inlineOffer"];
@@ -103,7 +91,7 @@ const {
   title,
   description,
   category,
-  tags = [],
+  // tags = [],        // no longer rendered, but kept in props for future use
   date,
   updated = null,
   readingTime = null,
@@ -113,11 +101,11 @@ const {
   canonical,
   tocHeadings = [],
   showTOC = false,
-  prev = null,
-  next = null,
-  related = null,
-  series = null,
-  showInlineAd = false,
+  // prev = null,      // legacy nav – retired from output
+  // next = null,
+  // related = null,   // legacy related – retired in favour of layout-level relatedArticles
+  // series = null,
+  // showInlineAd = false,
   heroTagline,
   heroSoftCta,
   heroImage: heroImageFromRoute,
@@ -132,36 +120,11 @@ const {
 } = Astro.props as Props;
 
 const categoryUrl = `/blog/${category}/`;
-const shareUrl = String(canonical || Astro.url);
-const hasDescription =
-  typeof description === "string" && description.trim().length > 0;
+const shareUrl = String(canonical || Astro.url); // kept for potential future use
 
 // Derive canonical author URL from normalized authorSlug (Fix 195-B)
 const resolvedAuthorSlug = authorSlug ?? "mezame-editorial";
 const authorUrl = `/about/editorial/${resolvedAuthorSlug}/`;
-
-// Series handling: only render when defined and non-empty.
-// Items with an explicit `index` are sorted ascending;
-// items without `index` keep their original relative order and appear after.
-const hasSeries = Array.isArray(series) && series.length > 0;
-
-const sortedSeries: SeriesItem[] = hasSeries
-  ? [...series!].sort((a, b) => {
-      const ai = typeof a.index === "number" ? a.index : null;
-      const bi = typeof b.index === "number" ? b.index : null;
-
-      if (ai !== null && bi !== null) return ai - bi;
-      if (ai !== null && bi === null) return -1;
-      if (ai === null && bi !== null) return 1;
-      return 0; // both null -> keep relative order in stable sort
-    })
-  : [];
-
-// Conditional cover rendering: only when a non-empty src is present (Fix 195-D)
-const hasCover =
-  !!cover &&
-  typeof cover.src === "string" &&
-  cover.src.trim().length > 0;
 
 // Map legacy tocHeadings into BlogPostLayout TOC items
 const toc =
@@ -174,69 +137,74 @@ const toc =
       }))
     : undefined;
 
-// Legacy related[] → RelatedArticle[] fallback mapping (205.1.6).
-// Canonical relatedArticles[] should be computed in the route via
-// src/lib/blog/related; this exists purely for backwards compatibility.
-const legacyRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
-  related && related.length > 0
-    ? related.map((item) => {
-        const slug = item.slug;
-        const rawCategory = item.data?.category ?? category;
-        const categorySlug =
-          typeof rawCategory === "string" && rawCategory.trim().length > 0
-            ? rawCategory
-            : undefined;
+/**
+ * Normalise hero image input (string | object | Astro image object) into the
+ * single shape expected by BlogPostLayout, or undefined when not available.
+ *
+ * This prevents runtime errors like "Cannot read properties of undefined (reading 'src')"
+ * when heroImage / cover are missing or in different formats.
+ */
+type HeroInput =
+  | string
+  | {
+      src?: any;
+      alt?: string;
+      width?: number;
+      height?: number;
+    }
+  | null
+  | undefined;
 
-        const baseSlug =
-          typeof slug === "string" && slug.includes("/")
-            ? slug.split("/").pop()!
-            : slug;
+function normaliseHeroImage(
+  input: HeroInput,
+  fallbackAlt: string,
+): BlogPostLayoutProps["heroImage"] | undefined {
+  if (!input) return undefined;
 
-        const href =
-          categorySlug != null
-            ? `/blog/${categorySlug}/${baseSlug}/`
-            : `/blog/${baseSlug}/`;
+  // Case 1: plain string path, e.g. "/images/blog/hero/blog-home-hero-02.webp"
+  if (typeof input === "string") {
+    return {
+      src: input,
+      alt: fallbackAlt,
+    };
+  }
 
-        const readingTimeMinutes =
-          typeof item.data?.readingTime === "number"
-            ? item.data.readingTime
-            : undefined;
+  // Case 2: object with src (string or Astro image object)
+  const srcVal = input.src;
+  if (!srcVal) return undefined;
 
-        const dateISO =
-          item.data?.date != null
-            ? new Date(item.data.date).toISOString()
-            : undefined;
+  // 2a: src is already a string path
+  if (typeof srcVal === "string") {
+    return {
+      src: srcVal,
+      alt: input.alt ?? fallbackAlt,
+      width: input.width,
+      height: input.height,
+    };
+  }
 
-        return {
-          title: item.data?.title ?? baseSlug,
-          href,
-          category: categorySlug ?? category,
-          readingTimeMinutes,
-          excerpt: item.data?.description ?? undefined,
-          dateISO,
-        };
-      })
-    : undefined;
-
-const hasRouteRelated =
-  Array.isArray(relatedArticlesFromRoute) &&
-  relatedArticlesFromRoute.length > 0;
-
-const resolvedRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
-  hasRouteRelated ? relatedArticlesFromRoute : legacyRelatedArticles;
+  // 2b: src is an Astro image object with its own src/width/height
+  return {
+    src: srcVal.src,
+    alt: input.alt ?? fallbackAlt,
+    width: srcVal.width ?? input.width,
+    height: srcVal.height ?? input.height,
+  };
+}
 
 // Resolve heroImage: prefer route/frontmatter-mapped heroImage,
-// fall back to legacy cover → hero mapping.
+// then fall back to legacy cover mapping.
+// Both heroImageFromRoute and cover may contain string paths or Astro images.
 const heroImage: BlogPostLayoutProps["heroImage"] =
-  heroImageFromRoute ??
-  (hasCover
-    ? {
-        src: cover!.src,
-        alt: cover!.alt ?? title,
-        width: cover!.width,
-        height: cover!.height,
-      }
-    : undefined);
+  normaliseHeroImage(heroImageFromRoute as HeroInput, title) ??
+  normaliseHeroImage(cover as HeroInput, title);
+
+// relatedArticles are now expected from route (via src/lib/blog/related)
+const resolvedRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
+  Array.isArray(relatedArticlesFromRoute) &&
+  relatedArticlesFromRoute.length > 0
+    ? relatedArticlesFromRoute
+    : undefined;
 
 // Build props for BlogPostLayout (205.2 adapter layer)
 const blogPostLayoutProps: BlogPostLayoutProps = {
@@ -272,81 +240,13 @@ const blogPostLayoutProps: BlogPostLayoutProps = {
 ---
 
 <!--
-  FP-205.2: This component is now a thin adapter.
-  BlogPostLayout handles the core article IA (breadcrumbs, hero, cover, intro,
-  TOC, body, IA blocks, conversion, related).
-  This wrapper keeps legacy footer/meta/series/nav/related/lead-magnet/comments/
-  author/ad sections for backwards compatibility.
+  Under Fix Plan 213, BlogPostLayout owns the full single-article IA
+  (hero, intro, TOC, body, conversion slices, related, etc).
+  This wrapper is intentionally minimal and does not append any legacy
+  footer / nav / related / comments / author / ad shells.
 -->
 <div class="post stack stack--first-tight page-gap-after">
   <BlogPostLayout {...blogPostLayoutProps}>
     <slot />
   </BlogPostLayout>
-
-  <!-- Legacy footer: tags + share (kept for now outside BlogPostLayout) -->
-  <footer class="post__footer container">
-    {tags.length > 0 && <PostTags tags={tags} />}
-    <PostShare title={title} url={shareUrl} />
-  </footer>
-
-  <!-- Series / nav / related posts (block) -->
-  {hasSeries && sortedSeries.length > 0 && (
-    <section
-      class="post__series container"
-      aria-labelledby="post-series-title"
-    >
-      <h2 id="post-series-title" class="h4">
-        In this series
-      </h2>
-
-      <ol>
-        {sortedSeries.map((item) => (
-          <li>
-            <a href={item.url}>{item.title}</a>
-          </li>
-        ))}
-      </ol>
-    </section>
-  )}
-
-  <nav class="post__nav container" aria-label="Post navigation">
-    <PostNav {prev} {next} />
-  </nav>
-
-  {related && related.length > 0 && (
-    <section class="post__related container">
-      <RelatedCategories items={related} />
-    </section>
-  )}
-
-  <!-- Lead magnet strip (compose) -->
-  <section class="post__leadmagnet container">
-    <LeadMagnetStrip />
-  </section>
-
-  <!-- Comments (deferred slot) -->
-  <section class="post__comments container" aria-label="Comments">
-    <slot name="comments" />
-  </section>
-
-  <!-- Author card container (named slot, placed after footer stack) -->
-  <section class="post__author container" aria-label="Article author">
-    <slot name="author" />
-  </section>
-
-  <!-- Inline ad shell (optional, CLS-controlled; kept outside required footer order) -->
-  <section
-    class="ad-slot container"
-    role="complementary"
-    aria-label="Sponsored"
-    data-inline-ad-shell
-    hidden={!showInlineAd}
-  >
-    <div
-      class="ad-box"
-      data-inline-ad-active={showInlineAd ? "true" : "false"}
-    >
-      {showInlineAd && <slot name="inline-ad" />}
-    </div>
-  </section>
 </div>

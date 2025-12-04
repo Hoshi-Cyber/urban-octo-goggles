@@ -99,7 +99,7 @@
 /* -------------------------- */
 
 .card {
-  background-color: var(--color-surface);       /* Neutral 10 */
+  background-color: var(--color-neutral-0);     /* Solid surface on light page */
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: var(--space-6);
@@ -132,7 +132,7 @@
 
 .stat-badge .label {
   font-size: var(--fs-base);
-  color: var(--color-muted);                    /* Neutral 400 */
+  color: var(--color-neutral-600);              /* Strong, readable label */
   margin-top: var(--space-2);
 }
 
@@ -141,7 +141,7 @@
 /* -------------------------- */
 
 .text-muted {
-  color: var(--color-muted);
+  color: var(--color-neutral-400);              /* Secondary / meta text only */
 }
 
 .text-primary {
@@ -157,7 +157,7 @@
 /* -------------------------- */
 
 .bg-light {
-  background-color: var(--color-light);
+  background-color: var(--color-light);         /* Neutral 50 */
 }
 
 .bg-primary {

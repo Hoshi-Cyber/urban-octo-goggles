@@ -4,65 +4,102 @@
   Bottom-of-article hard CTA:
   - Mobile-first
   - Token-driven
-  - No global resets
-  - Sized for use inside a .container (BlogPostLayout handles outer layout)
+  - Premium, brand-aligned card inside BlogPostLayout’s final-cta band
 */
+
+@import "../../../../styles/tokens.css";
+@import "../../../../styles/typography.css";
 
 .final-cta {
   width: 100%;
 }
 
 /* Card container */
-
 .final-cta__inner {
-  max-width: 72ch;
+  width: 100%;
+  max-width: min(var(--blog-post-content-max-width, 72ch), 100%);
   margin-inline: auto;
-  padding: var(--space-5);
 
-  border-radius: var(--radius-xl);
+  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
+  padding-block: clamp(var(--space-5), 3.5vw, var(--space-6));
+  padding-inline: clamp(var(--space-5), 4vw, var(--space-7));
+
+  border-radius: var(--radius-2xl, 1.25rem);
   background: color-mix(
-    in srgb,
-    var(--color-primary) 8%,
-    var(--color-surface)
+    in oklab,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%,
+    var(--color-surface, #ffffff)
   );
   border: 1px solid
-    color-mix(in srgb, var(--color-primary) 24%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 80%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
+    );
   box-shadow: var(--shadow-md);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 /* Header */
-
 .final-cta__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+
+  /* Kill flex gap between eyebrow and title; use margins instead */
+  gap: 0;
 }
 
+/* Eyebrow – match KeyTakeaways/InlineOffer styling (no pill, text-only label) */
 .final-cta__eyebrow {
-  margin: 0;
+  /* Hard override any paragraph defaults */
+  margin-top: 0 !important;
+  /* Tiny negative margin to create a very small controlled gap */
+  margin-bottom: -0.02rem !important;
+  padding: 0 !important;
+
+  line-height: 1;
+  display: block;
+
   font-size: var(--fs-xs);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-accent-soft, var(--color-accent, #d4ab18)) 68%,
+    var(--color-text-muted, #6b7280)
+  );
 }
 
-.final-cta__title {
-  margin: 0;
-  font-size: var(--fs-xl);
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--color-text);
+/* Title – h2 scale comes from .h2; here we refine colour and kill extra margins */
+.final-cta__title,
+.final-cta__title.h2,
+.final-cta__title.section-title,
+.final-cta__title.h2.section-title {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  color: color-mix(
+    in oklab,
+    var(--color-primary-strong, var(--color-primary, #1b3637)) 82%,
+    var(--color-text, #020617)
+  );
 }
 
+/* Body copy */
 .final-cta__body {
-  font-size: var(--fs-base);
+  font-size: var(--fs-sm);
   line-height: 1.7;
-  color: var(--color-muted);
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 86%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
+  );
 }
 
 .final-cta__body > * + * {
@@ -70,28 +107,23 @@
 }
 
 /* Actions */
-
 .final-cta__actions {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
+/* Let Button’s own styles handle core visuals;
+   here we only tweak layout behaviour. */
 .final-cta__primary,
 .final-cta__secondary {
-  /* rely on Button.css for core button styling */
+  width: 100%;
 }
 
 /* Tablet+ */
-
 @media (min-width: 768px) {
   .final-cta__inner {
-    padding: var(--space-6);
     gap: var(--space-5);
-  }
-
-  .final-cta__title {
-    font-size: var(--fs-2xl);
   }
 
   .final-cta__actions {
@@ -99,12 +131,16 @@
     align-items: center;
     gap: var(--space-3);
   }
+
+  .final-cta__primary,
+  .final-cta__secondary {
+    width: auto;
+  }
 }
 
 /* Desktop+ */
-
 @media (min-width: 1024px) {
   .final-cta__inner {
-    padding-inline: var(--space-7);
+    padding-inline: clamp(var(--space-7), 5vw, var(--space-8));
   }
 }

@@ -1,0 +1,161 @@
+/* src/components/legal/LegalLayout/LegalLayout.css */
+
+/* Mobile-first shell */
+.legal-layout {
+  padding-block: clamp(var(--space-8, 2rem), 4vw, var(--space-12, 3rem));
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-background-soft, var(--color-background)) 0%,
+      var(--color-surface-muted, var(--color-background)) 100%
+    );
+}
+
+/* Card-like inner shell for premium feel */
+.legal-layout__inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-6, 1.5rem), 3vw, var(--space-10, 2.5rem));
+  padding: clamp(var(--space-5, 1.25rem), 3vw, var(--space-8, 2rem));
+  border-radius: var(--radius-xl, 1.25rem);
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-subtle, var(--color-light-alt));
+  box-shadow: var(--shadow-md, 0 18px 45px rgba(15, 23, 42, 0.06));
+}
+
+/* Header band */
+.legal-layout__header {
+  padding-bottom: clamp(var(--space-4, 1rem), 2vw, var(--space-6, 1.5rem));
+  border-bottom: 1px solid var(--color-border-subtle, var(--color-light-alt));
+}
+
+/* Body: mobile-first stacked layout */
+.legal-layout__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-6, 1.5rem), 3vw, var(--space-10, 2.5rem));
+}
+
+/* Single-column state when sidebar is disabled:
+   allow content to span full inner width */
+.legal-layout__body--single-column {
+  width: 100%;
+  margin-inline: 0;
+}
+
+/* Sidebar block (TOC) – full-width on mobile */
+.legal-layout__sidebar {
+  order: -1; /* TOC above content on mobile */
+  padding: var(--space-4, 1rem);
+  border-radius: var(--radius-lg, 1rem);
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-surface-alt, var(--color-surface)) 0%,
+      color-mix(
+        in oklab,
+        var(--color-surface-alt, var(--color-surface)) 85%,
+        var(--color-primary-soft, var(--color-primary)) 15%
+      )
+    );
+  border: 1px solid var(--color-border-subtle, var(--color-light-alt));
+  box-shadow: var(--shadow-sm, 0 10px 25px rgba(15, 23, 42, 0.04));
+}
+
+/* Main content area */
+.legal-layout__content {
+  display: block;
+  width: 100%;
+  max-width: 72ch;
+}
+
+/* Footer band */
+.legal-layout__footer {
+  margin-top: clamp(var(--space-6, 1.5rem), 3vw, var(--space-10, 2.5rem));
+  padding-top: clamp(var(--space-6, 1.5rem), 3vw, var(--space-8, 2rem));
+  border-top: 1px solid var(--color-border-subtle, var(--color-light-alt));
+  display: block;
+}
+
+/* Small screens up: slightly increase padding and tighten gap */
+@media (min-width: var(--bp-sm, 37.5rem)) {
+  .legal-layout__inner {
+    padding: clamp(var(--space-6, 1.5rem), 3vw, var(--space-9, 2.25rem));
+    gap: clamp(var(--space-6, 1.5rem), 2.5vw, var(--space-9, 2.25rem));
+  }
+
+  .legal-layout__content {
+    max-width: 76ch;
+  }
+}
+
+/* ≥ md: switch to 2-column when sidebar is present */
+@media (min-width: var(--bp-md, 48rem)) {
+  .legal-layout__body--with-sidebar {
+    display: grid;
+    align-items: flex-start;
+    gap: clamp(var(--space-8, 2rem), 3vw, var(--space-12, 3rem));
+  }
+
+  /* Sidebar left (default if sidebarPosition="left") */
+  .legal-layout__body--with-sidebar.legal-layout__body--sidebar-left {
+    grid-template-columns: minmax(0, 3.2fr) minmax(0, 8.8fr);
+  }
+
+  .legal-layout__body--with-sidebar.legal-layout__body--sidebar-left
+    .legal-layout__sidebar {
+    grid-column: 1;
+    order: 0;
+    position: sticky;
+    top: var(--space-10, 2.5rem);
+  }
+
+  .legal-layout__body--with-sidebar.legal-layout__body--sidebar-left
+    .legal-layout__content {
+    grid-column: 2;
+  }
+
+  /* Sidebar right (default) */
+  .legal-layout__body--with-sidebar:not(.legal-layout__body--sidebar-left) {
+    grid-template-columns: minmax(0, 8.8fr) minmax(0, 3.2fr);
+  }
+
+  .legal-layout__body--with-sidebar:not(.legal-layout__body--sidebar-left)
+    .legal-layout__content {
+    grid-column: 1;
+  }
+
+  .legal-layout__body--with-sidebar:not(.legal-layout__body--sidebar-left)
+    .legal-layout__sidebar {
+    grid-column: 2;
+    order: 0;
+    position: sticky;
+    top: var(--space-10, 2.5rem);
+  }
+}
+
+/* ≥ lg: constrain inner shell and allow more breathing room on desktop */
+@media (min-width: var(--bp-lg, 64rem)) {
+  .legal-layout__inner {
+    max-width: 78rem;
+    margin-inline: auto;
+    padding: clamp(var(--space-7, 1.75rem), 2.5vw, var(--space-10, 2.5rem));
+  }
+
+  .legal-layout__content {
+    max-width: 80ch;
+  }
+}
+
+/* Relax sticky on very short viewports */
+@media (max-height: 640px) {
+  .legal-layout__sidebar {
+    position: static;
+  }
+}
+
+/* OVERRIDE: when we are in single-column (no sidebar),
+   let the content span the full inner width instead of 72–80ch. */
+.legal-layout__body--single-column .legal-layout__content {
+  max-width: 100%;
+}
