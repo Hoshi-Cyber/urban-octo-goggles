@@ -9,21 +9,22 @@ import { fileURLToPath } from "node:url";
 /**
  * CVWriting.co.ke – Astro config
  *
- * Fix Plan 205.1.4 – IA Validation / Linting for MDX:
- * - IA validation is implemented via scripts/validate-blog-ia.ts
- *   and run through npm / CI hooks (build/pre-commit).
- * - MDX integration is left standard here; remark/rehype plugin
- *   slots are explicitly defined for future IA plugin wiring if needed.
+ * IA validation is implemented via scripts/validate-blog-ia.ts
+ * and run through npm / CI hooks (build/pre-commit).
  */
 
 export default defineConfig({
-  // Use env var if set; otherwise leave undefined
+  // Netlify can set ASTRO_SITE in production; otherwise leave undefined.
   site: process.env.ASTRO_SITE || undefined,
 
   // Keep your existing URL pattern
   trailingSlash: "always",
 
-  // We are using Netlify SSR, so keep server output
+  /**
+   * Use Netlify SSR output.
+   * Your routing (including dynamic blog routes) is already designed
+   * for SSR mode and builds successfully with this setting.
+   */
   output: "server",
 
   // Netlify adapter for SSR
@@ -33,8 +34,6 @@ export default defineConfig({
     react(),
     tailwind(),
     mdx({
-      // Reserved for future IA-related remark/rehype plugins if the
-      // validation layer is ever moved into the MDX pipeline.
       remarkPlugins: [],
       rehypePlugins: [],
     }),
@@ -43,7 +42,8 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url)), // Windows-safe alias
+        // Windows-safe alias so `@/` points to `src/`
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
       extensions: [
         ".mjs",
