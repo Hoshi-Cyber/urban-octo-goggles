@@ -9,13 +9,10 @@ import PostFeedLatest from "../../components/blog/compose/PostFeedLatest/index.a
 import LeadCaptureBanner from "../../components/cta/LeadCaptureBanner/index.astro";
 import TrustBar from "../../components/socialproof/TrustBar/index.astro";
 import { getCollection } from "astro:content";
-
 import processPage from "../../data/pages/process";
 
-const { title, description, seo, hero, steps, deliverables, timeline, cta } =
-  processPage;
+const { title, description, seo, hero, steps, deliverables, timeline, cta } = processPage;
 
-// Ensure we always have a valid hero image + alt, even if data file is missing them
 const heroImage =
   typeof hero?.image === "string" && hero.image.trim().length > 0
     ? hero.image
@@ -40,13 +37,10 @@ const slugify = (s: string) =>
 const isBad = (v: unknown) =>
   v === null ||
   v === undefined ||
-  (typeof v === "string" &&
-    (!v.trim() || v.includes("undefined") || v.includes("null")));
+  (typeof v === "string" && (!v.trim() || v.includes("undefined") || v.includes("null")));
 
-// Load all non-draft blog posts
 const blogAll = await getCollection("blog", ({ data }) => !data.draft);
 
-// Normalise posts into the shape PostFeedLatest expects
 const blogPosts = blogAll
   .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
   .map((p) => {
@@ -54,8 +48,8 @@ const blogPosts = blogAll
     const categorySlug = slugify(p.data.category ?? "uncategorized");
 
     let coverSrc: string | null = null;
-    const cover = (p.data as any).cover;
-    const ogImage = (p.data as any).ogImage;
+    const cover = p.data.cover;
+    const ogImage = p.data.ogImage;
 
     if (cover && typeof cover === "object" && typeof cover.src === "string") {
       coverSrc = cover.src;
@@ -74,67 +68,39 @@ const blogPosts = blogAll
         description: p.data.description,
         date: new Date(p.data.date),
         readingTime:
-          (p.data as any).readingTimeMinutes ??
-          p.data.readingTime ??
-          undefined,
+          p.data.readingTimeMinutes ?? p.data.readingTime ?? undefined,
         category: p.data.category ?? "Uncategorized",
         cover: coverSrc ? { src: coverSrc, alt: p.data.title } : undefined,
       },
     };
   })
   .filter((p) => !isBad(p.frontmatter.cover?.src))
-  .sort(
-    (a, b) =>
-      (b.frontmatter.date as Date).getTime() -
-      (a.frontmatter.date as Date).getTime(),
-  );
-
-// -------------------------
-// Process-page article selection
-// -------------------------
-//
-// Goal (using only existing frontmatter):
-// 1) Relevance: only categories that support the CV/process journey.
-// 2) Freshness: newest first.
-// 3) Ensure at least one CV-format/ATS article if available.
-// 4) Limit to 4 posts.
-//
+  .sort((a, b) => b.frontmatter.date.getTime() - a.frontmatter.date.getTime());
 
 const PROCESS_CATEGORIES = ["cv-tips", "career-growth", "linkedin"] as const;
 
-const getCategory = (cat: unknown): string =>
-  String(cat || "").toLowerCase().trim();
+const getCategory = (cat: unknown): string => String(cat || "").toLowerCase().trim();
 
-// Filter to relevant categories only (exclude e.g. kenya-market)
 const relevantPosts = blogPosts.filter((post) =>
-  PROCESS_CATEGORIES.includes(getCategory(post.frontmatter.category) as any),
+  PROCESS_CATEGORIES.includes(getCategory(post.frontmatter.category) as any)
 );
 
-// Within relevant posts, ensure we pull at least one cv-tips article if any exist
 const cvTipsPosts = relevantPosts.filter(
-  (post) => getCategory(post.frontmatter.category) === "cv-tips",
+  (post) => getCategory(post.frontmatter.category) === "cv-tips"
 );
 
-let processLatestPosts = [] as typeof blogPosts;
-
+let processLatestPosts = [];
 if (cvTipsPosts.length > 0) {
-  // blogPosts are already sorted by date desc, so first cv-tips is the freshest
   const featuredCvTips = cvTipsPosts[0];
-
-  // Keep order (date desc), but ensure featuredCvTips is first
   const remaining = relevantPosts.filter((p) => p !== featuredCvTips);
-
   processLatestPosts = [featuredCvTips, ...remaining].slice(0, 4);
 } else {
-  // If no cv-tips articles yet, just take the top 4 relevant ones by date
   processLatestPosts = relevantPosts.slice(0, 4);
 }
 
 const showTrust = false;
 ---
-
 <BaseLayout {title} {description} {seo}>
-  <!-- Process hero with image wired into ServiceHero -->
   <ServiceHero
     title={hero.title}
     sub={hero.sub}
@@ -145,11 +111,7 @@ const showTrust = false;
     alt={heroAlt}
   />
 
-  <!-- Step-by-step process -->
-  <section
-    class="container mt-12"
-    aria-label="Step-by-step CV writing process"
-  >
+  <section class="container mt-12" aria-label="Step-by-step CV writing process">
     <Steps
       title={steps.title ?? "How your CV project runs"}
       eyebrow={steps.eyebrow ?? "Step-by-step"}
@@ -159,16 +121,14 @@ const showTrust = false;
     />
   </section>
 
-  <!-- Proof strip (enable when you have real items) -->
   {showTrust && (
     <section class="container mt-10" aria-label="Social proof">
       <TrustBar variant="compact" />
     </section>
   )}
 
-  <!-- Deliverables + Timeline -->
   <section class="container mt-12" aria-label="What you receive and timeline">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="process-layout">
       <DeliverablesList
         eyebrow="Included in every package"
         title="What you receive"
@@ -182,7 +142,6 @@ const showTrust = false;
     </div>
   </section>
 
-  <!-- Latest Articles – curated for process relevance -->
   <section class="container mt-12" aria-label="Latest articles">
     <PostFeedLatest
       posts={processLatestPosts}
@@ -197,7 +156,6 @@ const showTrust = false;
     />
   </section>
 
-  <!-- Bottom CTA -->
   <section class="container mt-12" aria-label="Call to action">
     <LeadCaptureBanner
       title={cta.title}
@@ -206,4 +164,18 @@ const showTrust = false;
       primaryLabel={cta.primaryLabel}
     />
   </section>
+
+  <style>
+    .process-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    @media (min-width: 768px) {
+      .process-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: flex-start;
+      }
+    }
+  </style>
 </BaseLayout>

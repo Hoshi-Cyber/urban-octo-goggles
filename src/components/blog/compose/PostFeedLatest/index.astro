@@ -1,14 +1,11 @@
 ---
-// File: src/components/blog/compose/PostFeedLatest/index.astro
-// Implements Fix Plan 149: enforce 8-card cap on homepage feed,
-// prefer SSG pagination, optional client "load more".
-
 export interface Cover {
   src: string;
   alt?: string;
   width?: number;
   height?: number;
 }
+
 export interface FM {
   title: string;
   description?: string;
@@ -17,10 +14,12 @@ export interface FM {
   category?: string;
   cover?: Cover;
 }
+
 export interface Post {
   url: string;
   frontmatter: FM;
 }
+
 export interface Props {
   posts: Post[];
   pageSize?: number;
@@ -39,7 +38,7 @@ import css from "./PostFeedLatest.css?url";
 
 const {
   posts = [],
-  pageSize = 8, // Fix Plan 149: default cap raised to 8
+  pageSize = 8, // default cap 8
   eyebrow = "From the blog",
   title = "Latest articles",
   moreHref = "/blog/",
@@ -62,12 +61,17 @@ const fmt = (d: string | Date) =>
 const catHref = (p: Post) =>
   `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
 ---
+
 <link rel="stylesheet" href={css} />
 
 <section class="pfl" aria-label="Latest articles">
   <div class="container">
     <header class="pfl__head">
-      {eyebrow && <p class="pfl__eyebrow">{eyebrow}</p>}
+      {eyebrow && (
+        <p class="pfl__eyebrow label-sm label-caps">
+          {eyebrow}
+        </p>
+      )}
       {title && (
         <h2 class="pfl__title section-title h2">
           {title}
@@ -185,33 +189,40 @@ const catHref = (p: Post) =>
     </div>
   </div>
 
-  {clientLoadMore && (
-    <script is:inline>
-      {`
-      (() => {
-        const grid = document.getElementById("pfl-grid");
-        const btn  = document.getElementById("pfl-more");
-        if (!grid || !btn) return;
-        const PAGE_SIZE = Number(grid.dataset.pageSize) || 8; // align with default
-        let shown = Math.min(PAGE_SIZE, grid.children.length);
-        btn.addEventListener(
-          "click",
-          () => {
-            const hidden = Array.from(
-              grid.querySelectorAll(".pfl__card.is-hidden")
-            );
-            const next = hidden.slice(0, PAGE_SIZE);
-            next.forEach((card) => {
-              card.classList.remove("is-hidden");
-              card.style.contentVisibility = "auto";
-            });
-            shown += next.length;
-            if (shown >= grid.children.length) btn.remove();
-          },
-          { passive: true }
-        );
-      })();
-      `}
-    </script>
-  )}
+  <script is:inline>
+    (() => {
+      const grid = document.getElementById("pfl-grid");
+      const btn = document.getElementById("pfl-more");
+
+      // If there is no load-more button or grid, silently exit.
+      if (!grid || !btn) return;
+
+      const pageSizeAttr = Number(grid.dataset.pageSize);
+      const PAGE_SIZE =
+        Number.isFinite(pageSizeAttr) && pageSizeAttr > 0 ? pageSizeAttr : 8;
+
+      let shown = Math.min(PAGE_SIZE, grid.children.length);
+
+      btn.addEventListener(
+        "click",
+        () => {
+          const hiddenCards = Array.from(
+            grid.querySelectorAll(".pfl__card.is-hidden"),
+          );
+          const next = hiddenCards.slice(0, PAGE_SIZE);
+
+          next.forEach((card) => {
+            card.classList.remove("is-hidden");
+            card.style.contentVisibility = "auto";
+          });
+
+          shown += next.length;
+          if (shown >= grid.children.length) {
+            btn.remove();
+          }
+        },
+        { passive: true },
+      );
+    })();
+  </script>
 </section>

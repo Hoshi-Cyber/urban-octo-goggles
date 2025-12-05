@@ -24,7 +24,11 @@ const safeIdSlug = String(title || "faq-support")
 const headingId = `faq-support-strip-title-${safeIdSlug}`;
 ---
 
-<section class="faq-support-strip" aria-labelledby={headingId}>
+<section
+  class="faq-support-strip"
+  aria-labelledby={headingId}
+  data-component="faq-support-strip"
+>
   <div class="faq-support-strip__inner container">
     <div class="faq-support-strip__content stack">
       <h2
@@ -33,7 +37,7 @@ const headingId = `faq-support-strip-title-${safeIdSlug}`;
       >
         {title}
       </h2>
-      <p class="faq-support-strip__copy text-muted">
+      <p class="faq-support-strip__copy">
         {copy}
       </p>
     </div>

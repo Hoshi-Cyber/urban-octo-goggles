@@ -6,8 +6,8 @@
   padding-block: var(--space-6);
   background: color-mix(
     in oklab,
-    var(--color-surface-alt, var(--color-surface)) 94%,
-    var(--color-primary-soft, var(--color-primary)) 6%
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
   );
 }
 
@@ -35,12 +35,12 @@
   padding: 0; /* override .card padding – we control inner spacing */
   border-radius: var(--radius-lg);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface) 86%);
   box-shadow: var(--shadow-sm);
   background-color: color-mix(
     in oklab,
-    var(--color-surface) 90%,
-    var(--color-primary-soft, var(--color-primary)) 10%
+    var(--color-surface) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
   );
   overflow: hidden;
   font-family: var(--font-sans);
@@ -121,8 +121,8 @@
   padding: var(--space-3) var(--space-4) var(--space-4);
   background: var(--color-background);
   color: var(--color-text);
-  font-size: var(--fs-base);
-  line-height: 1.6;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
 
   opacity: 0;
   transform: translateY(-4px);
@@ -184,7 +184,7 @@
   .faq-accordion__summary:hover {
     background: color-mix(
       in oklab,
-      var(--color-primary) 4%,
+      var(--color-primary) 3%,
       var(--color-surface)
     );
   }

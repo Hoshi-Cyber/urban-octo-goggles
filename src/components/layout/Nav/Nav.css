@@ -7,7 +7,11 @@
   );
   backdrop-filter: saturate(140%) blur(8px);
   border-bottom: 1px solid
-    color-mix(in oklab, var(--color-border-subtle, var(--color-light-alt)) 80%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, var(--color-light-alt)) 80%,
+      transparent
+    );
   box-shadow: var(--shadow-sm);
 }
 
@@ -59,21 +63,36 @@
   }
 }
 
+/* Primary nav container (desktop) */
+.nav__primary {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+}
+
 /* Desktop list */
 .nav__list {
   display: none;
   list-style: none;
   gap: var(--space-4);
+  align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 .nav__item {
   position: relative;
 }
 
+.nav__item--hasChildren {
+  padding-inline-end: 0.25rem;
+}
+
 /* Top-level links – clear, readable, non-muted */
 .nav__link {
   display: inline-flex;
   align-items: center;
+  column-gap: 0.35rem;
   padding: 0.35rem 0;
   text-decoration: none;
   position: relative;
@@ -102,11 +121,48 @@
   transform: scaleX(1);
 }
 
+/* Services / parent disclosure button */
+.nav__disclosure {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+/* Chevron indicator */
+.nav__chev {
+  font-size: 0.75rem;
+  transform-origin: center;
+  transition: transform 0.18s ease;
+}
+
+/* Open state for parent item */
+.nav__item--hasChildren.is-open > .nav__disclosure {
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 16%,
+    var(--color-surface) 84%
+  );
+  border-radius: var(--radius-md);
+  padding-inline: 0.4rem;
+}
+
+.nav__item--hasChildren.is-open > .nav__disclosure::after {
+  /* keep underline in sync */
+  transform: scaleX(1);
+}
+
+.nav__item--hasChildren.is-open > .nav__disclosure .nav__chev {
+  transform: rotate(-180deg);
+}
+
 /* Shared focus styles */
 .nav__link:focus-visible,
 .nav__sublink:focus-visible,
 .nav__drawerLink:focus-visible,
-.nav__drawerSublink:focus-visible {
+.nav__drawerSublink:focus-visible,
+.nav__toggle:focus-visible,
+.nav__close:focus-visible,
+.nav__summary:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px
     color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
@@ -117,10 +173,10 @@
 .nav__submenu {
   position: absolute;
   inset-inline-start: 0;
-  top: 100%;
+  top: calc(100% + 0.35rem);
   width: max-content;
   max-width: 22rem;
-  min-width: unset;
+  min-width: 12rem;
   padding: var(--space-2);
   display: none;
   background: color-mix(
@@ -129,7 +185,11 @@
     var(--color-primary-soft, var(--color-primary)) 4%
   );
   border: 1px solid
-    color-mix(in oklab, var(--color-border-subtle, var(--color-light-alt)) 80%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, var(--color-light-alt)) 80%,
+      transparent
+    );
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   z-index: 70;
@@ -162,6 +222,7 @@
   display: none !important;
 }
 
+/* Mobile toggle */
 .nav__toggle {
   inline-size: 40px;
   block-size: 40px;
@@ -171,6 +232,8 @@
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text);
+  cursor: pointer;
+  padding: 0;
 }
 
 .nav__toggleBar {
@@ -179,6 +242,18 @@
   block-size: 2px;
   margin: 3px 0;
   background: currentColor;
+  border-radius: 999px;
+}
+
+/* Open toggle state */
+.nav__toggle[aria-expanded="true"] {
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 16%,
+    var(--color-surface) 84%
+  );
+  box-shadow: var(--shadow-xs, 0 0 0 1px
+        color-mix(in oklab, var(--color-primary) 28%, transparent));
 }
 
 /* Scrim */
@@ -204,7 +279,8 @@
   padding: var(--space-4);
   overflow-y: auto;
   z-index: 60;
-  box-shadow: -12px 0 32px color-mix(in oklab, var(--color-text) 26%, transparent);
+  box-shadow: -12px 0 32px
+    color-mix(in oklab, var(--color-text) 26%, transparent);
 }
 
 .nav__drawer.is-open {
@@ -253,7 +329,7 @@
   );
 }
 
-/* Drawer section: child list styled distinctly */
+/* Drawer: grouped children */
 .nav__details {
   margin: 0.25rem 0;
   padding: 0.25rem 0.25rem;
@@ -272,10 +348,25 @@
   list-style: none;
   font-size: var(--fs-sm);
   color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+/* Hide default marker and add premium chevron */
 .nav__summary::-webkit-details-marker {
   display: none;
+}
+
+.nav__summary::after {
+  content: "▾";
+  font-size: 0.75rem;
+  transform-origin: center;
+  transition: transform 0.18s ease;
+}
+
+.nav__details[open] .nav__summary::after {
+  transform: rotate(-180deg);
 }
 
 .nav__drawerSub {
@@ -304,6 +395,11 @@
     var(--color-primary-soft, var(--color-primary)) 20%,
     var(--color-surface) 80%
   );
+}
+
+/* Drawer CTA list item */
+.nav__drawerCta {
+  margin-top: var(--space-4);
 }
 
 /* Disable page scroll when drawer is open */
@@ -350,7 +446,9 @@
   .nav__drawer,
   .nav__drawerLink,
   .nav__drawerSublink,
-  .nav__details {
+  .nav__details,
+  .nav__summary::after,
+  .nav__chev {
     transition: none !important;
   }
 }

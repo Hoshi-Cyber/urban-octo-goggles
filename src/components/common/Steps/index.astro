@@ -76,110 +76,109 @@ const columnsClass = `steps__list--cols-${maxColumnsForData}`;
 ---
 
 <section
-  class={`steps ${alignmentClass} ${className}`.trim()}
+  class={`steps ${alignmentClass} stack ${className}`.trim()}
   data-section="steps"
   aria-labelledby={hasTitle ? "steps-title" : undefined}
   aria-label={hasTitle ? undefined : "Process steps"}
 >
-  <div class="steps__body stack">
-    <header class="steps__head section-head">
-      {eyebrow && (
-        <p class="steps__eyebrow section-sub">
-          {eyebrow}
-        </p>
-      )}
-
-      {title && (
-        <h2 class="steps__title section-title" id="steps-title">
-          {title}
-        </h2>
-      )}
-    </header>
-
-    {steps.length > 0 && (
-      <ol
-        class={`steps__list ${columnsClass}`.trim()}
-        aria-describedby={hasTitle ? "steps-title" : undefined}
-      >
-        {steps.map((step, index) => (
-          <li
-            class="steps__item card"
-            value={index + 1}
-            aria-label={`Step ${index + 1}: ${step.title}`}
-          >
-            <div class="steps__content">
-              <p class="steps__kicker">
-                {`STEP ${index + 1}`}
-              </p>
-
-              <h3 class="steps__itemTitle">
-                {step.title}
-              </h3>
-
-              {step.summary && (
-                <p class="steps__itemSummary">
-                  {step.summary}
-                </p>
-              )}
-
-              {step.description && (
-                <p class="steps__itemDesc">
-                  {step.description}
-                </p>
-              )}
-
-              {(step.weDo && step.weDo.length > 0) ||
-              (step.youDo && step.youDo.length > 0) ? (
-                <dl class="steps__roles">
-                  {step.weDo && step.weDo.length > 0 && (
-                    <div class="steps__role">
-                      <dt class="steps__roleLabel">
-                        What we do
-                      </dt>
-                      <dd>
-                        <ul class="steps__roleList">
-                          {step.weDo.map((item) => (
-                            <li class="steps__roleItem">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </dd>
-                    </div>
-                  )}
-
-                  {step.youDo && step.youDo.length > 0 && (
-                    <div class="steps__role">
-                      <dt class="steps__roleLabel">
-                        What you do
-                      </dt>
-                      <dd>
-                        <ul class="steps__roleList">
-                          {step.youDo.map((item) => (
-                            <li class="steps__roleItem">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              ) : null}
-
-              {step.ctaHref && step.ctaLabel && (
-                <a
-                  href={step.ctaHref}
-                  class="btn btn-primary steps__cta"
-                  data-cta={`steps-${index + 1}-cta`}
-                >
-                  {step.ctaLabel}
-                </a>
-              )}
-            </div>
-          </li>
-        ))}
-      </ol>
+  {/* Header: eyebrow stacked directly above left-aligned h2 */}
+  <header class="steps__head">
+    {eyebrow && (
+      <p class="steps__eyebrow">
+        {eyebrow}
+      </p>
     )}
-  </div>
+
+    {title && (
+      <h2 class="steps__title" id="steps-title">
+        {title}
+      </h2>
+    )}
+  </header>
+
+  {steps.length > 0 && (
+    <ol
+      class={`steps__list ${columnsClass}`.trim()}
+      aria-describedby={hasTitle ? "steps-title" : undefined}
+    >
+      {steps.map((step, index) => (
+        <li
+          class="steps__item card"
+          value={index + 1}
+          aria-label={`Step ${index + 1}: ${step.title}`}
+        >
+          <div class="steps__content">
+            <p class="steps__kicker">
+              {`STEP ${index + 1}`}
+            </p>
+
+            <h3 class="steps__itemTitle">
+              {step.title}
+            </h3>
+
+            {step.summary && (
+              <p class="steps__itemSummary">
+                {step.summary}
+              </p>
+            )}
+
+            {step.description && (
+              <p class="steps__itemDesc">
+                {step.description}
+              </p>
+            )}
+
+            {(step.weDo && step.weDo.length > 0) ||
+            (step.youDo && step.youDo.length > 0) ? (
+              <dl class="steps__roles">
+                {step.weDo && step.weDo.length > 0 && (
+                  <div class="steps__role">
+                    <dt class="steps__roleLabel">
+                      What we do
+                    </dt>
+                    <dd>
+                      <ul class="steps__roleList">
+                        {step.weDo.map((item) => (
+                          <li class="steps__roleItem">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+
+                {step.youDo && step.youDo.length > 0 && (
+                  <div class="steps__role">
+                    <dt class="steps__roleLabel">
+                      What you do
+                    </dt>
+                    <dd>
+                      <ul class="steps__roleList">
+                        {step.youDo.map((item) => (
+                          <li class="steps__roleItem">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            ) : null}
+
+            {step.ctaHref && step.ctaLabel && (
+              <a
+                href={step.ctaHref}
+                class="btn btn-primary steps__cta"
+                data-cta={`steps-${index + 1}-cta`}
+              >
+                {step.ctaLabel}
+              </a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )}
 </section>

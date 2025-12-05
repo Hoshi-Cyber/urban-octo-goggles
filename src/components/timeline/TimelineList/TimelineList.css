@@ -1,102 +1,235 @@
 /* TimelineList.css */
-/* Mobile-first, brand tokens, compact for performance */
+/* Mobile-first, token-driven, premium process timeline */
 
 .tline {
-  padding-block: var(--space-2, 0.5rem);
+  padding-block: var(--space-2);
 }
 
+/* -------------------------------- */
+/* Header                           */
+/* -------------------------------- */
+
 .tline__header {
-  margin-bottom: var(--space-3, 0.75rem);
+  display: grid;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
 }
 
 .tline__eyebrow {
-  margin: 0 0 0.25rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-primary, #0b57d0) 55%, #000);
-  opacity: 0.8;
+  margin: 0;
+  color: var(--color-primary);
 }
 
 .tline__title {
   margin: 0;
-  font-size: clamp(1.125rem, 1vw + 1rem, 1.5rem);
-  line-height: 1.2;
 }
 
-/* List container */
+/* -------------------------------- */
+/* List layout                      */
+/* -------------------------------- */
+
 .tline__list {
+  position: relative;
   display: grid;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* Item */
+/* Optional denser rhythm */
+.tline--compact .tline__list {
+  gap: var(--space-2);
+}
+
+/* -------------------------------- */
+/* Item card                        */
+/* -------------------------------- */
+
 .tline__item {
+  position: relative;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-3, 0.75rem);
-  align-items: start;
-  padding: var(--space-4, 1rem);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 14%, #e5e7eb);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 4%, #fff);
-  border-radius: var(--radius-lg, 0.75rem);
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-light-alt));
+  background:
+    color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%);
+  box-shadow: var(--shadow-xs);
+
+  transition:
+    background-color 0.16s ease-out,
+    border-color 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    transform 0.1s ease-out;
+}
+
+.tline--compact .tline__item {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  gap: var(--space-2);
+}
+
+/* Gentle hover lift – desktop only */
+@media (hover: hover) and (pointer: fine) {
+  .tline__item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 24%,
+      var(--color-light-alt)
+    );
+    background:
+      color-mix(in oklab, var(--color-surface) 90%, var(--color-primary) 10%);
+  }
+}
+
+/* -------------------------------- */
+/* Marker + vertical spine          */
+/* -------------------------------- */
+
+.tline__marker {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.125rem;
+}
+
+/* Vertical spine running through the steps */
+.tline__marker::after {
+  content: "";
+  position: absolute;
+  top: calc(1.75rem + var(--space-1));
+  bottom: calc(-1 * var(--space-3));
+  inline-size: 1px;
+  background:
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-light-alt));
+}
+
+/* Stop the spine after the last item so it doesn’t overshoot */
+.tline__item:last-child .tline__marker::after {
+  display: none;
 }
 
 /* Number badge */
 .tline__badge {
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-  text-align: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  display: inline-grid;
+  place-items: center;
+
   border-radius: 9999px;
-  color: var(--color-primary, #0b57d0);
-  background: color-mix(in oklab, var(--color-primary, #0b57d0) 12%, #fff);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+
+  color: var(--color-primary);
+  background:
+    color-mix(in oklab, var(--color-light) 82%, var(--color-primary) 18%);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary, #0b57d0) 22%, transparent);
-  font-weight: 700;
-  font-size: 0.95rem;
+    color-mix(in oklab, var(--color-primary) 32%, var(--color-surface) 68%);
 }
 
-/* Content */
+/* -------------------------------- */
+/* Content stack                    */
+/* -------------------------------- */
+
 .tline__content {
-  min-width: 0;
+  min-inline-size: 0;
+  display: grid;
+  gap: 0.25rem;
 }
 
 .tline__row {
   display: flex;
-  gap: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
+  gap: var(--space-1);
   align-items: baseline;
   justify-content: space-between;
-  flex-wrap: wrap;
 }
 
+/* Phase heading */
 .tline__phase {
   margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.25;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--color-text);
 }
 
+/* Window (time range) */
 .tline__window {
-  font-size: 0.9rem;
-  color: var(--color-muted, #374151);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--color-muted);
+  white-space: nowrap;
 }
 
+/* Optional note/body copy */
 .tline__note {
-  margin: 0.25rem 0 0;
-  color: var(--color-muted, #374151);
-  line-height: 1.5;
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
 }
 
-/* Focus-visible for keyboard */
+/* -------------------------------- */
+/* Larger screens                   */
+/* -------------------------------- */
+
+@media (min-width: 640px) {
+  .tline {
+    padding-block: var(--space-3);
+  }
+
+  .tline__list {
+    gap: var(--space-4);
+  }
+
+  .tline--compact .tline__list {
+    gap: var(--space-3);
+  }
+
+  .tline__item {
+    padding: var(--space-4);
+  }
+
+  .tline--compact .tline__item {
+    padding-block: var(--space-3);
+    padding-inline: var(--space-4);
+  }
+
+  .tline__phase {
+    font-size: var(--fs-base);
+  }
+}
+
+/* -------------------------------- */
+/* Focus-visible & accessibility    */
+/* -------------------------------- */
+
+/*
+  If items ever become focusable (e.g., via JS or anchors),
+  this ensures a strong, brand-aligned focus ring.
+*/
 .tline__item:focus-visible {
-  outline: 2px solid var(--color-primary, #0b57d0);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow:
+    0 0 0 1px var(--color-neutral-0),
+    0 0 0 4px var(--color-focus-ring);
+  border-radius: var(--radius-lg);
 }
 
-/* Reduced motion */
+/* -------------------------------- */
+/* Reduced motion                   */
+/* -------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .tline * {
     transition: none !important;
     animation: none !important;
   }

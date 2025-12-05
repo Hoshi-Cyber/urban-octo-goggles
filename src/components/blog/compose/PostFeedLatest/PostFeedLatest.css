@@ -1,22 +1,30 @@
 /* src/components/blog/compose/PostFeedLatest/PostFeedLatest.css
    PostFeedLatest — elevated, brand-aligned, mobile-first
-   Source of truth for blog cards across Home and Category pages (Fix Plan 163)
+   Source of truth for blog cards across Home and Category pages
 */
 
-/* Section band: subtle, brand-tinted background */
+/* Section band: subtle, premium, brand-tinted background */
 .pfl {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-9));
+  padding-block-start: clamp(var(--space-8), 5vw, var(--space-10)); /* more room above eyebrow */
+  padding-block-end: clamp(var(--space-7), 5vw, var(--space-10)); /* unchanged bottom breathing room */
   background-color: color-mix(
     in oklab,
-    var(--color-surface-alt, #f9fafb) 90%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    var(--color-surface-alt, #f9fafb) 94%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
   );
+  border-block: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 90%,
+      var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+    );
+  border-radius: var(--radius-2xl, 1.25rem); /* smooth band corners */
 }
 
 /* Head */
 .pfl__head {
   display: grid;
-  gap: var(--space-2);
+  gap: calc(var(--space-1) * 0.5); /* tighter lock between eyebrow and title */
   margin-bottom: var(--space-5);
 }
 
@@ -42,7 +50,7 @@
   );
 }
 
-/* Grid: 1→2→4 columns, safe on <ol>/<ul> */
+/* Grid: 1→2→4 columns */
 .pfl__grid {
   display: grid;
   gap: clamp(var(--space-5), 3vw, var(--space-7));
@@ -138,7 +146,7 @@
   transition: transform 0.22s ease-out;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .pfl__card:hover .pfl__media img,
   .pfl__card:focus-within .pfl__media img {
     transform: scale(1.03);
@@ -172,7 +180,7 @@
   padding: var(--space-4);
 }
 
-/* Category link — smaller, no rounded chip; left accent bar */
+/* Category link — smaller label with left accent bar */
 .pfl__cat {
   margin: 0;
 }
@@ -255,7 +263,7 @@
     var(--color-primary, #1b3637) 88%,
     var(--color-text, #020617)
   );
-  text-decoration: none; /* no underline */
+  text-decoration: none;
 }
 
 /* Excerpt */
@@ -269,7 +277,7 @@
   );
 }
 
-/* Meta row – tiny creative pill styles */
+/* Meta row – pill styles */
 .pfl__meta {
   margin: 0;
   display: inline-flex;
@@ -318,8 +326,7 @@
 }
 
 /* Tag chips (kept for parity with category pages if used) */
-.pfl__
-tags {
+.pfl__tags {
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
@@ -361,9 +368,10 @@ tags {
   align-items: center;
   justify-content: flex-start;
   margin-top: var(--space-6);
+  flex-wrap: wrap;
 }
 
-/* Load more button (when enabled) – square-like style */
+/* Load more button (when enabled) – square-like editorial style */
 .pfl__loadMore {
   display: inline-flex;
   align-items: center;
@@ -372,7 +380,7 @@ tags {
   padding-inline: var(--space-4);
   padding-block: 0.35rem;
 
-  border-radius: 0; /* sharp, square-like corners */
+  border-radius: 0;
   border: 1px solid
     color-mix(
       in oklab,
@@ -426,7 +434,7 @@ tags {
   outline-offset: 2px;
 }
 
-/* “View all” CTA (intentionally still pill-style) */
+/* “View all” CTA (rectangular primary button with soft corners) */
 .pfl__viewAll {
   display: inline-flex;
   align-items: center;
@@ -434,9 +442,10 @@ tags {
   gap: 0.5rem;
 
   min-height: 2.75rem;
-  padding-inline: var(--space-4);
+  padding-inline: var(--space-5);
+  padding-block: 0.4rem;
 
-  border-radius: 999px;
+  border-radius: var(--radius-lg, 0.75rem);
   background-color: var(--color-primary, #1b3637);
   color: var(--color-on-primary, #ffffff);
   border: 1px solid

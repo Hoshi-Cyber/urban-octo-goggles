@@ -10,6 +10,21 @@ export interface Props {
   href: string;
   ctaLabel: string;
   ctaVariant?: "primary" | "accent" | "ghost" | "link";
+
+  /** Optional small label above the title, e.g. "Core service" */
+  eyebrow?: string;
+
+  /** Optional pill/tag next to or below the title, e.g. "Best for promotions" */
+  tag?: string;
+
+  /** Visually highlight this card (subtle premium emphasis) */
+  highlight?: boolean;
+
+  /** Make the card more compact for dense grids */
+  compact?: boolean;
+
+  /** Optionally clamp description to 2–4 lines for tighter layouts */
+  clampLines?: 2 | 3 | 4;
 }
 
 const {
@@ -18,25 +33,59 @@ const {
   href,
   ctaLabel,
   ctaVariant = "primary",
+  eyebrow,
+  tag,
+  highlight = false,
+  compact = false,
+  clampLines,
 } = Astro.props as Props;
----
 
+const baseClass = "service-card card stack";
+const highlightClass = highlight ? "service-card--highlight" : "";
+const compactClass = compact ? "service-card--compact" : "";
+const bodyClampClass = clampLines
+  ? `service-card__body--clamp service-card__body--clamp-${clampLines}`
+  : "";
+const articleClass = [baseClass, highlightClass, compactClass]
+  .filter(Boolean)
+  .join(" ");
+---
 <article
-  class="service-card card stack"
+  class={articleClass}
   itemScope
   itemType="https://schema.org/Service"
 >
   <header class="service-card__header">
+    {eyebrow && (
+      <p class="service-card__eyebrow fs-xs text-left">
+        {eyebrow}
+      </p>
+    )}
+
     <h3
       class="service-card__title fs-h4 lh-tight text-left"
       itemProp="name"
     >
       {title}
     </h3>
+
+    {tag && (
+      <p class="service-card__tag">
+        <span class="service-card__tagPill">{tag}</span>
+      </p>
+    )}
   </header>
 
   <p
-    class="service-card__body fs-base text-left mt-2"
+    class={[
+      "service-card__body",
+      "fs-base",
+      "text-left",
+      "mt-2",
+      bodyClampClass,
+    ]
+      .filter(Boolean)
+      .join(" ")}
     itemProp="description"
   >
     {body}

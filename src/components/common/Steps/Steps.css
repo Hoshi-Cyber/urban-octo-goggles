@@ -3,26 +3,25 @@
 
 /* Root section */
 .steps {
-  padding-block: var(--space-10);
+  /* Reduced overall vertical breathing room (esp. above eyebrow) */
+  padding-block: var(--space-8);
+  /* New: add horizontal breathing room so header doesn't kiss the edge */
+  padding-inline: clamp(var(--space-4), 4vw, var(--space-6));
   color: var(--color-text);
   background: color-mix(
     in oklab,
     var(--color-surface-alt, var(--color-surface)) 94%,
     var(--color-primary-soft, var(--color-primary)) 6%
   );
+  /* Outer strip remains softly rounded */
+  border-radius: var(--radius-xl);
 }
 
 @media (min-width: 768px) {
   .steps {
-    padding-block: var(--space-12);
+    /* Slightly reduced vs previous, still generous on larger screens */
+    padding-block: var(--space-10);
   }
-}
-
-/* Body – force full-width inside whatever wrapper it sits in */
-.steps__body {
-  width: 100%;
-  max-width: 100%;      /* override any stack/container max-width */
-  margin-inline: 0;     /* prevent auto-centering clamps */
 }
 
 /* Alignment variants */
@@ -41,9 +40,24 @@
 }
 
 /* Header */
-.steps__head {
+.steps .steps__head {
   display: grid;
-  gap: var(--space-3);
+  /* Further tightened eyebrow–title lock-up so they read as a single unit */
+  gap: var(--space-1);
+
+  /* Gap below the title block before cards */
+  margin-bottom: var(--space-4);
+
+  /* Force left alignment inside Steps */
+  text-align: left !important;
+  align-items: flex-start;
+  justify-items: flex-start;
+}
+
+/* Make eyebrow + title follow the forced left alignment */
+.steps__eyebrow,
+.steps__title {
+  text-align: left;
 }
 
 .steps__eyebrow {
@@ -56,8 +70,9 @@
   font-weight: 600;
 }
 
+/* Critical change: kill any inherited h2 margins so eyebrow + title sit tight */
 .steps__title {
-  margin: 0;
+  margin: 0 !important;
 }
 
 /* Grid */
@@ -67,20 +82,19 @@
   margin: 0;
   display: grid;
   gap: var(--space-6);
-  grid-template-columns: 1fr; /* 1-up mobile */
-  justify-items: stretch;     /* make items fill their cells */
+  grid-template-columns: 1fr;
+  justify-items: stretch;
   width: 100%;
-  max-width: 100%;            /* ensure grid spans full body width */
+  max-width: 100%;
+  padding-inline: var(--space-6);
 }
 
-/* 2-up at small / medium */
 @media (min-width: 640px) {
   .steps__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* 4-up at large – modifiers cap effective columns for balance */
 @media (min-width: 1024px) {
   .steps__list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -107,8 +121,8 @@
 .steps__item {
   display: flex;
   height: 100%;
-  width: 100%;      /* fill the grid track */
-  max-width: none;  /* override any global .card max-width */
+  width: 100%;
+  max-width: none;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   border: 1px solid
@@ -126,7 +140,6 @@
     background-color 0.15s ease;
 }
 
-/* Hover/active – subtle, no layout shift */
 .steps__item:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -183,15 +196,18 @@
 }
 
 /* Roles block */
-.steps__roles {
+steps__roles {
   margin-top: var(--space-4);
+  padding-top: var(--space-3);
   display: grid;
   gap: var(--space-3);
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-border-subtle) 80%, transparent);
 }
 
 .steps__role {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--space-1_5, var(--space-1));
 }
 
 .steps__roleLabel {
@@ -204,7 +220,8 @@
 
 .steps__roleList {
   margin: 0;
-  padding-left: var(--space-4);
+  padding-left: 0;
+  list-style: none;
   display: grid;
   gap: var(--space-1);
   font-size: var(--fs-sm);
@@ -212,7 +229,24 @@
 }
 
 .steps__roleItem {
+  position: relative;
   margin: 0;
+  padding-left: var(--space-4);
+}
+
+.steps__roleItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  border-radius: 999px;
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 60%,
+    var(--color-surface) 40%
+  );
 }
 
 /* CTA */
@@ -221,13 +255,13 @@
   justify-self: flex-start;
 }
 
-/* Focus visibility – card highlights when any child (e.g. CTA) is focused */
+/* Focus visibility */
 .steps__item:focus-within {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Respect reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .steps__item {
     transition: none !important;

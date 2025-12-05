@@ -1,14 +1,56 @@
 /* FAQQuickNav – pill-style in-page section navigation
    Uses global tokens & utilities only. */
 
+/* Wrapper band: refined, premium, softly elevated */
 .faq-quicknav {
-  margin-block: var(--space-2) var(--space-4);
-  /* bg-light class already provides a soft band background */
+  /* vertical gap from page header */
+  margin-top: var(--space-6);
+
+  /* Soft, brand-tinted band */
+  background:
+    radial-gradient(
+      circle at 0 0,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 16%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 14%,
+        transparent
+      )
+        0,
+      transparent 65%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 94%,
+      #ffffff 6%
+    );
+
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary) 10%,
+      var(--color-border-subtle, var(--color-light-alt)) 90%
+    );
+  box-shadow: var(
+    --shadow-xs,
+    0 10px 30px rgba(15, 23, 42, 0.06)
+  );
 }
 
+/* Inner frame: align with container rhythm, keep band feeling light */
 .faq-quicknav__inner {
   /* container class already sets max-width and horizontal padding */
-  padding-block: var(--space-2);
+  padding-block: var(--space-3);
 }
 
 /* Mobile-first: horizontal scrollable pill row */
@@ -77,14 +119,22 @@
 
 /* md+: allow wrapping and remove horizontal scrollbars */
 @media (min-width: 768px) {
+  .faq-quicknav__inner {
+    padding-block: var(--space-3);
+  }
+
   .faq-quicknav__list {
     flex-wrap: wrap;
     overflow-x: visible;
   }
 }
 
-/* lg+: keep wrap, just tighten padding/alignment so chips don't feel ad-hoc */
+/* lg+: keep wrap, just tighten alignment so chips read as a deliberate row */
 @media (min-width: 1024px) {
+  .faq-quicknav__inner {
+    padding-block: var(--space-3);
+  }
+
   .faq-quicknav__list {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -97,5 +147,12 @@
 
   .faq-quicknav__pill {
     width: auto; /* no forced full-width pills – prevents cramped text */
+  }
+}
+
+/* Reduced motion – no scroll-behaviour animation if user prefers less motion */
+@media (prefers-reduced-motion: reduce) {
+  .faq-quicknav__list {
+    scroll-behavior: auto;
   }
 }

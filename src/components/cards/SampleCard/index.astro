@@ -8,6 +8,14 @@ export interface Media {
   height?: number;
 }
 
+/**
+ * SampleCard – used on /samples grid.
+ *
+ * Notes:
+ * - `before` and `after` are intentionally not rendered here.
+ *   They are required by the /samples modal controller and kept
+ *   in the contract for data flow only.
+ */
 export interface Props {
   title: string;
   /**
@@ -38,6 +46,7 @@ const slug = title
   .replace(/(^-|-$)/g, "");
 
 const titleId = `samplecard-${slug || "title"}`;
+const subtitleId = subtitle ? `${titleId}-subtitle` : undefined;
 
 // Fixed, static CSS asset import (Vite/Netlify friendly)
 import sampleCardCss from "./SampleCard.css?url";
@@ -49,6 +58,7 @@ import sampleCardCss from "./SampleCard.css?url";
   class={`card samplecard${compact ? " samplecard--compact" : ""}`}
   data-section="samplecard"
   aria-labelledby={titleId}
+  aria-describedby={subtitle ? subtitleId : undefined}
 >
   {media?.src && (
     <figure class="samplecard__media">
@@ -59,6 +69,7 @@ import sampleCardCss from "./SampleCard.css?url";
         height={media.height ?? 360}
         loading="lazy"
         decoding="async"
+        sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 100vw"
         class="samplecard__img"
       />
     </figure>
@@ -73,7 +84,10 @@ import sampleCardCss from "./SampleCard.css?url";
       </h3>
 
       {subtitle && (
-        <p class="samplecard__subtitle text-muted">
+        <p
+          id={subtitleId}
+          class="samplecard__subtitle text-muted"
+        >
           {subtitle}
         </p>
       )}
@@ -86,7 +100,12 @@ import sampleCardCss from "./SampleCard.css?url";
         aria-label={`View before and after for ${title}`}
         data-cta="samplecard-open"
       >
-        {ctaLabel}
+        <span class="samplecard__cta-label">
+          {ctaLabel}
+        </span>
+        <span class="samplecard__cta-icon" aria-hidden="true">
+          ⟶
+        </span>
       </button>
     </footer>
   </div>

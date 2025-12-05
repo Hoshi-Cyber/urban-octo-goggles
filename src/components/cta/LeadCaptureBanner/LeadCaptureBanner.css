@@ -10,6 +10,9 @@
     var(--color-surface-alt, var(--color-surface)) 94%,
     var(--color-primary-soft, var(--color-primary)) 6%
   );
+  /* Softened, premium outer shell */
+  border-radius: var(--radius-xl);
+  overflow: hidden;
 }
 
 /* ===== Inner card ===== */

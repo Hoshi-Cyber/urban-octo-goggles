@@ -42,23 +42,50 @@ const normalizeHref = (href: string) => {
   }
 };
 ---
-<header class={`nav sticky top-0 z-50 ${className}`.trim()} role="banner" data-section="nav">
+<header
+  class={`nav sticky top-0 z-50 ${className}`.trim()}
+  role="banner"
+  data-section="nav"
+>
   <div class="nav__frame">
     <div class="container nav__bar">
       <!-- Brand: icon + wordmark -->
-      <a href="/" class="nav__brand" aria-label="CVWriting.co.ke home" data-cta="brand">
-        <img class="nav__brandIcon" src="/assets/logos/favicon-32.png" width="28" height="28" alt="" decoding="async" fetchpriority="high" />
-        <img class="nav__brandWordmark" src="/assets/logos/logo-wordmark.svg" alt="CVWriting.co.ke" decoding="async" />
+      <a
+        href="/"
+        class="nav__brand"
+        aria-label="CVWriting.co.ke home"
+        data-cta="brand"
+      >
+        <img
+          class="nav__brandIcon"
+          src="/assets/logos/favicon-32.png"
+          width="28"
+          height="28"
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        />
+        <img
+          class="nav__brandWordmark"
+          src="/assets/logos/logo-wordmark.svg"
+          alt="CVWriting.co.ke"
+          decoding="async"
+        />
         <span class="sr-only">CVWriting.co.ke</span>
       </a>
 
       <!-- Desktop nav -->
       <nav class="nav__primary" aria-label="Main">
         <ul class="nav__list" role="menubar">
-          {main.map((item: any) => (
+          {main.map((item: any) =>
             !item.children ? (
               <li class="nav__item" role="none">
-                <a href={normalizeHref(item.href)} role="menuitem" class="nav__link" data-cta={`nav-${item.label.toLowerCase()}`}>
+                <a
+                  href={normalizeHref(item.href)}
+                  role="menuitem"
+                  class="nav__link"
+                  data-cta={`nav-${item.label.toLowerCase()}`}
+                >
                   {item.label}
                 </a>
               </li>
@@ -66,16 +93,22 @@ const normalizeHref = (href: string) => {
               <li class="nav__item nav__item--hasChildren" role="none">
                 <button
                   class="nav__link nav__disclosure"
+                  type="button"
+                  role="menuitem"
                   aria-haspopup="true"
                   aria-expanded="false"
-                  aria-controls={`submenu-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                  aria-controls={`submenu-${item.label
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
                   data-cta={`nav-${item.label.toLowerCase()}`}
                 >
                   {item.label}
                   <span class="nav__chev" aria-hidden="true">▾</span>
                 </button>
                 <ul
-                  id={`submenu-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                  id={`submenu-${item.label
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
                   class="nav__submenu"
                   role="menu"
                 >
@@ -85,7 +118,11 @@ const normalizeHref = (href: string) => {
                         href={normalizeHref(child.href)}
                         role="menuitem"
                         class="nav__sublink"
-                        data-cta={`nav-${item.label.toLowerCase()}-${child.label.toLowerCase()}`}
+                        data-cta={`nav-${item.label
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}-${child.label
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
                       >
                         {child.label}
                       </a>
@@ -94,14 +131,20 @@ const normalizeHref = (href: string) => {
                 </ul>
               </li>
             )
-          ))}
+          )}
         </ul>
       </nav>
 
       <!-- Desktop CTA (hidden on mobile via CSS) -->
       {cta && (
-        <a href={normalizeHref(cta.href)} class="btn btn-primary nav__cta" data-cta="nav-cta">
-          <span class="btn__inner"><span class="btn__label">{cta.label}</span></span>
+        <a
+          href={normalizeHref(cta.href)}
+          class="btn btn-primary nav__cta"
+          data-cta="nav-cta"
+        >
+          <span class="btn__inner">
+            <span class="btn__label">{cta.label}</span>
+          </span>
         </a>
       )}
 
@@ -113,6 +156,7 @@ const normalizeHref = (href: string) => {
         aria-controls="nav-drawer"
         aria-expanded="false"
         data-cta="nav-toggle"
+        type="button"
       >
         <span class="nav__toggleBar" aria-hidden="true"></span>
         <span class="nav__toggleBar" aria-hidden="true"></span>
@@ -125,25 +169,51 @@ const normalizeHref = (href: string) => {
   <div id="nav-scrim" class="nav__scrim" hidden></div>
 
   <!-- Mobile drawer -->
-  <nav id="nav-drawer" class="nav__drawer" aria-label="Mobile" aria-modal="true" role="dialog">
-    <button class="nav__close" id="nav-close" aria-label="Close menu">✕</button>
+  <nav
+    id="nav-drawer"
+    class="nav__drawer"
+    aria-label="Mobile"
+    aria-modal="true"
+    role="dialog"
+    tabindex="-1"
+  >
+    <button
+      class="nav__close"
+      id="nav-close"
+      aria-label="Close menu"
+      type="button"
+    >
+      ✕
+    </button>
     <ul class="nav__drawerList">
-      {main.map((item: any) => (
+      {main.map((item: any) =>
         !item.children ? (
           <li>
-            <a href={normalizeHref(item.href)} class="nav__drawerLink" data-cta={`mnav-${item.label.toLowerCase()}`}>{item.label}</a>
+            <a
+              href={normalizeHref(item.href)}
+              class="nav__drawerLink"
+              data-cta={`mnav-${item.label.toLowerCase()}`}
+            >
+              {item.label}
+            </a>
           </li>
         ) : (
           <li>
             <details class="nav__details">
-              <summary class="nav__summary">{item.label}</summary>
+              <summary class="nav__summary">
+                {item.label}
+              </summary>
               <ul class="nav__drawerSub">
                 {item.children.map((child: any) => (
                   <li>
                     <a
                       href={normalizeHref(child.href)}
                       class="nav__drawerSublink"
-                      data-cta={`mnav-${item.label.toLowerCase()}-${child.label.toLowerCase()}`}
+                      data-cta={`mnav-${item.label
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}-${child.label
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}`}
                     >
                       {child.label}
                     </a>
@@ -153,11 +223,17 @@ const normalizeHref = (href: string) => {
             </details>
           </li>
         )
-      ))}
+      )}
       {cta && (
         <li class="nav__drawerCta">
-          <a href={normalizeHref(cta.href)} class="btn btn-primary" data-cta="mnav-cta">
-            <span class="btn__inner"><span class="btn__label">{cta.label}</span></span>
+          <a
+            href={normalizeHref(cta.href)}
+            class="btn btn-primary"
+            data-cta="mnav-cta"
+          >
+            <span class="btn__inner">
+              <span class="btn__label">{cta.label}</span>
+            </span>
           </a>
         </li>
       )}
@@ -165,51 +241,159 @@ const normalizeHref = (href: string) => {
   </nav>
 
   <script is:inline>
-    const root = document.currentScript.closest('.nav');
-    const toggle = root.querySelector('#nav-toggle');
-    const drawer = root.querySelector('#nav-drawer');
-    const scrim  = root.querySelector('#nav-scrim');
-    const closeBtn = root.querySelector('#nav-close');
-    const links = drawer.querySelectorAll('a');
+    (function () {
+      var scriptEl = document.currentScript;
+      if (!scriptEl) return;
+      var root = scriptEl.closest(".nav");
+      if (!root) return;
 
-    function setExpanded(v) {
-      toggle.setAttribute('aria-expanded', String(v));
-      drawer.classList.toggle('is-open', v);
-      document.documentElement.classList.toggle('no-scroll', v);
-      if (scrim) scrim.hidden = !v;
-    }
+      var toggle = root.querySelector("#nav-toggle");
+      var drawer = root.querySelector("#nav-drawer");
+      var scrim = root.querySelector("#nav-scrim");
+      var closeBtn = root.querySelector("#nav-close");
+      var links = drawer
+        ? Array.prototype.slice.call(drawer.querySelectorAll("a"))
+        : [];
+      var disclosures = Array.prototype.slice.call(
+        root.querySelectorAll(".nav__disclosure")
+      );
 
-    toggle.addEventListener('click', () => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      setExpanded(!expanded);
-    });
-
-    closeBtn.addEventListener('click', () => setExpanded(false));
-    if (scrim) scrim.addEventListener('click', () => setExpanded(false));
-
-    // Close when following a link
-    links.forEach(a => a.addEventListener('click', () => setExpanded(false)));
-
-    // ESC to close
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setExpanded(false);
-    }, { passive: true });
-
-    // Desktop submenu disclosure
-    const disclosures = root.querySelectorAll('.nav__disclosure');
-    disclosures.forEach(btn => {
-      const item = btn.closest('.nav__item--hasChildren');
-      btn.addEventListener('click', () => {
-        const open = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!open));
-        item.classList.toggle('is-open', !open);
+      var submenuItems = disclosures.map(function (btn) {
+        var item = btn.closest(".nav__item--hasChildren");
+        var submenu = item ? item.querySelector(".nav__submenu") : null;
+        return { btn: btn, item: item, submenu: submenu };
       });
-      item.addEventListener('focusout', (e) => {
-        if (!item.contains(e.relatedTarget)) {
-          btn.setAttribute('aria-expanded', 'false');
-          item.classList.remove('is-open');
+
+      var lastFocused = null;
+
+      function setExpanded(open) {
+        if (!toggle || !drawer) return;
+        var isOpen = !!open;
+
+        if (isOpen) {
+          lastFocused =
+            (document.activeElement && document.activeElement instanceof HTMLElement
+              ? document.activeElement
+              : toggle);
+        }
+
+        toggle.setAttribute("aria-expanded", String(isOpen));
+        drawer.classList.toggle("is-open", isOpen);
+        document.documentElement.classList.toggle("no-scroll", isOpen);
+        if (scrim) scrim.hidden = !isOpen;
+
+        if (isOpen) {
+          // Move focus into the drawer: first link, else close button, else drawer
+          var focusTarget =
+            drawer.querySelector(
+              "a, button, [tabindex]:not([tabindex='-1'])"
+            ) || closeBtn || drawer;
+
+          if (focusTarget && typeof focusTarget.focus === "function") {
+            focusTarget.focus();
+          }
+        } else {
+          // Restore focus to previous element or toggle
+          var target =
+            lastFocused && document.contains(lastFocused)
+              ? lastFocused
+              : toggle;
+          if (target && typeof target.focus === "function") {
+            target.focus();
+          }
+        }
+      }
+
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          var expanded = toggle.getAttribute("aria-expanded") === "true";
+          setExpanded(!expanded);
+        });
+      }
+
+      if (closeBtn) {
+        closeBtn.addEventListener("click", function () {
+          setExpanded(false);
+        });
+      }
+
+      if (scrim) {
+        scrim.addEventListener("click", function () {
+          setExpanded(false);
+        });
+      }
+
+      // Close drawer when following a link
+      links.forEach(function (a) {
+        a.addEventListener("click", function () {
+          setExpanded(false);
+        });
+      });
+
+      // Desktop submenu disclosure logic
+      function closeAllSubmenus() {
+        submenuItems.forEach(function (entry) {
+          var btn = entry.btn;
+          var item = entry.item;
+          var submenu = entry.submenu;
+          btn.setAttribute("aria-expanded", "false");
+          if (item) item.classList.remove("is-open");
+          if (submenu) submenu.setAttribute("data-open", "false");
+        });
+      }
+
+      submenuItems.forEach(function (entry) {
+        var btn = entry.btn;
+        var item = entry.item;
+        var submenu = entry.submenu;
+        if (!item) return;
+
+        btn.addEventListener("click", function () {
+          var isOpen = btn.getAttribute("aria-expanded") === "true";
+          closeAllSubmenus();
+          if (!isOpen) {
+            btn.setAttribute("aria-expanded", "true");
+            item.classList.add("is-open");
+            if (submenu) submenu.setAttribute("data-open", "true");
+          }
+        });
+
+        // Close when focus leaves the submenu item
+        item.addEventListener("focusout", function (event) {
+          var next = event.relatedTarget;
+          if (!next || !item.contains(next)) {
+            btn.setAttribute("aria-expanded", "false");
+            item.classList.remove("is-open");
+            if (submenu) submenu.setAttribute("data-open", "false");
+          }
+        });
+      });
+
+      // Global key handling: ESC closes drawer or any open submenu
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") return;
+
+        var drawerOpen = !!drawer && drawer.classList.contains("is-open");
+        if (drawerOpen) {
+          setExpanded(false);
+          return;
+        }
+
+        // Close any open desktop submenu
+        var openItem = root.querySelector(
+          ".nav__item--hasChildren.is-open"
+        );
+        if (openItem) {
+          closeAllSubmenus();
         }
       });
-    });
+
+      // Click-away handling for desktop submenus
+      document.addEventListener("click", function (event) {
+        if (!root.contains(event.target)) {
+          closeAllSubmenus();
+        }
+      });
+    })();
   </script>
 </header>

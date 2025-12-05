@@ -2,6 +2,7 @@
    Mobile-first, token-driven service summary card.
    Relies on global spacing, color, radius, and shadow tokens. */
 
+/* Base shell */
 .service-card {
   position: relative;
   display: flex;
@@ -10,13 +11,18 @@
 
   padding: var(--space-5);
   border-radius: var(--radius-xl);
+
   background: color-mix(
     in oklab,
-    var(--color-surface) 90%,
-    var(--color-primary-soft, var(--color-primary)) 10%
+    var(--color-surface) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
   );
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 18%, var(--color-surface) 82%);
+    color-mix(
+      in oklab,
+      var(--color-primary) 14%,
+      var(--color-surface) 86%
+    );
   box-shadow: var(--shadow-sm);
 
   min-height: 100%;
@@ -28,8 +34,7 @@
     background-color 0.18s ease-out;
 }
 
-/* Horizontal accent line at the top of the card
-   Borrowed from AboutSpecialisations card treatment */
+/* Horizontal accent line at the top of the card */
 .service-card::before {
   content: "";
   position: absolute;
@@ -38,34 +43,87 @@
   height: 3px;
   background: linear-gradient(
     to right,
-    color-mix(in oklab, var(--color-primary) 65%, transparent),
-    color-mix(in oklab, var(--color-accent) 35%, transparent)
+    color-mix(in oklab, var(--color-primary) 70%, transparent),
+    color-mix(in oklab, var(--color-accent) 40%, transparent)
   );
-  opacity: 0.95;
+  opacity: 0.9;
 }
 
 /* Elevation + subtle lift on hover/focus */
 .service-card:hover,
 .service-card:focus-within {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 30%,
+    var(--color-accent) 10%
+  );
   background: color-mix(
     in oklab,
-    var(--color-surface) 86%,
-    var(--color-primary-soft, var(--color-primary)) 14%
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
   );
+}
+
+/* When focused via keyboard inside, ensure outer card gets a clear ring */
+.service-card:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--color-primary) 35%,
+        var(--color-surface) 65%
+      ),
+    var(--shadow-md);
 }
 
 /* Header block */
 .service-card__header {
   margin: 0;
+  display: grid;
+  row-gap: var(--space-2);
+}
+
+/* Eyebrow label (optional) */
+.service-card__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
 }
 
 /* Title: uses global fs-h4 + lh-tight utilities in markup */
 .service-card__title {
   margin: 0;
   color: var(--color-primary);
+}
+
+/* Optional tag pill row */
+.service-card__tag {
+  margin: 0;
+}
+
+.service-card__tagPill {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-2);
+  padding-block: calc(var(--space-1) * 0.75);
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-accent) 30%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 22%,
+    var(--color-surface) 78%
+  );
 }
 
 /* Body: readable measure, primary text tone */
@@ -75,9 +133,66 @@
   max-width: 60ch;
 }
 
+/* Optional line-clamp variants for denser layouts */
+.service-card__body--clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.service-card__body--clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+.service-card__body--clamp-3 {
+  -webkit-line-clamp: 3;
+}
+
+.service-card__body--clamp-4 {
+  -webkit-line-clamp: 4;
+}
+
 /* CTA row anchored to the bottom of the card stack */
 .service-card__cta {
   margin-top: auto;
+}
+
+/* Highlighted card – slightly stronger emphasis */
+.service-card--highlight {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-primary-soft, var(--color-primary)) 12%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 30%,
+    var(--color-accent) 15%
+  );
+  box-shadow: var(--shadow-md);
+}
+
+.service-card--highlight::before {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-accent) 75%, var(--color-primary))
+  );
+}
+
+/* Compact variant – for dense grids or sidebars */
+.service-card--compact {
+  padding: var(--space-4);
+  gap: var(--space-2);
+}
+
+.service-card--compact .service-card__header {
+  row-gap: var(--space-1);
+}
+
+.service-card--compact .service-card__body {
+  font-size: var(--fs-sm);
 }
 
 /* Responsive density tuning */
@@ -85,10 +200,31 @@
   .service-card {
     padding: var(--space-5);
   }
+
+  .service-card--compact {
+    padding: var(--space-4);
+  }
 }
 
 @media (min-width: 1024px) {
   .service-card {
     padding: var(--space-6);
+  }
+
+  .service-card--compact {
+    padding: var(--space-5);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .service-card {
+    transition: none;
+    transform: none;
+  }
+
+  .service-card:hover,
+  .service-card:focus-within {
+    transform: none;
   }
 }

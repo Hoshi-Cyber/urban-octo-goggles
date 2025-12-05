@@ -39,7 +39,6 @@ const normalizedCards: NormalizedCard[] = (cards || []).map((card) => {
   const ctas = card.ctas ?? [];
 
   // Only treat CTAs explicitly marked as "primary" as primary.
-  // Ghost-only cards (e.g. "See our work") should not get a strong primary button.
   const primary = ctas.find((cta) => cta.variant === "primary");
   const secondary = ctas.filter((cta) => cta !== primary);
 
@@ -49,20 +48,30 @@ const normalizedCards: NormalizedCard[] = (cards || []).map((card) => {
     secondaryCtas: secondary,
   };
 });
+
+const stickyTop = stickTop ?? "6rem";
 ---
 
 {normalizedCards.length > 0 && (
-  <aside class="faq-sidebar stack" aria-label={ariaLabel}>
+  <aside
+    class="faq-sidebar stack"
+    aria-label={ariaLabel}
+    role="complementary"
+    data-component="faq-sidebar"
+  >
     {normalizedCards.map((card) => {
       const hasList = Array.isArray(card.list) && card.list.length > 0;
       const hasSecondary = card.secondaryCtas.length > 0;
-      const top = stickTop ?? "6rem";
       const itemClass = card.primaryCta
         ? "faq-sidebar__item faq-sidebar__item--primary"
         : "faq-sidebar__item faq-sidebar__item--soft";
 
       return (
-        <div class={itemClass}>
+        <div
+          class={itemClass}
+          role="group"
+          aria-label={card.title}
+        >
           {card.primaryCta ? (
             <StickyAsideCard
               title={card.title}
@@ -70,14 +79,14 @@ const normalizedCards: NormalizedCard[] = (cards || []).map((card) => {
               primaryHref={card.primaryCta.href}
               primaryLabel={card.primaryCta.label}
               ctaId={card.primaryCta.dataCta}
-              top={top}
+              top={stickyTop}
               class="faq-sidebar__saside"
             />
           ) : (
             <StickyAsideCard
               title={card.title}
               sub={card.body}
-              top={top}
+              top={stickyTop}
               class="faq-sidebar__saside"
             />
           )}

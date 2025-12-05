@@ -85,12 +85,6 @@ const faqSidebarCards: SidebarCard[] = [
         variant: "primary",
         dataCta: "faq-contact-support",
       },
-      {
-        label: "View pricing",
-        href: "/pricing/",
-        variant: "ghost",
-        dataCta: "faq-view-pricing",
-      },
     ],
   },
   {
@@ -207,39 +201,92 @@ const faqSidebarCards: SidebarCard[] = [
                   Our process is structured but flexible: we start with a clear brief, review your
                   existing documents, and then prepare drafts for you to review and refine within
                   defined timelines. This FAQ page is designed to answer the most common questions
-                  about how we work.
+                  about how we work and what to expect.
                 </p>
               </div>
 
-              <div class="faq-seo-links-wrapper">
-                <h3 class="faq-seo-links__title">Key pages to explore next</h3>
+              <aside
+                class="faq-seo-links-wrapper"
+                aria-label="Key pages to explore next"
+              >
+                <h3 class="faq-seo-links__title">
+                  Key pages to explore next
+                </h3>
+
                 <ul class="faq-seo-links">
-                  <li>
-                    <a href="/services/cv-writing/">CV writing services</a>
-                    <p>Packages and process for creating a professional, results-focused CV.</p>
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/services/cv-writing/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">CV writing services</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Packages and process for creating a professional, results-focused CV.
+                    </p>
                   </li>
-                  <li>
-                    <a href="/services/cover-letter/">Cover letter writing</a>
-                    <p>Custom cover letters aligned with your CV and target role.</p>
+
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/services/cover-letter/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">Cover letter writing</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Custom cover letters aligned with your CV and target role.
+                    </p>
                   </li>
-                  <li>
-                    <a href="/services/linkedin-optimization/">LinkedIn profile optimisation</a>
-                    <p>Profile rewrites to improve clarity, credibility, and recruiter visibility.</p>
+
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/services/linkedin-optimization/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">LinkedIn profile optimisation</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Profile rewrites to improve clarity, credibility, and recruiter visibility.
+                    </p>
                   </li>
-                  <li>
-                    <a href="/pricing/">Packages &amp; pricing</a>
-                    <p>Current pricing by career level and service combination.</p>
+
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/pricing/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">Packages &amp; pricing</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Current pricing by career level and service combination.
+                    </p>
                   </li>
-                  <li>
-                    <a href="/samples/">CV samples</a>
-                    <p>Anonymised examples to see our structure, tone, and formatting.</p>
+
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/samples/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">CV samples</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Anonymised examples to see our structure, tone, and formatting.
+                    </p>
                   </li>
-                  <li>
-                    <a href="/blog/">CV &amp; career advice blog</a>
-                    <p>Articles on CV best practice, interviews, and career communication.</p>
+
+                  <li class="faq-seo-links__item">
+                    <a
+                      href="/blog/"
+                      class="faq-seo-links__link"
+                    >
+                      <span class="faq-seo-links__label">CV &amp; career advice blog</span>
+                    </a>
+                    <p class="faq-seo-links__description">
+                      Articles on CV best practice, interviews, and career communication.
+                    </p>
                   </li>
                 </ul>
-              </div>
+              </aside>
             </div>
           </section>
         </div>
@@ -261,7 +308,7 @@ const faqSidebarCards: SidebarCard[] = [
         }}
         secondaryCta={{
           label: "WhatsApp our team",
-          href: "https://wa.me/2547XXXXXXXX",
+          href: "https://wa.me/254115117501",
           dataCta: "faq-whatsapp-bottom",
         }}
       />

@@ -30,7 +30,8 @@
         in oklab,
         var(--color-primary-soft, var(--color-primary)) 18%,
         transparent
-      ) 0,
+      )
+        0,
       transparent 60%
     ),
     radial-gradient(
@@ -39,7 +40,8 @@
         in oklab,
         var(--color-accent-soft, var(--color-accent)) 14%,
         transparent
-      ) 0,
+      )
+        0,
       transparent 65%
     ),
     color-mix(
@@ -178,8 +180,8 @@
 /* Main bundle title */
 .service-bundles__card-title {
   margin: 0;
-  font-size: var(--fs-h5);
-  line-height: var(--lh-tight);
+  font-size: var(--fs-h5, var(--fs-xl));
+  line-height: var(--lh-tight, 1.25);
   color: var(--color-text);
 }
 

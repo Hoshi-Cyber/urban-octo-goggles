@@ -1,107 +1,150 @@
 /* DeliverablesList.css */
-/* Mobile-first. Token-driven, aligned with global brand styles. */
+/* Mobile-first. Token-driven. Premium, quiet, and reusable. */
 
 .delivs {
   padding-block: var(--space-2);
 }
 
-/* Header */
+/* -------------------------------- */
+/* Header                           */
+/* -------------------------------- */
+
 .delivs__header {
+  display: grid;
+  gap: var(--space-1);
   margin-bottom: var(--space-3);
 }
 
-/* Eyebrow – clear, branded, no faded opacity */
+/* Eyebrow – reuses global label scale + caps for consistency */
 .delivs__eyebrow {
-  margin: 0 0 0.25rem;
-  font-size: var(--fs-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 600;
+  margin: 0;
   color: var(--color-primary);
 }
 
-/* Title */
+/* Title – piggybacks on .h2, but tightens local spacing */
 .delivs__title {
   margin: 0;
-  font-size: clamp(1.125rem, 1vw + 1rem, 1.5rem);
-  line-height: 1.2;
-  color: var(--color-text);
 }
 
-/* List layout – 1 → 2 columns at sm+ */
+/* -------------------------------- */
+/* List layout                      */
+/* -------------------------------- */
+
 .delivs__list {
   display: grid;
-  gap: var(--space-3);
   grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 @media (min-width: 640px) {
   .delivs__list {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Item card */
+/* -------------------------------- */
+/* Item card                        */
+/* -------------------------------- */
+
 .delivs__item {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-3);
   border-radius: var(--radius-lg);
+
   border: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-primary) 18%,
-      var(--color-border-subtle, var(--color-light-alt))
-    );
-  background: color-mix(
-    in oklab,
-    var(--color-surface) 96%,
-    var(--color-primary-soft, var(--color-primary)) 4%
-  );
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-light-alt));
+  background:
+    color-mix(in oklab, var(--color-surface) 94%, var(--color-primary) 6%);
   box-shadow: var(--shadow-xs);
+
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.08s ease;
+    background-color 0.16s ease-out,
+    border-color 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    transform 0.1s ease-out;
 }
 
-/* Hover lift */
-.delivs__item:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+/* Subtle “featured” state – slightly stronger contrast & border */
+.delivs__item--highlight {
   border-color: color-mix(
     in oklab,
-    var(--color-primary) 26%,
-    var(--color-border-subtle, var(--color-light-alt))
+    var(--color-accent) 30%,
+    var(--color-light-alt)
   );
+  background:
+    color-mix(in oklab, var(--color-light) 88%, var(--color-accent) 12%);
 }
 
-/* Icon chip */
+/* Hover lift – desktop/hover only */
+@media (hover: hover) and (pointer: fine) {
+  .delivs__item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 24%,
+      var(--color-light-alt)
+    );
+    background:
+      color-mix(in oklab, var(--color-surface) 90%, var(--color-primary) 10%);
+  }
+
+  .delivs__item--highlight:hover {
+    border-color: color-mix(
+      in oklab,
+      var(--color-accent) 40%,
+      var(--color-light-alt)
+    );
+    background:
+      color-mix(in oklab, var(--color-light) 82%, var(--color-accent) 18%);
+  }
+}
+
+/* -------------------------------- */
+/* Icon chip                        */
+/* -------------------------------- */
+
 .delivs__icon {
   display: inline-grid;
   place-items: center;
   inline-size: 1.75rem;
   block-size: 1.75rem;
   border-radius: 9999px;
+
   color: var(--color-primary);
-  background: color-mix(
-    in oklab,
-    var(--color-surface) 88%,
-    var(--color-primary-soft, var(--color-primary)) 12%
-  );
+  background:
+    color-mix(in oklab, var(--color-light) 80%, var(--color-primary) 20%);
   border: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-primary) 28%,
-      var(--color-surface) 72%
-    );
-  flex: 0 0 auto;
+    color-mix(in oklab, var(--color-primary) 36%, var(--color-surface) 64%);
 }
 
-/* Label – primary text tone, not muted */
+.delivs__item--highlight .delivs__icon {
+  color: var(--color-accent);
+  background:
+    color-mix(in oklab, var(--color-gold-50) 80%, var(--color-accent) 20%);
+  border-color: color-mix(
+    in oklab,
+    var(--color-accent) 40%,
+    var(--color-surface) 60%
+  );
+}
+
+/* -------------------------------- */
+/* Text stack                       */
+/* -------------------------------- */
+
+.delivs__body {
+  display: grid;
+  gap: 0.25rem;
+}
+
+/* Primary label – small body scale, strong tone */
 .delivs__label {
   margin: 0;
   font-size: var(--fs-sm);
@@ -109,16 +152,35 @@
   color: var(--color-text);
 }
 
-/* Focus-visible support for keyboard users */
+/* Optional meta – reserved for short clarifiers, more muted */
+.delivs__meta {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* -------------------------------- */
+/* Focus-visible & a11y             */
+/* -------------------------------- */
+
+/*
+  Scoped focus ring:
+  - Works for anchors/buttons inside the block
+  - Can be reused if items ever become interactive
+*/
 .delivs :where(a, button, .delivs__item):focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  outline: none;
+  box-shadow:
+    0 0 0 1px var(--color-neutral-0),
+    0 0 0 4px var(--color-focus-ring);
   border-radius: var(--radius-md);
 }
 
-/* Reduced motion – scoped to component */
+/* -------------------------------- */
+/* Reduced motion                   */
+/* -------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
   .delivs * {
     transition: none !important;

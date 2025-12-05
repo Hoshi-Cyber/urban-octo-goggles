@@ -276,6 +276,22 @@ const faqSchema =
               handleToggleIntent(details);
             });
 
+            // Native toggle handler – last line of defence for single-active
+            root.addEventListener('toggle', (event) => {
+              const target = event.target;
+              if (!target || !(target instanceof HTMLDetailsElement)) return;
+              if (!target.classList.contains('faq-accordion__item')) return;
+              if (!items.includes(target)) return;
+
+              if (target.hasAttribute('open')) {
+                // Ensure this is the only open item
+                openExclusive(target);
+              } else {
+                // Just resync aria-expanded on close
+                syncExpanded();
+              }
+            });
+
             // Ensure only one item is open if any were pre-opened
             const initiallyOpen = items.filter((d) => d.hasAttribute('open'));
             if (initiallyOpen.length > 1) {

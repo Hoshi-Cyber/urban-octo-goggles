@@ -1,32 +1,41 @@
 /* FAQSidebar – stacked StickyAsideCard wrapper for FAQ/help pages
    Visually elevated with brand colour accents, while respecting global tokens. */
 
-/* Sidebar wrapper – soft band with brand-tinted chrome */
 .faq-sidebar {
   /* .stack from globals already handles vertical rhythm between children */
   margin-top: var(--space-5);
   padding: var(--space-4);
-  border-radius: var(--radius-lg, 0.75rem);
+  border-radius: var(--radius-lg);
   background:
+    radial-gradient(
+      circle at 0 0,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 10%,
+        transparent
+      ),
+      transparent 55%
+    ),
     linear-gradient(
       145deg,
       color-mix(
         in oklab,
-        var(--color-surface-alt, #f9fafb) 95%,
-        #ffffff 5%
+        var(--color-surface-alt, var(--color-background)) 96%,
+        var(--color-surface) 4%
       ),
       color-mix(
         in oklab,
-        var(--color-primary-soft, var(--color-primary)) 9%,
-        transparent
+        var(--color-surface, var(--color-background)) 96%,
+        var(--color-primary-soft, var(--color-primary)) 4%
       )
     );
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 10%, transparent);
-  box-shadow: var(
-    --shadow-xs,
-    0 10px 25px rgba(15, 23, 42, 0.05)
-  );
+    color-mix(
+      in oklab,
+      var(--color-primary) 14%,
+      var(--color-surface) 86%
+    );
+  box-shadow: var(--shadow-sm, 0 10px 25px color-mix(in oklab, var(--color-text) 10%, transparent));
   position: relative;
   overflow: hidden;
 }
@@ -44,11 +53,11 @@
     var(--color-primary),
     color-mix(
       in oklab,
-      var(--color-accent) 70%,
-      var(--color-primary)
+      var(--color-accent, var(--color-primary)) 70%,
+      var(--color-primary) 30%
     )
   );
-  opacity: 0.95;
+  opacity: 0.9;
 }
 
 /* Tighten padding on very small screens */
@@ -73,7 +82,7 @@
   border-top: 1px dashed
     color-mix(
       in oklab,
-      var(--color-primary-soft, var(--color-primary)) 35%,
+      var(--color-primary-soft, var(--color-primary)) 32%,
       transparent
     );
 }
@@ -81,24 +90,28 @@
 /* StickyAsideCard tuning inside FAQ sidebar */
 .faq-sidebar__saside {
   padding: var(--space-4);
-  border-radius: var(--radius-md, 0.75rem);
+  border-radius: var(--radius-md);
   border: 1px solid
-    color-mix(in oklab, var(--color-surface-alt, #e5e7eb) 70%, transparent);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 70%,
+      transparent
+    );
+  box-shadow: 0 10px 24px color-mix(in oklab, var(--color-text) 8%, transparent);
   background:
     radial-gradient(
       circle at 0 0,
       color-mix(
         in oklab,
-        var(--color-surface-alt, #f9fafb) 40%,
+        var(--color-surface-alt, var(--color-surface)) 40%,
         transparent
       ),
       transparent 55%
     ),
     color-mix(
       in oklab,
-      var(--color-surface, #ffffff) 96%,
-      #ffffff 4%
+      var(--color-surface, var(--color-background)) 96%,
+      var(--color-surface-alt, var(--color-background)) 4%
     );
   transition:
     transform 160ms ease-out,
@@ -112,9 +125,9 @@
   border-color: color-mix(
     in oklab,
     var(--color-primary) 26%,
-    transparent
+    var(--color-surface) 74%
   );
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 18px 40px color-mix(in oklab, var(--color-text) 14%, transparent);
   background:
     radial-gradient(
       circle at 0 0,
@@ -127,8 +140,8 @@
     ),
     color-mix(
       in oklab,
-      var(--color-surface, #ffffff) 96%,
-      #ffffff 4%
+      var(--color-surface, var(--color-background)) 96%,
+      var(--color-surface-alt, var(--color-background)) 4%
     );
 }
 
@@ -137,7 +150,7 @@
   border-color: color-mix(
     in oklab,
     var(--color-accent-soft, var(--color-accent)) 22%,
-    transparent
+    var(--color-surface) 78%
   );
   background:
     radial-gradient(
@@ -151,8 +164,8 @@
     ),
     color-mix(
       in oklab,
-      var(--color-surface, #ffffff) 96%,
-      #ffffff 4%
+      var(--color-surface, var(--color-background)) 96%,
+      var(--color-surface-alt, var(--color-background)) 4%
     );
 }
 
@@ -160,14 +173,11 @@
 .faq-sidebar__item:hover .faq-sidebar__saside,
 .faq-sidebar__item:focus-within .faq-sidebar__saside {
   transform: translateY(-2px);
-  box-shadow: var(
-    --shadow-md,
-    0 22px 45px rgba(15, 23, 42, 0.12)
-  );
+  box-shadow: var(--shadow-md, 0 22px 45px color-mix(in oklab, var(--color-text) 16%, transparent));
   border-color: color-mix(
     in oklab,
     var(--color-primary) 32%,
-    transparent
+    var(--color-surface) 68%
   );
 }
 
@@ -184,17 +194,22 @@
   margin-top: var(--space-3);
   padding-top: var(--space-3);
   border-top: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-text) 6%,
+      transparent
+    );
   display: grid;
   gap: var(--space-2);
 }
 
-/* Bullet list for extra context – custom brand bullets */
+/* Bullet list for extra context – now higher contrast & larger for legibility */
 .faq-sidebar__list {
   margin: 0;
   padding-left: 0;
-  font-size: var(--fs-sm);
-  color: var(--color-muted);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  line-height: 1.6;
   display: grid;
   gap: var(--space-1);
   list-style: none;
@@ -204,9 +219,10 @@
   margin: 0;
   position: relative;
   padding-inline-start: 1.5rem;
-  max-width: 40ch;
+  max-width: 44ch;
 }
 
+/* Brand bullet */
 .faq-sidebar__list-item::before {
   content: "";
   position: absolute;
@@ -216,20 +232,28 @@
   height: 0.55rem;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 30% 30%, #ffffff 0, #ffffff 45%, transparent 60%),
+    radial-gradient(
+      circle at 30% 30%,
+      color-mix(
+        in oklab,
+        var(--color-surface, var(--color-background)) 85%,
+        transparent
+      ),
+      transparent 60%
+    ),
     linear-gradient(
       135deg,
       var(--color-primary),
       color-mix(
         in oklab,
-        var(--color-accent) 70%,
-        var(--color-primary)
+        var(--color-accent, var(--color-primary)) 70%,
+        var(--color-primary) 30%
       )
     );
   box-shadow: 0 0 0 1px
     color-mix(
       in oklab,
-      var(--color-surface) 40%,
+      var(--color-surface, var(--color-background)) 50%,
       transparent
     );
 }
@@ -243,7 +267,11 @@
   gap: var(--space-2);
   justify-content: center;
   border-top: 1px solid
-    color-mix(in oklab, var(--color-primary) 10%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-primary) 10%,
+      transparent
+    );
 }
 
 /* Sidebar buttons – compact, pill-shaped, intrinsic width */

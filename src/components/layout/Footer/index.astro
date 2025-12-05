@@ -8,42 +8,47 @@ function isManageCookies(label?: string) {
   return typeof label === "string" && label.toLowerCase().includes("manage cookies");
 }
 ---
-<footer class="footer" role="contentinfo" data-section="footer">
-  <div class="container">
-    <!-- Social -->
-    <div class="footer__head">
-      <p class="footer__socialLabel">Connect</p>
-      <nav class="footer__social" aria-label="Social links">
-        {footerData.social?.map((item) => {
-          const key = (item.icon || item.name || "").toLowerCase();
-          // Build icon path from the "icon" field in footer.json
-          const iconName = item.icon || key || "generic";
-          const iconSrc = `/assets/icons/${iconName}.svg`;
 
-          return (
-            <a
-              href={item.href}
-              target="_blank"
-              rel="noopener"
-              aria-label={item.name || item.icon}
-              title={item.name || item.icon}
-              class="sociallink"
-              data-cta={`footer-social-${(item.icon || item.name || "link").toLowerCase()}`}
-            >
-              <span class="sr-only">{item.name || item.icon}</span>
-              <img
-                src={iconSrc}
-                alt=""
-                loading="lazy"
-                class="sociallink__icon"
-              />
-            </a>
-          );
-        })}
+<footer class="footer" role="contentinfo" data-section="footer">
+  <div class="container footer__inner">
+    <!-- Social strip -->
+    <div class="footer__head">
+      <p class="footer__socialLabel">CONNECT</p>
+
+      <nav class="footer__social" aria-label="Social links">
+        <ul class="footer__socialList">
+          {footerData.social?.map((item) => {
+            const key = (item.icon || item.name || "").toLowerCase();
+            const iconName = item.icon || key || "generic";
+            const iconSrc = `/assets/icons/${iconName}.svg`;
+
+            return (
+              <li class="footer__socialItem">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={item.name || item.icon}
+                  title={item.name || item.icon}
+                  class="footer__socialLink"
+                  data-cta={`footer-social-${(item.icon || item.name || "link").toLowerCase()}`}
+                >
+                  <span class="sr-only">{item.name || item.icon}</span>
+                  <img
+                    src={iconSrc}
+                    alt=""
+                    loading="lazy"
+                    class="footer__socialIcon"
+                  />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
     </div>
 
-    <!-- Columns, max 5 links each -->
+    <!-- Navigation columns -->
     <div class="footer__cols">
       {footerData.columns?.map((col) => (
         <section class="footer__col">
@@ -52,7 +57,7 @@ function isManageCookies(label?: string) {
             {col.links?.slice(0, 5).map((link) => {
               const manage = isManageCookies(link.label);
               return (
-                <li>
+                <li class="footer__linksItem">
                   <a
                     href={manage ? "#" : link.href}
                     class="footer__link"
@@ -71,14 +76,17 @@ function isManageCookies(label?: string) {
 
     <!-- Bottom bar – compact legal quick links -->
     <div class="footer__bottom">
-      <p class="footer__copy">© {year} CV Writing Kenya. All rights reserved.</p>
+      <p class="footer__copy">
+        © {year} CV Writing Kenya. All rights reserved.
+      </p>
+
       <nav class="footer__legal" aria-label="Legal">
         {footerData.bottom?.map((item) => {
           const manage = isManageCookies(item.label);
           return (
             <a
               href={manage ? "#" : item.href}
-              class="footer__link"
+              class="footer__link footer__link--legal"
               data-cta={`footer-legal-${(item.label || "link")
                 .toLowerCase()
                 .replace(/\s+/g, "-")}`}
@@ -89,8 +97,9 @@ function isManageCookies(label?: string) {
           );
         })}
       </nav>
+
       <p class="footer__credit">
-        Site by
+        Site by{" "}
         <a
           class="footer__creditLink"
           href="https://TemplateFleet.com"

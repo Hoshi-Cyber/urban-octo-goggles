@@ -37,6 +37,7 @@
     transform 0.06s ease;
 }
 
+/* Inner layout */
 .btn .btn__inner {
   display: inline-flex;
   align-items: center;
@@ -47,10 +48,24 @@
   white-space: nowrap;
 }
 
+/* Icon-only label (still available for screen readers) */
+.btn__label--srOnly {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Hover/active */
 .btn:hover {
   background: var(--_bg-hover);
 }
+
 .btn:active {
   transform: translateY(1px);
 }
@@ -70,7 +85,26 @@
   pointer-events: none;
 }
 
+/* Loading state */
+.btn.is-loading {
+  cursor: progress;
+}
+
+/* Spinner appended after content */
+.btn.is-loading .btn__inner::after {
+  content: "";
+  display: inline-block;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-inline-start: var(--space-2);
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: btn-spin 0.7s linear infinite;
+}
+
 /* Variants */
+/* Primary – main brand CTA */
 .btn-primary {
   --_bg: var(--color-primary);
   --_fg: var(--color-on-primary);
@@ -85,6 +119,7 @@
   );
 }
 
+/* Accent – warm secondary CTA */
 .btn-accent {
   --_bg: var(--color-accent);
   --_fg: var(--color-on-accent);
@@ -99,6 +134,7 @@
   );
 }
 
+/* Ghost – soft, tinted supporting CTA */
 .btn-ghost {
   --_bg: color-mix(
     in oklab,
@@ -118,6 +154,7 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* Link – inline, minimal CTA */
 .btn-link {
   --_bg: transparent;
   --_fg: var(--color-accent);
@@ -130,6 +167,53 @@
 
 .btn-link:hover {
   text-decoration-thickness: 2px;
+}
+
+/* Tone modifiers (layered on top of variants) */
+
+/* Success tone – positive confirmations */
+.btn-tone-success {
+  --_bg: color-mix(
+    in oklab,
+    var(--color-success, #15803d) 90%,
+    var(--color-surface) 10%
+  );
+  --_fg: var(--color-on-primary, #ffffff);
+  --_bd: color-mix(
+    in oklab,
+    var(--color-success, #15803d) 40%,
+    transparent
+  );
+}
+
+/* Danger tone – destructive actions */
+.btn-tone-danger {
+  --_bg: color-mix(
+    in oklab,
+    var(--color-danger, #b91c1c) 90%,
+    var(--color-surface) 10%
+  );
+  --_fg: var(--color-on-primary, #ffffff);
+  --_bd: color-mix(
+    in oklab,
+    var(--color-danger, #b91c1c) 40%,
+    transparent
+  );
+}
+
+/* Subtle tone – extra-soft ghost treatment */
+.btn-tone-subtle {
+  --_bg: color-mix(
+    in oklab,
+    var(--color-surface) 98%,
+    var(--color-primary-soft, var(--color-primary)) 2%
+  );
+  --_fg: var(--color-primary);
+  --_bd: color-mix(
+    in oklab,
+    var(--color-primary) 14%,
+    transparent
+  );
 }
 
 /* Sizes */
@@ -149,6 +233,12 @@
   padding-inline: var(--space-5);
   min-height: 52px;
   font-size: var(--fs-lg);
+}
+
+/* Icon-only button */
+.btn--iconOnly {
+  padding-inline: var(--space-2);
+  min-inline-size: 44px;
 }
 
 /* Block on narrow viewports */
@@ -174,6 +264,10 @@
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
+  }
+
+  .btn.is-loading .btn__inner::after {
+    animation: none;
   }
 }
 
@@ -204,4 +298,11 @@
 /* Ensure anchor buttons keep no underline by default */
 a.btn {
   text-decoration: none;
+}
+
+/* Spinner animation */
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

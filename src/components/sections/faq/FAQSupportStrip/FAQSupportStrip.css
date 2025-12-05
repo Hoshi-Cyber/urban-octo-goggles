@@ -1,5 +1,5 @@
 /* FAQSupportStrip – reusable support CTA band for FAQ/help pages
-   Upgraded with brand gradients and premium card styling. */
+   Premium band with brand gradients and a refined inner card. */
 
 .faq-support-strip {
   margin-block: var(--space-8) 0;
@@ -9,7 +9,7 @@
       circle at 0% 0%,
       color-mix(
         in oklab,
-        var(--color-primary-soft, var(--color-primary)) 14%,
+        var(--color-primary-soft, var(--color-primary)) 10%,
         transparent
       ),
       transparent 60%
@@ -18,7 +18,7 @@
       circle at 100% 100%,
       color-mix(
         in oklab,
-        var(--color-accent-soft, var(--color-accent)) 10%,
+        var(--color-accent-soft, var(--color-accent)) 8%,
         transparent
       ),
       transparent 65%
@@ -45,7 +45,7 @@
       circle at 0% 0%,
       color-mix(
         in oklab,
-        var(--color-primary-soft, var(--color-primary)) 16%,
+        var(--color-primary-soft, var(--color-primary)) 14%,
         transparent
       ),
       transparent 58%
@@ -54,7 +54,7 @@
       circle at 100% 0%,
       color-mix(
         in oklab,
-        var(--color-accent-soft, var(--color-accent)) 12%,
+        var(--color-accent-soft, var(--color-accent)) 10%,
         transparent
       ),
       transparent 60%
@@ -73,9 +73,13 @@
     color-mix(
       in oklab,
       var(--color-primary) 16%,
-      rgba(148, 163, 184, 0.35)
+      var(--color-surface-alt, var(--color-surface)) 84%
     );
   overflow: hidden;
+  transition:
+    box-shadow 160ms ease-out,
+    transform 160ms ease-out,
+    border-color 160ms ease-out;
 }
 
 /* Inner soft outline ring */
@@ -121,8 +125,25 @@
       ),
       var(--color-primary)
     );
-  opacity: 0.28;
+  opacity: 0.24;
   filter: blur(1px);
+}
+
+/* Hover/focus elevation on the card (kept subtle) */
+@media (hover: hover) {
+  .faq-support-strip__inner:hover,
+  .faq-support-strip__inner:focus-within {
+    box-shadow: var(
+      --shadow-md,
+      0 18px 42px rgba(15, 23, 42, 0.12)
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 24%,
+      var(--color-surface-alt, var(--color-surface)) 76%
+    );
+    transform: translateY(-1px);
+  }
 }
 
 /* Content (title + copy) */
@@ -162,14 +183,11 @@
   );
 }
 
-/* Copy text: subtle, controlled width */
+/* Copy text: normal text colour, controlled width */
 .faq-support-strip__copy {
   margin: 0;
   font-size: var(--fs-sm, 0.9rem);
-  color: var(
-    --color-text-muted,
-    var(--color-text-subtle, inherit)
-  );
+  color: var(--color-text);
   max-width: 38rem;
 }
 
@@ -195,7 +213,7 @@
   border-radius: 999px;
 }
 
-/* Secondary (ghost) button – tinted with brand border */
+/* Secondary (ghost) button – lightly tinted with brand border */
 .faq-support-strip__btn--secondary {
   border-width: 1px;
   border-style: solid;
@@ -214,7 +232,10 @@
 /* Extra emphasis on secondary button hover/focus */
 .faq-support-strip__btn--secondary:focus-visible,
 .faq-support-strip__btn--secondary:hover {
-  box-shadow: var(--shadow-sm, 0 10px 24px rgba(15, 23, 42, 0.08));
+  box-shadow: var(
+    --shadow-sm,
+    0 10px 24px rgba(15, 23, 42, 0.08)
+  );
   border-color: color-mix(
     in oklab,
     var(--color-primary) 32%,
@@ -258,5 +279,6 @@
 @media (prefers-reduced-motion: reduce) {
   .faq-support-strip__inner {
     transition: none;
+    transform: none !important;
   }
 }

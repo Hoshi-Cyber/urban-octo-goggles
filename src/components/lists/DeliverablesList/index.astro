@@ -1,7 +1,20 @@
 ---
 import "./DeliverablesList.css";
 
-export type DeliverableItem = { label: string; icon?: string };
+export type DeliverableItem = {
+  label: string;
+  icon?: string;
+  /**
+   * Optional supporting line – e.g. a short clarifier, scope, or constraint.
+   * If omitted, the item renders as a single-line benefit.
+   */
+  meta?: string;
+  /**
+   * Optional visual emphasis for key inclusions.
+   * When true, the card gains a slightly stronger border/surface treatment.
+   */
+  highlight?: boolean;
+};
 
 interface Props {
   title?: string;
@@ -16,26 +29,63 @@ const {
 }: Props = Astro.props;
 ---
 
-<section class="delivs" aria-labelledby="delivs-title" data-section="deliverables">
+<section
+  class="delivs"
+  aria-labelledby="delivs-title"
+  data-section="deliverables"
+>
   <header class="delivs__header">
-    {eyebrow && <p class="delivs__eyebrow">{eyebrow}</p>}
-    <h2 id="delivs-title" class="delivs__title">{title}</h2>
+    {eyebrow && (
+      <p class="delivs__eyebrow label-sm label-caps">
+        {eyebrow}
+      </p>
+    )}
+    <h2 id="delivs-title" class="h2 delivs__title">
+      {title}
+    </h2>
   </header>
 
   <ul class="delivs__list" role="list">
     {items.map((it) => (
-      <li class="delivs__item" role="listitem">
+      <li
+        class={`delivs__item${it.highlight ? " delivs__item--highlight" : ""}`}
+        role="listitem"
+      >
         <span class="delivs__icon" aria-hidden="true">
-          {it.icon
-            ? <img src={it.icon} alt="" width="16" height="16" loading="lazy" />
-            : (
-              // inline check icon (uses currentColor)
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-                <path fill="currentColor" d="M6.6 10.8 3.8 8l1.1-1.1 1.7 1.7L11 3.9l1.1 1.1z"/>
-              </svg>
-            )}
+          {it.icon ? (
+            <img
+              src={it.icon}
+              alt=""
+              width="16"
+              height="16"
+              loading="lazy"
+            />
+          ) : (
+            // Inline check icon (uses currentColor; decorative only)
+            <svg
+              viewBox="0 0 16 16"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path
+                fill="currentColor"
+                d="M6.6 10.8 3.8 8l1.1-1.1 1.7 1.7L11 3.9l1.1 1.1z"
+              />
+            </svg>
+          )}
         </span>
-        <span class="delivs__label">{it.label}</span>
+
+        <div class="delivs__body">
+          <p class="delivs__label">
+            {it.label}
+          </p>
+          {it.meta && (
+            <p class="delivs__meta">
+              {it.meta}
+            </p>
+          )}
+        </div>
       </li>
     ))}
   </ul>

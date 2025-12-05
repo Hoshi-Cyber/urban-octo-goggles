@@ -1,4 +1,5 @@
 ---
+// src/components/cta/Button/index.astro
 /** Button — mobile-first, token-driven,
  * Polymorphic: <a> if href, else <button>.
  */
@@ -15,6 +16,15 @@ export interface Props {
   rel?: string;
   ariaLabel?: string;
   class?: string;
+
+  /** Optional visual tone modifier layered on top of the variant */
+  tone?: "default" | "success" | "danger" | "subtle";
+
+  /** Optional loading state: disables interaction and shows spinner */
+  loading?: boolean;
+
+  /** Icon-only button; hides visible label but keeps it for a11y */
+  iconOnly?: boolean;
 }
 
 const {
@@ -29,6 +39,9 @@ const {
   rel,
   ariaLabel,
   class: className = "",
+  tone = "default",
+  loading = false,
+  iconOnly = false,
 } = Astro.props as Props;
 
 const variantClass =
@@ -45,6 +58,18 @@ const sizeClass =
 
 const blockClass = block ? "btn-block" : "";
 
+const toneClass =
+  tone === "success"
+    ? "btn-tone-success"
+    : tone === "danger"
+    ? "btn-tone-danger"
+    : tone === "subtle"
+    ? "btn-tone-subtle"
+    : "";
+
+const iconOnlyClass = iconOnly ? "btn--iconOnly" : "";
+const loadingClass = loading ? "is-loading" : "";
+
 const resolvedTarget = target ?? undefined;
 const resolvedRel =
   resolvedTarget === "_blank" ? rel ?? "noopener" : rel ?? undefined;
@@ -55,37 +80,46 @@ const dataCta = cta ?? `btn-${variant}`;
 const ariaLabelAttr =
   ariaLabel && ariaLabel !== label ? ariaLabel : undefined;
 
+// When loading, treat as disabled for interaction
+const isDisabled = disabled || loading;
+
 import "./Button.css";
 ---
 
 {href ? (
   <a
-    href={disabled ? undefined : href}
-    class={`btn ${variantClass} ${sizeClass} ${blockClass} ${className}`.trim()}
+    href={isDisabled ? undefined : href}
+    class={`btn ${variantClass} ${sizeClass} ${blockClass} ${toneClass} ${iconOnlyClass} ${loadingClass} ${className}`.trim()}
     aria-label={ariaLabelAttr}
     data-cta={dataCta}
     {...(resolvedTarget ? { target: resolvedTarget } : {})}
     {...(resolvedRel ? { rel: resolvedRel } : {})}
-    aria-disabled={disabled ? "true" : undefined}
-    tabindex={disabled ? -1 : undefined}
+    aria-disabled={isDisabled ? "true" : undefined}
+    aria-busy={loading ? "true" : undefined}
+    tabindex={isDisabled ? -1 : undefined}
   >
     <span class="btn__inner">
       <slot name="icon-left" />
-      <span class="btn__label">{label}</span>
+      <span class={`btn__label${iconOnly ? " btn__label--srOnly" : ""}`}>
+        {label}
+      </span>
       <slot name="icon-right" />
     </span>
   </a>
 ) : (
   <button
     type="button"
-    class={`btn ${variantClass} ${sizeClass} ${blockClass} ${className}`.trim()}
+    class={`btn ${variantClass} ${sizeClass} ${blockClass} ${toneClass} ${iconOnlyClass} ${loadingClass} ${className}`.trim()}
     aria-label={ariaLabelAttr}
     data-cta={dataCta}
-    disabled={disabled}
+    disabled={isDisabled}
+    aria-busy={loading ? "true" : undefined}
   >
     <span class="btn__inner">
       <slot name="icon-left" />
-      <span class="btn__label">{label}</span>
+      <span class={`btn__label${iconOnly ? " btn__label--srOnly" : ""}`}>
+        {label}
+      </span>
       <slot name="icon-right" />
     </span>
   </button>
