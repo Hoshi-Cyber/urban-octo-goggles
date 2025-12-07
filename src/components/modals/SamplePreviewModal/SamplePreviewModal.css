@@ -24,6 +24,7 @@
   transition: opacity 0.15s ease;
 }
 
+/* Fallback for environments without color-mix */
 @supports not (background: color-mix(in oklab, black 50%, white)) {
   .spm__backdrop {
     background: rgba(0, 0, 0, 0.55);
@@ -38,25 +39,29 @@
   margin: 0 auto;
   max-width: min(960px, 100vw);
   width: 100%;
+
   background: color-mix(
     in oklab,
     var(--color-surface, var(--color-background, #fff)) 96%,
     var(--color-primary-soft, var(--color-primary)) 4%
   );
   color: var(--color-text, #111827);
+
   border-radius: var(--radius-2xl, 1rem) var(--radius-2xl, 1rem) 0 0;
-  box-shadow: 0 -10px 36px rgba(15, 23, 42, 0.20);
+  box-shadow: 0 -10px 36px rgba(15, 23, 42, 0.2);
   border: 1px solid
     color-mix(
       in oklab,
       var(--color-border-subtle, #e5e7eb) 80%,
       transparent
     );
+
   transform: translateY(12%);
   opacity: 0;
   transition:
     transform 0.2s ease,
     opacity 0.2s ease;
+
   outline: none;
   display: grid;
   max-height: 92vh;
@@ -85,6 +90,7 @@
   color: var(--color-text);
 }
 
+/* Close button */
 .spm__close {
   appearance: none;
   border: 0;
@@ -96,6 +102,9 @@
   block-size: 44px; /* a11y target */
   border-radius: var(--radius-md, 0.5rem);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     background-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -124,6 +133,11 @@
   gap: var(--space-4, 1rem);
 }
 
+/* Media area */
+.spm__media {
+  margin: 0;
+}
+
 .spm__media img {
   width: 100%;
   height: auto;
@@ -132,12 +146,13 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Before / After blocks */
+/* Before / After blocks container */
 .spm__ba {
   display: grid;
   gap: var(--space-4, 1rem);
 }
 
+/* Before / After block cards */
 .spm__block {
   background: color-mix(
     in oklab,
@@ -154,10 +169,25 @@
   padding: var(--space-3, 0.85rem) var(--space-4, 1rem);
 }
 
+/* Slightly stronger emphasis on "After" to signal improvement */
+.spm__block--after {
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 88%,
+    var(--color-primary-soft, var(--color-primary)) 12%
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+/* Fallback for block background */
 @supports not (background: color-mix(in oklab, white 50%, black)) {
   .spm__block {
     background: #f8fafc;
     border: 1px solid #e5e7eb;
+  }
+
+  .spm__block--after {
+    background: #eef2ff;
   }
 }
 
@@ -171,12 +201,39 @@
   color: var(--color-primary);
 }
 
-/* Body copy */
+/* Bullet-styled body copy */
 .spm__text {
   margin: 0;
   font-size: var(--fs-sm, 0.95rem);
   line-height: 1.6;
   color: var(--color-text);
+  position: relative;
+  padding-left: var(--space-4, 1rem);
+}
+
+.spm__text::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  font-size: 1.1em;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+/* (Optional) list styles retained if needed elsewhere */
+.spm__list {
+  margin: 0;
+  padding-left: var(--space-5, 1.25rem);
+  list-style: disc;
+  display: grid;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--fs-sm, 0.95rem);
+  color: var(--color-text);
+}
+
+.spm__list li {
+  line-height: 1.6;
 }
 
 /* Open state */
@@ -193,7 +250,14 @@
   opacity: 1;
 }
 
-/* Larger screens: center dialog */
+/* Larger screens: center dialog and refine layout */
+@media (min-width: 768px) {
+  .spm__content {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
 @media (min-width: 1024px) {
   .spm__dialog {
     top: 50%;

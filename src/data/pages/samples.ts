@@ -110,22 +110,23 @@ const items: Sample[] = [
 
   // High-value samples with anonymised thumbnails under /assets/samples/
 
-  {
-    id: "senior-software-engineer-fintech",
-    title: "Senior Software Engineer — Fintech",
-    level: "Senior",
-    industry: "IT",
-    before:
-      "CV lists multiple projects in long paragraphs, mixes programming languages and tools without context, and has no clear summary. Achievements are described as duties, with no metrics or mention of scale.",
-    after:
-      "Structured CV around a sharp profile summary, a concise tech stack section, and outcome-focused experience bullets. Highlighted impact using metrics such as payment uptime, transaction volumes, and production issue reduction, and grouped projects under relevant roles.",
-    media: {
-      src: "/assets/samples/it/senior-software-engineer-1.jpg",
-      alt: "Transformed CV layout for a senior software engineer in fintech",
-      width: 640,
-      height: 360,
-    },
+ {
+  id: "senior-software-engineer-fintech",
+  title: "Senior Software Engineer — Fintech",
+  level: "Senior",
+  industry: "IT",
+  before:
+    "CV lists multiple projects in long paragraphs, mixes programming languages and tools without context, and has no clear summary. Achievements are described as duties, with no metrics or mention of scale.",
+  after:
+    "Structured CV around a sharp profile summary, a concise tech stack section, and outcome-focused experience bullets. Highlighted impact using metrics such as payment uptime, transaction volumes, and production issue reduction, and grouped projects under relevant roles.",
+  media: {
+    src: "/assets/samples/it/senior-software-engineer-1.jpg",
+    alt: "Transformed CV layout for a senior software engineer in fintech",
+    width: 640,
+    height: 360,
   },
+},
+
   {
     id: "registered-nurse-referral-hospital",
     title: "Registered Nurse — Referral Hospital",

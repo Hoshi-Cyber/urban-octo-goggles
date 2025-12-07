@@ -18,9 +18,26 @@ interface Props {
   title?: string;
   items: CategoryCard[];
   class?: string;
+  /**
+   * Optional: mark one category as the currently active/selected category.
+   * Useful on category index pages to show which topic is being viewed.
+   */
+  activeHref?: string;
+  /**
+   * Optional: render a slightly denser variant with reduced vertical padding.
+   * Useful when CategoryGrid is used in tighter layouts.
+   */
+  compact?: boolean;
 }
 
-const { eyebrow, title, items, class: className } = Astro.props as Props;
+const {
+  eyebrow,
+  title,
+  items,
+  class: className,
+  activeHref,
+  compact = false,
+} = Astro.props as Props;
 
 const VARIANTS = ["a", "b", "c", "d"];
 
@@ -37,10 +54,19 @@ const sectionId =
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "")}`;
+
+const sectionClass = [
+  "catgrid",
+  "section",
+  compact ? "catgrid--compact" : "",
+  className ?? "",
+]
+  .filter(Boolean)
+  .join(" ");
 ---
 
 <section
-  class={`catgrid section ${className ?? ""}`.trim()}
+  class={sectionClass}
   data-section="blog-category-grid"
   aria-labelledby={sectionId}
 >
@@ -62,19 +88,31 @@ const sectionId =
           const variant = VARIANTS[index % VARIANTS.length];
           const hasCount = typeof item.count === "number" && item.count > 0;
           const countLabel = hasCount
-            ? `${item.count} ${item.count === 1 ? "post" : "posts"}`
+            ? `${item.count} ${item.count === 1 ? "Post" : "Posts"}`
             : "";
           const cardLabel = hasCount
             ? `${item.title}, ${countLabel}`
             : item.title;
+          const isActive = typeof activeHref === "string" &&
+            activeHref.trim().length > 0 &&
+            item.href === activeHref;
+
+          const liClass = [
+            "cat",
+            `cat--${variant}`,
+            isActive ? "cat--active" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           return (
-            <li class={`cat cat--${variant}`}>
+            <li class={liClass}>
               <a
                 href={item.href}
                 class="cat__link card"
                 aria-label={cardLabel}
                 data-cta="blog-category"
+                aria-current={isActive ? "page" : undefined}
               >
                 {item.icon && (
                   <div

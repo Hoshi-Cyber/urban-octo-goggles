@@ -1,4 +1,6 @@
 ---
+// src/components/cards/SamplePreviewModal/index.astro
+
 /**
  * SamplePreviewModal — mobile-first, a11y-safe modal for sample previews
  * Props:
@@ -8,12 +10,17 @@
  *  - after: string
  *  - media?: { src: string; alt: string } | null
  *
- * Emits no events by default; consumers toggle `open` via parent state.
- * Optional close hooks: listen for `[data-close]` click or Escape key.
+ * Consumers control `open` via parent state.
+ * The modal emits a `sample-preview:close` CustomEvent on close so parents
+ * can synchronise state.
  */
 import "./SamplePreviewModal.css";
 
-interface Media { src: string; alt: string }
+interface Media {
+  src: string;
+  alt: string;
+}
+
 interface Props {
   open: boolean;
   title: string;
@@ -22,12 +29,71 @@ interface Props {
   media?: Media | null;
 }
 
-const { open = false, title, before, after, media = null } = Astro.props as Props;
+const { open = false, title, before, after, media = null } =
+  Astro.props as Props;
 
 // IDs for a11y labels
 const dialogId = "sample-preview-modal";
 const titleId = "sample-preview-title";
 const descId = "sample-preview-desc";
+
+/**
+ * Split a raw text block into "points" suitable for bullets.
+ * - Treats line breaks and "•" as explicit separators.
+ * - Further splits into sentences on ., !, ? while keeping punctuation.
+ * - Trims and removes empty fragments.
+ */
+function splitToPoints(value: string): string[] {
+  if (!value) return [];
+
+  // Normalise explicit bullet markers into line breaks
+  const lineChunks = value
+    .replace(/•/g, "\n")
+    .split(/[\r\n]+/)
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
+
+  const points: string[] = [];
+
+  lineChunks.forEach((chunk) => {
+    if (!chunk) return;
+
+    let buffer = "";
+
+    for (let i = 0; i < chunk.length; i++) {
+      const char = chunk[i];
+      const next = chunk[i + 1];
+      buffer += char;
+
+      const isSentenceEnd =
+        (char === "." || char === "!" || char === "?") &&
+        (next === " " || next === undefined);
+
+      if (isSentenceEnd) {
+        const sentence = buffer.trim();
+        if (sentence.length) {
+          points.push(sentence);
+        }
+        buffer = "";
+
+        // Skip the trailing space after punctuation if present
+        if (next === " ") {
+          i++;
+        }
+      }
+    }
+
+    const remaining = buffer.trim();
+    if (remaining.length) {
+      points.push(remaining);
+    }
+  });
+
+  return points;
+}
+
+const beforePoints = splitToPoints(before);
+const afterPoints = splitToPoints(after);
 ---
 
 <div
@@ -49,8 +115,17 @@ const descId = "sample-preview-desc";
     tabindex="-1"
   >
     <header class="spm__header">
-      <h2 id={titleId} class="spm__title">{title}</h2>
-      <button type="button" class="spm__close" data-close aria-label="Close preview">×</button>
+      <h2 id={titleId} class="spm__title">
+        {title}
+      </h2>
+      <button
+        type="button"
+        class="spm__close"
+        data-close
+        aria-label="Close sample preview"
+      >
+        ×
+      </button>
     </header>
 
     <div id={descId} class="spm__content">
@@ -68,14 +143,32 @@ const descId = "sample-preview-desc";
       )}
 
       <div class="spm__ba">
-        <section class="spm__block">
+        <section class="spm__block spm__block--before">
           <h3 class="spm__eyebrow">Before</h3>
-          <p class="spm__text">{before}</p>
+
+          {beforePoints.length ? (
+            <ul class="spm__list">
+              {beforePoints.map((point) => (
+                <li class="spm__text">{point}</li>
+              ))}
+            </ul>
+          ) : (
+            <p class="spm__text">{before}</p>
+          )}
         </section>
 
-        <section class="spm__block">
+        <section class="spm__block spm__block--after">
           <h3 class="spm__eyebrow">After</h3>
-          <p class="spm__text">{after}</p>
+
+          {afterPoints.length ? (
+            <ul class="spm__list">
+              {afterPoints.map((point) => (
+                <li class="spm__text">{point}</li>
+              ))}
+            </ul>
+          ) : (
+            <p class="spm__text">{after}</p>
+          )}
         </section>
       </div>
     </div>
@@ -83,48 +176,127 @@ const descId = "sample-preview-desc";
 
   <!-- framework-free focus trap + close handlers -->
   <script is:inline>
-    (() => {
-      const root = document.currentScript.closest('.spm');
+    (function () {
+      var scriptEl = document.currentScript;
+      if (!scriptEl) return;
+      var root = scriptEl.closest(".spm");
       if (!root) return;
 
-      const dialog = root.querySelector('.spm__dialog');
-      const closeEls = root.querySelectorAll('[data-close]');
-      const isOpen = () => root.classList.contains('is-open');
+      var dialog = root.querySelector(".spm__dialog");
+      var closeEls = root.querySelectorAll("[data-close]");
 
-      // Focus trap
-      const getFocusables = () =>
-        dialog.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+      if (!dialog) return;
 
-      const trap = (e) => {
+      var lastFocused = null;
+
+      function isOpen() {
+        return root.classList.contains("is-open");
+      }
+
+      function getFocusables() {
+        return dialog.querySelectorAll(
+          'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        );
+      }
+
+      function closeModal() {
         if (!isOpen()) return;
-        const items = getFocusables();
+
+        root.classList.remove("is-open");
+        root.setAttribute("aria-hidden", "true");
+
+        // Restore focus to the element that triggered the modal, if possible
+        if (
+          lastFocused &&
+          lastFocused instanceof HTMLElement &&
+          document.contains(lastFocused)
+        ) {
+          try {
+            lastFocused.focus();
+          } catch (_) {
+            // ignore
+          }
+        }
+
+        // Notify parent so it can update `open` state
+        var evt;
+        try {
+          evt = new CustomEvent("sample-preview:close", {
+            bubbles: true,
+            cancelable: false,
+          });
+        } catch (e) {
+          // Fallback for very old browsers
+          evt = document.createEvent("CustomEvent");
+          evt.initCustomEvent("sample-preview:close", true, false, null);
+        }
+        root.dispatchEvent(evt);
+      }
+
+      function handleKeydown(event) {
+        if (!isOpen()) return;
+
+        var e = event || window.event;
+
+        if (e.key === "Escape" || e.key === "Esc") {
+          e.preventDefault();
+          closeModal();
+          return;
+        }
+
+        if (e.key !== "Tab") return;
+
+        var items = getFocusables();
         if (!items.length) return;
-        const first = items[0], last = items[items.length - 1];
-        if (e.key === 'Tab') {
-          if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-          else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-        }
-        if (e.key === 'Escape') {
-          root.classList.remove('is-open');
-          root.setAttribute('aria-hidden', 'true');
-        }
-      };
 
-      // Open autofocus
-      const observe = new MutationObserver(() => {
-        if (isOpen()) {
-          dialog.focus();
+        var first = items[0];
+        var last = items[items.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
         }
+      }
+
+      // Observe open/close to handle focus
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function () {
+          if (isOpen()) {
+            // Capture the element that opened the modal
+            var active = document.activeElement;
+            if (active && active !== dialog) {
+              lastFocused = active;
+            }
+            // Move focus into the dialog
+            window.setTimeout(function () {
+              try {
+                dialog.focus();
+              } catch (_) {
+                // ignore
+              }
+            }, 0);
+            document.addEventListener("keydown", handleKeydown);
+          } else {
+            document.removeEventListener("keydown", handleKeydown);
+          }
+        });
       });
-      observe.observe(root, { attributes: true, attributeFilter: ['class'] });
 
-      // Close handlers
-      closeEls.forEach(el => el.addEventListener('click', () => {
-        root.classList.remove('is-open');
-        root.setAttribute('aria-hidden', 'true');
-      }, { passive: true }));
+      observer.observe(root, { attributes: true, attributeFilter: ["class"] });
 
-      document.addEventListener('keydown', trap);
+      // Backdrop + close button handlers
+      closeEls.forEach(function (el) {
+        el.addEventListener("click", function () {
+          closeModal();
+        });
+      });
     })();
   </script>
 </div>
