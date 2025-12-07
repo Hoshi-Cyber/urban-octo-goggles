@@ -1,14 +1,26 @@
 [
   {
+    "id": "linkedin-refresh",
+    "category": "addons",
+    "type": "addon",
+    "name": "LinkedIn Refresh",
+    "description": "Light optimisation for early-career and mid-level professionals. Includes headline rewrite, summary rewrite, and basic keyword tuning.",
+    "priceLabel": "KSh 2,000",
+    "badge": null,
+    "highlight": false,
+    "sortOrder": 10,
+    "isVisible": true
+  },
+  {
     "id": "linkedin-revamp",
     "category": "addons",
     "type": "addon",
-    "name": "Full LinkedIn revamp",
-    "description": "Complete LinkedIn profile rewrite with recruiter-focused keywords across headline, about, experience and skills.",
-    "priceLabel": "KSh 2,000",
+    "name": "Full LinkedIn Revamp",
+    "description": "Complete LinkedIn profile overhaul for maximum visibility, including headline, summary, achievement bullets, keyword strategy, and structure rebuild.",
+    "priceLabel": "KSh 4,500",
     "badge": "High impact",
     "highlight": true,
-    "sortOrder": 10,
+    "sortOrder": 20,
     "isVisible": true
   },
   {
@@ -20,7 +32,7 @@
     "priceLabel": "KSh 1,500",
     "badge": null,
     "highlight": false,
-    "sortOrder": 20,
+    "sortOrder": 30,
     "isVisible": true
   },
   {
@@ -32,7 +44,7 @@
     "priceLabel": "KSh 1,000",
     "badge": null,
     "highlight": false,
-    "sortOrder": 30,
+    "sortOrder": 40,
     "isVisible": true
   },
   {
@@ -43,18 +55,6 @@
     "description": "Extra keyword research for specialised sectors such as tech, NGO, banking and consulting.",
     "priceLabel": "KSh 1,000",
     "badge": "Great for specialised roles",
-    "highlight": false,
-    "sortOrder": 40,
-    "isVisible": true
-  },
-  {
-    "id": "annual-refresh",
-    "category": "addons",
-    "type": "addon",
-    "name": "Annual CV refresh",
-    "description": "One CV update within 12 months for promotions, role changes or new achievements.",
-    "priceLabel": "KSh 3,000",
-    "badge": "Future-proof",
     "highlight": false,
     "sortOrder": 50,
     "isVisible": true

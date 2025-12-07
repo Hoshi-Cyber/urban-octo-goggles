@@ -58,19 +58,27 @@ const linkClasses =
     </div>
     <p class="addons-item__desc">{description}</p>
   </th>
-  <td class="addons-item__cell addons-item__cell--meta">
-    <span class="addons-item__price">{priceLabel}</span>
 
-    {ctaHref && ctaLabel && (
-      <span class="addons-item__cta-wrapper">
-        <a
-          href={ctaHref}
-          class={linkClasses}
-          data-cta={`addons:${id}`}
-        >
-          {ctaLabel}
-        </a>
+  <td class="addons-item__cell addons-item__cell--meta">
+    <div class="addons-item__meta">
+      <span
+        class="addons-item__price"
+        aria-label={`Price for ${name}: ${priceLabel}`}
+      >
+        {priceLabel}
       </span>
-    )}
+
+      {ctaHref && ctaLabel && (
+        <span class="addons-item__cta-wrapper">
+          <a
+            href={ctaHref}
+            class={linkClasses}
+            data-cta={`addons:${id}`}
+          >
+            {ctaLabel}
+          </a>
+        </span>
+      )}
+    </div>
   </td>
 </tr>

@@ -33,9 +33,8 @@ const {
   categories = ["addons", "speed"],
   compact = false,
   showIntro = true,
-  // We keep these props but the CTA will be a small text link, not a big button
   ctaHref = "/contact/",
-  ctaLabel = "Add this option",
+  ctaLabel = "Add option",
   ctaVariant = "link",
 } = Astro.props as AddonsProps;
 
@@ -63,13 +62,15 @@ const CATEGORY_CONFIG: Record<
   },
 };
 
+// Filter visible add-ons
 const rawAddons = (addonsData as AddOn[]).filter(
   (item) => item.isVisible !== false
 );
 
+// Normalise requested categories
 const requestedCategories = new Set(categories);
 
-// Group visible add-ons by category and sort within each group
+// Group and sort by category
 const grouped = new Map<string, AddOn[]>();
 
 for (const item of rawAddons) {
@@ -117,16 +118,17 @@ for (const [, list] of grouped) {
             ? " addons__column--speed"
             : " addons__column--addons");
 
-        const tableId = `${headingId}-${category}`;
+        const columnId = `${headingId}-${category}`;
 
         return (
-          <section class={columnClass} aria-labelledby={tableId}>
-            <h3 id={tableId} class="h3 addons__column-title">
+          <section class={columnClass} aria-labelledby={columnId}>
+            <h3 id={columnId} class="h3 addons__column-title">
               {config.heading}
             </h3>
 
             <div class="addons__table-wrap">
-              <table class="addons__table">
+              {/* Desktop table (>= 640px) */}
+              <table class="addons__table addons__table--desktop">
                 <caption class="sr-only">{config.heading}</caption>
                 <colgroup>
                   <col class="addons__col addons__col--info" />
@@ -161,6 +163,51 @@ for (const [, list] of grouped) {
                   ))}
                 </tbody>
               </table>
+
+              {/* Mobile cards (< 640px) */}
+              <div class="addons__cards addons__cards--mobile">
+                {items.map((item) => {
+                  const cardClass =
+                    "addons-card" +
+                    (item.highlight ? " addons-card--highlight" : "") +
+                    (item.type === "speed" ? " addons-card--speed" : "") +
+                    (compact ? " addons-card--compact" : "");
+
+                  return (
+                    <article
+                      class={cardClass}
+                      data-addon-id={item.id}
+                      data-addon-type={item.type}
+                      data-addon-category={item.category}
+                    >
+                      <header class="addons-card__head">
+                        <h4 class="addons-card__name">{item.name}</h4>
+                        {item.badge && (
+                          <span class="addons-card__badge">{item.badge}</span>
+                        )}
+                      </header>
+
+                      <p class="addons-card__desc">{item.description}</p>
+
+                      <div class="addons-card__meta">
+                        <span class="addons-card__price">
+                          {item.priceLabel}
+                        </span>
+
+                        {ctaHref && ctaLabel && (
+                          <a
+                            href={ctaHref}
+                            class="addons-card__link"
+                            data-cta={`addons:${item.id}`}
+                          >
+                            {ctaLabel}
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
 
             {note && <p class="addons__note">{note}</p>}
