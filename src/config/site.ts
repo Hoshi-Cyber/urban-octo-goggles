@@ -20,7 +20,7 @@ export const siteConfig = {
      * This is aligned with the existing Blog home placeholder.
      */
     heroImage: {
-      src: "/images/blog/hero/blog-home-hero.webp",
+      src: "/assets/images/blog/hero/blog-home-hero.webp",
       alt: "CVWriting.co.ke blog – expert CV and career advice",
     },
 

@@ -37,10 +37,10 @@ if (!categoryEntries.length) {
 
 // Hero images per category (fallback to default)
 const HERO_IMAGES: Record<string, string> = {
-  "cv-tips": "/images/blog/hero/blog-home-hero-01.webp",
-  linkedin: "/images/blog/hero/blog-home-hero-02.webp",
-  "career-growth": "/images/blog/hero/blog-home-hero-03.webp",
-  "kenya-market": "/images/blog/hero/blog-home-hero-04.webp",
+  "cv-tips": "/assets/images/blog/hero/blog-home-hero-01.webp",
+  linkedin: "/assets/images/blog/hero/blog-home-hero-02.webp",
+  "career-growth": "/assets/images/blog/hero/blog-home-hero-03.webp",
+  "kenya-market": "/assets/images/blog/hero/blog-home-hero-04.webp",
 };
 
 // Separate OG images mapping so hero image and OG image can diverge if needed
@@ -52,7 +52,7 @@ const OG_IMAGES: Record<string, string> = {
 };
 
 const heroImageSrc =
-  HERO_IMAGES[cat] ?? "/images/blog/hero/blog-home-hero.webp";
+  HERO_IMAGES[cat] ?? "/assets/images/blog/hero/blog-home-hero.webp";
 
 const ogImageSrc = OG_IMAGES[cat] ?? heroImageSrc;
 

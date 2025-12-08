@@ -161,7 +161,7 @@ function normaliseHeroImage(
 ): BlogPostLayoutProps["heroImage"] | undefined {
   if (!input) return undefined;
 
-  // Case 1: plain string path, e.g. "/images/blog/hero/blog-home-hero-02.webp"
+  // Case 1: plain string path, e.g. "/assets/images/blog/hero/blog-home-hero-02.webp"
   if (typeof input === "string") {
     return {
       src: input,
