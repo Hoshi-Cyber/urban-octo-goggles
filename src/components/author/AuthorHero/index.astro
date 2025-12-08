@@ -1,0 +1,256 @@
+---
+// src/components/author/AuthorHero/index.astro
+
+import "./AuthorHero.css";
+
+export interface AuthorWithCount {
+  // Keep loose typing to avoid fighting the existing schema;
+  // we only rely on a small set of known / optional fields.
+  [key: string]: any;
+}
+
+export interface Props {
+  author: AuthorWithCount;
+}
+
+const { author } = Astro.props as Props;
+
+// Core identity
+const displayName = author.displayName ?? author.name ?? "Author";
+const role =
+  author.role ??
+  author.title ??
+  author.tagline ??
+  author.position ??
+  "Editorial arm of CVWriting.co.ke";
+
+const summary =
+  author.summary ??
+  author.bio ??
+  author.description ??
+  author.intro ??
+  "";
+
+// Focus / speciality text (used in the second stat card)
+const focus =
+  author.focus ??
+  author.specialism ??
+  author.primaryTopic ??
+  "CVs & careers in Kenya";
+
+// Avatar image (or initials)
+const avatarSrc =
+  author.avatar?.src ??
+  author.avatar ??
+  author.photo?.src ??
+  author.photo ??
+  author.image?.src ??
+  undefined;
+
+const avatarAlt =
+  author.avatar?.alt ??
+  author.photo?.alt ??
+  `${displayName} avatar`;
+
+// Optional hero background image (if provided on the author object)
+const heroImageSrc =
+  author.heroImage?.src ??
+  author.heroImage ??
+  author.bannerImage?.src ??
+  author.bannerImage ??
+  undefined;
+
+// Real article count (injected by AuthorPageTemplate)
+const postsCount = Number.isFinite(author.postsCount)
+  ? Number(author.postsCount)
+  : 0;
+
+// Social / web links – only render buttons if URLs exist
+const websiteUrl = author.website ?? author.websiteUrl ?? author.url ?? "";
+const linkedinUrl = author.linkedin ?? author.linkedinUrl ?? "";
+const facebookUrl = author.facebook ?? author.facebookUrl ?? "";
+const xUrl =
+  author.x ??
+  author.xUrl ??
+  author.twitter ??
+  author.twitterUrl ??
+  "";
+const instagramUrl = author.instagram ?? author.instagramUrl ?? "";
+const quoraUrl = author.quora ?? author.quoraUrl ?? "";
+
+// Does this author have at least one external profile link?
+const hasSocials =
+  !!websiteUrl ||
+  !!linkedinUrl ||
+  !!facebookUrl ||
+  !!xUrl ||
+  !!instagramUrl ||
+  !!quoraUrl;
+
+// CTA destinations
+const guidesHref = `/blog/?author=${author.slug ?? ""}`;
+const pricingHref = "/pricing/";
+---
+
+<section
+  class="author-hero"
+  aria-labelledby="author-hero-title"
+  style={heroImageSrc ? `--author-hero-image: url('${heroImageSrc}')` : undefined}
+>
+  <div class="container author-hero__inner">
+    <div class="author-hero__main">
+      <div class="author-hero__media">
+        <div class="author-hero__avatar-shell">
+          {avatarSrc ? (
+            <img
+              src={avatarSrc}
+              alt={avatarAlt}
+              loading="lazy"
+              decoding="async"
+              class="author-hero__avatar"
+            />
+          ) : (
+            <span aria-hidden="true" class="author-hero__initials">
+              {displayName.charAt(0)}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div class="author-hero__content">
+        <p class="author-hero__eyebrow label-sm label-caps">
+          {author.eyebrow ?? "Editorial author"}
+        </p>
+
+        {/* H1 uses global h1 styles; component class only controls spacing */}
+        <h1 id="author-hero-title" class="author-hero__title">
+          {displayName}
+        </h1>
+
+        {role && <p class="author-hero__role">{role}</p>}
+
+        {summary && <p class="author-hero__summary">{summary}</p>}
+
+        <div class="author-hero__stats" aria-label="Author highlights">
+          <div class="author-hero__stat">
+            <p class="author-hero__stat-label">Articles published</p>
+            <p class="author-hero__stat-value">
+              {postsCount > 0 ? postsCount : "—"}
+            </p>
+          </div>
+
+          <div class="author-hero__stat">
+            <p class="author-hero__stat-label">Focus</p>
+            <p class="author-hero__stat-value">{focus}</p>
+          </div>
+        </div>
+
+        <div class="author-hero__actions">
+          <a
+            href={guidesHref}
+            class="btn btn-primary btn-md author-hero__btn"
+            data-cta="author-hero:guides"
+          >
+            <span class="btn__inner">
+              <span class="btn__label">Explore CV &amp; career guides</span>
+            </span>
+          </a>
+
+          <a
+            href={pricingHref}
+            class="btn btn-outline btn-md author-hero__btn author-hero__btn--secondary"
+            data-cta="author-hero:pricing"
+          >
+            <span class="btn__inner">
+              <span class="btn__label">View CV writing packages</span>
+            </span>
+          </a>
+        </div>
+
+        {hasSocials && (
+          <div class="author-hero__footer" aria-label="Author social profiles">
+            <div class="author-hero__socials">
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:website"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">Website</span>
+                  </span>
+                </a>
+              )}
+
+              {linkedinUrl && (
+                <a
+                  href={linkedinUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:linkedin"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">LinkedIn</span>
+                  </span>
+                </a>
+              )}
+
+              {facebookUrl && (
+                <a
+                  href={facebookUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:facebook"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">Facebook</span>
+                  </span>
+                </a>
+              )}
+
+              {xUrl && (
+                <a
+                  href={xUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:x"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">X</span>
+                  </span>
+                </a>
+              )}
+
+              {instagramUrl && (
+                <a
+                  href={instagramUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:instagram"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">Instagram</span>
+                  </span>
+                </a>
+              )}
+
+              {quoraUrl && (
+                <a
+                  href={quoraUrl}
+                  class="btn btn-ghost btn-sm author-hero__social"
+                  data-cta="author-hero:quora"
+                  rel="noopener noreferrer"
+                >
+                  <span class="btn__inner">
+                    <span class="btn__label">Quora</span>
+                  </span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

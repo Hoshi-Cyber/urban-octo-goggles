@@ -1,0 +1,52 @@
+---
+// src/components/author/AuthorServicesBridge/index.astro
+
+import "./AuthorServicesBridge.css";
+
+import LeadCaptureBanner from "../../cta/LeadCaptureBanner/index.astro";
+import type { EditorialAuthor } from "../../../../data/authors/schema";
+
+export interface Props {
+  id?: string;
+  author: EditorialAuthor;
+  eyebrow?: string;
+  title?: string;
+  sub?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+}
+
+const {
+  id = "author-services-cta",
+  author,
+  eyebrow = "Turn reading into real CV results",
+  title = "Ready to turn these insights into a stronger CV?",
+  sub = "If you recognise yourself in these articles, you’re exactly who CVWriting.co.ke serves. Work with our expert writers to transform your CV, LinkedIn profile, and job search strategy into something Kenyan employers actually respond to.",
+  primaryHref = "/pricing/",
+  primaryLabel = "View CV writing packages",
+  secondaryHref = "/samples/",
+  secondaryLabel = "See real CV samples",
+} = Astro.props as Props;
+---
+
+<section
+  id={id}
+  class="section author-services-bridge"
+  aria-labelledby="author-services-bridge-title"
+>
+  <div class="container author-services-bridge__inner">
+    <LeadCaptureBanner
+      eyebrow={eyebrow}
+      title={title}
+      sub={sub}
+      primaryHref={primaryHref}
+      primaryLabel={primaryLabel}
+      secondaryHref={secondaryHref}
+      secondaryLabel={secondaryLabel}
+      data-author-id={author.id}
+      data-author-slug={author.slug}
+    />
+  </div>
+</section>

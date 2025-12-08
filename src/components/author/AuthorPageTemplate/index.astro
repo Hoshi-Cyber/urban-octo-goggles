@@ -1,0 +1,93 @@
+---
+// src/components/author/AuthorPageTemplate/index.astro
+
+import "./AuthorPageTemplate.css";
+
+import AuthorHero from "../AuthorHero/index.astro";
+import AuthorTopicFilters from "../AuthorTopicFilters/index.astro";
+import AuthorPostFeedCore from "../AuthorPostFeedCore/index.astro";
+import AuthorPostFeedExtended from "../AuthorPostFeedExtended/index.astro";
+import AuthorServicesBridge from "../AuthorServicesBridge/index.astro";
+
+import type { EditorialAuthor } from "../../../data/authors/schema";
+
+export type FeedPost = {
+  url: string;
+  frontmatter: {
+    title: string;
+    description?: string;
+    date: Date;
+    readingTime?: number | string;
+    category: string;
+    cover?: { src: string; alt?: string };
+  };
+};
+
+export interface Props {
+  author: EditorialAuthor;
+  posts: FeedPost[];
+}
+
+const { author, posts = [] } = Astro.props as Props;
+
+// Normalise category slugs
+const coreCategories = (author.coreCategories || []).map((c) =>
+  String(c).toLowerCase().trim()
+);
+
+const isCoreCategory = (value: unknown): boolean => {
+  if (!value || typeof value !== "string") return false;
+  const slug = value.toLowerCase().trim();
+  return coreCategories.includes(slug);
+};
+
+const corePosts = posts.filter((post) =>
+  isCoreCategory(post.frontmatter.category)
+);
+const extendedPosts = posts.filter(
+  (post) => !isCoreCategory(post.frontmatter.category)
+);
+
+const topicFilterItems = [
+  {
+    label: "CV & career guides",
+    href: "#author-core-posts",
+    dataCta: "author-core-posts",
+  },
+  {
+    label: "Extended topics",
+    href: "#author-extended-posts",
+    dataCta: "author-extended-posts",
+  },
+  {
+    label: "All articles",
+    href: `/blog/?author=${author.slug}`,
+    dataCta: "author-all-articles",
+  },
+];
+
+// Use the actual number of posts for the hero "Articles published" stat
+const postsCount = posts.length;
+
+// Pass an augmented author object into the hero so it can read postsCount
+const authorWithCount = {
+  ...author,
+  postsCount,
+};
+---
+
+<main id="main" class="author-page">
+  <AuthorHero author={authorWithCount} />
+
+  <AuthorTopicFilters
+    items={topicFilterItems}
+    align="left"
+    ariaLabel={`Filter topics for ${author.displayName}`}
+  />
+
+  <AuthorPostFeedCore author={author} posts={corePosts} />
+
+  <AuthorPostFeedExtended author={author} posts={extendedPosts} />
+
+  {author.showServicesCta && <AuthorServicesBridge author={author} />}
+</main>

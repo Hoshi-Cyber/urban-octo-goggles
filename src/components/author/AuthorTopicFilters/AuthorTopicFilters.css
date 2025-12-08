@@ -1,0 +1,97 @@
+/* src/components/author/AuthorTopicFilters/AuthorTopicFilters.css */
+
+.author-topic-filters {
+  padding-block: var(--space-4, 1.5rem);
+  background: transparent;
+}
+
+.author-topic-filters__inner {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar in a non-destructive way */
+.author-topic-filters__inner::-webkit-scrollbar {
+  height: 0;
+}
+
+.author-topic-filters__list {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-2, 0.75rem);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Alignment variants */
+.author-topic-filters--left .author-topic-filters__list {
+  justify-content: flex-start;
+}
+
+.author-topic-filters--center .author-topic-filters__list {
+  justify-content: center;
+}
+
+.author-topic-filters--between .author-topic-filters__list {
+  justify-content: space-between;
+}
+
+/* Individual item */
+.author-topic-filters__item {
+  flex: 0 0 auto;
+}
+
+/* Chip styling */
+.author-topic-filters__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-3, 1rem);
+  padding-block: 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.5));
+  background: var(--surface-strong, #ffffff);
+  font-size: var(--fs-xs, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  text-decoration: none;
+  color: var(--text-muted-strong, #4b5563);
+  white-space: nowrap;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 120ms ease;
+}
+
+.author-topic-filters__chip:hover,
+.author-topic-filters__chip:focus-visible {
+  border-color: var(--accent-subtle, #bfdbfe);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent-strong, #1d4ed8);
+  box-shadow: var(--shadow-subtle, 0 1px 2px rgba(15, 23, 42, 0.06));
+  transform: translateY(-1px);
+}
+
+.author-topic-filters__chip:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.author-topic-filters__chip-label {
+  line-height: 1.2;
+}
+
+/* Larger screens: allow wrapping and tighten spacing if needed */
+@media (min-width: 768px) {
+  .author-topic-filters__inner {
+    overflow-x: visible;
+  }
+
+  .author-topic-filters__list {
+    flex-wrap: wrap;
+  }
+}

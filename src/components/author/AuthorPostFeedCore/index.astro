@@ -1,0 +1,49 @@
+---
+// src/components/author/AuthorPostFeedCore/index.astro
+
+import "../../blog/compose/PostFeedLatest/PostFeedLatest.css";
+import "./AuthorPostFeedCore.css";
+
+import PostFeedLatest from "../../blog/compose/PostFeedLatest/index.astro";
+import type { EditorialAuthor } from "../../../../data/authors/schema";
+
+export interface Props {
+  id?: string;
+  author: EditorialAuthor;
+  posts: any[];
+  eyebrow?: string;
+  title?: string;
+  sub?: string;
+}
+
+const {
+  id = "author-core-posts",
+  author,
+  posts = [],
+  eyebrow = "Core vertical",
+  title = `${author.displayName} on CVs, careers & job search`,
+  sub = "Deep dives on CV strategy, Kenyan job-market realities, LinkedIn positioning, and practical career moves."
+} = Astro.props as Props;
+
+const hasPosts = Array.isArray(posts) && posts.length > 0;
+---
+
+{hasPosts && (
+  <section id={id} class="section author-post-feed-core">
+    <div class="container">
+      <header class="section-head author-post-feed-core__head">
+        <p class="section-eyebrow author-post-feed-core__eyebrow">
+          {eyebrow}
+        </p>
+        <h2 class="section-title author-post-feed-core__title">
+          {title}
+        </h2>
+        <p class="section-subtitle author-post-feed-core__sub">
+          {sub}
+        </p>
+      </header>
+
+      <PostFeedLatest items={posts} />
+    </div>
+  </section>
+)}

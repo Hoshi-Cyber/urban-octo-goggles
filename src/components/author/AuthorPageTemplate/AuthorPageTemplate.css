@@ -1,0 +1,7 @@
+/* src/components/author/AuthorPageTemplate/AuthorPageTemplate.css */
+
+.author-page {
+  min-height: 100vh;
+  background-color: var(--surface-base, #f5f5f5);
+  color: var(--color-text, #020617);
+}

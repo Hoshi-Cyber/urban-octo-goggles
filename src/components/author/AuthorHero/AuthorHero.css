@@ -1,0 +1,280 @@
+/* src/components/author/AuthorHero/AuthorHero.css */
+
+.author-hero {
+  position: relative;
+  padding-block: clamp(var(--space-8), 8vw, var(--space-12));
+  background-color: var(--color-surface-alt, var(--color-surface));
+  background-image:
+    radial-gradient(
+      circle at top left,
+      color-mix(in oklab, var(--color-primary) 12%, transparent) 0,
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      color-mix(in oklab, var(--color-accent) 10%, transparent) 0,
+      transparent 60%
+    ),
+    var(--author-hero-image, none);
+  background-repeat: no-repeat;
+  background-size:
+    420px 420px,
+    380px 380px,
+    cover;
+  background-position:
+    top left,
+    bottom right,
+    center;
+}
+
+.author-hero__inner {
+  max-width: var(--container-max, 72rem);
+  margin-inline: auto;
+}
+
+.author-hero__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+/* Avatar / media column */
+
+.author-hero__media {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.author-hero__avatar-shell {
+  position: relative;
+  inline-size: clamp(7.5rem, 24vw, 9rem);
+  block-size: clamp(7.5rem, 24vw, 9rem);
+  border-radius: var(--radius-2xl, 1.5rem);
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--color-surface),
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 24%,
+      var(--color-surface-alt) 76%
+    )
+  );
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.author-hero__avatar {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.author-hero__initials {
+  font-family: var(--font-sans);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Content column */
+
+.author-hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.author-hero__eyebrow {
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.author-hero__title {
+  margin: 0;
+  /* All size/weight handled by global h1 styles */
+  color: var(--color-ink);
+}
+
+.author-hero__role {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.author-hero__summary {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 60ch;
+  color: var(--color-text);
+}
+
+/* Stats row */
+
+.author-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.author-hero__stat {
+  min-inline-size: 11rem;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-surface-alt) 86%);
+}
+
+.author-hero__stat-label {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.author-hero__stat-value {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* Primary hero CTA actions */
+
+.author-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.author-hero__btn {
+  min-width: 0;
+}
+
+/* Strong secondary CTA styling for pricing button */
+.author-hero__btn--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 30%,
+    var(--color-surface-alt) 70%
+  );
+  box-shadow: var(--shadow-xs);
+}
+
+.author-hero__btn--secondary:hover,
+.author-hero__btn--secondary:focus-visible {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 14%,
+    var(--color-surface) 86%
+  );
+}
+
+/* Social buttons footer */
+
+.author-hero__footer {
+  margin-top: var(--space-4);
+}
+
+.author-hero__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Premium pill-like social buttons */
+.author-hero__social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-surface) 92%, var(--color-primary-soft, var(--color-primary)) 8%),
+    color-mix(in oklab, var(--color-surface) 96%, var(--color-primary-soft, var(--color-primary)) 4%)
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 24%, var(--color-surface-alt) 76%);
+  font-size: var(--fs-xs);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-xs);
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.author-hero__social .btn__inner {
+  gap: var(--space-1);
+}
+
+.author-hero__social .btn__label {
+  white-space: nowrap;
+}
+
+.author-hero__social:hover {
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 16%,
+    var(--color-surface) 84%
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 36%,
+    var(--color-surface-alt) 64%
+  );
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* RESPONSIVE LAYOUTS --------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .author-hero__main {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-6);
+  }
+
+  .author-hero__media {
+    justify-content: center;
+  }
+
+  .author-hero__avatar-shell {
+    inline-size: clamp(8.5rem, 16vw, 10rem);
+    block-size: clamp(8.5rem, 16vw, 10rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .author-hero {
+    padding-block: clamp(var(--space-10), 7vw, var(--space-14));
+  }
+
+  .author-hero__main {
+    column-gap: var(--space-8);
+  }
+
+  .author-hero__stats {
+    gap: var(--space-4);
+  }
+}
+
+/* ACCESSIBILITY -------------------------------------------------------- */
+
+.author-hero :where(a, button):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

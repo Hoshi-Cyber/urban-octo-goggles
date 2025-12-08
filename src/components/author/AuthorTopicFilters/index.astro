@@ -1,0 +1,58 @@
+---
+// src/components/author/AuthorTopicFilters/index.astro
+
+import "./AuthorTopicFilters.css";
+
+export interface TopicFilterItem {
+  label: string;
+  href: string;
+  dataCta?: string;
+}
+
+export type TopicFilterAlign = "left" | "center" | "between";
+
+export interface Props {
+  id?: string;
+  items: TopicFilterItem[];
+  align?: TopicFilterAlign;
+  ariaLabel?: string;
+}
+
+const {
+  id = "author-topic-filters",
+  items = [],
+  align = "left",
+  ariaLabel = "Filter topics"
+} = Astro.props as Props;
+
+const hasItems = Array.isArray(items) && items.length > 0;
+
+const alignClass =
+  align === "center"
+    ? "author-topic-filters--center"
+    : align === "between"
+    ? "author-topic-filters--between"
+    : "author-topic-filters--left";
+---
+
+{hasItems && (
+  <nav id={id} class={`author-topic-filters ${alignClass}`} aria-label={ariaLabel}>
+    <div class="container author-topic-filters__inner">
+      <ul class="author-topic-filters__list">
+        {items.map((item) => (
+          <li class="author-topic-filters__item">
+            <a
+              href={item.href}
+              class="author-topic-filters__chip"
+              data-cta={item.dataCta}
+            >
+              <span class="author-topic-filters__chip-label">
+                {item.label}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}

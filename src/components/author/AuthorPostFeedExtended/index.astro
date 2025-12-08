@@ -1,0 +1,49 @@
+---
+// src/components/author/AuthorPostFeedExtended/index.astro
+
+import "../../blog/compose/PostFeedLatest/PostFeedLatest.css";
+import "./AuthorPostFeedExtended.css";
+
+import PostFeedLatest from "../../blog/compose/PostFeedLatest/index.astro";
+import type { EditorialAuthor } from "../../../../data/authors/schema";
+
+export interface Props {
+  id?: string;
+  author: EditorialAuthor;
+  posts: any[];
+  eyebrow?: string;
+  title?: string;
+  sub?: string;
+}
+
+const {
+  id = "author-extended-posts",
+  author,
+  posts = [],
+  eyebrow = "Extended topics",
+  title = `${author.displayName} on broader work & life at work`,
+  sub = "Complementary perspectives on writing, productivity, and the wider Kenyan work landscape that still connect back to better career outcomes."
+} = Astro.props as Props;
+
+const hasPosts = Array.isArray(posts) && posts.length > 0;
+---
+
+{hasPosts && (
+  <section id={id} class="section author-post-feed-extended">
+    <div class="container">
+      <header class="section-head author-post-feed-extended__head">
+        <p class="section-eyebrow author-post-feed-extended__eyebrow">
+          {eyebrow}
+        </p>
+        <h2 class="section-title author-post-feed-extended__title">
+          {title}
+        </h2>
+        <p class="section-subtitle author-post-feed-extended__sub">
+          {sub}
+        </p>
+      </header>
+
+      <PostFeedLatest items={posts} />
+    </div>
+  </section>
+)}

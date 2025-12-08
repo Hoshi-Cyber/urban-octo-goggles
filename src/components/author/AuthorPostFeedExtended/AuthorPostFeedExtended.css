@@ -1,0 +1,45 @@
+/* src/components/author/AuthorPostFeedExtended/AuthorPostFeedExtended.css */
+
+.author-post-feed-extended {
+  background: var(--surface-soft, #f7f8fb);
+  padding-block: var(--space-7, 3.5rem) var(--space-8, 4.5rem);
+}
+
+.author-post-feed-extended__head {
+  margin-bottom: var(--space-5, 2rem);
+}
+
+.author-post-feed-extended__eyebrow {
+  font-size: var(--fs-xs, 0.8rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+  margin: 0 0 var(--space-1, 0.4rem);
+}
+
+.author-post-feed-extended__title {
+  margin: 0 0 var(--space-2, 0.75rem);
+  font-size: var(--fs-2xl, 1.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text-strong, #0f172a);
+}
+
+.author-post-feed-extended__sub {
+  margin: 0;
+  max-width: 38rem;
+  font-size: var(--fs-sm, 0.95rem);
+  line-height: 1.7;
+  color: var(--text-muted, #6b7280);
+}
+
+@media (min-width: 1024px) {
+  .author-post-feed-extended {
+    padding-block: var(--space-8, 4.5rem) var(--space-9, 5.5rem);
+  }
+
+  .author-post-feed-extended__title {
+    font-size: var(--fs-3xl, 2rem);
+  }
+}

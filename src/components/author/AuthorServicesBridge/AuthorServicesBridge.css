@@ -1,0 +1,134 @@
+/* src/components/author/AuthorServicesBridge/AuthorServicesBridge.css */
+
+/* Outer dark band – now much more compact vertically */
+.author-services-bridge {
+  position: relative;
+  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
+  background: var(
+    --surface-strong,
+    linear-gradient(
+      135deg,
+      #020617 0%,
+      #020617 26%,
+      #020b3a 60%,
+      #020617 100%
+    )
+  );
+  color: var(--color-neutral-0, #f9fafb);
+}
+
+/* Inner width: keep CTA focused and aligned with author content */
+.author-services-bridge__inner {
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* COMPACT NESTED CTA (LeadCaptureBanner) ONLY INSIDE THIS BRIDGE     */
+/* ------------------------------------------------------------------ */
+
+/* 1) Reduce the band padding of the nested CTA */
+.author-services-bridge [data-section="lead-cta"] {
+  padding-block: var(--space-3);
+}
+
+/* Remove extra side padding from nested .container so we don't double-gutter */
+.author-services-bridge [data-section="lead-cta"] .container {
+  padding-inline: 0;
+}
+
+/* 2) Make the inner CTA card more compact */
+.author-services-bridge [data-section="lead-cta"] .lead {
+  padding: var(--space-4);
+}
+
+/* Slightly tighter layout gaps inside the CTA */
+.author-services-bridge [data-section="lead-cta"] .lead__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.author-services-bridge [data-section="lead-cta"] .lead__body {
+  gap: var(--space-2);
+}
+
+.author-services-bridge [data-section="lead-cta"] .lead__actions {
+  gap: var(--space-2);
+}
+
+/* 3) Slightly smaller typography for the bridge context */
+.author-services-bridge [data-section="lead-cta"] .lead__title {
+  font-size: var(--fs-xl);
+  line-height: 1.25;
+}
+
+.author-services-bridge [data-section="lead-cta"] .lead__sub {
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+/* Keep buttons full-width on mobile but with less “air” around them */
+.author-services-bridge [data-section="lead-cta"] .btn {
+  inline-size: 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/* RESPONSIVE TWEAKS                                                  */
+/* ------------------------------------------------------------------ */
+
+@media (min-width: 640px) {
+  .author-services-bridge {
+    padding-block: clamp(var(--space-3), 2vw, var(--space-4));
+  }
+
+  .author-services-bridge [data-section="lead-cta"] {
+    padding-block: var(--space-3);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead__title {
+    font-size: var(--fs-2xl);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead__inner {
+    gap: var(--space-3);
+  }
+}
+
+@media (min-width: 768px) {
+  /* Keep the two-column layout from LeadCaptureBanner but with tighter spacing */
+  .author-services-bridge [data-section="lead-cta"] .lead__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead__actions {
+    justify-content: flex-end;
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .btn {
+    inline-size: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .author-services-bridge {
+    padding-block: var(--space-4);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .author-services-bridge [data-section="lead-cta"] .lead__title {
+    font-size: var(--fs-2xl);
+  }
+}

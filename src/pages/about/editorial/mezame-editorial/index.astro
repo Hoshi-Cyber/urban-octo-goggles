@@ -1,0 +1,87 @@
+---
+/**
+ * Author Page – Mezame Editorial
+ * Path: src/pages/about/editorial/mezame-editorial/index.astro
+ */
+
+import BaseLayout from "../../../../components/layout/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+import AuthorPageTemplate, {
+  type FeedPost
+} from "../../../../components/author/AuthorPageTemplate/index.astro";
+
+import { mezameEditorialAuthor as author } from "../../../../data/authors";
+
+// SEO shell
+const pageTitle = `${author.displayName} – Articles & Guides – CVWriting.co.ke`;
+const pageDescription =
+  "Read articles by Mezame Editorial, the editorial arm of CVWriting.co.ke, featuring practical guidance on CVs, careers, job search and professional communication.";
+
+const seo = {
+  canonical: `/about/editorial/${author.slug}/`,
+};
+
+// Fetch posts for this author
+const allPosts = await getCollection("blog", ({ data }) => data.authorId === author.id);
+
+// Mapping helpers (shared with other author pages via pattern)
+const PLACEHOLDER = "/assets/images/placeholder/blog-hero.webp";
+
+const safeString = (value: unknown): string => {
+  if (typeof value !== "string") return "";
+  return value.trim();
+};
+
+const isBad = (v: unknown) =>
+  v === null ||
+  v === undefined ||
+  (typeof v === "string" && (!v.trim() || v.includes("undefined") || v.includes("null")));
+
+const slugify = (s: string) =>
+  String(s || "uncategorized")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+const posts: FeedPost[] = allPosts
+  .filter((p) => p?.data?.title && p?.data?.date && p?.slug)
+  .map((p) => {
+    const postSlug = p.slug.split("/").pop() || p.slug;
+    const categorySlug = slugify(safeString(p.data.category || "uncategorized"));
+
+    let coverSrc: string | null = null;
+    const cover = p.data.cover;
+    const ogImage = p.data.ogImage;
+
+    if (cover && typeof cover === "object" && typeof (cover as any).src === "string") {
+      coverSrc = (cover as any).src;
+    } else if (typeof cover === "string") {
+      coverSrc = cover;
+    } else if (typeof ogImage === "string") {
+      coverSrc = ogImage;
+    }
+
+    if (isBad(coverSrc)) coverSrc = PLACEHOLDER;
+
+    return {
+      url: `/blog/${categorySlug}/${postSlug}/`,
+      frontmatter: {
+        title: safeString(p.data.title),
+        description: safeString(p.data.description || ""),
+        date: new Date(p.data.date),
+        readingTime:
+          (p.data as any).readingTimeMinutes ?? (p.data as any).readingTime ?? undefined,
+        category: categorySlug || "uncategorized",
+        cover: coverSrc ? { src: coverSrc, alt: safeString(p.data.title) } : undefined,
+      },
+    };
+  })
+  .filter((p) => !isBad(p.frontmatter.cover?.src))
+  .sort((a, b) => b.frontmatter.date.getTime() - a.frontmatter.date.getTime());
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} seo={seo}>
+  <AuthorPageTemplate author={author} posts={posts} />
+</BaseLayout>

@@ -1,0 +1,49 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ogLightBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7f5ef"/>
+      <stop offset="100%" stop-color="#e5ecec"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#ogLightBg)"/>
+  <rect x="64" y="64" width="1072" height="502" rx="40" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+  <circle cx="220" cy="246" r="80" fill="#1b3637"/>
+  <circle cx="220" cy="246" r="74" fill="#f7f5ef"/>
+  <circle cx="220" cy="246" r="74" fill="none" stroke="#d4ab18" stroke-width="4"/>
+  <text x="220" y="252" text-anchor="middle" dominant-baseline="central"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="52" font-weight="700" fill="#1b3637" letter-spacing="5">
+    ME
+  </text>
+  <text x="340" y="210"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="18" font-weight="600" fill="#6b7280" letter-spacing="4">
+    EDITORIAL AUTHOR
+  </text>
+  <text x="340" y="262"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="42" font-weight="700" fill="#111827">
+    {AUTHOR_NAME}
+  </text>
+  <text x="340" y="305"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="22" font-weight="500" fill="#374151">
+    {AUTHOR_TAGLINE}
+  </text>
+  <text x="340" y="360"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="18" font-weight="500" fill="#4b5563">
+    Articles &amp; guides on CVs, careers, and the Kenyan job market.
+  </text>
+  <rect x="340" y="404" width="260" height="46" rx="23" fill="#1b3637"/>
+  <text x="470" y="434" text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="18" font-weight="600" fill="#f9fafb">
+    cvwriting.co.ke
+  </text>
+  <text x="64" y="596"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="18" font-weight="500" fill="#6b7280">
+    AUTHOR PAGE • {AUTHOR_SLUG}
+  </text>
+</svg>
