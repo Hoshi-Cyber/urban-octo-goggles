@@ -6,7 +6,7 @@ import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
 import FAQQuickNav from "../../components/faq/FAQQuickNav/index.astro";
 import FAQSupportStrip from "../../components/sections/faq/FAQSupportStrip/index.astro";
 import FAQSidebar from "../../components/sections/faq/FAQSidebar/index.astro";
-import { getFaqPageFaqs } from "../../data/faqs";
+import { getFaqPageFaqs } from "../../data/faqs/faqs.data";
 
 const title = "Frequently Asked Questions";
 const description =
@@ -16,6 +16,7 @@ const seo = {
 };
 
 type FaqItem = {
+  id: string;
   q: string;
   a: string;
 };
@@ -49,6 +50,7 @@ const resolvedGroups = resolvedFaqPage.groups;
 
 // Map resolved items into the shape expected by FAQAccordion
 const topQuestions: FaqItem[] = resolvedTopQuestions.map((item) => ({
+  id: item.id,
   q: item.question,
   a: item.answer,
 }));
@@ -57,6 +59,7 @@ const faqGroups: FaqGroup[] = resolvedGroups.map((group) => ({
   id: group.id,
   title: group.title,
   items: group.items.map((item) => ({
+    id: item.id,
     q: item.question,
     a: item.answer,
   })),
@@ -315,3 +318,9 @@ const faqSidebarCards: SidebarCard[] = [
     </div>
   </main>
 </BaseLayout>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+</style>

@@ -1,10 +1,10 @@
 // src/data/faqs.ts
 // Single loader for all FAQ data (Fix Plan 207 – section 3)
 
-import itemsJson from "./faqs/items.json";
-import groupsJson from "./faqs/groups.json";
-import faqPageConfigJson from "./faqs/faq-page.json";
-import pricingConfigJson from "./faqs/pricing.json";
+import itemsJson from "./faq-items.json";
+import groupsJson from "./faq-groups.json";
+import faqPageConfigJson from "./faq-page.json";
+import pricingConfigJson from "./faq-pricing.json";
 
 // Types from schema
 import type {
@@ -14,7 +14,7 @@ import type {
   FaqPageConfig,
   FaqItemMap,
   FaqGroupMap,
-} from "./faqs/schema";
+} from "./schema";
 
 // Cast JSON to typed maps/configs
 const itemMap = itemsJson as FaqItemMap;
@@ -120,7 +120,7 @@ function resolvePage(config: FaqPageConfig): ResolvedFaqPage {
 /**
  * Main FAQ page ("/faq/").
  * Usage in src/pages/faq/index.astro:
- *   import { getFaqPageFaqs } from "../../data/faqs";
+ *   import { getFaqPageFaqs } from "../../data/faqs/faqs.data/faqs.data";
  *   const { topQuestions, groups: faqGroups } = getFaqPageFaqs();
  */
 export function getFaqPageFaqs(): ResolvedFaqPage {
@@ -130,7 +130,7 @@ export function getFaqPageFaqs(): ResolvedFaqPage {
 /**
  * Pricing page ("/pricing/") FAQs.
  * Usage in src/pages/pricing/index.astro:
- *   import { getPricingFaqs } from "../../data/faqs";
+ *   import { getPricingFaqs } from "../../data/faqs/faqs.data/faqs.data";
  *   const { topQuestions, groups } = getPricingFaqs();
  */
 export function getPricingFaqs(): ResolvedFaqPage {

@@ -6,7 +6,7 @@ export type FaqGroupId = string;
 export type FaqPageSlug = string;
 
 /**
- * Single FAQ item, stored in src/data/faqs/items.json
+ * Single FAQ item, stored in src/data/faqs/faq-items.json
  *
  * Example JSON shape:
  * {
@@ -19,7 +19,7 @@ export type FaqPageSlug = string;
  * }
  */
 export interface FaqItem {
-  /** Stable, URL-safe ID (kebab-case). Matches the key in items.json. */
+  /** Stable, URL-safe ID (kebab-case). Matches the key in faq-items.json. */
   id: FaqItemId;
   question: string;
   /** May contain simple inline HTML (links, <strong>, <em>, <br />). */
@@ -29,7 +29,7 @@ export interface FaqItem {
 }
 
 /**
- * Logical FAQ group/section, stored in src/data/faqs/groups.json
+ * Logical FAQ group/section, stored in src/data/faqs/faq-groups.json
  *
  * Example JSON shape:
  * {
@@ -41,7 +41,7 @@ export interface FaqItem {
  * }
  */
 export interface FaqGroup {
-  /** Stable ID for the group. Matches the key in groups.json. */
+  /** Stable ID for the group. Matches the key in faq-groups.json. */
   id: FaqGroupId;
   /** Displayed section title, e.g. "Pricing & payment". */
   title: string;
@@ -50,7 +50,7 @@ export interface FaqGroup {
 }
 
 /**
- * Per-page FAQ configuration, e.g. src/data/faqs/faq-page.json, pricing.json, etc.
+ * Per-page FAQ configuration, e.g. src/data/faqs/faq-page.json, faq-pricing.json, etc.
  *
  * Example JSON shape:
  * {

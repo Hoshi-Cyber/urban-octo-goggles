@@ -12,7 +12,9 @@
     "title": "Pricing & payment",
     "itemIds": [
       "payment-methods",
-      "refunds-policy"
+      "refunds-policy",
+      "which-package-is-right-for-me",
+      "can-i-upgrade-package-later"
     ]
   },
   "process-timelines": {

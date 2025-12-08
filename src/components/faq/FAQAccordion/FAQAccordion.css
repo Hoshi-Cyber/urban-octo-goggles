@@ -140,6 +140,39 @@
   padding-inline-start: 1.25rem;
 }
 
+/* Links inside answers */
+.faq-accordion__panel a {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  text-decoration-thickness: 0.08em;
+  transition:
+    color 140ms ease-out,
+    text-decoration-color 140ms ease-out,
+    background-color 140ms ease-out,
+    box-shadow 140ms ease-out;
+}
+
+.faq-accordion__panel a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.faq-accordion__panel a:focus-visible {
+  outline: none;
+  color: var(--color-accent);
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 10%,
+    var(--color-background) 90%
+  );
+  box-shadow: 0 0 0 2px
+    color-mix(in oklab, var(--color-primary) 55%, #ffffff);
+  border-radius: 0.25rem;
+  text-decoration-color: var(--color-accent);
+}
+
 /* Open state */
 .faq-accordion__item[open] .faq-accordion__summary {
   background: color-mix(

@@ -1,0 +1,127 @@
+{
+  "process-from-payment-to-final-cv": {
+    "id": "process-from-payment-to-final-cv",
+    "question": "How does the process work from payment to final CV?",
+    "answer": "<p>Once you confirm your package and make payment, your CV project moves through a clear, step-by-step process:</p><ol><li><strong>Intake form</strong> – you complete a short form so we understand your current role, target roles and career goals.</li><li><strong>Document review</strong> – we review your existing CV (or career history if you do not have one), plus any job descriptions or supporting documents.</li><li><strong>Draft preparation</strong> – we create your new CV using best-practice structure, wording and positioning for your target market.</li><li><strong>Review &amp; feedback</strong> – you review the draft and share comments, questions or clarifications.</li><li><strong>Revisions &amp; final files</strong> – we refine the document within the agreed revision window and then send your final files.</li></ol>",
+    "tags": ["process", "workflow", "top"]
+  },
+
+  "pricing-packages-cost": {
+    "id": "pricing-packages-cost",
+    "question": "How much do your CV packages cost?",
+    "answer": "<p>Our core CV writing packages currently range from KSh 2,500 to KSh 10,500, depending on your career level and what is included. Current headline pricing is:</p><ul><li><strong>Starter CV Pack</strong> – KSh 2,500</li><li><strong>Professional Impact Pack</strong> – KSh 4,800</li><li><strong>Advanced Growth Pack</strong> – KSh 7,500</li><li><strong>Executive Brand Suite</strong> – KSh 10,500</li></ul><p>You can keep your base package simple and then add optional extras such as LinkedIn upgrades, ATS reports, extra cover letters or faster turnaround if needed.</p><p>You can see the full package comparison and latest fees on our <a href='/pricing/#pricing'>Pricing page</a>.</p>",
+    "tags": ["pricing", "packages", "top"]
+  },
+
+  "turnaround-time-cv-delivery": {
+    "id": "turnaround-time-cv-delivery",
+    "question": "How long does it take to receive my CV?",
+    "answer": "<p>Standard delivery depends on your package and begins once we receive your completed intake form and documents:</p><ul><li><strong>Starter CV Pack</strong> – typically 3–4 business days</li><li><strong>Professional Impact Pack</strong> – typically 3–4 business days</li><li><strong>Advanced Growth Pack</strong> – typically 4–5 business days</li><li><strong>Executive Brand Suite</strong> – typically 5–7 business days</li></ul><p>If you need your CV sooner, you can add a faster delivery add-on (subject to availability):</p><ul><li><strong>Express delivery</strong> – 48 hours, +25% of the base package</li><li><strong>Priority delivery</strong> – 24 hours, +40% of the base package</li></ul>",
+    "tags": ["timelines", "turnaround", "top"]
+  },
+
+  "clients-outside-kenya": {
+    "id": "clients-outside-kenya",
+    "question": "Do you work with clients outside Kenya?",
+    "answer": "<p>Yes. We work with clients in Kenya and internationally. We adapt CV formats and content to match your target market (for example, Kenyan, UK, EU, or US-style CVs) while keeping your core achievements and positioning consistent.</p>",
+    "tags": ["clients", "locations", "international", "top"]
+  },
+
+  "who-we-serve": {
+    "id": "who-we-serve",
+    "question": "Who is cvwriting.co.ke best suited for?",
+    "answer": "<p>We support students, recent graduates, mid-career professionals, and senior leaders who want a clear, results-focused CV tailored to their target roles. If you are unsure whether we are the right fit, share your current CV and goals and we will advise honestly.</p>",
+    "tags": ["getting-started", "audience"]
+  },
+
+  "what-to-provide-to-get-started": {
+    "id": "what-to-provide-to-get-started",
+    "question": "What do I need to provide to get started?",
+    "answer": "<p>Ideally, share your current CV (if you have one), links to 1–3 target job descriptions, and any key achievements you want highlighted. If you do not have a CV yet, we will ask for a brief career history and education summary instead.</p><p>For a step-by-step view of how everything fits together, you can review our <a href='/process/'>Process page</a>.</p>",
+    "tags": ["getting-started", "requirements"]
+  },
+
+  "payment-methods": {
+    "id": "payment-methods",
+    "question": "Which payment methods do you accept?",
+    "answer": "<p>For Kenyan clients we accept M-Pesa and bank transfer. For international clients we support secure card payments and other region-appropriate options agreed during booking. All payment instructions are shared in your quote and confirmation email.</p>",
+    "tags": ["pricing", "payment"]
+  },
+
+  "refunds-policy": {
+    "id": "refunds-policy",
+    "question": "Do you offer refunds?",
+    "answer": "<p>Because CV writing is a time-based professional service, we normally do not offer refunds once work has started. Instead, each package includes clearly defined revision support so we can refine your documents until they align with your goals within the agreed scope.</p>",
+    "tags": ["pricing", "refunds", "policy"]
+  },
+
+  "process-main-steps": {
+    "id": "process-main-steps",
+    "question": "What are the main steps in your process?",
+    "answer": "<p>The process usually follows these steps:</p><ol><li>Enquiry and brief</li><li>Package recommendation and quote</li><li>Payment and intake form</li><li>Draft CV preparation</li><li>Review and revisions</li><li>Final delivery of files</li></ol><p>For a visual overview of these steps, you can also review the step-by-step workflow on our <a href='/process/'>Process page</a>.</p>",
+    "tags": ["process", "workflow"]
+  },
+
+  "delayed-feedback": {
+    "id": "delayed-feedback",
+    "question": "What happens if I delay in giving feedback?",
+    "answer": "<p>We keep your project active for a defined review period based on your package. If feedback is significantly delayed:</p><ul><li>We may need to reschedule your slot so we can keep other projects on track.</li><li>We will always update you and agree revised timelines where needed.</li></ul>",
+    "tags": ["process", "timelines"]
+  },
+
+  "revisions-included": {
+    "id": "revisions-included",
+    "question": "How many revisions are included?",
+    "answer": "<p>Revision support is package-based. As a guide:</p><ul><li><strong>Starter CV Pack</strong> – up to 2 revision rounds within 7 days</li><li><strong>Professional Impact Pack</strong> – up to 2 revision rounds within 10 days</li><li><strong>Higher-tier packages</strong> – revision support within the agreed project or engagement window</li></ul><p>Revisions cover clarifications, refinements and reasonable adjustments within the original scope.</p>",
+    "tags": ["revisions", "scope"]
+  },
+
+  "job-guarantee": {
+    "id": "job-guarantee",
+    "question": "Do you guarantee that I will get a job?",
+    "answer": "<p>We do not guarantee job offers, interviews, or promotions, because hiring decisions depend on many factors beyond your CV. What we guarantee is a professionally written, strategically structured CV aligned to your brief, sector and target markets.</p>",
+    "tags": ["guarantees", "expectations"]
+  },
+
+  "cv-file-formats": {
+    "id": "cv-file-formats",
+    "question": "Which file formats will I receive?",
+    "answer": "<p>You will receive your CV in the following formats:</p><ul><li><strong>Editable Word (.docx)</strong> for ATS and portal submissions</li><li><strong>Final PDF</strong> for email applications and printing</li></ul><p>Some packages also include additional assets, such as LinkedIn copy or executive brand statements, in suitable editable formats.</p><p>To see how our CVs look in practice, you can browse real examples on the <a href='/samples/'>Samples page</a>.</p>",
+    "tags": ["deliverables", "formats"]
+  },
+
+  "ats-friendly": {
+    "id": "ats-friendly",
+    "question": "Are your CVs ATS-friendly?",
+    "answer": "<p>Yes. All our CVs are designed to work well with applicant tracking systems and human reviewers:</p><ul><li>Clean, ATS-friendly structure, fonts and headings</li><li>Keywords aligned to your target roles and markets</li><li>Avoidance of layouts that break in ATS (overly complex tables, graphics or multi-column designs)</li></ul><p>You can also add an ATS score and optimisation report if you want a before-and-after view of improvements.</p>",
+    "tags": ["ats", "cv-format"]
+  },
+
+  "data-handling": {
+    "id": "data-handling",
+    "question": "How do you handle my data and documents?",
+    "answer": "<p>We treat your CV, documents and personal information as confidential. In practice, this means:</p><ul><li><strong>Limited access</strong> – only the team members working on your project can see your files.</li><li><strong>Service-only use</strong> – we use your data solely to deliver the services you have requested.</li><li><strong>No third-party marketing</strong> – we do not sell or share your details with third parties for advertising.</li></ul><p>For more on how we protect your data, you can review our <a href='/legal/privacy/'>Privacy Policy</a>.</p>",
+    "tags": ["data", "privacy"]
+  },
+
+  "data-retention": {
+    "id": "data-retention",
+    "question": "How long do you keep my information?",
+    "answer": "<p>We retain your files for a reasonable period so that we can complete your project, support revisions and assist with future updates. After this window:</p><ul><li><strong>Archiving</strong> – your files may be securely archived for reference.</li><li><strong>Deletion</strong> – older data may be removed in line with our data retention practices.</li></ul><p>For full details, please see our <a href='/legal/privacy/'>Privacy Policy</a>.</p>",
+    "tags": ["data", "privacy", "retention"]
+  },
+
+  "which-package-is-right-for-me": {
+    "id": "which-package-is-right-for-me",
+    "question": "Which package is right for my career level?",
+    "answer": "<p>As a guide, you can think about the packages like this:</p><ul><li><strong>Starter CV Pack</strong> – students and early-career professionals building a first or early CV</li><li><strong>Professional Impact Pack</strong> – mid-level professionals and career switchers who need a stronger, achievement-led CV plus cover letter</li><li><strong>Advanced Growth Pack</strong> – supervisors, managers and specialists preparing for the next step</li><li><strong>Executive Brand Suite</strong> – senior leaders, executives and diaspora-focused searches needing an executive CV and leadership brand</li></ul><p>If you are unsure, share your current CV and target roles and we will recommend the most suitable option.</p><p>You can also compare package details side-by-side on our <a href='/pricing/#compare'>Pricing page</a>.</p>",
+    "tags": ["pricing", "packages", "selection", "top"]
+  },
+
+  "can-i-upgrade-package-later": {
+    "id": "can-i-upgrade-package-later",
+    "question": "Can I upgrade my package later?",
+    "answer": "<p>Yes. You have several options if your needs change:</p><ul><li>You can upgrade to a higher package by paying the difference in fees, provided the work has not already progressed beyond a reasonable point in the process.</li><li>You can add extras such as full LinkedIn revamp, extra cover letters or ATS reports as separate add-ons at any stage.</li><li>Downgrades and partial refunds are generally not available once work has started.</li></ul><p>For a detailed view of available upgrades and add-ons, see the Add-ons section on our <a href='/pricing/#addons'>Pricing page</a>.</p>",
+    "tags": ["pricing", "packages", "upgrade"]
+  }
+}
