@@ -98,7 +98,7 @@ const cfg: SiteConfig = {
 
   // Image defaults
   images: {
-    ogDefault: "/assets/images/og/default-og.jpg",       // serve JPG/PNG for social
+    ogDefault: "/assets/images/og/default-blog.webp",       // serve JPG/PNG for social
     coverPlaceholder: "/assets/images/placeholder/blog-hero.webp",
     width: 1200,
     height: 675,

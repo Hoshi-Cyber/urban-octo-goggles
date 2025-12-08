@@ -4,7 +4,7 @@ import { defineCollection, z } from "astro:content";
 const urlRegex =
   /^(https?:\/\/)([\w.-]+)(:[0-9]+)?(\/[\w\-._~:/?#[\]@!$&'()*+,;%=]*)?$/i;
 
-// Only allow images that live under /public/assets/... or /public/images/... with common extensions
+// Only allow images that live under /public/assets/... with common extensions
 const publicAssetRegex =
   /^\/(assets|images)\/.+\.(webp|png|jpe?g|gif|svg)$/i;
 
