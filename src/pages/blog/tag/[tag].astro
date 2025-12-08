@@ -47,7 +47,7 @@ for (const p of all) {
 const posts = all
   .map((p) => {
     const thumb = p.data.thumbnail ?? p.data.image ?? p.data.cover ?? p.data.ogImage ?? null;
-    const thumbSrc = typeof thumb === "string" ? thumb : thumb?.src ?? "/assets/logos/logo-wide-1200.png";
+    const thumbSrc = typeof thumb === "string" ? thumb : thumb?.src ?? "/assets/logos/logo-wordmark-800x200.png";
     const thumbAlt = typeof thumb === "object" && thumb?.alt ? thumb.alt : p.data.title ?? "Post thumbnail";
     const dt = new Date(p.data.date);
     return {

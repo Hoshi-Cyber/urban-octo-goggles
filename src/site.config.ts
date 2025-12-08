@@ -76,7 +76,7 @@ const cfg: SiteConfig = {
     name: "CV Writing Kenya",
     legalName: "CV Writing Kenya",
     url: "https://cvwriting.co.ke",
-    logo: "/assets/brand/logo-og-1200x630.png",          // replace with your actual logo path
+    logo: "/assets/logos/logo-wordmark-1600x400.png",          // replace with your actual logo path
     sameAs: [
       "https://www.linkedin.com/company/cvwritingkenya",
       "https://x.com/cvwritingke",
