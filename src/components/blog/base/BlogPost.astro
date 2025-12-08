@@ -85,6 +85,21 @@ export interface Props {
   finalCta?: BlogPostLayoutProps["finalCta"];
   checklist?: BlogPostLayoutProps["checklist"];
   relatedArticles?: BlogPostLayoutProps["relatedArticles"];
+
+  /**
+   * Fix Plan 004 – layoutPreset frontmatter bridge:
+   * - Optional per-article override for the article layout preset.
+   * - When provided, it overrides the category-derived default.
+   * - Mapped directly into BlogPostLayoutProps.preset.
+   *
+   * Available values (BlogPostLayoutPresetKey):
+   * - "conversionArticle"
+   * - "editorialArticle"
+   * - "analysisArticle"
+   * - "shortInsight"
+   * - "campaignLanding"
+   */
+  layoutPreset?: BlogPostLayoutProps["preset"];
 }
 
 const {
@@ -117,6 +132,7 @@ const {
   finalCta,
   checklist,
   relatedArticles: relatedArticlesFromRoute,
+  layoutPreset,
 } = Astro.props as Props;
 
 const categoryUrl = `/blog/${category}/`;
@@ -206,6 +222,33 @@ const resolvedRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
     ? relatedArticlesFromRoute
     : undefined;
 
+/**
+ * Fix Plan 004 – Step 3: preset inference and wiring
+ *
+ * - Derive a sensible default preset based on category:
+ *     • "cv-tips" or "linkedin"     → "conversionArticle"
+ *     • "kenya-market"              → "analysisArticle"
+ *     • everything else (e.g. career-growth) → "editorialArticle"
+ *
+ * - Allow per-article override via layoutPreset (frontmatter):
+ *     • When layoutPreset is present, it wins.
+ *     • Otherwise, fall back to the category-derived default.
+ *
+ * - Pass the resolved preset into BlogPostLayout so that the layout
+ *   can use the PRESET_SLICES registry to decide slice ordering.
+ */
+const fmPreset = layoutPreset;
+
+const defaultPresetForCategory: BlogPostLayoutProps["preset"] =
+  category === "cv-tips" || category === "linkedin"
+    ? "conversionArticle"
+    : category === "kenya-market"
+    ? "analysisArticle"
+    : "editorialArticle";
+
+const resolvedPreset: BlogPostLayoutProps["preset"] =
+  fmPreset ?? defaultPresetForCategory;
+
 // Build props for BlogPostLayout (205.2 adapter layer)
 const blogPostLayoutProps: BlogPostLayoutProps = {
   breadcrumbs: [
@@ -236,12 +279,14 @@ const blogPostLayoutProps: BlogPostLayoutProps = {
   toc,
   showToc: showTOC && !!toc && toc.length > 0,
   relatedArticles: resolvedRelatedArticles,
+  preset: resolvedPreset,
 };
 ---
 
 <!--
-  Under Fix Plan 213, BlogPostLayout owns the full single-article IA
-  (hero, intro, TOC, body, conversion slices, related, etc).
+  Under Fix Plan 213 + Fix Plan 004, BlogPostLayout owns the full
+  single-article IA (hero, intro, TOC, body, conversion slices, related, etc),
+  including layout presets and slice ordering.
   This wrapper is intentionally minimal and does not append any legacy
   footer / nav / related / comments / author / ad shells.
 -->

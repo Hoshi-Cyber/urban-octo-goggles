@@ -2,16 +2,11 @@
 /**
  * File: src/pages/blog/[category]/[slug].astro
  *
- * Single blog post route wired to BlogPost + BlogPostLayout (Fix Plans 190, 195, 205.1, 213).
+ * Single blog post route wired to BlogPost + BlogPostLayout (Fix Plans 190, 195, 205.1, 213, 004).
  */
 
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-
-import type {
-  BlogPostLayoutPreset,
-  BlogPostLayoutSliceKey,
-} from "@/components/blog/post/BlogPostLayout";
 
 // Layout + page components
 import BaseLayout from "@/components/layout/BaseLayout.astro";
@@ -265,7 +260,7 @@ const relatedArticles: RelatedArticle[] = related.map((post) => {
   };
 });
 
-// ---------- Layout props from frontmatter ----------
+// ---------- Layout props from frontmatter (Fix Plan 205.1 / 004) ----------
 
 const heroTagline = (entry.data as any).heroTagline ?? null;
 const heroSoftCta = (entry.data as any).heroSoftCta ?? null;
@@ -285,72 +280,23 @@ const faqItems = (entry.data as any).faqItems ?? null;
 const finalCta = (entry.data as any).finalCta ?? null;
 const checklist = (entry.data as any).checklist ?? null;
 
-// ---------- IA preset + slice ordering (Fix Plan 213) ----------
-
-const layoutPreset: BlogPostLayoutPreset =
-  ((entry.data as any).layoutPreset as BlogPostLayoutPreset | undefined) ??
-  "conversionArticle";
-
-const layoutSlicesFromFrontmatter =
-  (entry.data as any).layoutSlices as BlogPostLayoutSliceKey[] | undefined;
-
-const hasTocSlice = showTOC && tocHeadings.length > 0;
-const hasChecklistSlice = !!checklist;
-const hasInlineOfferSlice = !!inlineOffer;
-const hasSocialProofSlice =
-  Array.isArray(socialProofItems) && socialProofItems.length > 0;
-const hasFaqSlice = Array.isArray(faqItems) && faqItems.length > 0;
-const hasFinalCtaSlice = !!finalCta;
-const hasRelatedSlice =
-  Array.isArray(relatedArticles) && relatedArticles.length > 0;
-
-const defaultSlicesByPreset: Record<
-  BlogPostLayoutPreset,
-  BlogPostLayoutSliceKey[]
-> = {
-  minimalArticle: ["toc", "body", "related"],
-  conversionArticle: [
-    "toc",
-    "body",
-    "checklist",
-    "inlineOffer",
-    "socialProof",
-    "faq",
-    "finalCta",
-    "related",
-  ],
-  educationalGuide: ["toc", "body", "checklist", "faq", "related"],
-};
-
-const baseSlicesForRoute: BlogPostLayoutSliceKey[] =
-  Array.isArray(layoutSlicesFromFrontmatter) &&
-  layoutSlicesFromFrontmatter.length > 0
-    ? layoutSlicesFromFrontmatter
-    : defaultSlicesByPreset[layoutPreset];
-
-const effectiveSlicesForRoute: BlogPostLayoutSliceKey[] =
-  baseSlicesForRoute.filter((sliceKey) => {
-    switch (sliceKey) {
-      case "toc":
-        return hasTocSlice;
-      case "body":
-        return true;
-      case "checklist":
-        return hasChecklistSlice;
-      case "inlineOffer":
-        return hasInlineOfferSlice;
-      case "socialProof":
-        return hasSocialProofSlice;
-      case "faq":
-        return hasFaqSlice;
-      case "finalCta":
-        return hasFinalCtaSlice;
-      case "related":
-        return hasRelatedSlice;
-      default:
-        return false;
-    }
-  });
+/**
+ * Fix Plan 004 – Step 5: Route-level layoutPreset bridge
+ *
+ * - Read optional `layoutPreset` from frontmatter.
+ * - Do NOT default here; BlogPost.astro derives a sensible default based on
+ *   category when this is undefined.
+ * - This keeps route-level aware of the category/slug context (for future
+ *   overrides) while deferring preset resolution to the adapter layer.
+ */
+const layoutPreset =
+  (entry.data as any).layoutPreset as
+    | "conversionArticle"
+    | "editorialArticle"
+    | "analysisArticle"
+    | "shortInsight"
+    | "campaignLanding"
+    | undefined;
 
 // ---------- SEO + JSON-LD wiring ----------
 
@@ -422,6 +368,7 @@ const breadcrumbs = [
   },
 ];
 
+// Build props for BlogPost adapter (Fix Plan 205.2 + 004)
 const layoutProps = {
   title,
   description,
@@ -450,8 +397,7 @@ const layoutProps = {
   finalCta,
   checklist,
   relatedArticles,
-  preset: layoutPreset,
-  slices: effectiveSlicesForRoute,
+  layoutPreset,
 };
 ---
 

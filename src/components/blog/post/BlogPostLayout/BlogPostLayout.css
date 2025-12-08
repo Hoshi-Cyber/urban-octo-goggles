@@ -17,6 +17,11 @@
  *   and closing bands, driven by --blog-post-content-max-width.
  * - Let .blog-post-layout__body-inner own the reading width; keep
  *   .blog-post-layout__content full-width inside that shell.
+ *
+ * Updated per Fix Plan 004 – Step 6:
+ * - Introduce light-touch visual refinements per layout preset, keyed by
+ *   data-layout-preset on the root .blog-post-layout article.
+ * - Do not change structure; only adjust spacing and band tint subtly.
  */
 
 @import "../../../../styles/tokens.css";
@@ -225,4 +230,113 @@
     );
     background-image: none;
   }
+}
+
+/* --------------------------------------------------------------------------
+ * Fix Plan 004 – Step 6
+ * Preset-specific visual refinements (light-touch, non-breaking)
+ *
+ * Assumes the root article exposes data-layout-preset with one of:
+ *  - "conversionArticle"
+ *  - "editorialArticle"
+ *  - "analysisArticle"
+ *  - "shortInsight"
+ *  - "campaignLanding"
+ *
+ * If data-layout-preset is not present, all defaults above apply as-is.
+ * ------------------------------------------------------------------------ */
+
+/* conversionArticle
+ * - Default behaviour (no overrides required).
+ * - Full banding: checklist, inlineOffer, socialProof, FAQ, finalCta, related.
+ */
+
+/* editorialArticle
+ * - Softer, more narrative. Reduce band contrast and vertical rhythm.
+ */
+.blog-post-layout[data-layout-preset="editorialArticle"] .blog-post-layout__body {
+  padding-block: clamp(var(--space-5), 3.5vw, var(--space-6));
+}
+
+.blog-post-layout[data-layout-preset="editorialArticle"] .blog-post-layout__toc {
+  background-color: var(--color-surface, #ffffff);
+  border-block-end: 1px solid var(--color-border-subtle, #e5e7eb);
+}
+
+.blog-post-layout[data-layout-preset="editorialArticle"]
+  .blog-post-layout__inline-offer {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 98%,
+    var(--color-accent, #d4ab18) 2%
+  );
+}
+
+.blog-post-layout[data-layout-preset="editorialArticle"]
+  .blog-post-layout__related {
+  background-color: var(--color-surface, #ffffff);
+  border-block-start: 1px solid var(--color-border-subtle, #e5e7eb);
+}
+
+/* analysisArticle
+ * - Emphasise structure and TOC; keep conversion bands present but calmer.
+ */
+.blog-post-layout[data-layout-preset="analysisArticle"] .blog-post-layout__toc {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 92%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+  );
+}
+
+.blog-post-layout[data-layout-preset="analysisArticle"]
+  .blog-post-layout__checklist {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 94%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
+  );
+}
+
+/* shortInsight
+ * - Compact, lightweight. Reduce spacing and band intensity.
+ */
+.blog-post-layout[data-layout-preset="shortInsight"] {
+  padding-block: clamp(var(--space-6), 4vw, var(--space-8));
+}
+
+.blog-post-layout[data-layout-preset="shortInsight"] .blog-post-layout__body {
+  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
+}
+
+.blog-post-layout[data-layout-preset="shortInsight"]
+  .blog-post-layout__final-cta {
+  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
+}
+
+.blog-post-layout[data-layout-preset="shortInsight"]
+  .blog-post-layout__related {
+  background-color: var(--color-surface, #ffffff);
+  border-block-start: 1px solid var(--color-border-subtle, #e5e7eb);
+}
+
+/* campaignLanding
+ * - Stronger emphasis on checklist + final CTA bands.
+ */
+.blog-post-layout[data-layout-preset="campaignLanding"]
+  .blog-post-layout__checklist {
+  background-color: color-mix(
+    in oklab,
+    var(--color-accent, #d4ab18) 10%,
+    var(--color-surface-alt, #f9fafb) 90%
+  );
+}
+
+.blog-post-layout[data-layout-preset="campaignLanding"]
+  .blog-post-layout__final-cta {
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 14%,
+    var(--color-surface-alt, #f9fafb)
+  );
 }

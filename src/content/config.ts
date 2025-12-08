@@ -300,6 +300,32 @@ export const collections = {
         // Layout / IA versioning
         // -------------------------------------------------------------------
 
+        /**
+         * Fix Plan 004 – Optional per-article layout preset override.
+         *
+         * - When omitted, a sensible default is inferred from the category
+         *   inside BlogPost.astro (e.g. cv-tips/linkedin → conversionArticle,
+         *   kenya-market → analysisArticle, everything else → editorialArticle).
+         * - When provided, this value is passed through to BlogPostLayout and
+         *   used to select the slice sequence from the PRESET_SLICES registry.
+         *
+         * Available presets:
+         * - "conversionArticle"
+         * - "editorialArticle"
+         * - "analysisArticle"
+         * - "shortInsight"
+         * - "campaignLanding"
+         */
+        layoutPreset: z
+          .enum([
+            "conversionArticle",
+            "editorialArticle",
+            "analysisArticle",
+            "shortInsight",
+            "campaignLanding",
+          ])
+          .optional(),
+
         layoutVersion: z.enum(["blog-post-v1"]).default("blog-post-v1"),
       }),
   }),

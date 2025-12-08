@@ -30,6 +30,13 @@
  * Fix Plan 213.3 – separation contract (summary vs implementation):
  * - KeyTakeaways: short, insight-focused summary bullets (no verb-first “to-dos”).
  * - Checklist: ordered, verb-first implementation steps (action list only).
+ *
+ * Fix Plan 004 (Article Layout Presets v1.0):
+ * - Step 1: Extend BlogPostLayout props to accept preset (BlogPostLayoutPresetKey).
+ * - Step 2: Introduce a preset → slices registry (PRESET_SLICES) and resolve
+ *   slice ordering from:
+ *     • props.slices when provided, otherwise
+ *     • PRESET_SLICES[preset ?? "conversionArticle"].
  */
 
 import type { AstroComponentFactory } from "astro";
@@ -141,15 +148,10 @@ type ChecklistConfig = {
 };
 
 /**
- * IA presets and slice keys (Fix Plan 213):
- * - Preset defines intent (minimal vs conversion vs educational).
- * - Slice keys define which bands render and in what order.
+ * Slice keys:
+ * - Define which bands render and in what order.
+ * - Used by PRESET_SLICES (Fix Plan 004 – Step 2) and by explicit props.slices.
  */
-type BlogPostLayoutPreset =
-  | "minimalArticle"
-  | "conversionArticle"
-  | "educationalGuide";
-
 type BlogPostLayoutSliceKey =
   | "toc"
   | "body"
@@ -159,6 +161,36 @@ type BlogPostLayoutSliceKey =
   | "faq"
   | "finalCta"
   | "related";
+
+/**
+ * Fix Plan 004 – Article Layout Preset keys (v1.0)
+ *
+ * conversionArticle (existing default)
+ * - For: cv-tips, linkedin
+ * - Slices: toc, body, checklist, inlineOffer, socialProof, faq, finalCta, related
+ *
+ * editorialArticle
+ * - For: career-growth (thought-leadership / narrative posts)
+ * - Slices: body, inlineOffer, related
+ *
+ * analysisArticle
+ * - For: kenya-market (sector / trends / outlook pieces)
+ * - Slices: toc, body, inlineOffer, finalCta, related
+ *
+ * shortInsight
+ * - For: any category; short 500–800 word insights / campaign support posts.
+ * - Slices: body, related
+ *
+ * campaignLanding (optional v1.1)
+ * - For: special funnels and paid campaigns.
+ * - Slices: body, checklist, finalCta
+ */
+type BlogPostLayoutPresetKey =
+  | "conversionArticle"
+  | "editorialArticle"
+  | "analysisArticle"
+  | "shortInsight"
+  | "campaignLanding";
 
 export interface BlogPostLayoutProps {
   breadcrumbs: BreadcrumbItem[];
@@ -219,12 +251,16 @@ export interface BlogPostLayoutProps {
   checklist?: ChecklistConfig;
 
   /**
-   * IA preset and optional explicit slice ordering (Fix Plan 213):
-   * - preset: high-level intent for the article.
+   * IA preset and optional explicit slice ordering:
+   * - preset: high-level intent for the article (Fix Plan 004).
    * - slices: optional explicit ordered list of slice keys; when provided,
-   *   it takes precedence over the preset defaults.
+   *   it takes precedence over the preset defaults from PRESET_SLICES.
+   *
+   * Fix Plan 004 – Step 2 behaviour:
+   * - When slices is non-empty, it is used as-is (subject to data guards).
+   * - Otherwise, PRESET_SLICES[preset ?? "conversionArticle"] is used.
    */
-  preset?: BlogPostLayoutPreset;
+  preset?: BlogPostLayoutPresetKey;
   slices?: BlogPostLayoutSliceKey[];
 }
 
@@ -256,13 +292,18 @@ const {
 } = Astro.props as BlogPostLayoutProps;
 
 /**
- * Fix Plan 213 – IA slice defaults by preset.
- * Header band is always rendered at the top; slices control the remaining bands.
+ * Fix Plan 004 – Step 2
+ * Preset → slices registry (single source of truth for article layouts).
+ *
+ * NOTE:
+ * - Header/hero band is always rendered at the top; PRESET_SLICES governs
+ *   the *optional* bands below the header.
+ * - Route layer can still pass an explicit slices array to override this.
  */
-const defaultPreset: BlogPostLayoutPreset = "conversionArticle";
-
-const defaultSlicesByPreset: Record<BlogPostLayoutPreset, BlogPostLayoutSliceKey[]> = {
-  minimalArticle: ["toc", "body", "related"],
+const PRESET_SLICES: Record<
+  BlogPostLayoutPresetKey,
+  BlogPostLayoutSliceKey[]
+> = {
   conversionArticle: [
     "toc",
     "body",
@@ -273,10 +314,11 @@ const defaultSlicesByPreset: Record<BlogPostLayoutPreset, BlogPostLayoutSliceKey
     "finalCta",
     "related",
   ],
-  educationalGuide: ["toc", "body", "checklist", "faq", "related"],
+  editorialArticle: ["body", "inlineOffer", "related"],
+  analysisArticle: ["toc", "body", "inlineOffer", "finalCta", "related"],
+  shortInsight: ["body", "related"],
+  campaignLanding: ["body", "checklist", "finalCta"],
 };
-
-const resolvedPreset: BlogPostLayoutPreset = preset ?? defaultPreset;
 
 // Data-level checks used to filter slices; route layer should also gate these.
 const hasKeyTakeaways =
@@ -299,12 +341,24 @@ const hasHeroImage =
   typeof heroImage.src === "string" &&
   heroImage.src.trim().length > 0;
 
-// Choose base slice order, then filter against current data presence.
+/**
+ * Resolve base slice order (Fix Plan 004 – Step 2):
+ * - Use explicit slices when provided and non-empty.
+ * - Otherwise, resolve from PRESET_SLICES using preset or the implicit
+ *   "conversionArticle" default when preset is omitted.
+ */
+const resolvedPreset: BlogPostLayoutPresetKey = preset ?? "conversionArticle";
+
 const baseSlices: BlogPostLayoutSliceKey[] =
   Array.isArray(slices) && slices.length > 0
-    ? (slices as BlogPostLayoutSliceKey[])
-    : defaultSlicesByPreset[resolvedPreset];
+    ? slices
+    : PRESET_SLICES[resolvedPreset];
 
+/**
+ * Apply data guards on top of the structural slice ordering:
+ * - Each slice is only rendered when the corresponding data is present.
+ * - Body is always allowed (it is the primary content band).
+ */
 const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter(
   (sliceKey) => {
     switch (sliceKey) {
