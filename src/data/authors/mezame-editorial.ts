@@ -37,7 +37,7 @@ export const mezameEditorialAuthor: EditorialAuthor = {
     alt: "Abstract editorial hero artwork for Mezame Editorial",
   },
   bannerImage: {
-    src: "/assets/images/banner/baanner-1.png",
+    src: "/assets/images/banner/banner-1.png",
     alt: "Abstract editorial hero artwork for Mezame Editorial",
   },
 
