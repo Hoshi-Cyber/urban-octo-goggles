@@ -5,21 +5,35 @@
  * Single source of truth for:
  * - Category slugs used in routes
  * - Display names and descriptions
+ * - Hero / card copy for UI
+ * - Default layout presets and funnel stages
  * - Optional hero/OG image configs
  */
 
 /** URL-safe slugs for all blog categories. */
 export type CategorySlug =
-  | "cv-tips"
+  | "cv-strategy"
   | "linkedin"
   | "career-growth"
-  | "kenya-market";
+  | "kenya-market"
+  | "hiring-insights";
 
 /** Reusable image configuration for hero/OG images. */
 export type ImageConfig = {
   src: string;
   alt: string;
 };
+
+/** Allowed layout presets for BlogPostLayout. */
+export type BlogPostPreset =
+  | "conversionArticle"
+  | "editorialArticle"
+  | "analysisArticle"
+  | "shortInsight"
+  | "campaignLanding";
+
+/** Funnel stage markers used for content and CTA intensity. */
+export type FunnelStage = "TOFU" | "MOFU" | "BOFU" | "MOFU_BOFU";
 
 /** Full category metadata model. */
 export type BlogCategory = {
@@ -29,6 +43,18 @@ export type BlogCategory = {
   name: string;
   /** Short description used in intros, SEO snippets, etc. */
   description: string;
+  /** Category hero title (H1) for category landing pages. */
+  heroTitle: string;
+  /** Category hero subtitle for landing pages. */
+  heroSubtitle: string;
+  /** Short subtitle used on category cards (UI). */
+  cardSubtitle: string;
+  /** Microcopy / body text used on category cards (UI). */
+  cardBody: string;
+  /** Default layout preset for posts in this category. */
+  defaultPreset: BlogPostPreset;
+  /** Default funnel stage for posts in this category. */
+  defaultFunnelStage: FunnelStage;
   /** Optional hero image for category pages. */
   heroImage?: ImageConfig;
   /** Optional OG image for category pages. */
@@ -38,31 +64,80 @@ export type BlogCategory = {
 /**
  * Canonical category config.
  * All category- and routing-related logic should derive from this list.
+ *
+ * NOTE:
+ * - Slugs represent the new 5-category taxonomy:
+ *   - cv-strategy
+ *   - linkedin
+ *   - career-growth
+ *   - kenya-market
+ *   - hiring-insights
  */
 export const CATEGORIES: BlogCategory[] = [
   {
-    slug: "cv-tips",
-    name: "CV Tips",
+    slug: "cv-strategy",
+    name: "CV & Application Strategy",
     description:
-      "Practical CV and cover letter tips tailored to Kenya’s job market.",
+      "Clear, practical frameworks for CVs, cover letters, and ATS-ready applications tailored to the Kenyan market.",
+    heroTitle: "Build a CV That Gets You Shortlisted",
+    heroSubtitle: "Clear, practical frameworks for the modern Kenyan job market.",
+    cardSubtitle: "Clear, practical guides for stronger applications.",
+    cardBody:
+      "Proven CV, cover letter, and ATS frameworks tailored for the Kenyan job market.",
+    defaultPreset: "conversionArticle",
+    defaultFunnelStage: "BOFU",
   },
   {
     slug: "linkedin",
-    name: "LinkedIn & Online Profiles",
+    name: "LinkedIn & Professional Branding",
     description:
-      "Guides on optimising your LinkedIn and online profiles for visibility and credibility.",
+      "Guides for positioning your LinkedIn profile for visibility, credibility, and recruiter search.",
+    heroTitle: "Strengthen Your Professional Presence Online",
+    heroSubtitle: "Position yourself for visibility, credibility, and recruiter search.",
+    cardSubtitle: "Be visible. Be credible.",
+    cardBody:
+      "Position your profile for recruiter search, clarity, and professional authority.",
+    defaultPreset: "conversionArticle",
+    defaultFunnelStage: "MOFU_BOFU",
   },
   {
     slug: "career-growth",
-    name: "Career Growth",
+    name: "Career Growth & Transitions",
     description:
-      "Strategies for job search, promotions, career resilience and long-term growth.",
+      "Practical frameworks for progression, transitions, and leadership decisions in the Kenyan context.",
+    heroTitle: "Navigate Career Decisions with Clarity",
+    heroSubtitle: "Practical frameworks for progression, transitions, and leadership.",
+    cardSubtitle: "Navigate your next step with confidence.",
+    cardBody:
+      "Practical career strategy, progression insights, and transition frameworks for Kenyan professionals.",
+    defaultPreset: "editorialArticle",
+    defaultFunnelStage: "MOFU",
   },
   {
     slug: "kenya-market",
-    name: "Kenya Job Market",
+    name: "Kenya Job Market & Sector Insights",
     description:
-      "Insights on hiring trends, salary ranges and employer expectations in Kenya.",
+      "Data-backed sector outlooks, salary trends, and hiring patterns across the Kenyan economy.",
+    heroTitle: "Understand the Trends Shaping Work in Kenya",
+    heroSubtitle: "Sector outlooks, hiring patterns, and salary intelligence.",
+    cardSubtitle: "Local trends that shape real opportunities.",
+    cardBody:
+      "Sector outlooks, salary benchmarks, and hiring insights grounded in Kenya’s evolving economy.",
+    defaultPreset: "analysisArticle",
+    defaultFunnelStage: "TOFU",
+  },
+  {
+    slug: "hiring-insights",
+    name: "Interviews, Shortlisting & Recruiter Systems",
+    description:
+      "Interview preparation and recruiter-process insights for Kenyan jobseekers.",
+    heroTitle: "Learn How Hiring Really Works",
+    heroSubtitle: "Interview prep, shortlisting insights, and recruiter behaviour.",
+    cardSubtitle: "Understand how hiring really works.",
+    cardBody:
+      "Interview prep, recruiter behaviour, and shortlisting dynamics to help you stand out and get hired.",
+    defaultPreset: "conversionArticle",
+    defaultFunnelStage: "MOFU_BOFU",
   },
 ];
 
@@ -86,15 +161,29 @@ export const PER_PAGE = 8;
  * Look up category metadata by slug.
  * Returns undefined if the slug does not match any known category.
  */
-export function getCategoryBySlug(
-  slug: string,
-): BlogCategory | undefined {
+export function getCategoryBySlug(slug: string): BlogCategory | undefined {
   return CATEGORIES.find((category) => category.slug === slug);
 }
 
 /**
+ * New helper: get category by slug (semantic alias for getCategoryBySlug).
+ * Prefer this in new code.
+ */
+export function getCategory(slug: string): BlogCategory | undefined {
+  return getCategoryBySlug(slug);
+}
+
+/**
+ * New helper: get all category metadata.
+ * Useful for CategoryGrid, static paths, etc.
+ */
+export function getAllCategories(): BlogCategory[] {
+  return CATEGORIES;
+}
+
+/**
  * Base path for all category routes.
- * Example: /blog/cv-tips, /blog/cv-tips/page/2
+ * Example: /blog/cv-strategy, /blog/cv-strategy/page/2
  */
 export const categoryBasePath = "/blog";
 
@@ -125,7 +214,7 @@ export function categoryPagePath(
  * Falls back gracefully if an unknown slug is provided.
  */
 export function prettyCategoryTitle(slug: string): string {
-  const category = getCategoryBySlug(slug as CategorySlug);
+  const category = getCategoryBySlug(slug);
 
   if (category) {
     return category.name;
@@ -156,7 +245,7 @@ export function buildCategoryTitle(slug: string): string {
  * Uses the canonical description where available.
  */
 export function buildCategoryDescription(slug: string): string {
-  const category = getCategoryBySlug(slug as CategorySlug);
+  const category = getCategoryBySlug(slug);
 
   if (category?.description) {
     return category.description;

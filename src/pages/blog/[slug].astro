@@ -44,6 +44,20 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+/**
+ * Legacy → new category mapping for taxonomy migration (Fix Plan 005-03).
+ *
+ * This ensures that posts whose frontmatter still uses legacy category
+ * labels (e.g. "cv-tips") are redirected to the new canonical category
+ * slug (e.g. "cv-strategy") without breaking existing /blog/:slug URLs.
+ */
+const legacyToNewCategory: Record<string, string> = {
+  "cv-tips": "cv-strategy",
+  linkedin: "linkedin",
+  "career-growth": "career-growth",
+  "kenya-market": "kenya-market",
+};
+
 const slug = Astro.params.slug as string;
 
 /**
@@ -54,12 +68,20 @@ const slug = Astro.params.slug as string;
 const posts = await getCollection("blog");
 const match = posts.find((p) => p.slug.split("/").pop() === slug);
 
-const category =
+// Derive raw category from frontmatter (or fallback)
+const rawCategory =
   match && typeof (match.data as any).category === "string"
     ? slugify((match.data as any).category)
     : "uncategorized";
 
-const target = match ? `/blog/${category}/${slug}/` : "/blog/";
+// Map legacy category to new canonical slug if applicable
+const mappedCategory =
+  rawCategory in legacyToNewCategory
+    ? legacyToNewCategory[rawCategory]
+    : rawCategory;
+
+// Build target URL
+const target = match ? `/blog/${mappedCategory}/${slug}/` : "/blog/";
 
 /** Permanent redirect for SEO canonicalization */
 return Astro.redirect(target, 301);

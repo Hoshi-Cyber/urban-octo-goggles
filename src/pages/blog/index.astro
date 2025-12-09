@@ -79,12 +79,6 @@ const posts = all
   .filter((p) => !isBad(p.cover)) // skip any remaining obviously broken image values
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-// Build category counts by slug (for grid badges)
-const counts = posts.reduce((acc, p) => {
-  acc.set(p.categorySlug, (acc.get(p.categorySlug) ?? 0) + 1);
-  return acc;
-}, new Map<string, number>());
-
 // Featured + list
 const featured = posts[0] ?? null;
 const rest = featured ? posts.slice(1) : [];
@@ -125,50 +119,6 @@ const trendingItems = posts.slice(0, 5).map((p, i) => ({
   readingTime: p.readingTime,
   cover: p.cover ? { src: p.cover, alt: p.title } : null,
 }));
-
-// Inline SVG icons (consistent, crisp at small sizes)
-const svg = {
-  pen: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-  linkedin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554V14.86c0-1.334-.27-3.049-1.86-3.049-1.863 0-2.148 1.454-2.148 2.957v5.684H9.33V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.603 0 4.267 2.372 4.267 5.457v6.284zM5.337 7.433a2.062 2.062 0 110-4.124 2.062 2.062 0 010 4.124zM7.114 20.452H3.56V9h3.553v11.452z"/></svg>`,
-  briefcase: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12h.01"/></svg>`,
-  chart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="9" width="3" height="7" rx="1"/><rect x="12" y="5" width="3" height="11" rx="1"/><rect x="17" y="12" width="3" height="4" rx="1"/></svg>`,
-};
-
-// Category cards using inline SVG strings and attached counts
-const card = (icon: string, title: string, slug: string, blurb: string) => ({
-  icon,
-  title,
-  blurb,
-  href: `/blog/${slug}/`,
-  count: counts.get(slug) ?? 0,
-});
-
-const categoryCards = [
-  card(
-    svg.pen,
-    "CV & Cover Letter Tips",
-    "cv-tips",
-    "Actionable guides for better applications.",
-  ),
-  card(
-    svg.linkedin,
-    "LinkedIn & Branding",
-    "linkedin",
-    "Be discoverable and credible.",
-  ),
-  card(
-    svg.briefcase,
-    "Career Growth",
-    "career-growth",
-    "Prep, strategy, and negotiation.",
-  ),
-  card(
-    svg.chart,
-    "Kenya Job Market",
-    "kenya-market",
-    "Local trends and salary intel.",
-  ),
-];
 
 // Safe origin handling for JSON-LD (Astro.site may be undefined in dev)
 const siteOrigin = Astro.site?.origin ?? "";
@@ -219,11 +169,10 @@ const jsonLd = {
     }}
   />
 
-  <!-- Explore Categories with counts -->
+  <!-- Explore Categories – now driven from canonical metadata (5 categories) -->
   <CategoryGrid
     eyebrow="Topics"
     title="Explore Categories"
-    items={categoryCards}
   />
 
   <PostFeedLatest

@@ -1,5 +1,5 @@
 /* src/components/blog/compose/CategoryGrid/CategoryGrid.css
-   Premium category grid – 1/2/4 responsive layout, equal-height cards
+   Premium category grid – 1/2/3/5 responsive layout, equal-height cards
    - Uses CVWriting deep green primary + soft neutral/“gold” accents
    - Minimal, calm visuals; aligned to global .container width
 */
@@ -154,16 +154,28 @@
   align-items: stretch;
 }
 
-/* ≥ tablet: 2 cards per row */
+/* ≥ small tablet: 2 cards per row */
 @media (min-width: 640px) {
   .cat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* ≥ desktop: 4 cards per row */
-@media (min-width: 1024px) {
+/* ≥ large tablet: 3 cards per row for better balance */
+@media (min-width: 768px) {
   .cat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ≥ desktop: 5 cards per row on spacious layouts */
+@media (min-width: 1200px) {
+  .cat-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* Compact variant (e.g. category pages) keeps a slightly denser 4-column layout */
+  .catgrid--compact .cat-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

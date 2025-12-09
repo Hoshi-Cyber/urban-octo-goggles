@@ -19,8 +19,23 @@ import ArticleJsonLd from "@/components/seo/ArticleJsonLd/index.astro";
 
 import site from "@/site.config";
 
+// Category metadata (Fix Plan 005 – canonical 5-category model)
+import { getCategory } from "@/lib/blog/categories";
+
 // Route params (SSR)
 const { category, slug } = Astro.params as { category: string; slug: string };
+
+// Resolve canonical category metadata from the central model
+const categoryMeta = getCategory(category);
+
+// If the route category does not map to a known category, 404
+if (!categoryMeta) {
+  // Respect trailingSlash: "always"
+  return Astro.redirect("/404/");
+}
+
+// Canonical category slug (one of the defined CategorySlug values)
+const canonicalCategorySlug = categoryMeta.slug;
 
 // Load all posts
 const allPosts = await getCollection("blog");
@@ -30,11 +45,11 @@ const baseSlug = (p: CollectionEntry<"blog">) => p.slug.split("/").pop()!;
 const catFromPath = (p: CollectionEntry<"blog">) =>
   p.slug.includes("/") ? p.slug.split("/")[0] : undefined;
 
-// Find current entry by base slug + category
+// Find current entry by base slug + canonical category slug
 const entry = allPosts.find((p) => {
   const matchesSlug = baseSlug(p) === slug;
   const entryCat = p.data.category ?? catFromPath(p);
-  return matchesSlug && entryCat === category;
+  return matchesSlug && entryCat === canonicalCategorySlug;
 });
 
 if (!entry) {
@@ -45,7 +60,9 @@ if (!entry) {
 const { Content, headings } = await entry.render();
 
 // Derive category and helpers
-const categorySlug = entry.data.category ?? catFromPath(entry);
+// For canonical behaviour, prefer the resolved canonical slug
+const categorySlug =
+  entry.data.category ?? catFromPath(entry) ?? canonicalCategorySlug;
 const entryBaseSlug = baseSlug(entry);
 
 const title = entry.data.title;

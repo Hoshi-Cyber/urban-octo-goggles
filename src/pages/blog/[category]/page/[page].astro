@@ -41,6 +41,8 @@ import {
   buildCategoryTitle,
   buildCategoryDescription,
   relatedCategories, // FP-169.2
+  getCategory,
+  type CategorySlug,
 } from "../../../../lib/blog/categories";
 
 import { categorySlug, postUrlFromEntry, abs as absUrl } from "../../../../lib/slug";
@@ -59,7 +61,7 @@ const isBad = (v: unknown) =>
 export async function getStaticPaths() {
   const entries = await Promise.all(
     CATEGORIES.map(async (c) => {
-      const cSlug = categorySlug(c);
+      const cSlug = c.slug as CategorySlug;
       const list = await getCollection(
         "blog",
         ({ data }) => !data.draft && categorySlug(data.category) === cSlug,
@@ -74,7 +76,18 @@ export async function getStaticPaths() {
 }
 
 const { category, page } = Astro.params as { category: string; page: string };
-const cat = categorySlug(category);
+
+// Normalise incoming URL segment then resolve against canonical category model
+const normalizedCatSlug = categorySlug(category);
+const categoryMeta = getCategory(normalizedCatSlug);
+
+if (!categoryMeta) {
+  // Unknown/unsupported category → 404
+  return Astro.redirect("/404/");
+}
+
+// Canonical category slug (one of the 5 CategorySlug values)
+const cat = categoryMeta.slug as CategorySlug;
 
 /** Derive best-available thumbnail with intrinsic size fallbacks */
 function getThumb(p: any) {
@@ -112,7 +125,7 @@ function getThumb(p: any) {
   return { src, alt, width, height };
 }
 
-/** Fetch and sort posts */
+/** Fetch and sort posts (filtered by canonical category slug) */
 const all = await getCollection(
   "blog",
   ({ data }) => !data.draft && categorySlug(data.category) === cat,
@@ -120,7 +133,12 @@ const all = await getCollection(
 
 const posts = all
   .map((p) => {
-    const { src: thumbnailSrc, alt: thumbnailAlt, width: thumbnailW, height: thumbnailH } = getThumb(p);
+    const {
+      src: thumbnailSrc,
+      alt: thumbnailAlt,
+      width: thumbnailW,
+      height: thumbnailH,
+    } = getThumb(p);
     const date = new Date(p.data.date);
     return {
       url: postUrlFromEntry(p),
@@ -139,9 +157,14 @@ const posts = all
   })
   .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-/** Pagination */
+/** Pagination (using new PaginatedResult shape from lib/blog/categories.ts) */
 const requested = Math.max(1, Number(page || "1"));
-const { pageCount, page: current, start, slice: pageItems } = paginate(posts, requested, PER_PAGE);
+const pagination = paginate(posts, requested, PER_PAGE);
+
+const current = pagination.currentPage;
+const pageCount = pagination.totalPages;
+const pageItems = pagination.items;
+const start = (current - 1) * PER_PAGE;
 
 /** URLs + SEO */
 const basePath = categoryBasePath(cat);
@@ -152,7 +175,12 @@ const desc = `${buildCategoryDescription(cat)} Page ${current} of ${pageCount}.`
 
 const selfUrl = categoryPagePath(cat, current);
 const canonical = current === 1 ? `${basePath}/` : selfUrl;
-const prevUrl = current > 2 ? categoryPagePath(cat, current - 1) : current === 2 ? `${basePath}/` : null;
+const prevUrl =
+  current > 2
+    ? categoryPagePath(cat, current - 1)
+    : current === 2
+    ? `${basePath}/`
+    : null;
 const nextUrl = current < pageCount ? categoryPagePath(cat, current + 1) : null;
 
 /** JSON-LD: Breadcrumbs (absolute URLs) */
@@ -160,10 +188,20 @@ const breadcrumbsLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home",  item: absUrl("/", Astro.site) },
-    { "@type": "ListItem", position: 2, name: "Blog",  item: absUrl("/blog/", Astro.site) },
-    { "@type": "ListItem", position: 3, name: pretty, item: absUrl(basePath + "/", Astro.site) },
-    { "@type": "ListItem", position: 4, name: `Page ${current}`, item: absUrl(selfUrl, Astro.site) },
+    { "@type": "ListItem", position: 1, name: "Home", item: absUrl("/", Astro.site) },
+    { "@type": "ListItem", position: 2, name: "Blog", item: absUrl("/blog/", Astro.site) },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: pretty,
+      item: absUrl(basePath + "/", Astro.site),
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      name: `Page ${current}`,
+      item: absUrl(selfUrl, Astro.site),
+    },
   ],
 };
 
@@ -218,33 +256,71 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
     <link rel="stylesheet" href={lmsCss} />
 
     <!-- JSON-LD parity -->
-    <script type="application/ld+json" is:inline>{JSON.stringify(breadcrumbsLd)}</script>
-    <script type="application/ld+json" is:inline>{JSON.stringify(itemListLd)}</script>
-    <script type="application/ld+json" is:inline>{JSON.stringify(collectionPageLd)}</script>
+    <script type="application/ld+json" is:inline>
+      {JSON.stringify(breadcrumbsLd)}
+    </script>
+    <script type="application/ld+json" is:inline>
+      {JSON.stringify(itemListLd)}
+    </script>
+    <script type="application/ld+json" is:inline>
+      {JSON.stringify(collectionPageLd)}
+    </script>
   </Fragment>
 
-  <section class="container page-gap-after" data-section="category" aria-label="Category articles">
+  <section
+    class="container page-gap-after"
+    data-section="category"
+    aria-label="Category articles"
+  >
     <Breadcrumbs items={breadcrumbItems} />
 
     {/* Page-level stack governs spacing; desktop gap raised (FP-160) */}
-    <div class="stack" style="--section-gap: clamp(var(--space-5), 2vw, var(--space-10));">
+    <div
+      class="stack"
+      style="--section-gap: clamp(var(--space-5), 2vw, var(--space-10));"
+    >
       {/* Lean hero for paginated views. No inner horizontal padding. */}
       <header data-section="hero" style="max-width:56rem;">
         <h1 class="h2" style="margin: 0 0 var(--space-2);">{pretty}</h1>
-        <p class="text-muted" style="margin: 0 0 var(--space-3);">Page {current} of {pageCount}</p>
+        <p class="text-muted" style="margin: 0 0 var(--space-3);">
+          Page {current} of {pageCount}
+        </p>
         <div class="flex items-center gap-3 flex-wrap">
-          <a class="btn btn-primary" href="/services/cv-rewrite?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-primary" data-section="hero">Book CV Rewrite</a>
-          <a class="btn" href="/offers/free-cv-audit?utm_source=blog&utm_medium=category&utm_campaign=hero" data-cta="hero-secondary" data-section="hero">Free 24-Point CV Audit</a>
+          <a
+            class="btn btn-primary"
+            href="/services/cv-rewrite?utm_source=blog&utm_medium=category&utm_campaign=hero"
+            data-cta="hero-primary"
+            data-section="hero"
+          >
+            Book CV Rewrite
+          </a>
+          <a
+            class="btn"
+            href="/offers/free-cv-audit?utm_source=blog&utm_medium=category&utm_campaign=hero"
+            data-cta="hero-secondary"
+            data-section="hero"
+          >
+            Free 24-Point CV Audit
+          </a>
         </div>
       </header>
 
       {/* Toolbar stays inside the container; spacing handled by the stack */}
       <section aria-label="Category controls">
-        <CategoryUtilityBar client:load category={cat} pageSize={PER_PAGE} mountId="category-client-list" prettyCategory={pretty} />
+        <CategoryUtilityBar
+          client:load
+          category={cat}
+          pageSize={PER_PAGE}
+          mountId="category-client-list"
+          prettyCategory={pretty}
+        />
       </section>
 
       {/* Inner stack: list → lead magnet → pagination → related (FP-169.2) */}
-      <div class="stack" style="--section-gap: clamp(var(--space-8), 3vw, var(--space-12));">
+      <div
+        class="stack"
+        style="--section-gap: clamp(var(--space-8), 3vw, var(--space-12));"
+      >
         {/* Visible section header per Fix Plan 165 */}
         <section aria-labelledby="latest-heading">
           <header class="pfl__head">
@@ -261,7 +337,11 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
           {pageItems.length === 0 ? (
             <p class="text-muted">No posts yet. Check back soon.</p>
           ) : (
-            <section class="ssr-grid" data-section="grid" aria-labelledby="ssr-articles-heading">
+            <section
+              class="ssr-grid"
+              data-section="grid"
+              aria-labelledby="ssr-articles-heading"
+            >
               <h3 id="ssr-articles-heading" class="sr-only">Articles</h3>
               <ol class="pfl__grid" role="list">
                 {pageItems.slice(0, 8).map((p, i) => {
@@ -287,13 +367,23 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
                           )}
                         </a>
                         <div class="pfl__body">
-                          <p class="pfl__cat"><a href={`${basePath}/`}>{catName}</a></p>
+                          <p class="pfl__cat">
+                            <a href={`${basePath}/`}>{catName}</a>
+                          </p>
                           <h3 class="pfl__cardTitle">
-                            <a href={p.url} class="pfl__link">{p.title}</a>
+                            <a href={p.url} class="pfl__link">
+                              {p.title}
+                            </a>
                           </h3>
-                          {excerpt && <p class="pfl__excerpt clamp-3">{excerpt}</p>}
+                          {excerpt && (
+                            <p class="pfl__excerpt clamp-3">{excerpt}</p>
+                          )}
                           <p class="pfl__meta">
-                            <time dateTime={p.dateISO}>{dateStr}</time> · {typeof p.readMins === "number" ? p.readMins : "—"} min read
+                            <time dateTime={p.dateISO}>{dateStr}</time> ·{" "}
+                            {typeof p.readMins === "number"
+                              ? p.readMins
+                              : "—"}{" "}
+                            min read
                           </p>
                         </div>
                       </article>
@@ -306,7 +396,10 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
         </section>
 
         {/* FP-166: Lead magnet appears immediately after “Latest articles” */}
-        <section id="leadmagnet" aria-label="Subscribe for the CV Optimization PDF">
+        <section
+          id="leadmagnet"
+          aria-label="Subscribe for the CV Optimization PDF"
+        >
           <LeadMagnetStrip
             title="Get the CV Optimization PDF"
             sub="Join 12,000+ professionals receiving actionable, local career tactics."
@@ -321,7 +414,7 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
             basePath={basePath}
             current={current}
             total={pageCount}
-            query={Astro.url.search}   /* preserve ?sort & ?tag */
+            query={Astro.url.search} /* preserve ?sort & ?tag */
           />
         )}
 
@@ -339,5 +432,7 @@ const ogImage = pageItems[0]?.thumbnailSrc ?? null;
 
 <style>
   /* Hide SSR grid when the client list has content */
-  #category-client-list:not(:empty) ~ .ssr-grid { display: none; }
+  #category-client-list:not(:empty) ~ .ssr-grid {
+    display: none;
+  }
 </style>

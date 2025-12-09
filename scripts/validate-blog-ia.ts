@@ -34,7 +34,8 @@ interface Issue {
     | "section-out-of-order"
     | "missing-key-takeaways"
     | "missing-checklist"
-    | "steps-missing-subheadings";
+    | "steps-missing-subheadings"
+    | "invalid-layout-preset";
   message: string;
 }
 
@@ -46,6 +47,7 @@ interface Heading {
 interface BlogFrontmatter {
   layoutVersion?: string;
   articleType?: string;
+  layoutPreset?: unknown;
   keyTakeaways?: unknown;
   checklist?: unknown;
   [key: string]: unknown;
@@ -93,7 +95,23 @@ const REQUIRED_H2_SEQUENCE = [
 
 type RequiredSectionKey = (typeof REQUIRED_H2_SEQUENCE)[number]["key"];
 
-const CORE_ARTICLE_TYPES = ["pillar", "tactical", "faq"];
+const CORE_ARTICLE_TYPES = ["pillar", "tactical", "faq"] as const;
+
+/**
+ * Allowed layoutPreset values for BlogPostLayout (Fix Plan 005-09).
+ * This must stay in sync with:
+ * - Route-level bridge in /pages/blog/[category]/[slug].astro
+ * - BlogPostLayout preset resolution logic
+ */
+const ALLOWED_LAYOUT_PRESETS = [
+  "conversionArticle",
+  "editorialArticle",
+  "analysisArticle",
+  "shortInsight",
+  "campaignLanding",
+] as const;
+
+type LayoutPreset = (typeof ALLOWED_LAYOUT_PRESETS)[number];
 
 /**
  * Entry point.
@@ -170,7 +188,7 @@ function shouldValidate(frontmatter: BlogFrontmatter): boolean {
   if (layout !== "blog-post-v1") return false;
 
   const type = String(frontmatter.articleType || "").toLowerCase();
-  return CORE_ARTICLE_TYPES.includes(type);
+  return CORE_ARTICLE_TYPES.includes(type as (typeof CORE_ARTICLE_TYPES)[number]);
 }
 
 /**
@@ -226,9 +244,33 @@ function normaliseHeading(text: string): string {
 function validateFile(
   file: string,
   frontmatter: BlogFrontmatter,
-  headings: Heading[]
+  headings: Heading[],
 ): Issue[] {
   const issues: Issue[] = [];
+
+  // 0) Enforce allowed layoutPreset values (Fix Plan 005-09)
+  const rawPreset = frontmatter.layoutPreset;
+  const preset =
+    typeof rawPreset === "string" && rawPreset.trim().length > 0
+      ? (rawPreset.trim() as string)
+      : "";
+
+  if (preset) {
+    const isAllowed = (ALLOWED_LAYOUT_PRESETS as readonly string[]).includes(
+      preset,
+    );
+    if (!isAllowed) {
+      issues.push({
+        file,
+        severity: "error",
+        code: "invalid-layout-preset",
+        message: `Invalid layoutPreset "${preset}". Allowed values: ${ALLOWED_LAYOUT_PRESETS.join(
+          ", ",
+        )}.`,
+      });
+    }
+  }
+
   const h2 = headings.filter((h) => h.depth === 2);
   const normalisedH2 = h2.map((h) => normaliseHeading(h.text));
 
@@ -277,7 +319,7 @@ function validateFile(
   const stepsIndex = foundIndexByKey.get("steps");
   if (typeof stepsIndex === "number") {
     const globalIndexOfStepsH2 = headings.findIndex(
-      (h) => h.depth === 2 && normaliseHeading(h.text) === normalisedH2[stepsIndex]
+      (h) => h.depth === 2 && normaliseHeading(h.text) === normalisedH2[stepsIndex],
     );
 
     if (globalIndexOfStepsH2 !== -1) {
@@ -367,7 +409,7 @@ function reportIssues(issues: Issue[]): void {
 
   console.log("");
   console.log(
-    `[validate-blog-ia] Summary: ${errors.length} error(s), ${warnings.length} warning(s).`
+    `[validate-blog-ia] Summary: ${errors.length} error(s), ${warnings.length} warning(s).`,
   );
 }
 

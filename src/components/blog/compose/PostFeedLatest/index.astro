@@ -34,6 +34,7 @@ export interface Props {
 }
 
 import { categorySlug } from "../../../../lib/slug";
+import { getCategory } from "@/lib/blog/categories";
 import css from "./PostFeedLatest.css?url";
 
 const {
@@ -58,8 +59,20 @@ const fmt = (d: string | Date) =>
     day: "numeric",
   });
 
-const catHref = (p: Post) =>
-  `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
+/**
+ * FP005-07 / taxonomy migration:
+ * Resolve category links via canonical BlogCategory metadata where possible.
+ * - Normalise frontmatter category with categorySlug().
+ * - If that slug matches a known BlogCategory, use its canonical slug.
+ * - Otherwise, fall back to the raw slugified value.
+ */
+const catHref = (p: Post) => {
+  const raw = p.frontmatter?.category || "uncategorized";
+  const slug = categorySlug(raw);
+  const meta = getCategory(slug);
+  const resolvedSlug = meta?.slug ?? slug;
+  return `/blog/${resolvedSlug}/`;
+};
 ---
 
 <link rel="stylesheet" href={css} />

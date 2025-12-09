@@ -2,6 +2,11 @@
 // File: src/components/blog/compose/CategoryHero/index.astro
 
 import css from "./CategoryHero.css?url";
+import {
+  getCategory,
+  type BlogCategory,
+  type CategorySlug,
+} from "@/lib/blog/categories";
 
 export interface Cta {
   href: string;
@@ -15,23 +20,51 @@ export interface Stats {
 }
 
 export interface Props {
-  title: string;
+  /**
+   * Optional explicit title.
+   * If omitted, the component will derive a title from BlogCategory metadata
+   * (heroTitle → name) when categorySlug/category is provided.
+   */
+  title?: string;
+  /**
+   * Optional explicit dek/subtitle.
+   * If omitted, the component will derive it from BlogCategory metadata
+   * (heroSubtitle → description) when categorySlug/category is provided.
+   */
   dek?: string;
   stats?: Stats;
   primaryCta?: Cta;
   secondaryCta?: Cta;
   /** Fix Plan 158: avoid double horizontal gutters at page level */
   contained?: boolean;
+
+  /**
+   * Optional category slug (e.g. "cv-strategy").
+   * Used to pull hero copy from the canonical BlogCategory metadata.
+   */
+  categorySlug?: CategorySlug | string;
+  /**
+   * Optional BlogCategory object. If both category and categorySlug are
+   * provided, `category` takes precedence.
+   */
+  category?: BlogCategory;
 }
 
+const props = Astro.props as Props;
+
 const {
-  title,
-  dek,
   stats = {},
   primaryCta,
   secondaryCta,
   contained = false,
-} = Astro.props as Props;
+} = props;
+
+// Resolve category metadata (if provided) from props + canonical registry
+const categoryMeta: BlogCategory | undefined =
+  props.category ??
+  (props.categorySlug
+    ? getCategory(String(props.categorySlug))
+    : undefined);
 
 function fmtDate(d?: string | Date) {
   if (!d) return null;
@@ -46,6 +79,19 @@ function fmtDate(d?: string | Date) {
   }
 }
 
+// FP005-05: Resolve hero title/dek from BlogCategory metadata when not explicitly set
+const resolvedTitle =
+  (typeof props.title === "string" && props.title.trim().length > 0
+    ? props.title
+    : categoryMeta?.heroTitle ||
+      categoryMeta?.name ||
+      "Blog category");
+
+const resolvedDek =
+  (typeof props.dek === "string" && props.dek.trim().length > 0
+    ? props.dek
+    : categoryMeta?.heroSubtitle || categoryMeta?.description || undefined);
+
 const lastUpdatedText = fmtDate(stats.lastUpdated);
 const statBits = [
   typeof stats.postCount === "number" ? `${stats.postCount} posts` : null,
@@ -59,11 +105,16 @@ const titleId = "category-hero-title";
 /**
  * We always render a hero visual:
  * - If a <slot name="media" /> is provided, we use it.
- * - Otherwise we fall back to a default hero image in /public/images.
+ * - Otherwise we fall back to a default hero image in /public/images,
+ *   optionally overridden by BlogCategory.heroImage.
  */
 const hasMediaSlot = Astro.slots.has?.("media") === true;
 const hasMedia = true; // ensure layout treats hero as media-present
-const FALLBACK_HERO = "/assets/images/blog/hero/blog-home-hero.webp"; // safe shared fallback
+
+// FP005-05: Prefer category-specific hero image when available
+const FALLBACK_HERO =
+  categoryMeta?.heroImage?.src ||
+  "/assets/images/blog/hero/blog-home-hero.webp"; // safe shared fallback
 ---
 
 <section
@@ -87,12 +138,12 @@ const FALLBACK_HERO = "/assets/images/blog/hero/blog-home-hero.webp"; // safe sh
 
       {/* h1 using global h1 styles via utility + hero-specific styling */}
       <h1 id={titleId} class="category-hero__title section-title h1">
-        {title}
+        {resolvedTitle}
       </h1>
 
-      {dek && (
+      {resolvedDek && (
         <p id={dekId} class="category-hero__dek">
-          {dek}
+          {resolvedDek}
         </p>
       )}
 
@@ -111,7 +162,7 @@ const FALLBACK_HERO = "/assets/images/blog/hero/blog-home-hero.webp"; // safe sh
               class="btn btn-primary"
               href={primaryCta.href}
               data-cta="category-primary"
-              aria-describedby={dek ? dekId : undefined}
+              aria-describedby={resolvedDek ? dekId : undefined}
             >
               {primaryCta.label}
             </a>
@@ -121,7 +172,7 @@ const FALLBACK_HERO = "/assets/images/blog/hero/blog-home-hero.webp"; // safe sh
               class="btn btn-accent"
               href={secondaryCta.href}
               data-cta="category-secondary"
-              aria-describedby={dek ? dekId : undefined}
+              aria-describedby={resolvedDek ? dekId : undefined}
             >
               {secondaryCta.label}
             </a>

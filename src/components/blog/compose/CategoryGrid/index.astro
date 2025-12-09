@@ -1,9 +1,13 @@
 ---
 // src/components/blog/compose/CategoryGrid/index.astro
-// Premium blog category grid – 1/2/4 layout with equal-height cards,
+// Premium blog category grid – responsive 1/2/3/5 layout with equal-height cards,
 // width-aligned to other sections via a shared .container wrapper.
 
 import "./CategoryGrid.css";
+import {
+  getAllCategories,
+  type BlogCategory,
+} from "@/lib/blog/categories";
 
 export interface CategoryCard {
   icon?: string; // inline SVG string (optional)
@@ -16,7 +20,12 @@ export interface CategoryCard {
 interface Props {
   eyebrow?: string;
   title?: string;
-  items: CategoryCard[];
+  /**
+   * Optional explicit items.
+   * If omitted or empty, CategoryGrid will derive category cards
+   * from the canonical blog category metadata (Fix Plan 005-04).
+   */
+  items?: CategoryCard[];
   class?: string;
   /**
    * Optional: mark one category as the currently active/selected category.
@@ -63,6 +72,90 @@ const sectionClass = [
 ]
   .filter(Boolean)
   .join(" ");
+
+/**
+ * Premium mono-line SVG icons per canonical category.
+ * These are tuned for the 52px icon frame in CategoryGrid.css.
+ */
+const ICONS: Record<string, string> = {
+  // CV & Applications – document + checkmark
+  "cv-strategy": `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8" y="4" width="16" height="24" rx="2.8" />
+        <path d="M12 11h8M12 15h5M12 19h4" />
+        <path d="M19 23.5 22.25 26.5 26.5 21.5" />
+      </g>
+    </svg>
+  `,
+
+  // LinkedIn & Profile – badge + signal rings
+  linkedin: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="10" cy="11" r="3.1" />
+        <path d="M6.75 22.5v-4.2a4.25 4.25 0 0 1 4.25-4.25h0" />
+        <rect x="17" y="9" width="8.5" height="10.5" rx="2.6" />
+        <path d="M19.5 21.75h3.5" />
+        <path d="M6 6.5c2.3-1.8 4.7-2.7 7.9-2.7 5.9 0 10.8 3.7 12.4 9" stroke-width="1.3" opacity="0.7" />
+      </g>
+    </svg>
+  `,
+
+  // Career Growth & Transitions – staircase + arrow
+  "career-growth": `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 25v-6h6v-6h6V7h6" />
+        <path d="M20 9.5 24 5.5 27 8.5" />
+        <circle cx="11" cy="9" r="1.8" />
+      </g>
+    </svg>
+  `,
+
+  // Kenya Job Market – bar chart + Kenya outline hint (triangle marker)
+  "kenya-market": `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 25.5h20" />
+        <rect x="8" y="15" width="3.8" height="7.5" rx="1" />
+        <rect x="14" y="12" width="3.8" height="10.5" rx="1" />
+        <rect x="20" y="9" width="3.8" height="13.5" rx="1" />
+        <path d="M9 8.5 12.5 6l3 2.2L18.8 6l4.2 3.2" opacity="0.85" />
+      </g>
+    </svg>
+  `,
+
+  // Hiring Insights & Interviews – mic + spark / shortlist ticks
+  "hiring-insights": `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="11" y="7" width="6.5" height="10" rx="3.2" />
+        <path d="M9 13.5v1.4A7 7 0 0 0 16 21a7 7 0 0 0 7-7v-1.5" />
+        <path d="M16 21v3.5" />
+        <path d="M13.25 24.5h5.5" />
+        <path d="M22.2 8.2 23.5 6 24.8 8.2M22.2 10.8 23.5 13l1.3-2.2" />
+      </g>
+    </svg>
+  `,
+};
+
+/**
+ * FP005-04: If no explicit items are provided, derive category cards
+ * from the canonical BLOG_CATEGORIES metadata.
+ */
+const categories: BlogCategory[] = getAllCategories();
+
+const autoItems: CategoryCard[] = categories.map((cat) => ({
+  title: cat.name,
+  blurb: cat.cardBody || cat.description,
+  href: `/blog/${cat.slug}/`,
+  icon: ICONS[cat.slug] ?? ICONS["cv-strategy"], // graceful default
+  // count intentionally omitted here; can be wired via props in the future
+}));
+
+const resolvedItems: CategoryCard[] =
+  Array.isArray(items) && items.length > 0 ? items : autoItems;
 ---
 
 <section
@@ -82,18 +175,20 @@ const sectionClass = [
     </header>
 
     {/* Grid: aligned to the same container width as other sections */}
-    {items?.length > 0 && (
+    {resolvedItems?.length > 0 && (
       <ul class="cat-grid" role="list" aria-label={resolvedTitle}>
-        {items.map((item, index) => {
+        {resolvedItems.map((item, index) => {
           const variant = VARIANTS[index % VARIANTS.length];
-          const hasCount = typeof item.count === "number" && item.count > 0;
+          const hasCount =
+            typeof item.count === "number" && item.count > 0;
           const countLabel = hasCount
             ? `${item.count} ${item.count === 1 ? "Post" : "Posts"}`
             : "";
           const cardLabel = hasCount
             ? `${item.title}, ${countLabel}`
             : item.title;
-          const isActive = typeof activeHref === "string" &&
+          const isActive =
+            typeof activeHref === "string" &&
             activeHref.trim().length > 0 &&
             item.href === activeHref;
 
@@ -131,7 +226,9 @@ const sectionClass = [
                     </p>
                   )}
 
-                  {hasCount && <span class="cat__count">{countLabel}</span>}
+                  {hasCount && (
+                    <span class="cat__count">{countLabel}</span>
+                  )}
                 </div>
 
                 <span class="cat__chev" aria-hidden="true">

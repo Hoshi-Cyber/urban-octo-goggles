@@ -22,7 +22,6 @@
  * Fix Plan 213:
  * - Introduce explicit IA presets and slice ordering for optional bands.
  * - Keep header as a fixed shell; render remaining bands via ordered slice keys.
- * - Preserve presentational responsibility only; routes choose preset/slices.
  * - Clarify KeyTakeaways vs Checklist:
  *   • KeyTakeaways → compact summary at top of body column (“what this post says”).
  *   • Checklist   → implementation band (“what to do next”) via ChecklistSection.
@@ -31,12 +30,9 @@
  * - KeyTakeaways: short, insight-focused summary bullets (no verb-first “to-dos”).
  * - Checklist: ordered, verb-first implementation steps (action list only).
  *
- * Fix Plan 004 (Article Layout Presets v1.0):
- * - Step 1: Extend BlogPostLayout props to accept preset (BlogPostLayoutPresetKey).
- * - Step 2: Introduce a preset → slices registry (PRESET_SLICES) and resolve
- *   slice ordering from:
- *     • props.slices when provided, otherwise
- *     • PRESET_SLICES[preset ?? "conversionArticle"].
+ * Fix Plan 004 (Article Layout Presets v1.0) + FP005-09:
+ * - Accept a layout preset key and resolve slice ordering from a preset registry.
+ * - Guard preset against invalid values; fall back to "conversionArticle".
  */
 
 import type { AstroComponentFactory } from "astro";
@@ -138,8 +134,6 @@ type RelatedArticle = {
  * ChecklistConfig is the normalized structure consumed by ChecklistSection:
  * - title/leadHtml control the framing.
  * - items is a simple ordered list of implementation steps.
- *
- * Central bank helpers (getChecklistItems) are expected to return this shape.
  */
 type ChecklistConfig = {
   title?: string;
@@ -150,7 +144,7 @@ type ChecklistConfig = {
 /**
  * Slice keys:
  * - Define which bands render and in what order.
- * - Used by PRESET_SLICES (Fix Plan 004 – Step 2) and by explicit props.slices.
+ * - Used by PRESET_SLICES and by explicit props.slices.
  */
 type BlogPostLayoutSliceKey =
   | "toc"
@@ -163,27 +157,7 @@ type BlogPostLayoutSliceKey =
   | "related";
 
 /**
- * Fix Plan 004 – Article Layout Preset keys (v1.0)
- *
- * conversionArticle (existing default)
- * - For: cv-tips, linkedin
- * - Slices: toc, body, checklist, inlineOffer, socialProof, faq, finalCta, related
- *
- * editorialArticle
- * - For: career-growth (thought-leadership / narrative posts)
- * - Slices: body, inlineOffer, related
- *
- * analysisArticle
- * - For: kenya-market (sector / trends / outlook pieces)
- * - Slices: toc, body, inlineOffer, finalCta, related
- *
- * shortInsight
- * - For: any category; short 500–800 word insights / campaign support posts.
- * - Slices: body, related
- *
- * campaignLanding (optional v1.1)
- * - For: special funnels and paid campaigns.
- * - Slices: body, checklist, finalCta
+ * Article Layout Preset keys (v1.0)
  */
 type BlogPostLayoutPresetKey =
   | "conversionArticle"
@@ -192,7 +166,7 @@ type BlogPostLayoutPresetKey =
   | "shortInsight"
   | "campaignLanding";
 
-export interface BlogPostLayoutProps {
+interface BlogPostLayoutProps {
   breadcrumbs: BreadcrumbItem[];
 
   // Hero / meta
@@ -207,59 +181,22 @@ export interface BlogPostLayoutProps {
   heroImage?: HeroImage;
   heroSoftCta?: HeroSoftCta;
 
-  /**
-   * KeyTakeaways (Fix Plan 213 + 213.3 – summary, not implementation):
-   * - 3–5 compact bullets capturing the essence of the article.
-   * - Insight-focused, declarative statements (no verb-first “do X / start Y”).
-   * - Rendered once at the top of the body column, above article content.
-   * - Not for implementation steps – those belong in checklist.
-   */
   keyTakeaways?: string[];
-
-  /**
-   * Optional intro slice:
-   * - HTML string with short contextual intro.
-   * - Presented as rich text between hero and body-top KeyTakeaways.
-   */
   introHtml?: string;
 
-  // Table of contents
   toc?: TocItem[];
   showToc?: boolean;
 
-  // Body content
-  /**
-   * Optional explicit body renderer (e.g. MDX component).
-   * If omitted, the <slot /> content will be used.
-   */
   Content?: AstroComponentFactory;
 
-  // Conversion & trust (resolved via central data banks at route layer)
   inlineOffer?: InlineOffer;
   socialProofItems?: SocialProofItem[];
   faqItems?: FaqItem[];
   finalCta?: FinalCta;
   relatedArticles?: RelatedArticle[];
 
-  /**
-   * Implementation checklist (Fix Plan 213 + 213.3 – “what to do next”):
-   * - Action-oriented steps only (verb-first tasks, e.g. “Map your target roles”).
-   * - Represents an ordered implementation list, distinct from summary bullets.
-   * - Rendered as a dedicated band via ChecklistSection, separate from
-   *   KeyTakeaways’ summary bullets.
-   */
   checklist?: ChecklistConfig;
 
-  /**
-   * IA preset and optional explicit slice ordering:
-   * - preset: high-level intent for the article (Fix Plan 004).
-   * - slices: optional explicit ordered list of slice keys; when provided,
-   *   it takes precedence over the preset defaults from PRESET_SLICES.
-   *
-   * Fix Plan 004 – Step 2 behaviour:
-   * - When slices is non-empty, it is used as-is (subject to data guards).
-   * - Otherwise, PRESET_SLICES[preset ?? "conversionArticle"] is used.
-   */
   preset?: BlogPostLayoutPresetKey;
   slices?: BlogPostLayoutSliceKey[];
 }
@@ -292,18 +229,9 @@ const {
 } = Astro.props as BlogPostLayoutProps;
 
 /**
- * Fix Plan 004 – Step 2
- * Preset → slices registry (single source of truth for article layouts).
- *
- * NOTE:
- * - Header/hero band is always rendered at the top; PRESET_SLICES governs
- *   the *optional* bands below the header.
- * - Route layer can still pass an explicit slices array to override this.
+ * Preset → slices registry.
  */
-const PRESET_SLICES: Record<
-  BlogPostLayoutPresetKey,
-  BlogPostLayoutSliceKey[]
-> = {
+const PRESET_SLICES: Record<BlogPostLayoutPresetKey, BlogPostLayoutSliceKey[]> = {
   conversionArticle: [
     "toc",
     "body",
@@ -320,34 +248,46 @@ const PRESET_SLICES: Record<
   campaignLanding: ["body", "checklist", "finalCta"],
 };
 
-// Data-level checks used to filter slices; route layer should also gate these.
-const hasKeyTakeaways =
-  Array.isArray(keyTakeaways) && keyTakeaways.length > 0;
+/**
+ * Allowed presets for runtime guard (FP005-09).
+ */
+const ALLOWED_PRESETS: BlogPostLayoutPresetKey[] = [
+  "conversionArticle",
+  "editorialArticle",
+  "analysisArticle",
+  "shortInsight",
+  "campaignLanding",
+];
 
+const hasKeyTakeaways = Array.isArray(keyTakeaways) && keyTakeaways.length > 0;
 const hasToc = !!(showToc && toc && toc.length > 0);
-
 const hasChecklist =
   !!(checklist && Array.isArray(checklist.items) && checklist.items.length > 0);
-
 const hasInlineOffer = !!inlineOffer;
 const hasSocialProof = !!(socialProofItems && socialProofItems.length > 0);
 const hasFaq = !!(faqItems && faqItems.length > 0);
 const hasFinalCta = !!finalCta;
 const hasRelated = !!(relatedArticles && relatedArticles.length > 0);
 
-// Defensive guard for hero image to prevent `.src` access on bad data
 const hasHeroImage =
   !!heroImage &&
   typeof heroImage.src === "string" &&
   heroImage.src.trim().length > 0;
 
 /**
- * Resolve base slice order (Fix Plan 004 – Step 2):
- * - Use explicit slices when provided and non-empty.
- * - Otherwise, resolve from PRESET_SLICES using preset or the implicit
- *   "conversionArticle" default when preset is omitted.
+ * Resolve preset safely:
+ * - If an explicit slices array is provided, use it.
+ * - Otherwise validate preset against ALLOWED_PRESETS, else fall back.
  */
-const resolvedPreset: BlogPostLayoutPresetKey = preset ?? "conversionArticle";
+const rawPreset =
+  typeof preset === "string" && preset.trim().length > 0
+    ? (preset.trim() as BlogPostLayoutPresetKey | string)
+    : "";
+
+const resolvedPreset: BlogPostLayoutPresetKey =
+  rawPreset && ALLOWED_PRESETS.includes(rawPreset as BlogPostLayoutPresetKey)
+    ? (rawPreset as BlogPostLayoutPresetKey)
+    : "conversionArticle";
 
 const baseSlices: BlogPostLayoutSliceKey[] =
   Array.isArray(slices) && slices.length > 0
@@ -355,34 +295,30 @@ const baseSlices: BlogPostLayoutSliceKey[] =
     : PRESET_SLICES[resolvedPreset];
 
 /**
- * Apply data guards on top of the structural slice ordering:
- * - Each slice is only rendered when the corresponding data is present.
- * - Body is always allowed (it is the primary content band).
+ * Apply data guards.
  */
-const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter(
-  (sliceKey) => {
-    switch (sliceKey) {
-      case "toc":
-        return hasToc;
-      case "body":
-        return true;
-      case "checklist":
-        return hasChecklist;
-      case "inlineOffer":
-        return hasInlineOffer;
-      case "socialProof":
-        return hasSocialProof;
-      case "faq":
-        return hasFaq;
-      case "finalCta":
-        return hasFinalCta;
-      case "related":
-        return hasRelated;
-      default:
-        return false;
-    }
-  },
-);
+const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter((sliceKey) => {
+  switch (sliceKey) {
+    case "toc":
+      return hasToc;
+    case "body":
+      return true;
+    case "checklist":
+      return hasChecklist;
+    case "inlineOffer":
+      return hasInlineOffer;
+    case "socialProof":
+      return hasSocialProof;
+    case "faq":
+      return hasFaq;
+    case "finalCta":
+      return hasFinalCta;
+    case "related":
+      return hasRelated;
+    default:
+      return false;
+  }
+});
 ---
 
 <article class="blog-post-layout page-gap-after" data-section="blog-post">
@@ -437,9 +373,7 @@ const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter(
           <div class="container">
             <div class="blog-post-layout__body-inner">
               <div class="blog-post-layout__content prose">
-                {/* KeyTakeaways – compact summary at top of body column (never implementation steps) */}
                 {hasKeyTakeaways && <KeyTakeaways items={keyTakeaways} />}
-
                 {Content ? <Content /> : <slot />}
               </div>
             </div>
@@ -454,7 +388,6 @@ const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter(
       return (
         <section key={sliceKey} class="blog-post-layout__checklist">
           <div class="container">
-            {/* ChecklistSection – implementation band, visually distinct from summary */}
             <ChecklistSection
               title={checklist.title}
               leadHtml={checklist.leadHtml}

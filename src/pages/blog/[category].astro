@@ -2,6 +2,11 @@
 import BaseLayout from "../../components/layout/BaseLayout.astro";
 import "../../styles/pages/blog-category.css";
 import { getCollection } from "astro:content";
+import {
+  getCategory,
+  type CategorySlug,
+  type BlogCategory,
+} from "@/lib/blog/categories";
 
 /**
  * Dynamic category route – no getStaticPaths.
@@ -19,41 +24,63 @@ function categorySlug(value: unknown): string {
 }
 
 const { category } = Astro.params;
-const cat = categorySlug(category || "uncategorized");
+const rawCategory = category || "uncategorized";
+const normalizedSlug = categorySlug(rawCategory);
+
+// Resolve canonical category metadata from the central model
+const categoryMeta = getCategory(normalizedSlug) as BlogCategory | undefined;
+
+// If the slug does not map to a known category, go to 404
+if (!categoryMeta) {
+  return Astro.redirect("/404/");
+}
+
+// Canonical category slug (one of the 5 defined CategorySlug values)
+const cat = categoryMeta.slug as CategorySlug;
 
 // Load all non-draft posts
 const allEntries = await getCollection("blog", ({ data }) => !data.draft);
 
-// Filter posts for this category
+// Filter posts for this category using the canonical slug
 const categoryEntries = allEntries.filter((entry) => {
   const name = (entry.data as any)?.category ?? "";
-  return categorySlug(name) === cat;
+  const entrySlug = categorySlug(name);
+  return entrySlug === cat;
 });
 
-// If no posts match this category, go to 404
-if (!categoryEntries.length) {
+// FP005-07: Special-case empty category behaviour for "hiring-insights".
+// - For existing categories: keep 404 on empty.
+// - For "hiring-insights": allow 0 posts and render an empty listing.
+if (!categoryEntries.length && cat !== "hiring-insights") {
   return Astro.redirect("/404/");
 }
 
 // Hero images per category (fallback to default)
-const HERO_IMAGES: Record<string, string> = {
-  "cv-tips": "/assets/images/blog/hero/blog-home-hero-01.webp",
+const HERO_IMAGES: Record<CategorySlug, string> = {
+  "cv-strategy": "/assets/images/blog/hero/blog-home-hero-01.webp",
   linkedin: "/assets/images/blog/hero/blog-home-hero-02.webp",
   "career-growth": "/assets/images/blog/hero/blog-home-hero-03.webp",
   "kenya-market": "/assets/images/blog/hero/blog-home-hero-04.webp",
+  "hiring-insights": "/assets/images/blog/hero/blog-home-hero-03.webp",
 };
 
 // Separate OG images mapping so hero image and OG image can diverge if needed
-const OG_IMAGES: Record<string, string> = {
-  "cv-tips": "/assets/images/blog/og/categories/blog-category-cv-tips-og.webp",
-  linkedin: "/assets/images/blog/og/categories/blog-category-linkedin-og.webp",
-  "career-growth": "/assets/images/blog/og/categories/blog-category-career-growth-og.webp",
-  "kenya-market": "/assets/images/blog/og/categories/blog-category-kenya-market-og.webp",
+const OG_IMAGES: Record<CategorySlug, string> = {
+  "cv-strategy":
+    "/assets/images/blog/og/categories/blog-category-cv-strategy-og.webp",
+  linkedin:
+    "/assets/images/blog/og/categories/blog-category-linkedin-og.webp",
+  "career-growth":
+    "/assets/images/blog/og/categories/blog-category-career-growth-og.webp",
+  "kenya-market":
+    "/assets/images/blog/og/categories/blog-category-kenya-market-og.webp",
+  "hiring-insights":
+    "/assets/images/blog/og/categories/blog-category-hiring-insights-og.webp",
 };
 
-const heroImageSrc =
-  HERO_IMAGES[cat] ?? "/assets/images/blog/hero/blog-home-hero.webp";
+const defaultHeroImage = "/assets/images/blog/hero/blog-home-hero.webp";
 
+const heroImageSrc = HERO_IMAGES[cat] ?? defaultHeroImage;
 const ogImageSrc = OG_IMAGES[cat] ?? heroImageSrc;
 
 // Map entries into the unified post shape for the feed
@@ -113,42 +140,31 @@ const fmtDate = (d: string | Date) =>
 const catHref = (p: { frontmatter: any }) =>
   `/blog/${categorySlug(p.frontmatter?.category || "uncategorized")}/`;
 
-// Human-friendly titles & descriptions
-const categoryTitleMap: Record<string, string> = {
-  "cv-tips": "CV & Cover Letter Tips",
-  linkedin: "LinkedIn & Branding",
-  "career-growth": "Career Growth",
-  "kenya-market": "Kenya Job Market",
-};
+// Hero copy (from canonical category metadata)
+const heroTitle = categoryMeta.heroTitle || categoryMeta.name;
+const heroSubtitle = categoryMeta.heroSubtitle || categoryMeta.description;
 
-const categoryDescriptionMap: Record<string, string> = {
-  "cv-tips":
-    "Actionable CV and cover letter advice tailored to Kenya’s job market.",
-  linkedin:
-    "LinkedIn profile and personal brand guidance to help you be discoverable and credible.",
-  "career-growth":
-    "Interviews, offers, and career leverage strategies for Kenyan professionals.",
-  "kenya-market":
-    "Local job market trends, salary intel, and hiring patterns in Kenya.",
-};
-
-const title = categoryTitleMap[cat] || "Blog category";
-const description =
-  categoryDescriptionMap[cat] ||
+// SEO copy derived from canonical metadata
+const seoTitleText = categoryMeta.name || "Blog category";
+const seoDescriptionText =
+  categoryMeta.description ||
   "Curated articles from CVWriting.co.ke on CVs, interviews, and strategy.";
 
+const pageTitle = `${seoTitleText} | CVWriting.co.ke Blog`;
+const pageDescription = seoDescriptionText;
+
 const seo = {
-  title: `${title} | CVWriting.co.ke Blog`,
-  description,
+  title: pageTitle,
+  description: pageDescription,
   openGraph: {
-    title: `${title} | CVWriting.co.ke Blog`,
-    description,
+    title: pageTitle,
+    description: pageDescription,
     image: ogImageSrc,
   },
 };
 ---
 
-<BaseLayout {title} {description} {seo}>
+<BaseLayout title={pageTitle} description={pageDescription} {seo}>
   <main data-section="blog-category">
     <!-- HERO: page title, description, hero image (mobile-first, 2-column on desktop) -->
     <section class="section bcat-hero" aria-labelledby="bcat-hero-heading">
@@ -157,10 +173,10 @@ const seo = {
           <p class="bcat-hero__eyebrow">Blog category</p>
           <!-- h1 element using global h1 styling -->
           <h1 id="bcat-hero-heading" class="bcat-hero__title section-title h1">
-            {title}
+            {heroTitle}
           </h1>
           <p class="bcat-hero__lede">
-            {description}
+            {heroSubtitle}
           </p>
           <p class="bcat-hero__meta">
             <span class="bcat-hero__metaPill">
@@ -172,7 +188,7 @@ const seo = {
         <figure class="bcat-hero__media">
           <img
             src={heroImageSrc}
-            alt={`${title} hero image`}
+            alt={`${heroTitle} hero image`}
             loading="eager"
             decoding="async"
             width="1200"
@@ -183,7 +199,7 @@ const seo = {
       </div>
     </section>
 
-    <!-- FEED: Latest articles (UNCHANGED) -->
+    <!-- FEED: Latest articles -->
     <section
       class="section bcat-feed"
       aria-label="Latest articles in this category"
@@ -196,96 +212,107 @@ const seo = {
           </header>
 
           <div id="bcat-grid" class="bcat-grid">
-            {postsPage1.map((p, idx) => {
-              const href = p.url;
-              const categoryLink = catHref(p);
-              const dt = new Date(p.frontmatter.date);
-              const dateIso = isNaN(dt.getTime()) ? undefined : dt.toISOString();
+            {postsPage1.length === 0 ? (
+              <p class="bcat-feed__empty">
+                No articles in this category yet. New insights are coming soon.
+              </p>
+            ) : (
+              postsPage1.map((p, idx) => {
+                const href = p.url;
+                const categoryLink = catHref(p);
+                const dt = new Date(p.frontmatter.date);
+                const dateIso = isNaN(dt.getTime())
+                  ? undefined
+                  : dt.toISOString();
 
-              return (
-                <article
-                  class="bcat-card"
-                  data-index={idx}
-                  data-cat={
-                    (p.frontmatter?.category ?? "").trim() || "uncategorized"
-                  }
-                >
-                  {p.frontmatter?.cover?.src ? (
-                    <a
-                      href={href}
-                      class="bcat-card__media"
-                      aria-label={`Read ${p.frontmatter.title}`}
-                    >
-                      <img
-                        src={p.frontmatter.cover.src}
-                        alt={p.frontmatter.cover.alt ?? p.frontmatter.title}
-                        width={p.frontmatter.cover.width ?? 640}
-                        height={p.frontmatter.cover.height ?? 360}
-                        loading={idx < 4 ? "eager" : "lazy"}
-                        decoding="async"
-                        sizes="(min-width:1280px) 25vw, (min-width:1024px) 25vw, (min-width:640px) 33vw, 100vw"
-                        fetchpriority={idx < 2 ? "high" : "low"}
-                      />
-                    </a>
-                  ) : (
-                    <div
-                      class="bcat-card__media bcat-card__media--empty"
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  <div class="bcat-card__body">
-                    {p.frontmatter?.category && (
-                      <p class="bcat-card__cat">
-                        <a
-                          href={categoryLink}
-                          aria-label={`View ${p.frontmatter.category} posts`}
-                        >
-                          {p.frontmatter.category}
-                        </a>
-                      </p>
-                    )}
-
-                    <h3 class="bcat-card__title line-clamp-2">
+                return (
+                  <article
+                    class="bcat-card"
+                    data-index={idx}
+                    data-cat={
+                      (p.frontmatter?.category ?? "").trim() ||
+                      "uncategorized"
+                    }
+                  >
+                    {p.frontmatter?.cover?.src ? (
                       <a
                         href={href}
-                        class="bcat-card__link"
+                        class="bcat-card__media"
                         aria-label={`Read ${p.frontmatter.title}`}
                       >
-                        {p.frontmatter.title}
+                        <img
+                          src={p.frontmatter.cover.src}
+                          alt={
+                            p.frontmatter.cover.alt ?? p.frontmatter.title
+                          }
+                          width={p.frontmatter.cover.width ?? 640}
+                          height={p.frontmatter.cover.height ?? 360}
+                          loading={idx < 4 ? "eager" : "lazy"}
+                          decoding="async"
+                          sizes="(min-width:1280px) 25vw, (min-width:1024px) 25vw, (min-width:640px) 33vw, 100vw"
+                          fetchpriority={idx < 2 ? "high" : "low"}
+                        />
                       </a>
-                    </h3>
-
-                    {p.frontmatter?.description && (
-                      <p class="bcat-card__excerpt clamp-3">
-                        {p.frontmatter.description}
-                      </p>
+                    ) : (
+                      <div
+                        class="bcat-card__media bcat-card__media--empty"
+                        aria-hidden="true"
+                      />
                     )}
 
-                    <p class="bcat-card__meta">
-                      {dateIso && (
-                        <span class="bcat-card__metaPill bcat-card__metaPill--date">
-                          <time datetime={dateIso}>
-                            {fmtDate(p.frontmatter.date)}
-                          </time>
-                        </span>
+                    <div class="bcat-card__body">
+                      {p.frontmatter?.category && (
+                        <p class="bcat-card__cat">
+                          <a
+                            href={categoryLink}
+                            aria-label={`View ${p.frontmatter.category} posts`}
+                          >
+                            {p.frontmatter.category}
+                          </a>
+                        </p>
                       )}
-                      {typeof p.frontmatter?.readingTime === "number" && (
-                        <span
-                          class="bcat-card__metaPill bcat-card__metaPill--read"
-                          aria-label={`${p.frontmatter.readingTime} minute read`}
+
+                      <h3 class="bcat-card__title line-clamp-2">
+                        <a
+                          href={href}
+                          class="bcat-card__link"
+                          aria-label={`Read ${p.frontmatter.title}`}
                         >
-                          {p.frontmatter.readingTime} min read
-                        </span>
+                          {p.frontmatter.title}
+                        </a>
+                      </h3>
+
+                      {p.frontmatter?.description && (
+                        <p class="bcat-card__excerpt clamp-3">
+                          {p.frontmatter.description}
+                        </p>
                       )}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
+
+                      <p class="bcat-card__meta">
+                        {dateIso && (
+                          <span class="bcat-card__metaPill bcat-card__metaPill--date">
+                            <time datetime={dateIso}>
+                              {fmtDate(p.frontmatter.date)}
+                            </time>
+                          </span>
+                        )}
+                        {typeof p.frontmatter?.readingTime === "number" && (
+                          <span
+                            class="bcat-card__metaPill bcat-card__metaPill--read"
+                            aria-label={`${p.frontmatter.readingTime} minute read`}
+                          >
+                            {p.frontmatter.readingTime} min read
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </article>
+                );
+              })
+            )}
           </div>
 
-          {hasMore && (
+          {hasMore && postsPage1.length > 0 && (
             <div class="bcat-feed__actions">
               <a
                 href={`/blog/${cat}/page/2/`}
