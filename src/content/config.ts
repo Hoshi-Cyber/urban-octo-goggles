@@ -1,5 +1,12 @@
-﻿// src/content/config.ts 
+﻿// src/content/config.ts
 import { defineCollection, z } from "astro:content";
+import type {
+  CategorySlug,
+  BlogPostPreset,
+  FunnelStage,
+} from "../lib/blog/categories";
+import { CATEGORY_SLUGS } from "../lib/blog/categories";
+import type { LengthCategory, PostIntent } from "../lib/blog/playbooks";
 
 const urlRegex =
   /^(https?:\/\/)([\w.-]+)(:[0-9]+)?(\/[\w\-._~:/?#[\]@!$&'()*+,;%=]*)?$/i;
@@ -14,6 +21,51 @@ const publicAssetRegex =
  */
 const internalPathRegex = /^\/[a-z0-9\-/_]+$/i;
 
+/**
+ * Category slug enum derived from the canonical CATEGORY_SLUGS list.
+ * Keeps the content schema in lockstep with src/lib/blog/categories.ts.
+ */
+const categoryEnum = z.enum(
+  CATEGORY_SLUGS as [CategorySlug, ...CategorySlug[]],
+);
+
+/**
+ * Length category options for playbooks (mirrors src/lib/blog/playbooks.ts).
+ */
+const lengthCategoryEnum = z.enum(
+  ["short", "standard", "long"] as [LengthCategory, ...LengthCategory[]],
+);
+
+/**
+ * Intent options for playbooks (mirrors src/lib/blog/playbooks.ts).
+ */
+const postIntentEnum = z.enum(
+  ["educationFirst", "balanced", "hardSell"] as [
+    PostIntent,
+    ...PostIntent[],
+  ],
+);
+
+/**
+ * Funnel stage options (mirrors src/lib/blog/categories.ts FunnelStage).
+ */
+const funnelStageEnum = z.enum(
+  ["TOFU", "MOFU", "BOFU", "MOFU_BOFU"] as [FunnelStage, ...FunnelStage[]],
+);
+
+/**
+ * Layout preset enum (mirrors BlogPostPreset in src/lib/blog/categories.ts).
+ */
+const layoutPresetEnum = z.enum(
+  [
+    "conversionArticle",
+    "editorialArticle",
+    "analysisArticle",
+    "shortInsight",
+    "campaignLanding",
+  ] as [BlogPostPreset, ...BlogPostPreset[]],
+);
+
 export const collections = {
   blog: defineCollection({
     type: "content",
@@ -26,9 +78,15 @@ export const collections = {
         description: z.string().min(30),
 
         /**
-         * Category slug used for URLs, e.g. "cv-writing", "career-growth".
+         * Category slug used for URLs and taxonomy.
+         * Must be one of the canonical CategorySlug values:
+         * - cv-strategy
+         * - linkedin
+         * - career-growth
+         * - kenya-market
+         * - hiring-insights
          */
-        category: z.string().regex(/^[a-z0-9-]+$/),
+        category: categoryEnum,
 
         /**
          * Tags for discovery/related posts.
@@ -93,6 +151,22 @@ export const collections = {
          * Canonical URL for the article, if different from the primary URL.
          */
         canonical: z.string().regex(urlRegex).optional(),
+
+        /**
+         * Optional hreflang alternates for multi-region or multi-language content.
+         * Example:
+         *  alternates:
+         *    - hrefLang: "en-ke"
+         *      href: "https://cvwriting.co.ke/blog/..."
+         */
+        alternates: z
+          .array(
+            z.object({
+              hrefLang: z.string().min(2),
+              href: z.string().regex(urlRegex),
+            }),
+          )
+          .optional(),
 
         /**
          * Open Graph / Twitter image.
@@ -168,12 +242,46 @@ export const collections = {
           .optional(),
 
         // -------------------------------------------------------------------
-        // IA: top-of-article scaffolding
+        // Content meta: IA, playbooks, funnel
         // -------------------------------------------------------------------
 
         /**
+         * Optional explicit layout preset override.
+         * When omitted, defaults are derived from the category via
+         * resolvePresetForCategory in src/lib/blog/categories.ts.
+         */
+        layoutPreset: layoutPresetEnum.optional(),
+
+        /**
+         * Optional funnel stage override for this specific article.
+         * When omitted, defaults are derived from the category via
+         * resolveFunnelStageForCategory in src/lib/blog/categories.ts.
+         */
+        funnelStage: funnelStageEnum.optional(),
+
+        /**
+         * Optional length category hint for BlogPostLayout slice playbooks.
+         * Mirrors LengthCategory in src/lib/blog/playbooks.ts.
+         */
+        lengthCategory: lengthCategoryEnum.optional(),
+
+        /**
+         * Optional conversion intent hint for BlogPostLayout slice playbooks.
+         * Mirrors PostIntent in src/lib/blog/playbooks.ts.
+         */
+        intent: postIntentEnum.optional(),
+
+        /**
+         * Introductory HTML or markdown string rendered above the first H2.
+         * Used for 1–2 paragraph context/introduction separate from the main
+         * MDX body structure.
+         */
+        introHtml: z.string().optional(),
+
+        /**
          * Key takeaways (3–5 bullets). Shown near the top of the article.
-         * Kept optional for migration; IA validation will enforce where required.
+         * Kept optional at schema level; IA validator enforces where required
+         * (e.g. pillar/tactical articles).
          */
         keyTakeaways: z
           .array(z.string().min(5))
@@ -186,7 +294,28 @@ export const collections = {
         // -------------------------------------------------------------------
 
         /**
-         * Optional checklist items used in “Implementation checklist” band.
+         * Canonical implementation checklist.
+         * Used by BlogPostLayout for the checklist band.
+         *
+         * Each item can be:
+         * - A simple string: "Update your CV headline for clarity"
+         * - A richer object with label + optional description.
+         */
+        checklist: z
+          .array(
+            z.union([
+              z.string().min(3),
+              z.object({
+                label: z.string().min(3),
+                description: z.string().min(5).optional(),
+              }),
+            ]),
+          )
+          .optional(),
+
+        /**
+         * DEPRECATED: use `checklist` instead.
+         * Kept temporarily for backward compatibility with older content.
          */
         checklistItems: z
           .array(
@@ -203,8 +332,8 @@ export const collections = {
 
         /**
          * Optional inline offer inserted mid-article.
-         * RELAXED: All fields inside are optional to avoid hard failures
-         * on partially-filled blocks.
+         * All fields inside are optional to avoid hard failures on
+         * partially-filled blocks.
          */
         inlineOffer: z
           .object({
@@ -232,6 +361,39 @@ export const collections = {
              */
             badge: z.string().optional(),
           })
+          .optional(),
+
+        // -------------------------------------------------------------------
+        // IA: social proof strip
+        // -------------------------------------------------------------------
+
+        /**
+         * Optional social proof items displayed near the bottom of the article.
+         */
+        socialProofItems: z
+          .array(
+            z.object({
+              quote: z.string().min(5),
+              name: z.string().optional(),
+              role: z.string().optional(),
+            }),
+          )
+          .optional(),
+
+        // -------------------------------------------------------------------
+        // IA: FAQ band
+        // -------------------------------------------------------------------
+
+        /**
+         * Optional FAQ items for the article.
+         */
+        faqItems: z
+          .array(
+            z.object({
+              question: z.string().min(5),
+              answer: z.string().min(10),
+            }),
+          )
           .optional(),
 
         // -------------------------------------------------------------------
@@ -301,31 +463,10 @@ export const collections = {
         // -------------------------------------------------------------------
 
         /**
-         * Fix Plan 004 – Optional per-article layout preset override.
-         *
-         * - When omitted, a sensible default is inferred from the category
-         *   inside BlogPost.astro (e.g. cv-tips/linkedin → conversionArticle,
-         *   kenya-market → analysisArticle, everything else → editorialArticle).
-         * - When provided, this value is passed through to BlogPostLayout and
-         *   used to select the slice sequence from the PRESET_SLICES registry.
-         *
-         * Available presets:
-         * - "conversionArticle"
-         * - "editorialArticle"
-         * - "analysisArticle"
-         * - "shortInsight"
-         * - "campaignLanding"
+         * Layout version marker for BlogPostLayout.
+         * "blog-post-v1" is the current default; additional versions can be
+         * introduced later without breaking existing content.
          */
-        layoutPreset: z
-          .enum([
-            "conversionArticle",
-            "editorialArticle",
-            "analysisArticle",
-            "shortInsight",
-            "campaignLanding",
-          ])
-          .optional(),
-
         layoutVersion: z.enum(["blog-post-v1"]).default("blog-post-v1"),
       }),
   }),
