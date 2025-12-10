@@ -12,7 +12,7 @@
 // Notes:
 // - BlogPostLayout remains the single source of truth for IA + band order.
 // - This helper only chooses which existing slices to request for a post.
-// - Route layer (e.g. src/pages/blog/[slug].astro) is responsible for:
+// - Route layer (e.g. src/pages/blog/[category]/[slug].astro) is responsible for:
 //   • Reading lengthCategory / intent from frontmatter.
 //   • Calling resolveSlicesForPost and passing the result as the `slices` prop.
 //   • Applying separate TOC gating via showToc (word/heading thresholds).
@@ -39,8 +39,10 @@ export interface SlicePlaybookOptions {
   intent?: PostIntent | null;
 }
 
-// Fix Plan 213 default for the "conversionArticle" preset.
-// This is the baseline stack when no length/intent meta is provided.
+/**
+ * Fix Plan 213 default for the "conversionArticle" preset.
+ * This is the baseline stack when no length/intent meta is provided.
+ */
 const CONVERSION_DEFAULT_SLICES: readonly BlogPostLayoutSliceKey[] = [
   "toc",
   "body",
@@ -155,4 +157,21 @@ export function resolveSlicesForPost(
   // Any unsupported combo or missing meta falls back to the original
   // conversionArticle default from Fix Plan 213.
   return cloneSlices(CONVERSION_DEFAULT_SLICES);
+}
+
+/**
+ * Future-proof helper:
+ * Given optional meta from frontmatter, provide a normalised playbook input.
+ *
+ * This keeps the rest of the code from having to worry about null/undefined
+ * and centralises defaulting logic in one place.
+ */
+export function normalisePlaybookOptions(
+  lengthCategory?: LengthCategory | null,
+  intent?: PostIntent | null,
+): SlicePlaybookOptions {
+  return {
+    lengthCategory: lengthCategory ?? "standard",
+    intent: intent ?? "balanced",
+  };
 }
