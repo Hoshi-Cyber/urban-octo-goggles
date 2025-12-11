@@ -1,62 +1,41 @@
 /* src/components/blog/base/Breadcrumbs/Breadcrumbs.css
-   Blog breadcrumbs – premium pill trail above the post header
-   - Mobile-first, low-noise, uses brand colours subtly
-   - Compact layout that wraps gracefully on narrow screens
+   Blog breadcrumbs – light, text-first trail above the post header
+   - Aligned to the global .container grid (container class added in markup)
+   - No pill band background; looks like part of the page chrome
+   - Uses brand neutrals + primary accents for a premium, quiet look
 */
 
 .breadcrumbs {
-  width: 100%;
-  max-width: var(--container-max);
-  margin-inline: auto;
-
-  /* modest breathing room above, none below */
-  padding-block-start: var(--space-2);
+  /* The .container class handles width + centering. Here we only do spacing + type. */
+  padding-block-start: var(--space-3);
   padding-block-end: 0;
 
   font-size: var(--fs-xs);
+  line-height: 1.4;
   color: var(--color-muted);
+
+  /* Center the breadcrumb trail to stack above the hero/title */
+  text-align: center;
 }
 
-/* Main list wrapper – pill band using surface + primary-soft tint */
+/* Main list wrapper – simple inline trail, no background band */
 .breadcrumbs__list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-
-  /* reset any external gap */
-  gap: 0 !important;
-
-  column-gap: 0;
-  row-gap: var(--space-1);
+  justify-content: center; /* center within the container */
+  gap: 0; /* separators manage micro-spacing */
 
   margin: 0;
-  padding: clamp(0.2rem, 0.4vw, 0.35rem)
-           clamp(var(--space-2), 2vw, var(--space-3));
+  padding: 0;
   list-style: none;
-
-  border-radius: var(--radius-pill, 999px);
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 94%,
-    var(--color-primary-soft, var(--color-primary)) 6%
-  );
-  border: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 88%,
-      transparent
-    );
-  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.05));
 }
 
 /* Items + separators */
 .breadcrumbs__item {
   display: inline-flex;
   align-items: center;
-  min-width: 0; /* allow current crumb to shrink */
-
-  /* No internal gap so text and "/" stay close */
-  gap: 0 !important;
+  min-width: 0;
 }
 
 /* Reset any legacy/global separator using ::before */
@@ -66,112 +45,84 @@
   padding: 0 !important;
 }
 
-/* Compact separator using muted tone */
+/* Separator – subtle, low-contrast slash */
 .breadcrumbs__item:not(:last-child)::after {
   content: "/";
   font-size: 0.9em;
-  color: color-mix(in oklab, var(--color-muted) 80%, transparent);
+  color: color-mix(in oklab, var(--color-muted) 75%, transparent);
 
-  margin-inline-start: 0.12rem !important;
-  margin-inline-end: 0.32rem !important;
+  margin-inline-start: 0.25rem;
+  margin-inline-end: 0.35rem;
 }
 
-/* Link + current styles */
+/* Link crumbs – quiet by default, upgrade via colour only on hover/focus */
 .breadcrumbs__link {
   display: inline-flex;
   align-items: center;
 
-  padding-inline: clamp(0.25rem, 0.4vw, 0.5rem);
-  padding-block: 0.15rem;
-  border-radius: var(--radius-pill, 999px);
-
-  text-decoration: none !important;
-
-  color: var(--color-muted);
-  background-color: transparent;
-
-  transition:
-    color 150ms ease-out,
-    background-color 150ms ease-out,
-    box-shadow 150ms ease-out,
-    transform 150ms ease-out;
-}
-
-/* Hover/focus: subtle primary tint, no underline */
-.breadcrumbs__link:hover,
-.breadcrumbs__link:focus-visible {
-  text-decoration: none !important;
-  color: var(--color-primary-strong, var(--color-primary));
-
-  background-color: color-mix(
+  text-decoration: none;
+  color: color-mix(
     in oklab,
-    var(--color-primary-soft, var(--color-primary)) 14%,
-    var(--color-surface, #ffffff)
+    var(--color-muted) 88%,
+    var(--color-text) 12%
   );
 
-  box-shadow: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.07));
+  padding: 0;            /* no pill padding */
+  border-radius: 0;      /* no pill shape */
+
+  transition:
+    color 140ms ease-out,
+    background-color 140ms ease-out;
+}
+
+/* Hover/focus: no underline, just colour + very soft tint */
+.breadcrumbs__link:hover,
+.breadcrumbs__link:focus-visible {
+  color: var(--color-primary-strong, var(--color-primary));
+  background-color: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 6%,
+    transparent
+  );
+  text-decoration: none;
   outline: none;
 }
 
-/* Explicit focus ring for keyboard users */
-.breadcrumbs__link:focus-visible {
-  box-shadow:
-    0 0 0 1px color-mix(
-      in oklab,
-      var(--color-primary, #1b3637) 65%,
-      transparent
-    ),
-    var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 0.07));
-}
-
-/* Current (terminal) crumb – slightly stronger pill */
+/* Current (terminal) crumb – slightly stronger text, no background chip */
 .breadcrumbs__current {
   display: inline-flex;
   align-items: center;
 
-  padding-inline: clamp(0.35rem, 0.6vw, 0.7rem);
-  padding-block: 0.18rem;
-  border-radius: var(--radius-pill, 999px);
-
-  font-weight: 600;
-  color: var(--color-primary-strong, var(--color-text));
-
-  background-color: color-mix(
+  font-weight: 500;
+  color: color-mix(
     in oklab,
-    var(--color-primary-soft, var(--color-primary)) 18%,
-    var(--color-surface, #ffffff)
+    var(--color-text, #111827) 86%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
   );
 
-  text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Responsive refinements – mobile first */
+/* Responsive refinements – keep it slim but proportionate */
+
 @media (min-width: 640px) {
   .breadcrumbs {
-    padding-block-start: var(--space-2);
-    padding-block-end: 0;
-  }
-
-  .breadcrumbs__list {
-    padding-block: clamp(0.25rem, 0.3vw, 0.45rem);
-    padding-inline: clamp(var(--space-2), 1.8vw, var(--space-4));
-  }
-}
-
-/*
-  Desktop refinement:
-  - Keep the current (post title) crumb on a single line with ellipsis.
-*/
-@media (min-width: 1024px) {
-  .breadcrumbs {
-    padding-block-start: var(--space-2);
-    padding-block-end: 0;
+    padding-block-start: var(--space-4);
   }
 
   .breadcrumbs__current {
-    max-width: 32ch;
+    max-width: 36ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .breadcrumbs {
+    padding-block-start: var(--space-5);
+  }
+
+  .breadcrumbs__current {
+    max-width: 42ch;
   }
 }

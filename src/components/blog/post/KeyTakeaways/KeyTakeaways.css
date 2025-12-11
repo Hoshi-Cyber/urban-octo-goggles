@@ -5,10 +5,11 @@
  * - Mobile-first
  * - Token-driven (spacing, typography, colours)
  * - Light, subtle band above the article content (no heavy card chrome)
+ *
+ * Note:
+ * - Design tokens and typography are imported globally via src/styles/index.css.
+ * - This file assumes variables like --space-*, --fs-*, --color-* are available.
  */
-
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
 
 .key-takeaways {
   width: 100%;

@@ -51,7 +51,10 @@ const normalizeHref = (href: string) => {
       } else {
         // 3) Single-segment category: /blog/<cat>/ → slugged cat
         const cat = p.match(/^\/blog\/([^/]+)\/?$/);
-        if (cat && !["tag", "page", "rss", "categories", "tags"].includes(cat[1])) {
+        if (
+          cat &&
+          !["tag", "page", "rss", "categories", "tags"].includes(cat[1])
+        ) {
           p = `/blog/${slug(decodeURIComponent(cat[1]))}/`;
         }
       }
@@ -94,7 +97,7 @@ const jsonLd = {
 ---
 
 {normalized.length ? (
-  <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <nav class="breadcrumbs container" aria-label="Breadcrumb">
     <ol class="breadcrumbs__list">
       {normalized.map((c, i) => {
         const href = c.href ? normalizeHref(c.href) : undefined;

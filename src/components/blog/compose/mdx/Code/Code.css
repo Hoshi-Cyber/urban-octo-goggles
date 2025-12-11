@@ -1,4 +1,4 @@
-/* src/components/blog/mdx/Code/Code.css
+/* src/components/blog/compose/mdx/Code/Code.css
    MDX Code block — premium, brand-aligned with copy button.
    Mobile-first, token-driven, neat and minimalist.
 */
@@ -107,7 +107,7 @@
   outline-offset: 2px;
 }
 
-/* Status text */
+/* Status text for visual users */
 .mdx-code__copy .label::after {
   content: attr(data-ready);
 }

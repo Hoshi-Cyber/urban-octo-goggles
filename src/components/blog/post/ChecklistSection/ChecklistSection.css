@@ -5,107 +5,76 @@
   - Mobile-first
   - Token-driven
   - Premium, brand-aligned inner card sitting on the blog layout band
-*/
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --text-*, --color-* etc. are available.
+*/
 
 .checklist-section {
   width: 100%;
 }
 
-/* Inner card: centred, premium panel on top of the band
-   BlogPostLayout controls the outer band background; we focus on the card. */
-.checklist-section__inner {
-  width: 100%;
-  max-width: min(var(--blog-post-content-max-width, 70ch), 100%);
+.checklist-section__container {
+  max-width: var(--layout-max-width, 72rem);
   margin-inline: auto;
-
-  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
-  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
-  padding-inline: clamp(var(--space-4), 3vw, var(--space-6));
-
-  border-radius: var(--radius-2xl, 1.25rem);
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface, #ffffff) 94%,
-    var(--color-surface-alt, #f9fafb) 6%
-  );
-  border: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 88%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
-    );
-  box-shadow: var(--shadow-sm);
+  padding-inline: var(--space-4);
 }
 
-/* Header */
+.checklist-section__inner {
+  border-radius: var(--radius-lg, 1.25rem);
+  border: 1px solid var(--color-border-subtle, rgba(15, 23, 42, 0.08));
+  background: var(
+    --color-surface-soft,
+    linear-gradient(
+      135deg,
+      rgba(248, 250, 252, 0.98),
+      rgba(241, 245, 249, 0.98)
+    )
+  );
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .checklist-section__header {
   display: flex;
   flex-direction: column;
-
-  /* Kill flex gap between eyebrow and title; use margins instead */
-  gap: 0;
-
-  margin-block-end: var(--space-4);
+  gap: var(--space-2);
 }
 
-/* Eyebrow – match other bands: text-only label, no pill */
 .checklist-section__eyebrow {
-  /* Hard override any paragraph defaults */
-  margin-top: 0 !important;
-  /* Tiny negative margin to create a very small controlled gap */
-  margin-bottom: -0.01rem !important;
-  padding: 0 !important;
-
-  line-height: 1;
-  display: block;
-
-  font-size: var(--fs-xs);
-  letter-spacing: 0.12em;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  font-weight: 600;
-
-  color: color-mix(
-    in oklab,
-    var(--color-accent-soft, var(--color-accent, #d4ab18)) 68%,
-    var(--color-text-muted, #6b7280)
-  );
+  color: var(--color-text-muted, #64748b);
 }
 
-/* Title – override global .h2 margins with higher specificity */
-.checklist-section__title,
-.checklist-section__title.h2,
-.checklist-section__title.section-title,
-.checklist-section__title.h2.section-title {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-
-  line-height: 1.2;
-
-  color: color-mix(
-    in oklab,
-    var(--color-primary-strong, var(--color-primary, #1b3637)) 80%,
-    var(--color-text, #020617)
-  );
+.checklist-section__title {
+  margin: 0;
+  font-family: var(--font-heading, system-ui);
+  font-size: var(--text-lg);
+  line-height: 1.3;
+  color: var(--color-text-strong, #0f172a);
 }
 
-/* Lead copy */
 .checklist-section__lead {
-  font-size: var(--fs-sm);
-  line-height: 1.6;
-  color: color-mix(
-    in oklab,
-    var(--color-text, #020617) 80%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 20%
-  );
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--color-text-muted, #64748b);
 }
 
-.checklist-section__lead > * + * {
-  margin-block-start: var(--space-1);
+.checklist-section__lead p {
+  margin: 0;
+}
+
+.checklist-section__lead p + p {
+  margin-top: var(--space-2);
 }
 
 /* Tablet+ */
@@ -114,11 +83,7 @@
     padding-inline: clamp(var(--space-6), 4vw, var(--space-8));
   }
 
-  .checklist-section__title,
-  .checklist-section__title.h2,
-  .checklist-section__title.section-title,
-  .checklist-section__title.h2.section-title {
-    /* h2 handles scale; we only ensure comfortable line-length presence */
+  .checklist-section__title {
     max-width: 24rem;
   }
 }

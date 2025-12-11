@@ -1,23 +1,119 @@
 ---
-interface Item { label: string; checked?: boolean }
-interface Props { items: Item[] }
-const { items = [] } = Astro.props;
-const sheet = new URL('./Checklist.css', import.meta.url).toString();
+/*
+  File: src/components/ui/Checklist/index.astro
+
+  Purpose:
+  - Reusable, token-driven checklist UI for marketing/editorial surfaces.
+  - Mobile-first, accessible, and brand-aligned for cvwriting.co.ke.
+
+  Backwards compatibility:
+  - Keeps the original public API:
+    interface Item { label: string; checked?: boolean }
+    interface Props { items: Item[] }
+  - Extends Item and Props with optional fields without breaking existing usage.
+*/
+
+interface ChecklistItem {
+  /** Primary label text for the checklist row (required). */
+  label: string;
+  /** Optional secondary line for clarification/subtext. */
+  description?: string;
+  /** Initial checked state (cosmetic only; no JS state management). */
+  checked?: boolean;
+  /** Emphasis level for the row (affects visual weight only). */
+  emphasis?: "primary" | "subtle";
+  /** Semantic state used for visual styling only. */
+  state?: "default" | "success" | "warning" | "error";
+  /** If true, renders the checkbox disabled and styles as inactive. */
+  disabled?: boolean;
+}
+
+interface ChecklistProps {
+  items: ChecklistItem[];
+  /**
+   * Optional visual variant for density/layout.
+   * - "default" → spacious rows (recommended for most usage).
+   * - "compact" → tighter vertical rhythm (e.g. dense implementation lists).
+   */
+  variant?: "default" | "compact";
+  /**
+   * Optional density toggle; shorthand to make rows slightly tighter.
+   * - Can be combined with variant if needed.
+   */
+  dense?: boolean;
+}
+
+const {
+  items = [],
+  variant = "default",
+  dense = false,
+} = Astro.props as ChecklistProps;
+
+const sheet = new URL("./Checklist.css", import.meta.url).toString();
+
+/**
+ * Root class name with optional variant/density modifiers.
+ */
+const rootClassName = [
+  "ui-checklist",
+  variant === "compact" ? "ui-checklist--compact" : "",
+  dense ? "ui-checklist--dense" : "",
+]
+  .filter(Boolean)
+  .join(" ");
 ---
+
 <link rel="stylesheet" href={sheet} />
-<ul class="ui-checklist" role="list">
-  {items.map((it, idx) => (
-    <li class="ui-checklist__item">
-      <label class="ui-checklist__label">
-        <input
-          class="ui-checklist__box"
-          type="checkbox"
-          checked={Boolean(it.checked)}
-          aria-label={it.label}
-        />
-        <span class="ui-checklist__text">{it.label}</span>
-      </label>
-    </li>
-  ))}
+
+<ul class={rootClassName}>
+  {items.map((it, idx) => {
+    const id = `ui-checklist-${idx}`;
+    const itemState = it.state ?? "default";
+    const itemEmphasis = it.emphasis ?? "primary";
+    const isDisabled = Boolean(it.disabled);
+
+    const itemClassName = [
+      "ui-checklist__item",
+      itemEmphasis === "subtle"
+        ? "ui-checklist__item--emphasis-subtle"
+        : "ui-checklist__item--emphasis-primary",
+      itemState !== "default"
+        ? `ui-checklist__item--state-${itemState}`
+        : "",
+      isDisabled ? "ui-checklist__item--disabled" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <li class={itemClassName}>
+        <label
+          class="ui-checklist__label"
+          for={id}
+        >
+          <input
+            id={id}
+            class="ui-checklist__box"
+            type="checkbox"
+            checked={Boolean(it.checked)}
+            disabled={isDisabled}
+          />
+          <span class="ui-checklist__body">
+            <span class="ui-checklist__text">
+              {it.label}
+            </span>
+
+            {it.description && (
+              <span class="ui-checklist__description">
+                {it.description}
+              </span>
+            )}
+          </span>
+        </label>
+      </li>
+    );
+  })}
+
+  {/* Optional extra content (footnotes, inline CTA, etc.) */}
   <slot />
 </ul>

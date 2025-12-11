@@ -2,21 +2,51 @@
 /*
   src/components/blog/post/InlineOfferBlock/index.astro
 
-  FP-205.6:
+  FP-205.6 / Fix Plan 006 Step 4.5:
   - Mid-article conversion block sized for a single blog post.
   - Uses shared Button component (btn system) and token-driven layout.
   - BlogPostLayout already wraps this in a .container; do NOT add another.
+  - Purely presentational: all copy, links, and tracking IDs are provided upstream.
 */
 
 import Button from "@/components/cta/Button";
 import "./InlineOfferBlock.css";
 
 export interface InlineOfferBlockProps {
+  /**
+   * Main offer heading, rendered as an h2 within the article.
+   * Example: "Ready to upgrade your CV for actual shortlists?"
+   */
   heading: string;
+
+  /**
+   * Benefit bullets for the offer.
+   * Kept simple (string array) to stay compatible with existing usage.
+   */
   bullets: string[];
+
+  /**
+   * Primary CTA button label.
+   * Example: "View CV Packages"
+   */
   ctaLabel: string;
+
+  /**
+   * Primary CTA href (internal path or absolute URL).
+   * Example: "/pricing"
+   */
   ctaHref: string;
+
+  /**
+   * Optional small trust note (under or beside the CTA).
+   * Example: "Built from 500+ Kenyan CV projects since 2017."
+   */
   trustNote?: string;
+
+  /**
+   * Optional eyebrow text above the heading.
+   * Example: "Work with an expert"
+   */
   eyebrow?: string;
 }
 
@@ -38,9 +68,11 @@ const hasBullets = Array.isArray(bullets) && bullets.length > 0;
 >
   <div class="inline-offer__inner">
     <header class="inline-offer__header">
-      <p class="inline-offer__eyebrow">
-        {eyebrow}
-      </p>
+      {eyebrow && (
+        <p class="inline-offer__eyebrow">
+          {eyebrow}
+        </p>
+      )}
 
       <h2
         id="inline-offer-title"

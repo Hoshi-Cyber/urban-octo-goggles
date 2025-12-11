@@ -1,188 +1,224 @@
-/* src/components/blog/compose/PostToc/PostToc.css
-   Post table of contents for single blog post.
-   Mobile-first, token-driven, scoped to .post.
-   FP-190.1: Full-width stacked block above body (no sidebar behaviour).
-*/
+/* PostToc – clean, responsive TOC card
+ * - Mobile: full-width card above content, collapsible.
+ * - Desktop: sticky sidebar card, scrollable list.
+ */
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+/* Root card --------------------------------------------------------------- */
 
-/* Wrapper: full-width block, soft premium surface */
-.post .post__toc,
 .post-toc {
-  margin-block: clamp(var(--space-4), 3vw, var(--space-6));
-  padding-block: clamp(var(--space-3), 2.5vw, var(--space-4));
-  padding-inline: clamp(var(--space-3), 3vw, var(--space-4));
-
-  border-radius: var(--radius-2xl, 1.25rem);
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 88%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
-  );
-  border: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 92%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
-    );
-  box-shadow: var(--shadow-sm);
-
-  font-size: var(--fs-sm);
-}
-
-/* TOC title – compact eyebrow-style heading */
-.post .post__toc-title,
-.post-toc__title {
-  margin: 0 0 var(--space-2);
-
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-
-  color: color-mix(
-    in oklab,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 80%,
-    var(--color-text, #020617)
-  );
-}
-
-/* List reset and layout */
-.post .post__toc-list,
-.post-toc__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space-1) * 0.9);
-}
-
-/* Items */
-.post .post__toc-item,
-.post-toc__item {
-  margin: 0;
-}
-
-/* Base link styling */
-.post .post__toc-link,
-.post-toc__link {
+  width: 100%;
+  max-width: var(--blog-post-content-max-width, 72ch);
+  margin: 0 auto 2rem;
+  padding: 1.25rem 1.25rem;
+  border-radius: 20px;
+  box-sizing: border-box;
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-subtle, #e5e7eb);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
   position: relative;
-
-  display: block;
-  padding-block: 0.25rem;
-  padding-inline: var(--space-1);
-
-  border-radius: var(--radius-md, 0.5rem);
-
-  text-decoration: none;
-  line-height: 1.4;
-
-  color: color-mix(
-    in oklab,
-    var(--color-text, #020617) 82%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 18%
-  );
-
-  transition:
-    color 150ms ease-out,
-    background-color 150ms ease-out,
-    transform 100ms ease-out;
+  overflow: hidden;
 }
 
-/* Hover / focus states – colour + subtle lift, no underline */
-.post .post__toc-link:hover,
-.post-toc__link:hover,
-.post .post__toc-link:focus-visible,
-.post-toc__link:focus-visible {
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface, #ffffff) 86%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 14%
-  );
-  color: color-mix(
-    in oklab,
-    var(--color-primary, #1b3637) 88%,
-    var(--color-text, #020617)
-  );
-  transform: translateY(-1px);
-  outline: none;
+/* Variant hook (if you ever need) */
+.post-toc[data-variant="compact"] {
+  padding: 1rem 1rem;
 }
 
-/* Depth-based indentation */
-.post .post__toc-item--d3 .post__toc-link,
-.post-toc__item--d3 .post-toc__link {
-  padding-inline-start: calc(var(--space-3) + var(--space-1));
-  font-size: 0.94em;
-  color: color-mix(
-    in oklab,
-    var(--color-text, #020617) 78%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 22%
+/* Progress bar ----------------------------------------------------------- */
+
+.post-toc__progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(
+    to right,
+    var(--color-primary, #1b3637),
+    var(--color-primary-soft, #38bdf8)
   );
+  transition: transform 0.15s ease-out;
 }
 
-/* Left accent guide for all items for visual rhythm */
-.post .post__toc-list,
+/* Title ------------------------------------------------------------------ */
+
+.post-toc__title {
+  display: none; /* hidden on mobile, visible on md+ */
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--color-text-subtle, #6b7280);
+}
+
+/* Mobile toggle ---------------------------------------------------------- */
+
+.post-toc__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.4rem;
+  margin: 0 0 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle, #e5e7eb);
+  background-color: var(--color-surface-elevated, #f9fafb);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text, #111827);
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+.post-toc__toggle:hover {
+  background-color: var(--color-surface-subtle, #f3f4f6);
+  border-color: var(--color-border-strong, #d1d5db);
+}
+
+.post-toc__toggle-label {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.post-toc__toggle-icon {
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+  transform-origin: 50% 50%;
+  transition: transform 0.15s ease-out;
+}
+
+.post-toc.post-toc--open .post-toc__toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* List ------------------------------------------------------------------- */
+
 .post-toc__list {
-  border-left: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 30%,
-      var(--color-border-subtle, #e5e7eb) 70%
-    );
-  padding-left: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none; /* collapsed on mobile by default */
 }
 
-/* Small bullet accent */
-.post .post__toc-item::before,
+.post-toc__item {
+  position: relative;
+  padding-left: 1rem;
+  margin: 0.1rem 0;
+}
+
+/* vertical guideline */
 .post-toc__item::before {
   content: "";
-  display: inline-block;
-  width: 0.35rem;
-  height: 0.35rem;
-  margin-right: 0.4rem;
-
+  position: absolute;
+  left: 0.35rem;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  width: 2px;
   border-radius: 999px;
-  background-color: color-mix(
-    in oklab,
-    var(--color-primary, #1b3637) 80%,
-    var(--color-accent, #d4ab18) 20%
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.06),
+    rgba(15, 23, 42, 0.02)
   );
 }
 
-/* Align bullet + link */
-.post .post__toc-item,
-.post-toc__item {
-  display: flex;
-  align-items: flex-start;
+/* indentation by depth */
+.post-toc__item--d3 {
+  padding-left: 1.75rem;
 }
 
-.post .post__toc-item .post__toc-link,
-.post-toc__item .post-toc__link {
-  flex: 1;
+/* link styling */
+.post-toc__link {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  max-width: 100%;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-text-subtle, #4b5563);
+  text-decoration: none;
+  padding: 0.25rem 0.1rem;
+  border-radius: 999px;
+  outline: none;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out,
+    transform 0.1s ease-out;
 }
 
-/* Larger screens: slightly more breathing room */
-@media (min-width: 1024px) {
-  .post .post__toc,
+.post-toc__link:hover {
+  color: var(--color-text, #111827);
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+.post-toc__link:focus-visible {
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.7);
+}
+
+/* Active state (scroll-spy) --------------------------------------------- */
+
+.post-toc__item.is-active::before {
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary, #1b3637),
+    var(--color-primary-soft, #38bdf8)
+  );
+}
+
+.post-toc__item.is-active .post-toc__link {
+  color: var(--color-primary-strong, #111827);
+  background-color: rgba(56, 189, 248, 0.09);
+  transform: translateX(1px);
+}
+
+/* Expanded state on mobile ----------------------------------------------- */
+
+.post-toc__list[data-expanded="true"],
+.post-toc.post-toc--open .post-toc__list {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+/* Tablet / Desktop layout ------------------------------------------------ */
+
+@media (min-width: 768px) {
   .post-toc {
-    margin-block: var(--space-6);
-    padding-block: var(--space-4);
-    padding-inline: var(--space-4);
+    margin: 0;
   }
 
-  .post .post__toc-title,
+  .post-toc__toggle {
+    display: none; /* not needed on larger screens */
+  }
+
   .post-toc__title {
-    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .post-toc__list {
+    display: block;
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-top: 0.25rem;
   }
 }
 
-/* Reduced motion */
+/* Sticky on large screens (used when nested in aside) -------------------- */
+
+@media (min-width: 1024px) {
+  .post-toc {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+/* Reduced motion --------------------------------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
-  .post .post__toc-link,
-  .post-toc__link {
+  .post-toc__link,
+  .post-toc__toggle-icon,
+  .post-toc__progress {
     transition: none;
-    transform: none;
   }
 }

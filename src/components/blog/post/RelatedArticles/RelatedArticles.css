@@ -1,10 +1,11 @@
 /*
   src/components/blog/post/RelatedArticles/RelatedArticles.css
   Presentation for the related articles strip inside the BlogPostLayout
-*/
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --fs-*, --color-* are available.
+*/
 
 .related-articles {
   width: 100%;

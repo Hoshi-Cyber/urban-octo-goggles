@@ -1,17 +1,37 @@
 ---
 /**
- * Simple neutral note block for MDX content.
+ * File: src/components/blog/compose/mdx/Note/index.astro
+ *
+ * Purpose (Fix Plan 006 · Step 5.1):
+ * - Provide a neutral, premium inline note pattern for MDX content.
+ * - Keep semantics simple: an <aside> with role="note" for screen readers.
+ * - Rely on global tokens and Note.css for visual design.
  *
  * Usage:
- * <Note>
- *   This is a note inside the article.
- * </Note>
+ *   <Note>
+ *     This is a note inside the article.
+ *   </Note>
+ *
+ *   <Note label="Editor’s note">
+ *     Custom ARIA label if needed for context.
+ *   </Note>
  */
+
+export interface NoteProps {
+  /**
+   * Accessible label for assistive technologies.
+   * Defaults to "Note".
+   */
+  label?: string;
+}
+
+const { label = "Note" } = Astro.props as NoteProps;
+
+const sheet = new URL("./Note.css", import.meta.url).toString();
 ---
-<aside class="mdx-note" role="note" aria-label="Note">
+
+<link rel="stylesheet" href={sheet} />
+
+<aside class="mdx-note" role="note" aria-label={label}>
   <slot />
 </aside>
-
-<style>
-  @import "./Note.css";
-</style>

@@ -2,73 +2,92 @@
 /*
   src/components/blog/post/SocialProofStrip/index.astro
 
-  FP-205.7:
-  - Slim testimonial / trust strip for use within a single blog post.
-  - Internally reuses the shared TestimonialCard component.
-  - Visually lighter than the full TestimonialStrip section, but
-    still clearly branded and premium.
+  Fix Plan 006 – SocialProofStrip:
+  - In-article social proof band for blog posts.
+  - Purely presentational; receives pre-resolved social proof items.
+  - No extra landmarks (BlogPostLayout owns the <section> wrapper).
+
+  This variant is intentionally conservative to avoid known Astro
+  compiler edge cases: minimal TS, simple expressions, single root node.
 */
 
 import TestimonialCard from "@/components/common/TestimonialCard";
-import "./SocialProofStrip.css";
 
-export interface SocialProofItem {
+const sheet = new URL("./SocialProofStrip.css", import.meta.url).toString();
+
+type SocialProofItem = {
   quote: string;
   author: string;
   role?: string;
   avatarSrc?: string;
   rating?: number;
-  /** Optional extra class for a given card (e.g. highlight) */
   class?: string;
-}
+};
 
-export interface SocialProofStripProps {
+type Props = {
   items: SocialProofItem[];
   title?: string;
   eyebrow?: string;
-}
+  titleId?: string;
+};
 
 const {
-  items,
+  items = [],
   title = "Clients we’ve helped",
   eyebrow = "Social proof",
-} = Astro.props as SocialProofStripProps;
+  titleId: explicitTitleId,
+} = Astro.props as Props;
 
 const hasItems = Array.isArray(items) && items.length > 0;
+
+// Generate a stable ID if none was provided.
+// This stays entirely on the server; no client JS.
+const generatedId = "social-proof-title";
+const titleId = explicitTitleId || generatedId;
 ---
 
+<link rel="stylesheet" href={sheet} />
+
 {hasItems && (
-  <section
+  <div
     class="social-proof-strip"
-    aria-labelledby="social-proof-title"
+    role="group"
+    aria-labelledby={titleId}
   >
     <div class="social-proof-strip__inner">
-      <header class="social-proof-strip__header">
+      <div class="social-proof-strip__header">
         {eyebrow && (
           <p class="social-proof-strip__eyebrow">
             {eyebrow}
           </p>
         )}
+
         <h2
-          id="social-proof-title"
+          id={titleId}
           class="social-proof-strip__title h2 section-title"
         >
           {title}
         </h2>
-      </header>
+      </div>
 
       <div class="social-proof-strip__grid">
-        {items.map((item) => (
-          <TestimonialCard
-            quote={item.quote}
-            author={item.author}
-            role={item.role}
-            avatarSrc={item.avatarSrc}
-            rating={item.rating}
-            class={`social-proof-strip__card ${item.class ?? ""}`.trim()}
-          />
-        ))}
+        {items.map((item) => {
+          const cardClass = item.class
+            ? `social-proof-strip__card ${item.class}`
+            : "social-proof-strip__card";
+
+          return (
+            <TestimonialCard
+              quote={item.quote}
+              author={item.author}
+              role={item.role}
+              avatarSrc={item.avatarSrc}
+              rating={item.rating}
+              class={cardClass}
+            />
+          );
+        })}
       </div>
     </div>
-  </section>
+  </div>
 )}

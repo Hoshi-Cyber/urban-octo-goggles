@@ -5,10 +5,11 @@
   - Mobile-first
   - Token-driven
   - Premium, minimal, brand-aligned styling
-*/
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --fs-*, --color-* are available.
+*/
 
 .social-proof-strip {
   width: 100%;

@@ -1,33 +1,292 @@
+/*
+  File: src/components/ui/Checklist/Checklist.css
+
+  Design goals:
+  - Mobile-first, token-driven checklist rows.
+  - Premium, calm visual language matching cvwriting.co.ke.
+  - Clear focus/hover states, large tap targets, and good contrast.
+*/
+
 @import "../../../styles/tokens.css";
 @import "../../../styles/typography.css";
 
+/* Root list
+   ------------------------------------------------------------------- */
+
 .ui-checklist {
-  display: grid;
-  gap: var(--space-2);
-  margin: var(--space-4) 0;
+  margin-block: var(--space-4);
   padding: 0;
   list-style: none;
+
+  display: grid;
+  gap: var(--space-2);
 }
+
+/* Density / variant modifiers
+   ------------------------------------------------------------------- */
+
+.ui-checklist--compact {
+  gap: var(--space-1-5, 0.375rem);
+}
+
+.ui-checklist--dense {
+  margin-block: var(--space-3);
+}
+
+/* Item wrapper
+   ------------------------------------------------------------------- */
+
 .ui-checklist__item {
   margin: 0;
 }
 
+/* Emphasis levels (row visual weight only) */
+
+.ui-checklist__item--emphasis-primary .ui-checklist__label {
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 84%,
+    var(--color-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-border-subtle, #e5e7eb) 88%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 12%
+  );
+}
+
+.ui-checklist__item--emphasis-subtle .ui-checklist__label {
+  background-color: var(--color-surface, #ffffff);
+  border-color: color-mix(
+    in oklab,
+    var(--color-border-subtle, #e5e7eb) 96%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
+  );
+}
+
+/* State decorators (border/rail + subtle colour shift)
+   - Applied on top of emphasis styles.
+*/
+
+.ui-checklist__item--state-success .ui-checklist__label {
+  border-color: color-mix(
+    in oklab,
+    var(--color-success, #16a34a) 34%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+.ui-checklist__item--state-warning .ui-checklist__label {
+  border-color: color-mix(
+    in oklab,
+    var(--color-warning, #eab308) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+.ui-checklist__item--state-error .ui-checklist__label {
+  border-color: color-mix(
+    in oklab,
+    var(--color-danger, #dc2626) 40%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+/* Disabled look */
+
+.ui-checklist__item--disabled .ui-checklist__label {
+  cursor: default;
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 92%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-border-subtle, #e5e7eb) 96%,
+    var(--color-surface-alt, #f9fafb)
+  );
+  opacity: 0.85;
+}
+
+.ui-checklist__item--disabled .ui-checklist__text,
+.ui-checklist__item--disabled .ui-checklist__description {
+  color: color-mix(
+    in oklab,
+    var(--color-text-muted, #6b7280) 86%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+}
+
+/* Label row
+   ------------------------------------------------------------------- */
+
 .ui-checklist__label {
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: start;
+  align-items: flex-start;
   gap: var(--space-2);
+
+  inline-size: 100%;
+
+  padding-inline: var(--space-3);
+  padding-block: var(--space-2-5, 0.7rem);
+
+  min-block-size: 2.75rem;
+
+  border-radius: var(--radius-md, 0.75rem);
+  border: 1px solid var(--color-border-subtle, #e5e7eb);
+  background-color: var(--color-surface, #ffffff);
+
+  cursor: pointer;
+
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out,
+    transform 140ms ease-out;
 }
+
+/* Hover (pointer users only) */
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-checklist__label:hover {
+    background-color: color-mix(
+      in oklab,
+      var(--color-surface-alt, #f9fafb) 90%,
+      var(--color-surface, #ffffff)
+    );
+    box-shadow: var(--shadow-xs, 0 1px 2px rgba(15, 23, 42, 0.07));
+    transform: translateY(-1px);
+  }
+
+  .ui-checklist__item--disabled .ui-checklist__label:hover {
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+/* Focus ring using :focus-within for keyboard users */
+
+.ui-checklist__label:focus-within {
+  outline: none;
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary, #1b3637) 70%,
+    var(--color-accent, #d4ab18)
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 70%,
+      var(--color-accent, #d4ab18)
+    );
+}
+
+/* Checklist box (native checkbox)
+   ------------------------------------------------------------------- */
 
 .ui-checklist__box {
   inline-size: 1.125rem;
   block-size: 1.125rem;
   margin: 0;
-  border-radius: var(--radius-sm, 6px);
-  border: 1px solid var(--border-1, var(--color-border-1));
-  accent-color: var(--brand-6, var(--color-accent));
+  margin-top: 0.15rem;
+
+  border-radius: var(--radius-sm, 0.4rem);
+  border: 1px solid var(--color-border-subtle, #e5e7eb);
+  background-color: var(--color-surface, #ffffff);
+
+  accent-color: var(--color-accent, #d4ab18);
 }
 
+/* Disabled checkbox */
+
+.ui-checklist__box:disabled {
+  cursor: default;
+  border-color: color-mix(
+    in oklab,
+    var(--color-border-subtle, #e5e7eb) 92%,
+    var(--color-surface-alt, #f9fafb)
+  );
+}
+
+/* Ensure visible focus even if browser does not propagate :focus-visible well */
+
+.ui-checklist__box:focus-visible {
+  outline: 2px solid
+    color-mix(
+      in oklab,
+      var(--color-primary, #1b3637) 60%,
+      var(--color-accent, #d4ab18)
+    );
+  outline-offset: 2px;
+}
+
+/* Text block
+   ------------------------------------------------------------------- */
+
+.ui-checklist__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5, 0.25rem);
+}
+
+/* Primary line */
+
 .ui-checklist__text {
-  font: var(--font-body, 400 1rem/1.6 var(--font-sans));
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm, 0.95rem);
+  line-height: 1.6;
+  font-weight: 500;
+  color: color-mix(
+    in oklab,
+    var(--color-text, #020617) 90%,
+    var(--color-primary-soft, var(--color-primary, #1b3637)) 10%
+  );
+}
+
+/* Secondary line (optional description) */
+
+.ui-checklist__description {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs, 0.82rem);
+  line-height: 1.5;
+  color: color-mix(
+    in oklab,
+    var(--color-text-muted, #6b7280) 90%,
+    var(--color-surface-alt, #f9fafb)
+  );
+}
+
+/* Larger breakpoints
+   ------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .ui-checklist {
+    gap: var(--space-2-5, 0.75rem);
+  }
+
+  .ui-checklist--compact {
+    gap: var(--space-2);
+  }
+
+  .ui-checklist__label {
+    padding-inline: var(--space-3-5, 1.1rem);
+    padding-block: var(--space-2-5, 0.8rem);
+  }
+
+  .ui-checklist__text {
+    font-size: var(--fs-base, 1rem);
+  }
+}
+
+/* Motion preferences
+   ------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-checklist__label {
+    transition: none;
+    transform: none;
+  }
 }
