@@ -4,11 +4,12 @@
   Mid-article offer card:
   - Mobile-first
   - Token-driven (spacing, color, radius, shadow)
-  - Visually lighter than LeadMagnetStrip but clearly a CTA block.
-*/
+  - Visually lighter than hero CTAs but clearly a conversion block.
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --fs-*, --color-* are available.
+*/
 
 .inline-offer {
   width: 100%;
@@ -48,15 +49,13 @@
   display: flex;
   flex-direction: column;
 
-  /* Kill flex gap between eyebrow and title */
+  /* Remove accidental gap between eyebrow and title */
   gap: 0;
 }
 
 /* Eyebrow – match KeyTakeaways styling (no pill, text-only label) */
 .inline-offer__eyebrow {
-  /* Hard override any paragraph defaults */
   margin-top: 0 !important;
-  /* Slightly less negative so there is a tiny visible gap */
   margin-bottom: -0.02rem !important;
   padding: 0 !important;
 

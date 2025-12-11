@@ -1,17 +1,32 @@
 ---
-// src/components/blog/mdx/Footnote/index.astro
+// src/components/blog/compose/mdx/Footnote/index.astro
+// MDX inline footnote reference marker.
+// - Accessible, token-driven, and brand-aligned.
+// - Used by MDX mapping for inline references (Fix Plan 006 Step 5.1).
 
 interface Props {
+  /** Numeric or string identifier for the footnote, e.g. 1, 2, 3. */
   id?: string | number;
 }
 
 const { id } = Astro.props as Props;
+
+/**
+ * Accessibility:
+ * - aria-label gives screen readers a descriptive label such as "Footnote 1".
+ * - href links to the corresponding footnote definition element (e.g. #fn-1).
+ */
 const label = id ? `Footnote ${id}` : "Footnote";
 const href = id ? `#fn-${id}` : "#";
 const displayId = id ?? "n";
 ---
+
 <sup class="mdx-footnote">
-  <a href={href} aria-label={label}>
+  <a
+    href={href}
+    aria-label={label}
+    role="doc-noteref"
+  >
     [{displayId}]
   </a>
 </sup>

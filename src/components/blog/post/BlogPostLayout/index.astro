@@ -1,41 +1,18 @@
 ---
 /* File: src/components/blog/post/BlogPostLayout/index.astro
+ * (Fix Plan 006.1 – OnePath-compliant version)
  *
- * Purpose:
- * - Render the full single blog post layout for CVWriting.co.ke.
- * - All data is provided via BlogPostLayoutProps from the route layer.
- *
- * Fix Plan 205.1:
- * - Single source of truth for hero, intro, keyTakeaways, inlineOffer, socialProof,
- *   FAQ, finalCta, checklist, and relatedArticles.
- *
- * Fix Plan 205.1.7:
- * - socialProofItems, faqItems, and checklist are now fed via central data banks
- *   (src/data/testimonials, src/data/faqs, src/data/checklists) resolved in the
- *   route; this layout is purely presentational.
- *
- * Fix Plan 205.2:
- * - Consolidate all core single-article IA into this layout.
- * - BlogPost.astro acts as a thin adapter; routes construct BlogPostLayoutProps.
- * - This component owns structure only and does not perform any data fetching.
- *
- * Fix Plan 213:
- * - Introduce explicit IA presets and slice ordering for optional bands.
- * - Keep header as a fixed shell; render remaining bands via ordered slice keys.
- * - Clarify KeyTakeaways vs Checklist:
- *   • KeyTakeaways → compact summary at top of body column (“what this post says”).
- *   • Checklist   → implementation band (“what to do next”) via ChecklistSection.
- *
- * Fix Plan 213.3 – separation contract (summary vs implementation):
- * - KeyTakeaways: short, insight-focused summary bullets (no verb-first “to-dos”).
- * - Checklist: ordered, verb-first implementation steps (action list only).
- *
- * Fix Plan 004 (Article Layout Presets v1.0) + FP005-09:
- * - Accept a layout preset key and resolve slice ordering from a preset registry.
- * - Guard preset against invalid values; fall back to "conversionArticle".
+ * Responsibilities:
+ * - Orchestrate the full blog post experience:
+ *   Hero → Intro → TOC → Body → Checklist → Inline Offer → Social Proof → FAQ → Final CTA → Related.
+ * - Select slices via preset or explicit `slices`.
+ * - Emit JSON-LD structured data once, at the article root.
+ * - Delegate visuals to post/* components and BlogPostLayout.css.
  */
 
 import type { AstroComponentFactory } from "astro";
+import type { BlogPostPreset } from "@/lib/blog/categories";
+import type { BlogPostLayoutSliceKey } from "@/lib/blog/playbooks";
 
 import Breadcrumbs from "@/components/blog/base/Breadcrumbs";
 import PostToc from "@/components/blog/compose/PostToc";
@@ -48,15 +25,18 @@ import KeyTakeaways from "@/components/blog/post/KeyTakeaways";
 import InlineOfferBlock from "@/components/blog/post/InlineOfferBlock";
 import SocialProofStrip from "@/components/blog/post/SocialProofStrip";
 import FinalCtaBlock from "@/components/blog/post/FinalCtaBlock";
-import RelatedArticles from "@/components/blog/post/RelatedArticles";
 import ChecklistSection from "@/components/blog/post/ChecklistSection";
+
+import PostShare from "@/components/blog/base/PostShare";
+import PostFeedLatest from "@/components/blog/compose/PostFeedLatest";
 
 import "./BlogPostLayout.css";
 
-type BreadcrumbItem = {
-  href: string;
-  label: string;
-};
+/* -------------------------------------------------------------------------- */
+/*  Types                                                                     */
+/* -------------------------------------------------------------------------- */
+
+type BreadcrumbItem = { href: string; label: string };
 
 type TocItem = {
   id: string;
@@ -65,16 +45,9 @@ type TocItem = {
   href?: string;
 };
 
-type HeroImage = {
-  src: string;
-  alt: string;
-};
+type HeroImage = { src: string; alt: string };
 
-type HeroSoftCta = {
-  label: string;
-  href: string;
-  ctaId?: string;
-};
+type HeroSoftCta = { label: string; href: string; ctaId?: string };
 
 type InlineOffer = {
   heading: string;
@@ -85,11 +58,6 @@ type InlineOffer = {
   eyebrow?: string;
 };
 
-/**
- * Shape used by both:
- * - src/data/testimonials.ts (central bank)
- * - BlogPostLayoutProps.socialProofItems
- */
 type SocialProofItem = {
   quote: string;
   author: string;
@@ -99,19 +67,8 @@ type SocialProofItem = {
   class?: string;
 };
 
-/**
- * FAQ item structure:
- * - Question in plain text.
- * - Answer in sanitized HTML (pre-rendered at data/route layer).
- */
-type FaqItem = {
-  question: string;
-  answerHtml: string;
-};
+type FaqItem = { question: string; answerHtml: string };
 
-/**
- * Final CTA block at bottom of article.
- */
 type FinalCta = {
   heading: string;
   bodyHtml: string;
@@ -121,55 +78,33 @@ type FinalCta = {
   secondaryHref?: string;
 };
 
+/**
+ * RelatedArticle is intentionally flexible so it can accept data both from:
+ * - The route ([category]/[slug].astro) with `{ url, date: Date }`
+ * - Any layout-level mapping using `{ href, dateISO }`
+ */
 type RelatedArticle = {
   title: string;
-  href: string;
+  href?: string;
+  url?: string;
   category: string;
   readingTimeMinutes?: number;
   excerpt?: string;
   dateISO?: string;
+  date?: string | Date;
 };
 
-/**
- * ChecklistConfig is the normalized structure consumed by ChecklistSection:
- * - title/leadHtml control the framing.
- * - items is a simple ordered list of implementation steps.
- */
 type ChecklistConfig = {
   title?: string;
   leadHtml?: string;
   items: string[];
 };
 
-/**
- * Slice keys:
- * - Define which bands render and in what order.
- * - Used by PRESET_SLICES and by explicit props.slices.
- */
-type BlogPostLayoutSliceKey =
-  | "toc"
-  | "body"
-  | "checklist"
-  | "inlineOffer"
-  | "socialProof"
-  | "faq"
-  | "finalCta"
-  | "related";
+type StructuredData = Record<string, unknown>;
 
-/**
- * Article Layout Preset keys (v1.0)
- */
-type BlogPostLayoutPresetKey =
-  | "conversionArticle"
-  | "editorialArticle"
-  | "analysisArticle"
-  | "shortInsight"
-  | "campaignLanding";
-
-interface BlogPostLayoutProps {
+export interface BlogPostLayoutProps {
   breadcrumbs: BreadcrumbItem[];
 
-  // Hero / meta
   category: string;
   title: string;
   heroTagline?: string;
@@ -181,8 +116,8 @@ interface BlogPostLayoutProps {
   heroImage?: HeroImage;
   heroSoftCta?: HeroSoftCta;
 
-  keyTakeaways?: string[];
   introHtml?: string;
+  keyTakeaways?: string[];
 
   toc?: TocItem[];
   showToc?: boolean;
@@ -193,13 +128,30 @@ interface BlogPostLayoutProps {
   socialProofItems?: SocialProofItem[];
   faqItems?: FaqItem[];
   finalCta?: FinalCta;
+  checklist?: ChecklistConfig;
   relatedArticles?: RelatedArticle[];
 
-  checklist?: ChecklistConfig;
-
-  preset?: BlogPostLayoutPresetKey;
+  preset?: BlogPostPreset;
   slices?: BlogPostLayoutSliceKey[];
+
+  structuredData?: StructuredData;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Preset slice registry                                                     */
+/* -------------------------------------------------------------------------- */
+
+const PRESET_SLICES: Record<BlogPostPreset, BlogPostLayoutSliceKey[]> = {
+  conversionArticle: ["toc", "body", "checklist", "inlineOffer", "socialProof", "faq", "finalCta", "related"],
+  editorialArticle: ["toc", "body", "socialProof", "related"],
+  analysisArticle: ["toc", "body", "faq", "related"],
+  shortInsight: ["body", "related"],
+  campaignLanding: ["body", "inlineOffer", "faq", "finalCta", "related"],
+};
+
+/* -------------------------------------------------------------------------- */
+/*  Props & derived state                                                     */
+/* -------------------------------------------------------------------------- */
 
 const {
   breadcrumbs,
@@ -214,91 +166,77 @@ const {
   heroImage,
   heroSoftCta,
   introHtml,
-  keyTakeaways = [],
+  keyTakeaways,
   toc,
-  showToc = true,
+  showToc,
   Content,
   inlineOffer,
   socialProofItems,
   faqItems,
   finalCta,
-  relatedArticles,
   checklist,
+  relatedArticles,
   preset,
   slices,
+  structuredData,
 } = Astro.props as BlogPostLayoutProps;
 
-/**
- * Preset → slices registry.
- */
-const PRESET_SLICES: Record<BlogPostLayoutPresetKey, BlogPostLayoutSliceKey[]> = {
-  conversionArticle: [
-    "toc",
-    "body",
-    "checklist",
-    "inlineOffer",
-    "socialProof",
-    "faq",
-    "finalCta",
-    "related",
-  ],
-  editorialArticle: ["body", "inlineOffer", "related"],
-  analysisArticle: ["toc", "body", "inlineOffer", "finalCta", "related"],
-  shortInsight: ["body", "related"],
-  campaignLanding: ["body", "checklist", "finalCta"],
-};
-
-/**
- * Allowed presets for runtime guard (FP005-09).
- */
-const ALLOWED_PRESETS: BlogPostLayoutPresetKey[] = [
-  "conversionArticle",
-  "editorialArticle",
-  "analysisArticle",
-  "shortInsight",
-  "campaignLanding",
-];
-
+const hasHeroImage = Boolean(heroImage?.src);
+const hasIntro = Boolean(introHtml);
 const hasKeyTakeaways = Array.isArray(keyTakeaways) && keyTakeaways.length > 0;
-const hasToc = !!(showToc && toc && toc.length > 0);
-const hasChecklist =
-  !!(checklist && Array.isArray(checklist.items) && checklist.items.length > 0);
-const hasInlineOffer = !!inlineOffer;
-const hasSocialProof = !!(socialProofItems && socialProofItems.length > 0);
-const hasFaq = !!(faqItems && faqItems.length > 0);
-const hasFinalCta = !!finalCta;
-const hasRelated = !!(relatedArticles && relatedArticles.length > 0);
+const hasToc = Boolean(showToc && toc && toc.length > 0);
+const hasChecklist = Boolean(checklist && checklist.items && checklist.items.length > 0);
+const hasInlineOffer = Boolean(
+  inlineOffer &&
+    inlineOffer.heading &&
+    inlineOffer.ctaLabel &&
+    inlineOffer.ctaHref,
+);
+const hasSocialProof = Array.isArray(socialProofItems) && socialProofItems.length > 0;
+const hasFaq = Array.isArray(faqItems) && faqItems.length > 0;
+const hasFinalCta = Boolean(finalCta && finalCta.heading && finalCta.primaryHref);
+const hasRelated = Array.isArray(relatedArticles) && relatedArticles.length > 0;
 
-const hasHeroImage =
-  !!heroImage &&
-  typeof heroImage.src === "string" &&
-  heroImage.src.trim().length > 0;
-
-/**
- * Resolve preset safely:
- * - If an explicit slices array is provided, use it.
- * - Otherwise validate preset against ALLOWED_PRESETS, else fall back.
- */
-const rawPreset =
-  typeof preset === "string" && preset.trim().length > 0
-    ? (preset.trim() as BlogPostLayoutPresetKey | string)
-    : "";
-
-const resolvedPreset: BlogPostLayoutPresetKey =
-  rawPreset && ALLOWED_PRESETS.includes(rawPreset as BlogPostLayoutPresetKey)
-    ? (rawPreset as BlogPostLayoutPresetKey)
-    : "conversionArticle";
-
+const resolvedPreset: BlogPostPreset = preset ?? "conversionArticle";
 const baseSlices: BlogPostLayoutSliceKey[] =
-  Array.isArray(slices) && slices.length > 0
+  slices && slices.length > 0
     ? slices
     : PRESET_SLICES[resolvedPreset];
 
 /**
- * Apply data guards.
+ * Normalise relatedArticles into PostFeedLatest's `{ url, frontmatter }` shape.
  */
-const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter((sliceKey) => {
-  switch (sliceKey) {
+const mapRelatedToFeedPosts = (items: RelatedArticle[] | undefined) => {
+  if (!items || items.length === 0) return [];
+
+  return items.map((item) => {
+    const url =
+      (item.href && item.href.trim().length > 0 && item.href) ||
+      (item.url && item.url.trim().length > 0 && item.url) ||
+      "#";
+
+    let date: string | Date | undefined = item.dateISO ?? item.date;
+
+    // Ensure we always pass something parseable to PostFeedLatest.
+    if (!date && item.dateISO) {
+      date = item.dateISO;
+    }
+
+    return {
+      url,
+      frontmatter: {
+        title: item.title,
+        description: item.excerpt,
+        date: date ?? "",
+        readingTime: item.readingTimeMinutes,
+        category: item.category,
+      },
+    };
+  });
+};
+
+const effectiveSlices = baseSlices.filter((key) => {
+  switch (key) {
     case "toc":
       return hasToc;
     case "body":
@@ -319,168 +257,231 @@ const effectiveSlices: BlogPostLayoutSliceKey[] = baseSlices.filter((sliceKey) =
       return false;
   }
 });
+
+/**
+ * Ensure "related" always renders last, even if a custom `slices`
+ * array places it earlier.
+ */
+const orderedSlices: BlogPostLayoutSliceKey[] = (() => {
+  const s = [...effectiveSlices];
+  const idx = s.indexOf("related");
+  if (idx !== -1) {
+    s.splice(idx, 1);
+    s.push("related");
+  }
+  return s;
+})();
+
+/* -------------------------------------------------------------------------- */
+/*  Structured data                                                           */
+/* -------------------------------------------------------------------------- */
+
+const structuredDataJson =
+  structuredData && Object.keys(structuredData).length
+    ? JSON.stringify(structuredData)
+    : null;
+
+/* -------------------------------------------------------------------------- */
+/*  Share URL                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Use the current request URL for sharing.
+ * - No hard-coded domain logic.
+ * - Works consistently for canonical production URLs and preview/staging.
+ */
+const shareUrl = Astro.url?.toString();
+const hasShare = Boolean(shareUrl);
 ---
 
-<article class="blog-post-layout page-gap-after" data-section="blog-post">
-  <header class="blog-post-layout__header">
-    <div class="container">
-      <div class="stack stack--first-tight">
-        {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} />
-        )}
+<main id="main-content" role="main">
+  <article
+    class="blog-post-layout page-gap-after"
+    role="article"
+    aria-label={title}
+    data-layout-preset={resolvedPreset}
+  >
+    {structuredDataJson && (
+      <script type="application/ld+json">
+        {structuredDataJson}
+      </script>
+    )}
 
-        <ArticleHero
-          category={category}
-          title={title}
-          heroTagline={heroTagline}
-          publishedAt={publishedAt}
-          updatedAt={updatedAt}
-          readingTimeMinutes={readingTimeMinutes}
-          authorName={authorName}
-          authorUrl={authorUrl}
-          softCta={heroSoftCta}
-        />
+    <!-- Hero / intro -->
+    <header class="blog-post-layout__header">
+      <div class="container">
+        <div class="stack stack--first-tight">
+          {breadcrumbs?.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
-        {hasHeroImage && heroImage && (
-          <PostCover src={heroImage.src} alt={heroImage.alt} />
-        )}
+          <ArticleHero
+            category={category}
+            title={title}
+            heroTagline={heroTagline}
+            publishedAt={publishedAt}
+            updatedAt={updatedAt}
+            readingTimeMinutes={readingTimeMinutes}
+            authorName={authorName}
+            authorUrl={authorUrl}
+            softCta={heroSoftCta}
+          />
 
-        {introHtml && <IntroBlock introHtml={introHtml} />}
+          {hasHeroImage && (
+            <PostCover src={heroImage!.src} alt={heroImage!.alt} />
+          )}
+
+          {hasIntro && <IntroBlock introHtml={introHtml!} />}
+
+          {hasShare && shareUrl && (
+            <PostShare
+              title={title}
+              url={shareUrl}
+              via="CVWriting.co.ke"
+            />
+          )}
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  {effectiveSlices.map((sliceKey) => {
-    if (sliceKey === "toc") {
-      if (!hasToc) return null;
+    <!-- Dynamic slices -->
+    {orderedSlices.map((sliceKey) => {
+      if (sliceKey === "toc") {
+        return (
+          <section
+            key="toc"
+            class="blog-post-layout__toc"
+            role="navigation"
+            aria-label="On this page"
+          >
+            <div class="container">
+              <PostToc items={toc!} />
+            </div>
+          </section>
+        );
+      }
 
-      return (
-        <section
-          key={sliceKey}
-          class="blog-post-layout__toc"
-          aria-label="On this page"
-        >
-          <div class="container">
-            <PostToc items={toc!} />
-          </div>
-        </section>
-      );
-    }
-
-    if (sliceKey === "body") {
-      return (
-        <section key={sliceKey} class="blog-post-layout__body">
-          <div class="container">
-            <div class="blog-post-layout__body-inner">
-              <div class="blog-post-layout__content prose">
-                {hasKeyTakeaways && <KeyTakeaways items={keyTakeaways} />}
-                {Content ? <Content /> : <slot />}
+      if (sliceKey === "body") {
+        return (
+          <section
+            key="body"
+            class="blog-post-layout__body"
+            role="region"
+            aria-label="Article content"
+          >
+            <div class="container">
+              <div class="blog-post-layout__body-inner">
+                <div class="blog-post-layout__content prose">
+                  {hasKeyTakeaways && <KeyTakeaways items={keyTakeaways!} />}
+                  {Content ? <Content /> : <slot />}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      );
-    }
+          </section>
+        );
+      }
 
-    if (sliceKey === "checklist") {
-      if (!hasChecklist || !checklist) return null;
+      if (sliceKey === "checklist") {
+        return (
+          <section
+            key="checklist"
+            class="blog-post-layout__checklist"
+            role="region"
+            aria-label="Practical checklist"
+          >
+            <div class="container">
+              <ChecklistSection config={checklist!} />
+            </div>
+          </section>
+        );
+      }
 
-      return (
-        <section key={sliceKey} class="blog-post-layout__checklist">
-          <div class="container">
-            <ChecklistSection
-              title={checklist.title}
-              leadHtml={checklist.leadHtml}
-              items={checklist.items}
-              headingLevel={2}
+      if (sliceKey === "inlineOffer") {
+        return (
+          <section
+            key="inlineOffer"
+            class="blog-post-layout__inline-offer"
+            role="region"
+            aria-label="CV & LinkedIn upgrade offer"
+          >
+            <div class="container">
+              <InlineOfferBlock offer={inlineOffer!} />
+            </div>
+          </section>
+        );
+      }
+
+      if (sliceKey === "socialProof") {
+        return (
+          <section
+            key="socialProof"
+            class="blog-post-layout__social-proof"
+            role="region"
+            aria-label="Client results and testimonials"
+          >
+            <div class="container">
+              <SocialProofStrip items={socialProofItems!} />
+            </div>
+          </section>
+        );
+      }
+
+      if (sliceKey === "faq") {
+        return (
+          <section
+            key="faq"
+            class="blog-post-layout__faq"
+            role="region"
+            aria-label="Frequently asked questions"
+          >
+            <div class="container">
+              <FAQAccordion items={faqItems!} />
+            </div>
+          </section>
+        );
+      }
+
+      if (sliceKey === "finalCta") {
+        return (
+          <section
+            key="finalCta"
+            class="blog-post-layout__final-cta"
+            role="region"
+            aria-label="Next steps"
+          >
+            <div class="container">
+              <FinalCtaBlock cta={finalCta!} />
+            </div>
+          </section>
+        );
+      }
+
+      if (sliceKey === "related") {
+        const relatedFeedPosts = mapRelatedToFeedPosts(relatedArticles);
+
+        if (!relatedFeedPosts.length) return null;
+
+        return (
+          <section
+            key="related"
+            class="blog-post-layout__related"
+            role="region"
+            aria-label="Continue your learning"
+            data-section="post-related"
+          >
+            <PostFeedLatest
+              eyebrow="Keep learning"
+              title="Continue your learning"
+              posts={relatedFeedPosts}
+              pageSize={4}
+              moreHref={`/blog/${category}/`}
+              moreLabel="View all articles in this category"
+              moreAriaLabel={`View all ${category} articles`}
+              clientLoadMore={false}
             />
-          </div>
-        </section>
-      );
-    }
+          </section>
+        );
+      }
 
-    if (sliceKey === "inlineOffer") {
-      if (!hasInlineOffer || !inlineOffer) return null;
-
-      return (
-        <section key={sliceKey} class="blog-post-layout__inline-offer">
-          <div class="container">
-            <InlineOfferBlock
-              heading={inlineOffer.heading}
-              bullets={inlineOffer.bullets}
-              ctaLabel={inlineOffer.ctaLabel}
-              ctaHref={inlineOffer.ctaHref}
-              trustNote={inlineOffer.trustNote}
-              eyebrow={inlineOffer.eyebrow}
-            />
-          </div>
-        </section>
-      );
-    }
-
-    if (sliceKey === "socialProof") {
-      if (!hasSocialProof || !socialProofItems) return null;
-
-      return (
-        <section
-          key={sliceKey}
-          class="blog-post-layout__social-proof"
-          aria-label="Customer testimonials and results"
-        >
-          <div class="container">
-            <SocialProofStrip items={socialProofItems} />
-          </div>
-        </section>
-      );
-    }
-
-    if (sliceKey === "faq") {
-      if (!hasFaq || !faqItems) return null;
-
-      return (
-        <section
-          key={sliceKey}
-          class="blog-post-layout__faq"
-          aria-label="Frequently asked questions"
-        >
-          <div class="container">
-            <FAQAccordion items={faqItems} />
-          </div>
-        </section>
-      );
-    }
-
-    if (sliceKey === "finalCta") {
-      if (!hasFinalCta || !finalCta) return null;
-
-      return (
-        <section key={sliceKey} class="blog-post-layout__final-cta">
-          <div class="container">
-            <FinalCtaBlock
-              heading={finalCta.heading}
-              bodyHtml={finalCta.bodyHtml}
-              primaryLabel={finalCta.primaryLabel}
-              primaryHref={finalCta.primaryHref}
-              secondaryLabel={finalCta.secondaryLabel}
-              secondaryHref={finalCta.secondaryHref}
-            />
-          </div>
-        </section>
-      );
-    }
-
-    if (sliceKey === "related") {
-      if (!hasRelated || !relatedArticles) return null;
-
-      return (
-        <section key={sliceKey} class="blog-post-layout__related">
-          <div class="container">
-            <RelatedArticles items={relatedArticles} />
-          </div>
-        </section>
-      );
-    }
-
-    return null;
-  })}
-</article>
+      return null;
+    })}
+  </article>
+</main>

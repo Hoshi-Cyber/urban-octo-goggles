@@ -2,6 +2,14 @@
 // src/components/blog/compose/PostCover/index.astro
 // Fix Plan 190.2 / 193 / 195 – normalise cover prop
 // and render a CLS-safe, responsive hero image card with AVIF/WebP support.
+//
+// Fix Plan 006.1 – OnePath heroImage bridge:
+// - BlogPostLayout now calls <PostCover src={heroImage.src} alt={heroImage.alt} />.
+// - To stay backwards-compatible, this component now accepts BOTH:
+//     • cover={...}   (legacy, full object or Astro image)
+//     • src/alt/...   (new heroImage-based call site)
+// - All inputs are normalised through a single pipeline so the hero image
+//   renders reliably for every article.
 
 import css from "./PostCover.css?url";
 
@@ -28,13 +36,29 @@ interface CoverData {
 
 interface PostCoverProps {
   /**
-   * cover can be:
+   * Legacy / flexible entry:
    * - a fully-shaped CoverData object
    * - an Astro image-like object with nested src
    * - a plain string path
    * - or undefined (no cover provided)
    */
   cover?: CoverData | string | Record<string, any>;
+
+  /**
+   * New FP-006.1 heroImage entry:
+   * - When BlogPostLayout passes src/alt from heroImage, we build a cover
+   *   object from these scalar props.
+   */
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+  credit?: string;
+  srcsetAvif?: string;
+  srcsetWebp?: string;
+  sizes?: string;
+
   /**
    * Optional post title, used as a fallback for alt text.
    */
@@ -137,10 +161,60 @@ function normaliseCover(
 }
 
 const props = Astro.props as PostCoverProps;
-const title = props.title ?? "";
+
+const {
+  cover: coverProp,
+  src,
+  alt,
+  width,
+  height,
+  caption,
+  credit,
+  srcsetAvif: srcsetAvifProp,
+  srcsetWebp: srcsetWebpProp,
+  sizes: sizesProp,
+} = props;
+
+const titleFallback = alt ?? props.title ?? "";
+
+/**
+ * Decide what to feed into the normaliser:
+ * - If a legacy `cover` prop is present, it wins.
+ * - Otherwise, if any of the scalar heroImage props exist, build a cover-like
+ *   object from them.
+ */
+let rawForNormalise: PostCoverProps["cover"] = coverProp;
+
+const hasScalarHeroInput =
+  typeof src === "string" && src.trim().length > 0
+    ? true
+    : Boolean(
+        alt ||
+          width ||
+          height ||
+          caption ||
+          credit ||
+          srcsetAvifProp ||
+          srcsetWebpProp ||
+          sizesProp,
+      );
+
+if (!rawForNormalise && hasScalarHeroInput) {
+  rawForNormalise = {
+    src: src ?? "",
+    alt,
+    width,
+    height,
+    caption,
+    credit,
+    srcsetAvif: srcsetAvifProp,
+    srcsetWebp: srcsetWebpProp,
+    sizes: sizesProp,
+  } as Record<string, any>;
+}
 
 // Normalise incoming cover; may be null if nothing usable provided.
-const cover = normaliseCover(props.cover, title);
+const cover = normaliseCover(rawForNormalise, titleFallback);
 
 // If cover is null, imgSrc will be empty and the figure won’t render.
 const imgSrc: string = cover?.src ?? "";
@@ -149,7 +223,7 @@ const imgSrc: string = cover?.src ?? "";
 const imgWidth: number | undefined = cover?.width;
 const imgHeight: number | undefined = cover?.height;
 
-const imgAlt = cover?.alt || title || "";
+const imgAlt = cover?.alt || titleFallback || "";
 const hasCaption = Boolean(cover && (cover.caption || cover.credit));
 
 // Responsive format sources and sizes

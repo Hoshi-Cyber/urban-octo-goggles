@@ -1,36 +1,319 @@
 ---
-// src/components/blog/compose/PostToc/index.astro
+import "./PostToc.css";
 
-import css from "./PostToc.css?url";
-import type { TocProps, TocHeading } from "./types";
+/**
+ * File: src/components/blog/compose/PostToc/index.astro
+ *
+ * Canonical Table of Contents component for blog posts.
+ *
+ * Props (loose typing for safety):
+ * - items?: [{ id, label, level?, href? }]
+ * - headings?: MDX-style headings to normalise
+ * - minItems?: number
+ * - title?: string
+ * - labelledById?: string
+ * - headingLevel?: 2 | 3 | 4
+ * - variant?: "default" | "compact"
+ * - enableActiveTracking?: boolean
+ */
 
-const { headings = [] } = Astro.props as TocProps;
+const {
+  items,
+  headings,
+  minItems,
+  title = "On this page",
+  labelledById,
+  headingLevel = 2,
+  variant = "default",
+  enableActiveTracking = true,
+} = Astro.props;
 
-// Only allow H2/H3-level headings
-const items: TocHeading[] = headings.filter(
-  (h) => h && (h.depth === 2 || h.depth === 3),
-);
+/** Normalise legacy MDX headings into TOC items */
+function normaliseHeadings(source) {
+  if (!Array.isArray(source)) return [];
 
-// Require a sensible minimum number of headings
-const MIN_ITEMS = 3;
-const showToc = items.length >= MIN_ITEMS;
+  return source
+    .map((h) => {
+      const level = Number(h.depth ?? h.level ?? 2);
+      const id =
+        (h.slug ?? h.id ?? (h.data && h.data.id) ?? "").toString().trim();
+      const label = (
+        h.text ??
+        h.value ??
+        h.title ??
+        (Array.isArray(h.children)
+          ? h.children.map((c) => c.value || "").join(" ")
+          : "")
+      )
+        .toString()
+        .trim();
+
+      if (!id || !label) return null;
+
+      return {
+        id,
+        label,
+        level,
+        href:
+          h.href && h.href.toString().trim().length > 0
+            ? h.href.toString().trim()
+            : `#${id}`,
+      };
+    })
+    .filter(Boolean);
+}
+
+/** Decide which input to use: items (preferred) or headings (fallback) */
+const fromItems = Array.isArray(items) ? items : [];
+const fromHeadings =
+  !fromItems.length && Array.isArray(headings)
+    ? normaliseHeadings(headings)
+    : [];
+
+const rawItems = fromItems.length ? fromItems : fromHeadings;
+
+/** Filter + clean TOC items */
+const tocItems = (Array.isArray(rawItems) ? rawItems : [])
+  .map((item) => {
+    const level = Number(item.level ?? 2);
+    const id = (item.id ?? "").toString().trim();
+    const label = (item.label ?? "").toString().trim();
+    const href = (
+      item.href ??
+      (id ? `#${id}` : "")
+    )
+      .toString()
+      .trim();
+
+    return { id, label, level, href };
+  })
+  .filter((item) => {
+    return (
+      (item.level === 2 || item.level === 3) &&
+      item.id &&
+      item.label &&
+      item.href
+    );
+  });
+
+/** Only show if we have enough items */
+const minCount =
+  typeof minItems === "number" && minItems > 0 ? minItems : 3;
+const showToc = tocItems.length >= minCount;
+
+if (!showToc) {
+  // Do not render anything if not enough headings
+  return;
+}
+
+/** Accessibility / IDs */
+const titleId =
+  labelledById && String(labelledById).trim().length > 0
+    ? String(labelledById)
+    : "post-toc-title";
+
+const listId = "post-toc-list";
 ---
-<link rel="stylesheet" href={css} />
 
-{showToc && (
-  <nav class="post__toc" aria-labelledby="post-toc-title">
-    <h2 id="post-toc-title" class="post__toc-title h5">
-      On this page
-    </h2>
+<nav
+  class={`post-toc post-toc--${variant}`}
+  aria-labelledby={titleId}
+  aria-label={title}
+  data-post-toc
+  data-variant={variant}
+  data-enable-active-tracking={enableActiveTracking ? "true" : "false"}
+>
+  <!-- Progress bar (top) -->
+  <div class="post-toc__progress" data-post-toc-progress></div>
 
-    <ol class="post__toc-list">
-      {items.map((h) => (
-        <li class={`post__toc-item post__toc-item--d${h.depth}`}>
-          <a href={`#${h.slug}`} class="post__toc-link">
-            {h.text}
-          </a>
-        </li>
-      ))}
-    </ol>
-  </nav>
-)}
+  <!-- Mobile toggle -->
+  <button
+    type="button"
+    class="post-toc__toggle"
+    aria-expanded="false"
+    aria-controls={listId}
+    data-post-toc-toggle
+  >
+    <span class="post-toc__toggle-label">{title}</span>
+    <span class="post-toc__toggle-icon" aria-hidden="true">▾</span>
+  </button>
+
+  <!-- Static heading (tablet / desktop) -->
+  {
+    headingLevel === 3 ? (
+      <h3 id={titleId} class="post-toc__title">
+        {title}
+      </h3>
+    ) : headingLevel === 4 ? (
+      <h4 id={titleId} class="post-toc__title">
+        {title}
+      </h4>
+    ) : (
+      <h2 id={titleId} class="post-toc__title">
+        {title}
+      </h2>
+    )
+  }
+
+  <ol
+    id={listId}
+    class="post-toc__list"
+    data-post-toc-list
+    data-expanded="false"
+  >
+    {tocItems.map((item) => (
+      <li
+        class={`post-toc__item post-toc__item--d${item.level}`}
+        data-toc-target={item.href}
+      >
+        <a
+          href={item.href}
+          class="post-toc__link"
+          data-toc-link
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script>
+  (() => {
+    if (typeof window === "undefined") return;
+
+    const toc = document.querySelector("[data-post-toc]");
+    if (!toc) return;
+
+    const toggle = toc.querySelector("[data-post-toc-toggle]");
+    const list = toc.querySelector("[data-post-toc-list]");
+    const links = Array.from(toc.querySelectorAll("a[data-toc-link]"));
+    const progress = toc.querySelector("[data-post-toc-progress]");
+    const enableActiveTracking =
+      toc.dataset.enableActiveTracking !== "false";
+
+    /* -------------------------- Mobile toggle logic ------------------------- */
+    if (toggle && list) {
+      const setExpanded = (expanded) => {
+        toggle.setAttribute("aria-expanded", String(expanded));
+        list.setAttribute("data-expanded", String(expanded));
+        toc.classList.toggle("post-toc--open", expanded);
+      };
+
+      toggle.addEventListener("click", () => {
+        const current = list.getAttribute("data-expanded") === "true";
+        setExpanded(!current);
+      });
+
+      // default: collapsed on small screens
+      setExpanded(false);
+    }
+
+    /* ------------------------------ Smooth scroll --------------------------- */
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (!prefersReducedMotion) {
+      links.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const href = link.getAttribute("href") || "";
+          if (!href.startsWith("#")) return;
+
+          const targetId = href.slice(1);
+          const target = document.getElementById(targetId);
+          if (!target) return;
+
+          event.preventDefault();
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+          // Close on mobile after click
+          if (list && window.innerWidth < 768) {
+            list.setAttribute("data-expanded", "false");
+            toc.classList.remove("post-toc--open");
+            if (toggle) toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
+    }
+
+    /* ------------------------ Scroll-spy + progress bar --------------------- */
+    if (!enableActiveTracking) return;
+
+    const headingMap = new Map();
+
+    links.forEach((link) => {
+      const href = link.getAttribute("href") || "";
+      if (!href.startsWith("#")) return;
+
+      const id = href.slice(1);
+      const heading = document.getElementById(id);
+      if (!heading) return;
+
+      headingMap.set(heading, link);
+    });
+
+    const items = Array.from(toc.querySelectorAll("[data-toc-target]"));
+
+    const setActiveLink = (activeLink) => {
+      items.forEach((item) => item.classList.remove("is-active"));
+      if (!activeLink) return;
+
+      const href = activeLink.getAttribute("href");
+      if (!href) return;
+
+      const item = toc.querySelector(`[data-toc-target="${href}"]`);
+      if (item) item.classList.add("is-active");
+    };
+
+    if (headingMap.size === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let activeHeading = null;
+
+        entries.forEach((entry) => {
+          const heading = entry.target;
+          if (!headingMap.has(heading)) return;
+
+          if (entry.isIntersecting) {
+            if (
+              !activeHeading ||
+              entry.boundingClientRect.top <
+                activeHeading.getBoundingClientRect().top
+            ) {
+              activeHeading = heading;
+            }
+          }
+        });
+
+        if (activeHeading) {
+          const activeLink = headingMap.get(activeHeading);
+          setActiveLink(activeLink);
+        }
+
+        // progress bar
+        if (progress && document.documentElement) {
+          const scrollTop = window.scrollY || window.pageYOffset;
+          const docHeight =
+            document.documentElement.scrollHeight -
+            document.documentElement.clientHeight;
+
+          const ratio = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+          progress.style.transform = `scaleX(${ratio})`;
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -60% 0px",
+        threshold: 0.25,
+      }
+    );
+
+    headingMap.forEach((_link, heading) => observer.observe(heading));
+
+    window.addEventListener("beforeunload", () => {
+      observer.disconnect();
+    });
+  })();
+</script>

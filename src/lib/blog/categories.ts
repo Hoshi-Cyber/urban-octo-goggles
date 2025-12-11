@@ -8,6 +8,10 @@
  * - Hero / card copy for UI
  * - Default layout presets and funnel stages
  * - Optional hero/OG image configs
+ *
+ * Fix Plan 006 – Step 2.1:
+ * - This module is the ONLY place where category metadata is defined.
+ * - All other blog code (routes, layouts, CTAs, IA) should derive from here.
  */
 
 /** URL-safe slugs for all blog categories. */
@@ -35,7 +39,15 @@ export type BlogPostPreset =
 /** Funnel stage markers used for content and CTA intensity. */
 export type FunnelStage = "TOFU" | "MOFU" | "BOFU" | "MOFU_BOFU";
 
-/** Full category metadata model. */
+/**
+ * Full category metadata model.
+ *
+ * NOTE:
+ * - This is used across:
+ *   • Category listing pages
+ *   • BlogPostLayout (category label, description)
+ *   • CTA/playbook defaults via defaultPreset + defaultFunnelStage
+ */
 export type BlogCategory = {
   /** URL-safe slug (used in routes and content frontmatter). */
   slug: CategorySlug;
@@ -55,9 +67,15 @@ export type BlogCategory = {
   defaultPreset: BlogPostPreset;
   /** Default funnel stage for posts in this category. */
   defaultFunnelStage: FunnelStage;
-  /** Optional hero image for category pages. */
+  /**
+   * Optional hero image for category pages.
+   * This can be wired into category landing templates and SEO.
+   */
   heroImage?: ImageConfig;
-  /** Optional OG image for category pages. */
+  /**
+   * Optional OG image for category pages.
+   * If omitted, site-wide OG defaults should be used.
+   */
   ogImage?: ImageConfig;
 };
 
@@ -65,13 +83,12 @@ export type BlogCategory = {
  * Canonical category config.
  * All category- and routing-related logic should derive from this list.
  *
- * NOTE:
- * - Slugs represent the new 5-category taxonomy:
- *   - cv-strategy
- *   - linkedin
- *   - career-growth
- *   - kenya-market
- *   - hiring-insights
+ * Slugs represent the new 5-category taxonomy:
+ * - cv-strategy
+ * - linkedin
+ * - career-growth
+ * - kenya-market
+ * - hiring-insights
  */
 export const CATEGORIES: BlogCategory[] = [
   {
@@ -93,7 +110,8 @@ export const CATEGORIES: BlogCategory[] = [
     description:
       "Guides for positioning your LinkedIn profile for visibility, credibility, and recruiter search.",
     heroTitle: "Strengthen Your Professional Presence Online",
-    heroSubtitle: "Position yourself for visibility, credibility, and recruiter search.",
+    heroSubtitle:
+      "Position yourself for visibility, credibility, and recruiter search.",
     cardSubtitle: "Be visible. Be credible.",
     cardBody:
       "Position your profile for recruiter search, clarity, and professional authority.",
@@ -106,7 +124,8 @@ export const CATEGORIES: BlogCategory[] = [
     description:
       "Practical frameworks for progression, transitions, and leadership decisions in the Kenyan context.",
     heroTitle: "Navigate Career Decisions with Clarity",
-    heroSubtitle: "Practical frameworks for progression, transitions, and leadership.",
+    heroSubtitle:
+      "Practical frameworks for progression, transitions, and leadership.",
     cardSubtitle: "Navigate your next step with confidence.",
     cardBody:
       "Practical career strategy, progression insights, and transition frameworks for Kenyan professionals.",
@@ -132,7 +151,8 @@ export const CATEGORIES: BlogCategory[] = [
     description:
       "Interview preparation and recruiter-process insights for Kenyan jobseekers.",
     heroTitle: "Learn How Hiring Really Works",
-    heroSubtitle: "Interview prep, shortlisting insights, and recruiter behaviour.",
+    heroSubtitle:
+      "Interview prep, shortlisting insights, and recruiter behaviour.",
     cardSubtitle: "Understand how hiring really works.",
     cardBody:
       "Interview prep, recruiter behaviour, and shortlisting dynamics to help you stand out and get hired.",
@@ -158,24 +178,40 @@ export type Category = CategorySlug;
 export const PER_PAGE = 8;
 
 /**
+ * Internal map for O(1) category lookup by slug.
+ * This is built once at module load and reused everywhere.
+ */
+const CATEGORY_MAP: Record<CategorySlug, BlogCategory> = CATEGORIES.reduce(
+  (acc, category) => {
+    acc[category.slug] = category;
+    return acc;
+  },
+  {} as Record<CategorySlug, BlogCategory>,
+);
+
+/**
  * Look up category metadata by slug.
  * Returns undefined if the slug does not match any known category.
  */
 export function getCategoryBySlug(slug: string): BlogCategory | undefined {
-  return CATEGORIES.find((category) => category.slug === slug);
+  // Ensure we only treat recognised slugs as CategorySlug
+  if (CATEGORY_SLUGS.includes(slug as CategorySlug)) {
+    return CATEGORY_MAP[slug as CategorySlug];
+  }
+  return undefined;
 }
 
 /**
- * New helper: get category by slug (semantic alias for getCategoryBySlug).
- * Prefer this in new code.
+ * Semantic alias for getCategoryBySlug.
+ * Preferred helper in new code.
  */
 export function getCategory(slug: string): BlogCategory | undefined {
   return getCategoryBySlug(slug);
 }
 
 /**
- * New helper: get all category metadata.
- * Useful for CategoryGrid, static paths, etc.
+ * Get all category metadata.
+ * Useful for category grids, filters, and static path generation.
  */
 export function getAllCategories(): BlogCategory[] {
   return CATEGORIES;
@@ -318,4 +354,36 @@ export function paginate<T>(
     hasNextPage: currentPage < totalPages,
     hasPrevPage: currentPage > 1,
   };
+}
+
+/**
+ * Future-proof helper:
+ * Resolve the effective layout preset for a category, given an optional override.
+ *
+ * - If an explicitPreset is provided, use it.
+ * - Otherwise, fall back to the category's defaultPreset.
+ */
+export function resolvePresetForCategory(
+  categorySlug: CategorySlug,
+  explicitPreset?: BlogPostPreset | null,
+): BlogPostPreset {
+  if (explicitPreset) return explicitPreset;
+  const category = CATEGORY_MAP[categorySlug];
+  return category?.defaultPreset ?? "conversionArticle";
+}
+
+/**
+ * Future-proof helper:
+ * Resolve the effective funnel stage for a category, given an optional override.
+ *
+ * - If explicitFunnelStage is provided, use it.
+ * - Otherwise, fall back to the category's defaultFunnelStage.
+ */
+export function resolveFunnelStageForCategory(
+  categorySlug: CategorySlug,
+  explicitFunnelStage?: FunnelStage | null,
+): FunnelStage {
+  if (explicitFunnelStage) return explicitFunnelStage;
+  const category = CATEGORY_MAP[categorySlug];
+  return category?.defaultFunnelStage ?? "MOFU";
 }

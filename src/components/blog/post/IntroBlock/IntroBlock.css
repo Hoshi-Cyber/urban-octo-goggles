@@ -1,14 +1,15 @@
 /*
-  src/components/blog/post/IntroBlock/IntroBlock.css
+  File: src/components/blog/post/IntroBlock/IntroBlock.css
 
-  Introductory block for single blog posts.
-  - Mobile-first
-  - Token-driven
-  - Premium, brand-aligned “lead” panel for the opening paragraphs
+  IntroBlock (Fix Plan 006 – Step 4.2):
+  - Premium, brand-aligned lead panel for article opening paragraphs.
+  - Mobile-first, token-driven.
+  - Width-constrained to align with the main reading column.
+
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --fs-*, --color-* are available.
 */
-
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
 
 .intro-block {
   width: 100%;

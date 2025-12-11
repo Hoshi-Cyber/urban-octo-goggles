@@ -1,6 +1,53 @@
 ---
+/**
+ * File: src/components/blog/compose/mdx/Callout/index.astro
+ *
+ * Purpose (Fix Plan 006 – Step 5.1):
+ * - Provide a premium, accessible MDX callout block used for:
+ *   • Intro / framing notes
+ *   • Tips and best-practice notes
+ *   • Framework explanations
+ *   • Inline CTA or important emphasis blocks
+ * - Remain purely presentational; MDX mapping decides which
+ *   combination of `type` + `title` to use for each pattern.
+ *
+ * Usage examples (via MDX shortcodes / components mapping):
+ *   <Callout type="info" title="Context">
+ *     ...
+ *   </Callout>
+ *
+ *   <Callout type="success" title="Pro Tip">
+ *     ...
+ *   </Callout>
+ *
+ *   <Callout type="warn" title="Common Mistake">
+ *     ...
+ *   </Callout>
+ *
+ *   <Callout type="danger" title="Avoid This">
+ *     ...
+ *   </Callout>
+ */
+
 interface Props {
+  /**
+   * Visual/semantic variant:
+   * - "info"    → neutral / framing / context notes
+   * - "success" → wins, examples, positive outcomes, “What works”
+   * - "warn"    → cautions, common mistakes, tradeoffs
+   * - "danger"  → critical warnings / “Do NOT do this”
+   */
   type?: "info" | "success" | "warn" | "danger";
+
+  /**
+   * Optional eyebrow-style title rendered above the body.
+   * Common values in MDX:
+   * - "Context"
+   * - "Tip"
+   * - "Framework"
+   * - "Example"
+   * - "Inline CTA"
+   */
   title?: string;
 }
 
@@ -8,6 +55,7 @@ const { type = "info", title } = Astro.props as Props;
 
 const ariaLabel = title ? `Callout: ${title}` : "Callout";
 ---
+
 <section
   class="mdx-callout"
   data-type={type}

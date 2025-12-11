@@ -1,94 +1,109 @@
 ---
 /*
-  src/components/blog/post/ChecklistSection/index.astro
+  File: src/components/blog/post/ChecklistSection/index.astro
 
-  FP-205.10 + FP-213.2 + FP-213.3 + FP-213.5:
-  - Named wrapper for the “Implementation checklist” section in a single blog post.
-  - Uses ui/Checklist to present concrete action steps (implementation, not summary).
-  - Semantically distinct from KeyTakeaways (summary vs “what to do next”).
-  - Supports configurable heading level for clean document outline.
+  Purpose (Fix Plan 006 Step 4.4 – ChecklistSection):
+  - Provide a reusable “Implementation checklist” band for blog posts and marketing pages.
+  - Wrap the generic ui/Checklist component with:
+    • Section framing (eyebrow, title, lead copy).
+    • Blog-layout-aware container and spacing.
+  - Keep this component PRESENTATIONAL ONLY:
+    • No data fetching.
+    • No IA decisions (that’s handled in BlogPostLayout + playbooks).
+    • Accept normalised props from the route layer.
+
+  Notes:
+  - This component is optional and only rendered when there are checklist items.
+  - Heading level can be controlled via `headingLevel` to maintain a valid outline.
 */
 
 import Checklist from "@/components/ui/Checklist";
-import "./ChecklistSection.css";
 
-/**
- * ChecklistSectionProps
- *
- * Content contract (Fix Plan 213 + 213.3):
- * - Use for action-oriented implementation steps (“Do this next”), not summary bullets.
- * - Items should be clear, task-like phrases (ideally verb-first).
- * - Represents an ordered implementation list; visual numbering/checks handled
- *   by ui/Checklist and CSS.
- * - HTML in leadHtml is pre-sanitised at the route/content layer.
- */
 export interface ChecklistSectionProps {
   /** Section title, e.g. “Implementation checklist” */
   title?: string;
-  /** Optional short lead/description above the checklist (HTML string) */
+  /**
+   * Optional short HTML lead/intro paragraph rendered under the title.
+   * Must be sanitised upstream; rendered via set:html.
+   */
   leadHtml?: string;
-  /** Checklist items (action labels only; all start unchecked by default) */
+  /**
+   * Ordered list of implementation steps.
+   * Each string becomes a single checklist row label.
+   */
   items: string[];
   /**
-   * Heading level for the section title.
-   * - 2 → <h2> (default for main bands in BlogPostLayout)
-   * - 3 → <h3> when nested inside another section
+   * Heading level for the title, used to fit into the page outline.
+   * Default: 2 (renders <h2>).
    */
   headingLevel?: 2 | 3;
+  /**
+   * Optional small eyebrow above the title for context.
+   * Example: “Action steps you can take next”.
+   */
+  eyebrow?: string;
 }
 
 const {
   title = "Implementation checklist",
   leadHtml,
-  items,
+  items = [],
   headingLevel = 2,
+  eyebrow = "Action steps you can take next",
 } = Astro.props as ChecklistSectionProps;
 
-/**
- * Normalise items:
- * - Ensure we only render non-empty strings.
- * - Leave any further semantics (numbering, check state) to ui/Checklist.
- */
-const normalisedItems = Array.isArray(items)
-  ? items
-      .map((label) => (typeof label === "string" ? label.trim() : ""))
-      .filter((label) => label.length > 0)
-  : [];
+const hasItems = Array.isArray(items) && items.length > 0;
+const listItems = hasItems ? items.map((label) => ({ label })) : [];
 
-const listItems =
-  normalisedItems.length > 0
-    ? normalisedItems.map((label) => ({ label }))
-    : [];
+// Precompute for accessibility; avoid empty aria-labels.
+const sectionLabel =
+  title && title.trim().length > 0
+    ? title
+    : "Implementation checklist";
 
-// Heading element based on headingLevel prop
-const HeadingTag = (headingLevel === 3 ? "h3" : "h2") as "h2" | "h3";
+const sheet = new URL("./ChecklistSection.css", import.meta.url).toString();
 ---
 
-{listItems.length > 0 && (
-  <section
-    class="checklist-section"
-    aria-labelledby="checklist-section-title"
-  >
-    <div class="checklist-section__inner">
-      <header class="checklist-section__header">
-        <p class="checklist-section__eyebrow">Action steps</p>
+{hasItems && (
+  <>
+    <link rel="stylesheet" href={sheet} />
 
-        <HeadingTag
-          id="checklist-section-title"
-          class="checklist-section__title h2 section-title"
-        >
-          {title}
-        </HeadingTag>
+    <section
+      class="checklist-section"
+      aria-label={sectionLabel}
+    >
+      <div class="container checklist-section__container">
+        <div class="checklist-section__inner">
+          <header class="checklist-section__header">
+            {eyebrow && (
+              <p class="checklist-section__eyebrow">
+                {eyebrow}
+              </p>
+            )}
 
-        {leadHtml && (
-          <div
-            class="checklist-section__lead"
-            set:html={leadHtml}
-          />
-        )}
-      </header>
+            {title && headingLevel === 3 && (
+              <h3 class="checklist-section__title">
+                {title}
+              </h3>
+            )}
 
-      <Checklist items={listItems} />
-    </div>
-  </section>
+            {title && headingLevel !== 3 && (
+              <h2 class="checklist-section__title">
+                {title}
+              </h2>
+            )}
+
+            {leadHtml && (
+              <div
+                class="checklist-section__lead"
+                set:html={leadHtml}
+              />
+            )}
+          </header>
+
+          <Checklist items={listItems} />
+        </div>
+      </div>
+    </section>
+  </>
 )}

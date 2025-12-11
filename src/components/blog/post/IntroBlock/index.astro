@@ -1,11 +1,12 @@
 ---
 /*
-  src/components/blog/post/IntroBlock/index.astro
+  File: src/components/blog/post/IntroBlock/index.astro
 
-  FP-205.4:
+  Fix Plan 006 – Step 4.2 (IntroBlock):
   - Dedicated intro wrapper for the first 150–250 words of the article.
-  - Uses global typography tokens and spacing.
-  - Does not apply .container (parent layout already does).
+  - Uses global typography tokens and spacing via IntroBlock.css.
+  - Stays layout-agnostic: no .container; BlogPostLayout owns outer shell.
+  - Provides a clear, semantic landmark for the article introduction.
 */
 
 import "./IntroBlock.css";

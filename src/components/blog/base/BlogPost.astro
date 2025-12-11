@@ -10,6 +10,12 @@
    - Under Fix Plan 205.2 + 213, those legacy outer blocks are now retired
      so that the single source of truth for the page IA lives inside
      BlogPostLayout only.
+
+   Fix Plan 006.1 – Hero image pipeline:
+   - The route (/blog/[category]/[slug].astro) now fully normalises the
+     primary image (hero/cover/thumbnail/image/ogImage) into heroImage.
+   - This component forwards heroImage into BlogPostLayout and, as a
+     safety net, can fall back to cover if heroImage is missing.
 */
 
 import "./BlogPost.css";
@@ -39,8 +45,13 @@ export interface Props {
   author?: string;
   /** Normalized slug used to derive /about/editorial/<authorSlug>/ */
   authorSlug?: string;
+
+  /**
+   * Legacy cover mapping; now normalised at the route level.
+   * Route currently passes this as the same primary image as heroImage
+   * (normalised to { src, alt, width?, height? }).
+   */
   cover?: {
-    /** String path per Fix 195-C (e.g. "/images/blog/<category>/<slug>-hero.webp") */
     src: string | { src: string; width?: number; height?: number };
     alt?: string;
     width?: number;
@@ -52,6 +63,7 @@ export interface Props {
     srcsetWebp?: string;
     sizes?: string;
   };
+
   canonical?: string;
   tocHeadings?: Array<{ depth: number; slug: string; text: string }>;
   showTOC?: boolean;
@@ -76,7 +88,16 @@ export interface Props {
    */
   heroTagline?: BlogPostLayoutProps["heroTagline"];
   heroSoftCta?: BlogPostLayoutProps["heroSoftCta"];
+
+  /**
+   * Hero image as supplied by the route:
+   *   { src: string; alt: string; width?: number; height?: number }
+   *
+   * For backwards compatibility, some callers may still pass a string.
+   * The canonical /blog/[category]/[slug]/ route passes the object shape.
+   */
   heroImage?: BlogPostLayoutProps["heroImage"] | string;
+
   introHtml?: BlogPostLayoutProps["introHtml"];
   keyTakeaways?: BlogPostLayoutProps["keyTakeaways"];
   inlineOffer?: BlogPostLayoutProps["inlineOffer"];
@@ -153,68 +174,6 @@ const toc =
       }))
     : undefined;
 
-/**
- * Normalise hero image input (string | object | Astro image object) into the
- * single shape expected by BlogPostLayout, or undefined when not available.
- *
- * This prevents runtime errors like "Cannot read properties of undefined (reading 'src')"
- * when heroImage / cover are missing or in different formats.
- */
-type HeroInput =
-  | string
-  | {
-      src?: any;
-      alt?: string;
-      width?: number;
-      height?: number;
-    }
-  | null
-  | undefined;
-
-function normaliseHeroImage(
-  input: HeroInput,
-  fallbackAlt: string,
-): BlogPostLayoutProps["heroImage"] | undefined {
-  if (!input) return undefined;
-
-  // Case 1: plain string path, e.g. "/assets/images/blog/hero/blog-home-hero-02.webp"
-  if (typeof input === "string") {
-    return {
-      src: input,
-      alt: fallbackAlt,
-    };
-  }
-
-  // Case 2: object with src (string or Astro image object)
-  const srcVal = input.src;
-  if (!srcVal) return undefined;
-
-  // 2a: src is already a string path
-  if (typeof srcVal === "string") {
-    return {
-      src: srcVal,
-      alt: input.alt ?? fallbackAlt,
-      width: input.width,
-      height: input.height,
-    };
-  }
-
-  // 2b: src is an Astro image object with its own src/width/height
-  return {
-    src: srcVal.src,
-    alt: input.alt ?? fallbackAlt,
-    width: srcVal.width ?? input.width,
-    height: srcVal.height ?? input.height,
-  };
-}
-
-// Resolve heroImage: prefer route/frontmatter-mapped heroImage,
-// then fall back to legacy cover mapping.
-// Both heroImageFromRoute and cover may contain string paths or Astro images.
-const heroImage: BlogPostLayoutProps["heroImage"] =
-  normaliseHeroImage(heroImageFromRoute as HeroInput, title) ??
-  normaliseHeroImage(cover as HeroInput, title);
-
 // relatedArticles are now expected from route (via src/lib/blog/related)
 const resolvedRelatedArticles: BlogPostLayoutProps["relatedArticles"] =
   Array.isArray(relatedArticlesFromRoute) &&
@@ -249,6 +208,47 @@ const defaultPresetForCategory: BlogPostLayoutProps["preset"] =
 const resolvedPreset: BlogPostLayoutProps["preset"] =
   fmPreset ?? defaultPresetForCategory;
 
+/**
+ * Hero image forwarding – OnePath + safety net
+ *
+ * Primary rule:
+ *   - Forward heroImage from the route unchanged when present.
+ *
+ * Safety net:
+ *   - If heroImage is missing (undefined/null) but cover is available,
+ *     derive a minimal hero image from cover so the hero never silently
+ *     disappears when cards still show an image.
+ */
+let forwardedHeroImage: BlogPostLayoutProps["heroImage"] | undefined;
+
+if (heroImageFromRoute) {
+  if (typeof heroImageFromRoute === "string") {
+    forwardedHeroImage = {
+      src: heroImageFromRoute,
+      alt: title,
+    };
+  } else if ((heroImageFromRoute as any).src) {
+    forwardedHeroImage = heroImageFromRoute as BlogPostLayoutProps["heroImage"];
+  }
+} else if (cover && cover.src) {
+  // Fallback to cover if route did not supply a heroImage
+  if (typeof cover.src === "string") {
+    forwardedHeroImage = {
+      src: cover.src,
+      alt: cover.alt ?? title,
+      width: cover.width,
+      height: cover.height,
+    };
+  } else if (typeof cover.src === "object" && (cover.src as any).src) {
+    forwardedHeroImage = {
+      src: (cover.src as any).src,
+      alt: cover.alt ?? title,
+      width: (cover.src as any).width ?? cover.width,
+      height: (cover.src as any).height ?? cover.height,
+    };
+  }
+}
+
 // Build props for BlogPostLayout (205.2 adapter layer)
 const blogPostLayoutProps: BlogPostLayoutProps = {
   breadcrumbs: [
@@ -268,7 +268,7 @@ const blogPostLayoutProps: BlogPostLayoutProps = {
     typeof readingTime === "number" ? readingTime : undefined,
   authorName: author,
   authorUrl,
-  heroImage,
+  heroImage: forwardedHeroImage,
   introHtml,
   keyTakeaways,
   inlineOffer,

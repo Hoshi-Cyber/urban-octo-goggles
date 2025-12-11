@@ -5,10 +5,11 @@
   - Mobile-first
   - Token-driven
   - Premium, brand-aligned card inside BlogPostLayout’s final-cta band
-*/
 
-@import "../../../../styles/tokens.css";
-@import "../../../../styles/typography.css";
+  Note:
+  - Design tokens and typography are imported globally via src/styles/index.css.
+  - This file assumes variables like --space-*, --fs-*, --color-* are available.
+*/
 
 .final-cta {
   width: 100%;
@@ -142,5 +143,13 @@
 @media (min-width: 1024px) {
   .final-cta__inner {
     padding-inline: clamp(var(--space-7), 5vw, var(--space-8));
+  }
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .final-cta__inner {
+    scroll-behavior: auto;
+    transition: none;
   }
 }

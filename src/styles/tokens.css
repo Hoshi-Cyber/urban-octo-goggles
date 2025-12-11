@@ -104,6 +104,15 @@
   --space-14: 3.5rem;   /* 56px – upper bound for --section-gap */
   --space-16: 4rem;     /* 64px – upper bound for page/footer gaps */
 
+  /* Blog/layout-friendly spacing aliases (Fix Plan 006 – Step 1.1)
+     These are NOT used globally yet; they are safe to consume from
+     BlogPostLayout and post components without affecting existing pages. */
+
+  --space-section-top: var(--space-12);       /* 48px – top of major sections */
+  --space-section-bottom: var(--space-8);     /* 32px – bottom of major sections */
+  --space-block-gap: var(--space-5);          /* 20px – gap between blocks/paragraph groups */
+  --space-cta-padding-block: var(--space-6);  /* 24px – vertical padding for CTA blocks */
+
   /* ==========================================================================
      Typography
      ========================================================================== */

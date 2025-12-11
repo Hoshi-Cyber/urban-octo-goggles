@@ -1,11 +1,87 @@
 ---
-export interface Props {
-  type: 'Organization' | 'WebSite' | 'BreadcrumbList' | 'Product'
-  data: any
+/**
+ * File: src/components/seo/StructuredData/index.astro
+ *
+ * Purpose (Fix Plan 006 Step 3.2):
+ * - Provide a thin, generic wrapper for emitting JSON-LD structured data.
+ * - Accept pre-built schema objects/graphs from the route or layout layer.
+ * - Avoid building or mutating schema here; this component is emit-only.
+ * - Do not emit an empty <script> tag when no data is provided.
+ *
+ * Notes:
+ * - `type` is an optional semantic hint only; it does not alter the payload.
+ * - Payload should already conform to schema.org JSON-LD expectations.
+ */
+
+type StructuredDataType =
+  "Organization" |
+  "WebSite" |
+  "BreadcrumbList" |
+  "Product" |
+  "BlogPosting" |
+  "Article" |
+  "WebPage";
+
+interface StructuredDataProps {
+  /**
+   * Optional semantic hint for the schema type.
+   * Kept for clarity but does not affect how the payload is rendered.
+   */
+  type?: StructuredDataType;
+
+  /**
+   * Primary prop for structured data.
+   * - Prefer passing an @graph array or a single JSON-LD object here.
+   */
+  data?: Record<string, unknown> | Array<unknown> | null;
+
+  /**
+   * Backwards-compatible prop name:
+   * - If some callers use `structuredData` instead of `data`, we still support it.
+   */
+  structuredData?: Record<string, unknown> | Array<unknown> | null;
+
+  /**
+   * Optional `graph` alias for callers that want to mirror @graph semantics.
+   */
+  graph?: Record<string, unknown> | Array<unknown> | null;
 }
-const { data } = Astro.props
-// No CSS. Emits JSON-LD only.
+
+const { data, structuredData, graph } = Astro.props as StructuredDataProps;
+
+/**
+ * Choose the first non-null payload in priority order:
+ *   data → structuredData → graph
+ */
+const payload =
+  data !== undefined && data !== null
+    ? data
+    : structuredData !== undefined && structuredData !== null
+    ? structuredData
+    : graph !== undefined && graph !== null
+    ? graph
+    : null;
+
+/**
+ * Pre-serialised JSON-LD string.
+ * - Only set when payload is non-null and non-empty.
+ */
+let json: string | null = null;
+
+if (payload) {
+  if (Array.isArray(payload)) {
+    if (payload.length > 0) {
+      json = JSON.stringify(payload);
+    }
+  } else if (typeof payload === "object" && Object.keys(payload).length > 0) {
+    json = JSON.stringify(payload);
+  }
+}
 ---
-<script type="application/ld+json">
-  {JSON.stringify(data)}
-</script>
+
+{/* No CSS. Emits JSON-LD only. */}
+{json && (
+  <script type="application/ld+json">
+    {json}
+  </script>
+)}

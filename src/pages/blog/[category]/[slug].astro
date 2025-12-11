@@ -2,7 +2,7 @@
 /**
  * File: src/pages/blog/[category]/[slug].astro
  *
- * Single blog post route wired to BlogPost + BlogPostLayout (Fix Plans 190, 195, 205.1, 213, 004).
+ * Single blog post route wired to BlogPost + BlogPostLayout (Fix Plans 190, 195, 205.1, 213, 004, 006).
  */
 
 import type { CollectionEntry } from "astro:content";
@@ -21,6 +21,10 @@ import site from "@/site.config";
 
 // Category metadata (Fix Plan 005 – canonical 5-category model)
 import { getCategory } from "@/lib/blog/categories";
+
+// Related articles helper (Fix Plan 205.1.6 / 213 / 006)
+import { getRelatedArticles } from "@/lib/blog/related";
+import type { RelatedArticle } from "@/lib/blog/related";
 
 // Route params (SSR)
 const { category, slug } = Astro.params as { category: string; slug: string };
@@ -95,7 +99,7 @@ const canonicalAbs =
   (entry.data as any)?.canonical ||
   (siteUrl ? new URL(pathname, siteUrl).toString() : undefined);
 
-// ----- Hero / cover mapping (both normalised and safe) -----
+// ----- Hero / cover mapping (robust + normalised) -----
 
 type ImageForMeta =
   | {
@@ -111,80 +115,101 @@ type ImageForMeta =
       height?: number;
     }
   | string
+  | null
   | undefined;
 
 // Shared fallback image (also used for OG when nothing else is available)
 const FALLBACK_HERO_IMAGE = "/assets/images/og/default-blog.webp";
 
-/** Normalise any frontmatter/cover value into a safe { src, alt, width?, height? } object */
+/**
+ * Normalise any frontmatter image-ish value into a safe { src, alt, width?, height? } object.
+ * Accepts:
+ * - string path
+ * - Astro image metadata
+ * - objects with nested `src.src`
+ * - null / undefined → fallback
+ */
 function normaliseImageForLayout(
   value: ImageForMeta,
   fallbackSrc: string,
   alt: string,
 ): { src: string; alt: string; width?: number; height?: number } {
-  // Case 1: direct Astro image object { src: string, width?, height?, alt? }
-  if (
-    value &&
-    typeof value === "object" &&
-    "src" in value &&
-    typeof (value as any).src === "string"
-  ) {
-    const v = value as any;
-    return {
-      src: v.src as string,
-      alt:
-        typeof v.alt === "string" && v.alt.trim().length > 0 ? v.alt : alt,
-      width: typeof v.width === "number" ? v.width : undefined,
-      height: typeof v.height === "number" ? v.height : undefined,
-    };
-  }
-
-  // Case 2: nested Astro image { src: { src, width, height }, alt? }
-  if (
-    value &&
-    typeof value === "object" &&
-    "src" in value &&
-    typeof (value as any).src === "object" &&
-    (value as any).src &&
-    typeof (value as any).src.src === "string"
-  ) {
-    const inner = (value as any).src;
-    return {
-      src: inner.src as string,
-      alt:
-        typeof (value as any).alt === "string" &&
-        (value as any).alt.trim().length > 0
-          ? (value as any).alt
-          : alt,
-      width: typeof inner.width === "number" ? inner.width : undefined,
-      height: typeof inner.height === "number" ? inner.height : undefined,
-    };
-  }
-
-  // Case 3: plain string path
+  // Case 1: value is a plain string path
   if (typeof value === "string" && value.trim().length > 0) {
     return { src: value, alt };
+  }
+
+  if (value && typeof value === "object") {
+    // Case 2: value.src is itself an object (Astro image metadata nested)
+    if (
+      "src" in value &&
+      typeof (value as any).src === "object" &&
+      (value as any).src &&
+      typeof (value as any).src.src === "string"
+    ) {
+      const inner = (value as any).src;
+      return {
+        src: inner.src as string,
+        alt:
+          typeof (value as any).alt === "string" &&
+          (value as any).alt.trim().length > 0
+            ? (value as any).alt
+            : alt,
+        width: typeof inner.width === "number" ? inner.width : undefined,
+        height: typeof inner.height === "number" ? inner.height : undefined,
+      };
+    }
+
+    // Case 3: direct Astro image object or { src: string, alt?, width?, height? }
+    if ("src" in value && typeof (value as any).src === "string") {
+      const v = value as any;
+      return {
+        src: v.src as string,
+        alt:
+          typeof v.alt === "string" && v.alt.trim().length > 0 ? v.alt : alt,
+        width: typeof v.width === "number" ? v.width : undefined,
+        height: typeof v.height === "number" ? v.height : undefined,
+      };
+    }
   }
 
   // Case 4: no usable image – fall back to shared default
   return { src: fallbackSrc, alt };
 }
 
-// First normalise cover (old schema)
-const rawCover = (entry.data as any).cover as ImageForMeta;
-const cover = normaliseImageForLayout(
-  rawCover,
+/**
+ * Robust, future-proof primary image selection:
+ *
+ * Priority:
+ *   1. heroImage (explicit override for article hero)
+ *   2. cover     (canonical blog cover)
+ *   3. thumbnail (card-specific thumbnail)
+ *   4. image     (legacy/general image)
+ *   5. ogImage   (SEO/social image)
+ *
+ * This mirrors the grid/card behaviour (`thumbnail ?? image ?? cover ?? ogImage`)
+ * while still respecting an explicit heroImage override when present.
+ */
+const fmHeroImage = (entry.data as any).heroImage as ImageForMeta;
+const fmCover = (entry.data as any).cover as ImageForMeta;
+const fmThumbnail = (entry.data as any).thumbnail as ImageForMeta;
+const fmImage = (entry.data as any).image as ImageForMeta;
+const fmOgImage = (entry.data as any).ogImage as ImageForMeta;
+
+const primaryImageRaw: ImageForMeta =
+  fmHeroImage ?? fmCover ?? fmThumbnail ?? fmImage ?? fmOgImage;
+
+// Normalised hero image (used by layout + JSON-LD + preload)
+const heroImage = normaliseImageForLayout(
+  primaryImageRaw,
   FALLBACK_HERO_IMAGE,
   title,
 );
 
-// Then derive hero image, preferring heroImage but falling back to cover
-const rawHeroImage = ((entry.data as any).heroImage ?? cover) as ImageForMeta;
-const heroImage = normaliseImageForLayout(
-  rawHeroImage,
-  FALLBACK_HERO_IMAGE,
-  title,
-);
+// Keep a `cover` field for backwards-compatibility with existing adapters,
+// but align it to the same primary image so BlogPost/BlogPostLayout see
+// a single, consistent hero/cover image.
+const cover = heroImage;
 
 // Derive the hero image URL used by PostCover for LCP/JSON-LD/preload coherence
 const heroImageUrl: string | undefined =
@@ -227,7 +252,7 @@ const next =
     ? inSameCategory[idx + 1]
     : null;
 
-// Related posts: same category then tag-overlap score
+// Related posts (entry-level list kept for backward compatibility)
 function overlapScore(a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) {
   const ta = new Set(a.data.tags ?? []);
   const tb = new Set(b.data.tags ?? []);
@@ -253,28 +278,9 @@ const related = allPosts
   .slice(0, 6)
   .map((x) => x.post);
 
-type RelatedArticle = {
-  title: string;
-  url: string;
-  category?: string;
-  readingTime?: number | null;
-  excerpt?: string;
-  date: Date;
-};
-
-const relatedArticles: RelatedArticle[] = related.map((post) => {
-  const cat = post.data.category ?? catFromPath(post);
-  const b = baseSlug(post);
-  const url = `/blog/${cat}/${b}/`;
-
-  return {
-    title: post.data.title,
-    url,
-    category: cat,
-    readingTime: (post.data as any).readingTime ?? null,
-    excerpt: post.data.description,
-    date: new Date(post.data.date),
-  };
+// Canonical related articles payload for BlogPostLayout & UI (Fix Plan 205.1.6 / 213 / 006)
+const relatedArticles: RelatedArticle[] = await getRelatedArticles(entry, {
+  limit: 6,
 });
 
 // ---------- Layout props from frontmatter (Fix Plan 205.1 / 004) ----------
@@ -385,7 +391,7 @@ const breadcrumbs = [
   },
 ];
 
-// Build props for BlogPost adapter (Fix Plan 205.2 + 004)
+// Build props for BlogPost adapter (Fix Plan 205.2 + 004 + 006)
 const layoutProps = {
   title,
   description,
@@ -394,7 +400,7 @@ const layoutProps = {
   date,
   updated,
   readingTime,
-  // Now always a safe object
+  // Now always a safe, primary image, aligned with card logic
   cover,
   tocHeadings,
   showTOC,

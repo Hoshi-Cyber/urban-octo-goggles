@@ -2,10 +2,11 @@
 /**
  * File: src/components/seo/Seo.astro
  *
- * Purpose (Fix Plan 205.1.5):
- * - Centralise core SEO tags for pages (title, description, canonical).
+ * Purpose (Fix Plan 205.1.5 + Fix Plan 006 Step 3.2):
+ * - Centralise core SEO tags for pages (title, description, canonical, robots).
  * - Keep Open Graph / Twitter values aligned with the same meta fields
- *   used by ArticleJsonLd (metaTitle/metaDescription, ogImage, canonical).
+ *   used by JSON-LD builders (metaTitle/metaDescription, ogImage, canonical).
+ * - Provide a single, generic injection point for per-page JSON-LD structured data.
  *
  * Usage:
  *   <Seo
@@ -18,6 +19,7 @@
  *     siteName={site?.siteName}
  *     robots="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
  *     alternates={alternates}
+ *     structuredData={schema} // optional JSON-LD @graph or object
  *   />
  */
 
@@ -41,6 +43,12 @@ export interface SeoProps {
     hrefLang: string;
     href: string;
   }>;
+  /**
+   * Optional JSON-LD structured data payload for this page.
+   * - Typically an @graph object for blog articles, or a single schema object.
+   * - Built upstream (e.g. via seoSchema helpers) and passed through unchanged.
+   */
+  structuredData?: Record<string, unknown> | Array<unknown> | null;
 }
 
 const {
@@ -52,7 +60,24 @@ const {
   siteName,
   robots = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
   alternates = [],
+  structuredData,
 } = Astro.props as SeoProps;
+
+/**
+ * Pre-serialised JSON-LD string.
+ * - Only emit when a non-empty payload is provided.
+ */
+let structuredDataJson: string | null = null;
+
+if (structuredData) {
+  if (Array.isArray(structuredData)) {
+    if (structuredData.length > 0) {
+      structuredDataJson = JSON.stringify(structuredData);
+    }
+  } else if (Object.keys(structuredData).length > 0) {
+    structuredDataJson = JSON.stringify(structuredData);
+  }
+}
 ---
 
 <title>{title}</title>
@@ -108,4 +133,11 @@ const {
 )}
 {ogImage && (
   <meta name="twitter:image" content={ogImage} />
+)}
+
+{/* JSON-LD Structured Data (optional) */}
+{structuredDataJson && (
+  <script type="application/ld+json">
+    {structuredDataJson}
+  </script>
 )}

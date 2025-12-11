@@ -1,11 +1,20 @@
 ---
 /**
+ * MDX <Code> wrapper
+ *
  * Usage in MDX:
- * <Code>
- * {`const x = 1`}
- * </Code>
+ *   <Code>
+ *   {`const x = 1`}
+ *   </Code>
+ *
+ * Responsibilities (Fix Plan 006 Step 5.1):
+ * - Provide a premium, brand-aligned code block surface.
+ * - Keep semantics simple: <pre><code> inside a wrapper <div>.
+ * - Offer an accessible "Copy" button with clear focus styles.
+ * - Remain drop-in for any MDX content without additional props.
  */
 ---
+
 <div class="mdx-code">
   <pre class="mdx-code__pre">
     <code><slot /></code>
@@ -18,11 +27,17 @@
     data-state="ready"
     onClick={`(function(btn){
       const pre = btn.previousElementSibling;
-      if(!pre) return;
+      if (!pre) return;
       const text = pre.innerText;
-      navigator.clipboard.writeText(text).then(()=>{
-        btn.dataset.state='copied';
-        setTimeout(()=>{ btn.dataset.state='ready'; }, 1400);
+      if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+
+      navigator.clipboard.writeText(text).then(function () {
+        btn.dataset.state = 'copied';
+        window.setTimeout(function () {
+          btn.dataset.state = 'ready';
+        }, 1400);
+      }).catch(function () {
+        // Silent failure – button state stays "ready"
       });
     })(this)`}
   >

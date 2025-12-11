@@ -2,22 +2,58 @@
 /*
   src/components/blog/post/FinalCtaBlock/index.astro
 
-  FP-205.8:
+  FP-205.8 + Fix Plan 006 Step 4.6:
   - Bottom-of-article hard CTA block for single blog posts.
   - Uses global Button component (.btn system) and token-driven layout.
   - BlogPostLayout already wraps this in a .container; do NOT add another.
+  - Accessibility:
+    • <section> landmark labelled by H2.
+    • Optionally described by body copy for screen readers.
+  - Analytics:
+    • CTA tracking IDs remain explicit and overrideable.
 */
 
 import Button from "@/components/cta/Button";
 import "./FinalCtaBlock.css";
 
 export interface FinalCtaBlockProps {
+  /**
+   * Main CTA heading (required).
+   */
   heading: string;
+
+  /**
+   * Rich body copy rendered as HTML.
+   * Must be sanitized upstream.
+   */
   bodyHtml: string;
+
+  /**
+   * Primary CTA button label and href.
+   */
   primaryLabel: string;
   primaryHref: string;
+
+  /**
+   * Optional secondary CTA button.
+   */
   secondaryLabel?: string;
   secondaryHref?: string;
+
+  /**
+   * Optional eyebrow text above the heading.
+   * When omitted, a sensible default copy is used.
+   */
+  eyebrow?: string;
+
+  /**
+   * Optional tracking IDs for analytics.
+   * When omitted, defaults are:
+   * - "final-cta:primary"
+   * - "final-cta:secondary"
+   */
+  primaryCtaId?: string;
+  secondaryCtaId?: string;
 }
 
 const {
@@ -27,29 +63,56 @@ const {
   primaryHref,
   secondaryLabel,
   secondaryHref,
+  eyebrow,
+  primaryCtaId,
+  secondaryCtaId,
 } = Astro.props as FinalCtaBlockProps;
 
 const hasSecondary = Boolean(secondaryLabel && secondaryHref);
+
+/**
+ * Accessibility helpers:
+ * - Section is labelled by the H2.
+ * - If bodyHtml exists, we also expose it via aria-describedby.
+ */
+const headingId = "final-cta-title";
+const bodyId = "final-cta-body";
+const describedById = bodyHtml ? bodyId : undefined;
+
+/**
+ * CTA tracking IDs:
+ * - Allow route layer to override while preserving existing defaults.
+ */
+const primaryTrackingId = primaryCtaId || "final-cta:primary";
+const secondaryTrackingId = secondaryCtaId || "final-cta:secondary";
+
+/**
+ * Eyebrow fallback:
+ * - Keeps existing behaviour but allows smarter overrides from content layer.
+ */
+const eyebrowText = eyebrow || "Ready for the next step?";
 ---
 
 <section
   class="final-cta"
-  aria-labelledby="final-cta-title"
+  aria-labelledby={headingId}
+  aria-describedby={describedById}
 >
   <div class="final-cta__inner">
     <header class="final-cta__header">
       <p class="final-cta__eyebrow">
-        Ready for the next step?
+        {eyebrowText}
       </p>
 
       <h2
-        id="final-cta-title"
+        id={headingId}
         class="final-cta__title h2 section-title"
       >
         {heading}
       </h2>
 
       <div
+        id={bodyId}
         class="final-cta__body"
         set:html={bodyHtml}
       />
@@ -62,7 +125,7 @@ const hasSecondary = Boolean(secondaryLabel && secondaryHref);
         variant="primary"
         size="lg"
         class="final-cta__primary"
-        cta="final-cta:primary"
+        cta={primaryTrackingId}
       />
 
       {hasSecondary && (
@@ -72,7 +135,7 @@ const hasSecondary = Boolean(secondaryLabel && secondaryHref);
           variant="accent"
           size="lg"
           class="final-cta__secondary"
-          cta="final-cta:secondary"
+          cta={secondaryTrackingId}
         />
       )}
     </div>

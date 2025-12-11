@@ -1,342 +1,259 @@
 /*
  * File: src/components/blog/post/BlogPostLayout/BlogPostLayout.css
- *
- * Fix Plan 205.2 – Consolidated single-post layout shell
- *
- * Role:
- * - Own the full vertical rhythm and section boundaries for the single blog post.
- * - Keep all spacing decisions here so BlogPost.astro and the route remain data-only.
- * - Apply a premium, brand-aligned visual banding for each major slice.
- *
- * Updated per Fix Plan 213 status:
- * - Maintain IA presets, slice ordering, and band responsibilities.
- * - Refine colour application for a neat, minimalist, premium blog layout.
- *
- * Updated per Fix Plan 213.1:
- * - Introduce a single shared content column width for the article body
- *   and closing bands, driven by --blog-post-content-max-width.
- * - Let .blog-post-layout__body-inner own the reading width; keep
- *   .blog-post-layout__content full-width inside that shell.
- *
- * Updated per Fix Plan 004 – Step 6:
- * - Introduce light-touch visual refinements per layout preset, keyed by
- *   data-layout-preset on the root .blog-post-layout article.
- * - Do not change structure; only adjust spacing and band tint subtly.
+ * Premium single-post layout shell for CVWriting.co.ke
+ * - Token-driven, mobile-first
+ * - Enforces a single reading width for hero/body/slices
+ * - Lets the related rail expand to full blog container width
  */
 
 @import "../../../../styles/tokens.css";
 @import "../../../../styles/typography.css";
 
-/* Root article wrapper */
+/* Root article wrapper ----------------------------------------------------- */
+
 .blog-post-layout {
   padding-block: clamp(var(--space-8), 6vw, var(--space-10));
   background-color: var(--color-surface, #ffffff);
 
-  /* Fix Plan 213.1 – shared reading width for the column */
-  --blog-post-content-max-width: 70ch;
+  /* Base reading width for all core content bands (hero, body, etc.) */
+  --blog-post-content-max-width: 74ch;
 }
 
-/* Header stack: breadcrumbs, hero, cover, intro */
+/* Header stack: breadcrumbs + hero + media + intro + share ----------------- */
+
 .blog-post-layout__header {
-  /* Slightly reduced to avoid an over-tall header band after KeyTakeaways move */
-  padding-block-end: clamp(var(--space-5), 3.5vw, var(--space-7));
-
-  /* Soft, editorial header tint – very light use of primary */
-  background:
-    radial-gradient(
-      circle at top left,
-      color-mix(
-        in oklab,
-        var(--color-primary-soft, var(--color-primary, #1b3637)) 10%,
-        transparent
-      ),
-      transparent 60%
-    ),
-    color-mix(
-      in oklab,
-      var(--color-surface, #ffffff) 94%,
-      var(--color-surface-alt, #f9fafb) 6%
-    );
-
-  border-block-end: 1px solid
+  padding-block-end: clamp(var(--space-6), 4vw, var(--space-8));
+  border-bottom: 1px solid
     color-mix(
       in oklab,
       var(--color-border-subtle, #e5e7eb) 92%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+      transparent
     );
-}
-
-/* TOC region (optional) – very light band just below header */
-.blog-post-layout__toc {
-  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 96%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
-  );
-  border-block-end: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 94%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
-    );
-}
-
-/* Main body */
-.blog-post-layout__body {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-8));
   background-color: var(--color-surface, #ffffff);
 }
 
-/* Single content column shell */
-.blog-post-layout__body-inner {
-  width: 100%;
-  max-width: var(--blog-post-content-max-width);
+.blog-post-layout__header > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
   margin-inline: auto;
-  padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
 }
 
-/* Prose inside the column – inherit shell width */
+.blog-post-layout__header .stack {
+  gap: clamp(var(--space-3), 2vw, var(--space-4));
+}
+
+/* Ensure breadcrumbs sit compactly above hero */
+.blog-post-layout__header .breadcrumbs {
+  margin-block-end: var(--space-1);
+}
+
+/* Share band inside the header --------------------------------------------- */
+
+.blog-post-layout__header .post__shareSection {
+  /* Override global spacing so the band feels attached to the hero */
+  margin-block-start: clamp(var(--space-4), 3vw, var(--space-6));
+  margin-block-end: 0;
+}
+
+/* Body band ---------------------------------------------------------------- */
+
+.blog-post-layout__body {
+  padding-block: clamp(var(--space-7), 5vw, var(--space-10));
+  background-color: var(--color-surface, #ffffff);
+}
+
+.blog-post-layout__body > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+.blog-post-layout__body-inner {
+  display: block;
+}
+
 .blog-post-layout__content {
   max-width: 100%;
-  margin: 0;
 }
 
-/* Checklist section (implementation checklist)
-   Sits on a soft band that contrasts gently with the body */
-.blog-post-layout__checklist {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 96%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
-  );
-  border-block-start: 1px solid
+/* TOC band ----------------------------------------------------------------- */
+
+.blog-post-layout__toc {
+  padding-block: clamp(var(--space-4), 3vw, var(--space-6));
+  border-bottom: 1px solid
     color-mix(
       in oklab,
       var(--color-border-subtle, #e5e7eb) 92%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
+      transparent
+    );
+  background-color: var(--color-surface-alt, #f9fafb);
+}
+
+.blog-post-layout__toc > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* Checklist band ----------------------------------------------------------- */
+
+.blog-post-layout__checklist {
+  padding-block: clamp(var(--space-7), 5vw, var(--space-9));
+  background-color: color-mix(
+    in oklab,
+    var(--color-surface-alt, #f9fafb) 90%,
+    var(--color-primary-soft, #1b3637) 10%
+  );
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      transparent
     );
 }
 
-/* Inline offer (mid-article CTA)
-   Slightly warmer band using accent, still restrained */
+.blog-post-layout__checklist > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* Inline offer band -------------------------------------------------------- */
+
 .blog-post-layout__inline-offer {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
+  padding-block: clamp(var(--space-7), 5vw, var(--space-9));
+  background-color: var(--color-surface, #ffffff);
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      transparent
+    );
+}
+
+.blog-post-layout__inline-offer > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* Social proof band -------------------------------------------------------- */
+
+.blog-post-layout__social-proof {
+  padding-block: clamp(var(--space-7), 5vw, var(--space-9));
+  background-color: var(--color-surface-alt, #f9fafb);
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      transparent
+    );
+}
+
+.blog-post-layout__social-proof > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* FAQ band ----------------------------------------------------------------- */
+
+.blog-post-layout__faq {
+  padding-block: clamp(var(--space-7), 5vw, var(--space-9));
+  background-color: var(--color-surface, #ffffff);
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      transparent
+    );
+}
+
+.blog-post-layout__faq > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* Final CTA band ----------------------------------------------------------- */
+
+.blog-post-layout__final-cta {
+  padding-block: clamp(var(--space-7), 5vw, var(--space-9));
+  background-color: var(--color-surface, #ffffff);
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 92%,
+      transparent
+    );
+}
+
+.blog-post-layout__final-cta > .container {
+  max-width: min(
+    var(--container-max, 72rem),
+    var(--blog-post-content-max-width)
+  );
+  margin-inline: auto;
+}
+
+/* Related rail band (PostFeedLatest) -------------------------------------- */
+
+.blog-post-layout__related {
+  padding-block: clamp(var(--space-8), 6vw, var(--space-12));
   background-color: color-mix(
     in oklab,
     var(--color-surface-alt, #f9fafb) 94%,
-    var(--color-accent, #d4ab18) 6%
+    var(--color-primary-soft, #1b3637) 6%
   );
-  border-block-start: 1px solid
+  border-top: 1px solid
     color-mix(
       in oklab,
       var(--color-border-subtle, #e5e7eb) 90%,
-      var(--color-accent, #d4ab18) 10%
+      transparent
     );
 }
 
-/* Social proof strip – subtle, cool band to separate testimonials */
-.blog-post-layout__social-proof {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 96%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
-  );
-}
-
-/* FAQ block – near-body look with a light top border */
-.blog-post-layout__faq {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface, #ffffff) 94%,
-    var(--color-surface-alt, #f9fafb) 6%
-  );
-  border-block-start: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 92%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
-    );
-}
-
-/* Final CTA (bottom hard CTA)
-   Strongest band on the page, but still readable and calm */
-.blog-post-layout__final-cta {
-  padding-block: clamp(var(--space-8), 5vw, var(--space-10));
-  background-color: color-mix(
-    in oklab,
-    var(--color-primary, #1b3637) 10%,
-    var(--color-surface-alt, #f9fafb)
-  );
-}
-
-/* Related articles strip – closing band with light structure */
-.blog-post-layout__related {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-8));
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 96%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 4%
-  );
-  border-block-start: 1px solid
-    color-mix(
-      in oklab,
-      var(--color-border-subtle, #e5e7eb) 94%,
-      var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
-    );
-}
-
-/* Fix Plan 213.1 – align closing bands to the same content column */
-.blog-post-layout__checklist > .container,
-.blog-post-layout__inline-offer > .container,
-.blog-post-layout__final-cta > .container,
-.blog-post-layout__related > .container {
-  max-width: var(--blog-post-content-max-width);
-  margin-inline: auto;
-}
-
-/* Larger screens – tighten rhythm and widen reading width slightly */
-@media (min-width: 768px) {
-  .blog-post-layout {
-    padding-block: clamp(var(--space-9), 7vw, var(--space-12));
-    --blog-post-content-max-width: 72ch;
-  }
-
-  .blog-post-layout__body {
-    padding-block: clamp(var(--space-7), 4.5vw, var(--space-9));
-  }
-}
-
-@media (min-width: 1024px) {
-  .blog-post-layout {
-    --blog-post-content-max-width: 76ch;
-  }
-
-  .blog-post-layout__header {
-    padding-block-end: clamp(var(--space-7), 4.5vw, var(--space-9));
-  }
-}
-
-/* Reduced motion – keep layout static if motion is added later */
-@media (prefers-reduced-motion: reduce) {
-  .blog-post-layout__header {
-    background-color: color-mix(
-      in oklab,
-      var(--color-surface, #ffffff) 94%,
-      var(--color-surface-alt, #f9fafb) 6%
-    );
-    background-image: none;
-  }
-}
-
-/* --------------------------------------------------------------------------
- * Fix Plan 004 – Step 6
- * Preset-specific visual refinements (light-touch, non-breaking)
- *
- * Assumes the root article exposes data-layout-preset with one of:
- *  - "conversionArticle"
- *  - "editorialArticle"
- *  - "analysisArticle"
- *  - "shortInsight"
- *  - "campaignLanding"
- *
- * If data-layout-preset is not present, all defaults above apply as-is.
- * ------------------------------------------------------------------------ */
-
-/* conversionArticle
- * - Default behaviour (no overrides required).
- * - Full banding: checklist, inlineOffer, socialProof, FAQ, finalCta, related.
+/*
+ * IMPORTANT:
+ * - We intentionally do NOT constrain the inner PostFeedLatest container here.
+ * - PostFeedLatest already uses `.container` and its own grid, so this band
+ *   becomes a full-width, premium “continue your learning” rail.
  */
 
-/* editorialArticle
- * - Softer, more narrative. Reduce band contrast and vertical rhythm.
- */
-.blog-post-layout[data-layout-preset="editorialArticle"] .blog-post-layout__body {
-  padding-block: clamp(var(--space-5), 3.5vw, var(--space-6));
-}
-
-.blog-post-layout[data-layout-preset="editorialArticle"] .blog-post-layout__toc {
-  background-color: var(--color-surface, #ffffff);
-  border-block-end: 1px solid var(--color-border-subtle, #e5e7eb);
-}
+/* Preset-specific tweaks --------------------------------------------------- */
 
 .blog-post-layout[data-layout-preset="editorialArticle"]
-  .blog-post-layout__inline-offer {
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 98%,
-    var(--color-accent, #d4ab18) 2%
-  );
-}
-
-.blog-post-layout[data-layout-preset="editorialArticle"]
-  .blog-post-layout__related {
-  background-color: var(--color-surface, #ffffff);
-  border-block-start: 1px solid var(--color-border-subtle, #e5e7eb);
-}
-
-/* analysisArticle
- * - Emphasise structure and TOC; keep conversion bands present but calmer.
- */
-.blog-post-layout[data-layout-preset="analysisArticle"] .blog-post-layout__toc {
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 92%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 8%
-  );
-}
-
-.blog-post-layout[data-layout-preset="analysisArticle"]
   .blog-post-layout__checklist {
-  background-color: color-mix(
-    in oklab,
-    var(--color-surface-alt, #f9fafb) 94%,
-    var(--color-primary-soft, var(--color-primary, #1b3637)) 6%
-  );
-}
-
-/* shortInsight
- * - Compact, lightweight. Reduce spacing and band intensity.
- */
-.blog-post-layout[data-layout-preset="shortInsight"] {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-8));
+  background-color: var(--color-surface, #ffffff);
 }
 
 .blog-post-layout[data-layout-preset="shortInsight"] .blog-post-layout__body {
-  padding-block: clamp(var(--space-4), 3vw, var(--space-5));
+  padding-block-end: clamp(var(--space-6), 4vw, var(--space-8));
 }
 
-.blog-post-layout[data-layout-preset="shortInsight"]
-  .blog-post-layout__final-cta {
-  padding-block: clamp(var(--space-6), 4vw, var(--space-7));
-}
+/* Motion / reduced motion -------------------------------------------------- */
 
-.blog-post-layout[data-layout-preset="shortInsight"]
-  .blog-post-layout__related {
-  background-color: var(--color-surface, #ffffff);
-  border-block-start: 1px solid var(--color-border-subtle, #e5e7eb);
-}
-
-/* campaignLanding
- * - Stronger emphasis on checklist + final CTA bands.
- */
-.blog-post-layout[data-layout-preset="campaignLanding"]
-  .blog-post-layout__checklist {
-  background-color: color-mix(
-    in oklab,
-    var(--color-accent, #d4ab18) 10%,
-    var(--color-surface-alt, #f9fafb) 90%
-  );
-}
-
-.blog-post-layout[data-layout-preset="campaignLanding"]
-  .blog-post-layout__final-cta {
-  background-color: color-mix(
-    in oklab,
-    var(--color-primary, #1b3637) 14%,
-    var(--color-surface-alt, #f9fafb)
-  );
+@media (prefers-reduced-motion: reduce) {
+  .blog-post-layout *,
+  .blog-post-layout *::before,
+  .blog-post-layout *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
