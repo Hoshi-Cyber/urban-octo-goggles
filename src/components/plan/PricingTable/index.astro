@@ -3,6 +3,8 @@
  * File: src/components/plan/PricingTable/index.astro
  * CVWriting.co.ke – 4-tier GTM packages (Kenya 2025)
  * Header removed completely (eyebrow, h2 title, subtitle).
+ *
+ * Now supports optional original/current pricing for transparent discounts.
  */
 
 import defaultPricing from "../../../data/pricing.json";
@@ -15,6 +17,11 @@ export interface Plan {
   features: string[];
   ctaLabel: string;
   highlight?: boolean;
+
+  // Optional discount-aware pricing fields
+  originalPrice?: string; // e.g. "KSh 3,000"
+  currentPrice?: string; // e.g. "KSh 2,500" – falls back to priceRange if not provided
+  priceNote?: string; // e.g. "Graduate rate for first-time CV projects."
 }
 
 export interface Props {
@@ -37,61 +44,86 @@ import "./PricingTable.css";
   id="pricing"
   data-section="pricing"
 >
-
   <!-- HEADER REMOVED -->
 
   <div class="pricing__grid">
-    {pricing.map((plan) => (
-      <article
-        class={`pricing__card card ${
-          plan.highlight ? "is-highlight" : ""
-        }`.trim()}
-        aria-labelledby={`plan-${plan.id}-title`}
-        data-plan-id={plan.id}
-      >
-        {plan.highlight && (
-          <p class="pricing__badge">
-            <span class="pricing__badgeLabel">Most popular</span>
-          </p>
-        )}
+    {pricing.map((plan) => {
+      const displayPrice = plan.currentPrice ?? plan.priceRange;
 
-        <header class="pricing__cardHead">
-          <h3 id={`plan-${plan.id}-title`} class="pricing__planName">
-            {plan.name}
-          </h3>
+      const ariaPriceLabel = plan.originalPrice
+        ? `${plan.name} current price ${displayPrice}, previously ${plan.originalPrice}`
+        : `${plan.name} price ${displayPrice}`;
 
-          {plan.description && (
-            <p class="pricing__planDesc">{plan.description}</p>
+      return (
+        <article
+          class={`pricing__card card ${
+            plan.highlight ? "is-highlight" : ""
+          }`.trim()}
+          aria-labelledby={`plan-${plan.id}-title`}
+          data-plan-id={plan.id}
+        >
+          {plan.highlight && (
+            <p class="pricing__badge">
+              <span class="pricing__badgeLabel">Most popular</span>
+            </p>
           )}
 
-          <p class="pricing__price">
-            <span class="sr-only">Price:</span>
-            {plan.priceRange}
-          </p>
-        </header>
+          <header class="pricing__cardHead">
+            <h3 id={`plan-${plan.id}-title`} class="pricing__planName">
+              {plan.name}
+            </h3>
 
-        <ul
-          class="pricing__features"
-          aria-label={`${plan.name} deliverables`}
-        >
-          {plan.features.map((feat) => (
-            <li class="pricing__feature">{feat}</li>
-          ))}
-        </ul>
+            {plan.description && (
+              <p class="pricing__planDesc">{plan.description}</p>
+            )}
 
-        <div class="pricing__actions">
-          <a
-            href={`/contact/?package=${encodeURIComponent(plan.id)}`}
-            class="btn btn-primary pricing__cta"
-            data-cta={`pricing-${plan.id}-cta`}
-            aria-label={`Select ${plan.name} package`}
+            {plan.originalPrice && (
+              <p class="pricing__priceOriginal">
+                <span class="sr-only">Standard rate:</span>
+                <span aria-hidden="true">Standard rate </span>
+                <span class="pricing__priceOriginalValue">
+                  {plan.originalPrice}
+                </span>
+              </p>
+            )}
+
+            <p class="pricing__price" aria-label={ariaPriceLabel}>
+              <span class="sr-only">
+                {plan.originalPrice ? "Current price:" : "Price:"}
+              </span>
+              {displayPrice}
+            </p>
+
+            {plan.priceNote && (
+              <p class="pricing__priceNote">{plan.priceNote}</p>
+            )}
+          </header>
+
+          <ul
+            class="pricing__features"
+            aria-label={`${plan.name} deliverables`}
           >
-            <span class="btn__inner">
-              <span class="btn__label">{plan.ctaLabel}</span>
-            </span>
-          </a>
-        </div>
-      </article>
-    ))}
+            {plan.features.map((feat) => (
+              <li class="pricing__feature">
+                <span set:html={feat}></span>
+              </li>
+            ))}
+          </ul>
+
+          <div class="pricing__actions">
+            <a
+              href={`/contact/?package=${encodeURIComponent(plan.id)}`}
+              class="btn btn-primary pricing__cta"
+              data-cta={`pricing-${plan.id}-cta`}
+              aria-label={`Select ${plan.name} package`}
+            >
+              <span class="btn__inner">
+                <span class="btn__label">{plan.ctaLabel}</span>
+              </span>
+            </a>
+          </div>
+        </article>
+      );
+    })}
   </div>
 </section>

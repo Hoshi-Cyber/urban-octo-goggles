@@ -1,313 +1,545 @@
+/**
+ * File: src/styles/pages/services.css
+ * Service Pages – page-level patterns
+ *
+ * Popular combinations / Service Bundles
+ * - PricingTable-inspired premium band + cards
+ * - Clean grid, strong hierarchy, stable layout
+ * - PostCSS-safe: all @import at top
+ */
+
 @import "../tokens.css";
 @import "../typography.css";
 @import "../utilities.css";
-@import "../breakpoints.css";
 @import "../sections.css";
 
-/* Page-specific styles for /services/ */
+/* -------------------------------------------------------------------------- */
+/* Popular combinations / Service Bundles                                      */
+/* -------------------------------------------------------------------------- */
 
-/* ================================
-   Popular combinations / bundles
-   ================================ */
-
-/* Section wrapper – subtle band inside the global section */
+/* Section wrapper */
 .service-bundles {
-  position: relative;
+  padding-block: clamp(var(--space-9), 7vw, var(--space-12));
 }
 
-/* Inner band: premium, soft-tinted card using brand palette */
-.service-bundles__inner {
-  max-width: 100%;
+/* Neutralise generic .container so it does not constrain this band,
+   especially on mobile. We let the inner band control its own width. */
+.service-bundles .container {
+  max-width: none;
   width: 100%;
-  padding: clamp(var(--space-5), 3vw, var(--space-7));
-  border-radius: var(--radius-xl);
+  padding-inline: 0;
+}
+
+/* Premium band container */
+.service-bundles__inner {
+  position: relative;
+  margin-inline: auto;
+  max-width: var(--container-xl);
+  padding: clamp(var(--space-7), 4vw, var(--space-10));
+  border-radius: var(--radius-3xl);
   border: 1px solid
-    color-mix(in oklab, var(--color-primary) 12%, transparent);
-  background:
-    radial-gradient(
-      circle at 0 0,
-      color-mix(
-        in oklab,
-        var(--color-primary-soft, var(--color-primary)) 18%,
-        transparent
-      )
-        0,
-      transparent 60%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      color-mix(
-        in oklab,
-        var(--color-accent-soft, var(--color-accent)) 14%,
-        transparent
-      )
-        0,
-      transparent 65%
+    color-mix(in oklab, var(--color-border-subtle, #e5e7eb) 82%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(
+      in oklab,
+      var(--color-surface) 97%,
+      var(--color-primary-soft, var(--color-primary)) 3%
     ),
     color-mix(
       in oklab,
-      var(--color-surface-alt, #f9fafb) 94%,
-      #ffffff 6%
-    );
-  box-shadow: var(
-    --shadow-md,
-    0 18px 40px rgba(15, 23, 42, 0.08)
+      var(--color-background) 96%,
+      var(--color-surface) 4%
+    )
   );
-  display: grid;
-  row-gap: var(--space-3); /* strict vertical gap header ⇄ grid */
+  box-shadow: var(--shadow-sm);
 }
 
-/* Popular combinations header: H2 + intro stacked, full-width, left-aligned
-   Use higher-specificity selector so this wins over global .section-head rules */
-.service-bundles .section-head.service-bundles__head {
-  max-width: 100%;
-  width: 100%;
-  display: block;
+/* Subtle inner inset stroke for premium feel */
+.service-bundles__inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0
+      color-mix(in oklab, var(--color-surface) 80%, transparent),
+    inset 0 0 0 1px
+      color-mix(in oklab, var(--color-border-subtle, #e5e7eb) 85%, transparent);
 }
 
-.service-bundles .section-head.service-bundles__head .section-title {
-  max-width: 100%;
+/* -------------------------------------------------------------------------- */
+/* Section head (full width, left aligned)                                     */
+/* -------------------------------------------------------------------------- */
+
+.section-head.service-bundles__head {
+  max-width: none;
   width: 100%;
+  margin: 0 0 var(--space-8) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* eyebrow + title are tight */
   text-align: left;
-  margin: 0 0 var(--space-2);
+  align-items: flex-start;
 }
 
-/* Intro MUST sit directly under the title and span full width */
-.service-bundles
-  .section-head.service-bundles__head
-  .service-bundles__intro {
-  display: block;
-  margin-top: 0;
-  margin-inline: 0;
-  max-width: none; /* remove any global cap */
+/* Eyebrow chip */
+.service-bundles__eyebrow {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.8rem;
+  border-radius: 999px;
+  margin: 0; /* remove default p margins */
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 16%,
+    var(--color-surface) 84%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 32%,
+      var(--color-border-subtle, #e5e7eb)
+    );
+}
+
+/* H2 section title – full span, left aligned, h2 styles from globals */
+.section-head.service-bundles__head .section-title {
+  margin: 0;
+  max-width: none;
   width: 100%;
-  text-align: left;
-  color: var(--color-text); /* override any muted default */
 }
 
-/* Popular combinations grid:
-   1 col mobile → 2 cols md → 4 cols xl (4 / 2 / 1 layout) */
+/* Optional explicit title hook if ever needed */
+.service-bundles__title {
+  text-align: left;
+}
+
+/* Intro – left aligned, full span underneath title */
+.service-bundles__intro {
+  margin: var(--space-3) 0 0 0; /* spacing only below the title */
+  max-width: none; /* full width of band */
+  font-size: var(--fs-md);
+  line-height: 1.65;
+  color: var(--color-text);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Grid                                                                        */
+/* -------------------------------------------------------------------------- */
+
 .service-bundles__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-  margin-top: 0;
+  grid-template-columns: minmax(0, 1fr); /* full-width cards on mobile */
+  gap: clamp(var(--space-4), 2.5vw, var(--space-6));
 }
 
-@media (min-width: 768px) {
+@media (min-width: 720px) {
   .service-bundles__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1100px) {
   .service-bundles__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-/* Popular combination cards – aligned with ServiceDetailSection cards */
+/* -------------------------------------------------------------------------- */
+/* Cards – PricingTable-inspired                                               */
+/* -------------------------------------------------------------------------- */
+
 .service-bundles__card {
+  position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
   gap: var(--space-3);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-5) var(--space-4);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-surface) 92%, #f3f4f6 8%),
+    color-mix(
+      in oklab,
+      var(--color-surface) 94%,
+      var(--color-primary-soft, var(--color-primary)) 6%
+    )
+  );
   border: 1px solid
-    color-mix(in oklab, var(--color-text) 6%, transparent);
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, #e5e7eb) 70%,
+      var(--color-primary-soft, var(--color-primary)) 30%
+    );
+  box-shadow: var(--shadow-xs);
+  box-sizing: border-box;
+  overflow: visible; /* allow badge to sit above the card */
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+@media (min-width: 640px) {
+  .service-bundles__card {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+@media (min-width: 1536px) {
+  .service-bundles__card {
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+@media (hover: hover) {
+  .service-bundles__card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(
+      in oklab,
+      var(--color-primary) 30%,
+      var(--color-border-subtle, #e5e7eb)
+    );
+    background: linear-gradient(
+      180deg,
+      color-mix(
+        in oklab,
+        var(--color-surface) 90%,
+        var(--color-primary-soft, var(--color-primary)) 10%
+      ),
+      color-mix(
+        in oklab,
+        var(--color-surface) 92%,
+        var(--color-primary-soft, var(--color-primary)) 8%
+      )
+    );
+  }
+}
+
+.service-bundles__card:focus-within {
+  box-shadow:
+    0 0 0 3px var(--color-focus-ring, rgba(56, 189, 248, 0.5)),
+    var(--shadow-sm);
+}
+
+/* Featured / Most popular card – visual emphasis only,
+   layout identical to other cards so content never overflows. */
+.service-bundles__card--featured {
+  background: linear-gradient(
+    180deg,
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 20%,
+      var(--color-surface) 80%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 88%,
+      var(--color-primary-soft, var(--color-primary)) 12%
+    )
+  );
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 55%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  box-shadow: var(--shadow-lg);
+}
+
+/* Slight static lift for featured card */
+@media (min-width: 720px) {
+  .service-bundles__card--featured {
+    transform: translateY(-3px);
+  }
+}
+
+/* Optional highlight class retained for future interactions */
+.service-bundles__card--highlight {
+  border-color: color-mix(
+    in oklab,
+    var(--color-primary) 65%,
+    var(--color-border-subtle, #e5e7eb)
+  );
+  box-shadow: var(--shadow-md);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Badge – PricingTable-style ribbon                                           */
+/* -------------------------------------------------------------------------- */
+
+/* Same styling, but now “clipping” the top-right corner so it never covers
+   header text while still feeling anchored to the card. */
+.service-bundles__badge {
+  position: absolute;
+  top: calc(-1 * var(--space-3));
+  right: var(--space-4);
+  left: auto;
+  margin: 0;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-size: var(--fs-xxs, 0.7rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-on-primary, #ffffff);
   background: linear-gradient(
     135deg,
     color-mix(
       in oklab,
-      var(--color-surface, #ffffff) 97%,
-      #ffffff 3%
+      var(--color-accent, var(--color-gold)) 90%,
+      var(--color-primary) 10%
     ),
     color-mix(
       in oklab,
-      var(--color-surface-alt, #f9fafb) 100%,
-      transparent
+      var(--color-accent, var(--color-gold)) 70%,
+      #ffffff 12%
     )
   );
-  box-shadow: var(
-    --shadow-xs,
-    0 6px 18px rgba(15, 23, 42, 0.04)
-  );
-  position: relative;
-  overflow: hidden;
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    background-color 150ms ease-out;
+  box-shadow: 0 3px 8px
+    color-mix(
+      in oklab,
+      var(--color-accent, var(--color-gold)) 30%,
+      transparent
+    );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-accent, var(--color-gold)) 60%,
+      transparent
+    );
+  pointer-events: none;
+  transform: rotate(-10deg);
+  transform-origin: right center;
+  z-index: 2;
 }
 
-/* Top accent line, same treatment as ServiceDetailSection columns */
-.service-bundles__card::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 3px;
-  background: linear-gradient(
-    to right,
-    var(--color-primary),
-    color-mix(in oklab, var(--color-accent) 80%, var(--color-primary))
-  );
-  opacity: 0.9;
+.service-bundles__badge::before {
+  content: "★";
+  font-size: 0.75em;
 }
 
-/* Card hover elevation */
-.service-bundles__card:hover,
-.service-bundles__card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: var(
-    --shadow-md,
-    0 20px 40px rgba(15, 23, 42, 0.1)
-  );
-  border-color: color-mix(
-    in oklab,
-    var(--color-primary) 20%,
-    transparent
-  );
-}
+/* -------------------------------------------------------------------------- */
+/* Card content                                                                */
+/* -------------------------------------------------------------------------- */
 
-/* Card header: title + combo label stacked */
+/* More generous header padding + right-hand gutter; grid keeps hierarchy clean. */
 .service-bundles__card-header {
   display: grid;
-  row-gap: var(--space-1);
+  grid-auto-rows: min-content;
+  align-content: flex-start;
+  gap: 0.35rem;
+  padding: var(--space-3) var(--space-7) var(--space-3) var(--space-1);
+  margin: 0 0 var(--space-3) 0;
 }
 
-/* Main bundle title */
+/* Title leans into primary brand Green for a premium headline feel */
 .service-bundles__card-title {
   margin: 0;
-  font-size: var(--fs-h5, var(--fs-xl));
-  line-height: var(--lh-tight, 1.25);
-  color: var(--color-text);
+  font-size: clamp(1.02rem, 0.7vw + 0.9rem, 1.12rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-primary);
 }
 
-/* Combo label e.g. "CV + cover letter" */
+/* Combination line – slightly muted neutral for contrast */
+.service-bundles__card-variant {
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: color-mix(in oklab, var(--color-text) 70%, var(--color-muted) 30%);
+}
+
+/* “Best for…” line – small caps treatment using brand + neutral mix */
 .service-bundles__card-combo {
   margin: 0;
-  font-size: var(--fs-sm);
-  letter-spacing: 0.04em;
+  font-size: calc(var(--fs-xs) * 0.92);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text);
+  font-weight: 700;
+  color: color-mix(in oklab, var(--color-primary) 55%, var(--color-muted) 45%);
 }
 
-/* Body copy – use full text colour for legibility */
+/* Pricing panel – pill-like price inspired by PricingTable */
+.service-bundles__price {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-xl);
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
+  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 25%,
+      var(--color-border-subtle, #e5e7eb)
+    );
+  display: grid;
+  gap: 0.35rem;
+  justify-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Original “usually” price */
+.service-bundles__price-was {
+  font-size: var(--fs-xs);
+  color: color-mix(
+    in oklab,
+    var(--color-text) 65%,
+    var(--color-border-subtle, #e5e7eb) 35%
+  );
+  text-decoration: line-through;
+  text-underline-offset: 0.12em;
+}
+
+/* Main bundle price – pill */
+.service-bundles__price-now {
+  font-size: clamp(1.02rem, 0.96rem + 0.5vw, 1.3rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 26%,
+      transparent
+    );
+}
+
+/* Savings meta line (if ever used) */
+.service-bundles__price-save {
+  font-size: var(--fs-xxs, 0.75rem);
+  font-weight: 700;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 78%,
+    var(--color-text) 22%
+  );
+}
+
+/* Optional generic note */
+.service-bundles__price-note {
+  font-size: var(--fs-xs);
+  color: color-mix(
+    in oklab,
+    var(--color-text) 80%,
+    var(--color-muted) 20%
+  );
+}
+
+/* Body copy */
 .service-bundles__card-body {
-  margin: 0;
-  font-size: var(--fs-base);
-  line-height: 1.6;
+  margin-top: var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.65;
   color: var(--color-text);
 }
 
-/* Ensure button sits at the bottom of the card */
+/* Checklist */
+.service-bundles__card-points {
+  margin-top: var(--space-4);
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.service-bundles__card-points li {
+  position: relative;
+  padding-left: 1.55rem;
+}
+
+.service-bundles__card-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 1rem;
+  height: 1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  color: var(--color-on-primary, #ffffff);
+  background: var(--color-accent, var(--color-gold));
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-accent, var(--color-gold)) 28%,
+      transparent
+    );
+}
+
+/* CTA alignment – pushes button to bottom, left-aligned consistently */
 .service-bundles__card-link {
   margin-top: auto;
-}
-
-/* XS-only padding tweaks */
-@media (max-width: 639.98px) {
-  .service-bundles__inner {
-    padding: var(--space-4);
-  }
-
-  .service-bundles__card {
-    padding: var(--space-4);
-  }
-}
-
-/* ================================
-   "Who our services are best suited for"
-   Header + intro full-width, grid below
-   ================================ */
-
-/* Make header span full width, grid sit below it */
-.service-fit__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-areas:
-    "fit-head fit-head"
-    "fit-grid fit-grid";
-  row-gap: var(--space-6);
-}
-
-/* Header (H2 + intro) occupies both columns */
-.service-fit__inner .section-head {
-  grid-area: fit-head;
-  max-width: 100%;
-}
-
-/* Intro stacked under H2, full-width, left-aligned */
-.service-fit__inner .section-head .section-intro {
-  max-width: 100%;
-  text-align: left;
-}
-
-/* Two-column list grid remains as its own block below */
-.service-fit__grid {
-  grid-area: fit-grid;
-}
-
-/* ================================
-   "What clients report after working with us"
-   Ensure H2 + intro stack, full-width, left-aligned
-   ================================ */
-
-.service-outcomes .section-head {
-  max-width: 100%;
-  display: block; /* override any flex/grid layout from global .section-head */
-}
-
-.service-outcomes .section-head .section-title {
-  max-width: 100%;
-  text-align: left;
-}
-
-.service-outcomes .section-head .section-intro {
-  max-width: 100%;
-  text-align: left;
-  margin-top: var(--space-2);
-}
-
-/* ================================
-   Final CTA – stacked header, responsive actions
-   ================================ */
-
-/* One row above, two rows below the final CTA section */
-.service-final-cta {
-  margin-top: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.service-final-cta .section-head {
-  max-width: 100%;
-  display: block;
-}
-
-.service-final-cta .section-head .section-title {
-  max-width: 100%;
-  text-align: left;
-}
-
-.service-final-cta .section-head .section-intro {
-  max-width: 100%;
-  text-align: left;
-  margin-top: var(--space-2);
-}
-
-/* Buttons horizontal on larger screens, stacked on small */
-.service-final-cta__actions {
+  padding-top: var(--space-5);
   display: flex;
-  flex-direction: column; /* stacked by default (mobile-first) */
+  justify-content: flex-start;
   align-items: flex-start;
-  gap: var(--space-4);
+  text-align: left;
+}
+
+/* -------------------------------------------------------------------------- */
+/* CTA button layout inside cards (inherit component styling)                  */
+/* -------------------------------------------------------------------------- */
+
+.service-bundles__card-link :where(a, button) {
+  max-width: 100%;
+}
+
+/* Ensure long labels never force overflow, while preserving Button styling */
+.service-bundles__card-link :where(.btn) {
+  white-space: normal;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Footer note + CTA (kept for reuse if needed)                                */
+/* -------------------------------------------------------------------------- */
+
+.service-bundles__note {
+  margin-top: var(--space-8);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  max-width: none;
+}
+
+.service-bundles__cta {
   margin-top: var(--space-4);
 }
 
-@media (min-width: 768px) {
-  .service-final-cta__actions {
-    flex-direction: row; /* horizontal layout on md+ */
-  }
+.service-bundles__cta :where(a, button) {
+  min-height: 44px;
 }

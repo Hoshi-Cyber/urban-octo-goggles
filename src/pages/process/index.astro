@@ -16,7 +16,7 @@ const { title, description, seo, hero, steps, deliverables, timeline, cta } = pr
 const heroImage =
   typeof hero?.image === "string" && hero.image.trim().length > 0
     ? hero.image
-    : "/assets/images/services/main-services-overview-hero.webp";
+    : "/assets/images/services/main-services-process-hero.webp";
 
 const heroAlt =
   (typeof hero?.imageAlt === "string" && hero.imageAlt.trim().length > 0
@@ -142,19 +142,7 @@ const showTrust = false;
     </div>
   </section>
 
-  <section class="container mt-12" aria-label="Latest articles">
-    <PostFeedLatest
-      posts={processLatestPosts}
-      pageSize={4}
-      eyebrow="From the blog"
-      title="Latest articles"
-      moreHref="/blog/"
-      moreLabel="View all"
-      moreAriaLabel="View all blog posts"
-      ctaClass="pfl__viewAll"
-      clientLoadMore={false}
-    />
-  </section>
+  
 
   <section class="container mt-12" aria-label="Call to action">
     <LeadCaptureBanner

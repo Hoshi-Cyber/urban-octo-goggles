@@ -11,6 +11,7 @@
   padding-block: clamp(var(--space-6), 3vw, var(--space-10));
 }
 
+/* Tight section spacing used for proof band etc. */
 .servicePage .section--tight {
   padding-block: clamp(var(--space-4), 2.5vw, var(--space-8));
 }
@@ -77,13 +78,34 @@
   gap: clamp(var(--space-3), 1.4vw, var(--space-4));
 }
 
-/* Eyebrow – distinct but subtle */
+/* Eyebrow – base token */
 .servicePage .eyebrow {
   font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
   margin: 0;
+}
+
+/* Hero eyebrow – higher contrast pill over tinted hero background */
+.servicePage .section--hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-1) * 0.8);
+  border-radius: var(--radius-full, 999px);
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 80%,
+    var(--color-text) 20%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 78%,
+    var(--color-primary-soft, var(--color-primary)) 22%
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(in oklab, var(--color-primary) 16%, transparent);
 }
 
 /* Hero title – controlled width and spacing */
@@ -258,12 +280,18 @@
   }
 }
 
+/* Aside eyebrow – higher contrast, no washed-out grey */
 .servicePage .aside-eyebrow {
   margin: 0 0 var(--space-1);
   font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 65%,
+    var(--color-text) 35%
+  );
 }
 
 .servicePage .card-title {
@@ -275,7 +303,7 @@
   font-size: var(--fs-sm);
   color: color-mix(
     in oklab,
-    var(--color-muted) 90%,
+    var(--color-text) 90%,
     var(--color-primary-soft, var(--color-primary)) 10%
   );
 }
@@ -284,6 +312,10 @@
 .servicePage .cta-col {
   display: grid;
   gap: var(--space-3);
+}
+
+.servicePage .cta-col :where(a.btn, button.btn) {
+  width: 100%;
 }
 
 /* Premium service list (“What’s Included”) */
@@ -313,7 +345,7 @@
   background: var(--color-primary);
 }
 
-/* Benefits grid (currently unused but kept for future use) */
+/* Legacy benefits grid (still used on other pages if needed) */
 .servicePage .content.prose .benefits__grid {
   list-style: none;
   margin: var(--space-3) 0 0;
@@ -339,6 +371,8 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid
     color-mix(in oklab, var(--color-primary) 10%, transparent);
+  display: grid;
+  gap: var(--space-1);
 }
 
 .servicePage .content.prose .benefit-item h3 {
@@ -350,7 +384,7 @@
 .servicePage .content.prose .benefit-item p {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 /* Features section – light brand tint + subtle hover */
@@ -418,56 +452,315 @@
 .servicePage .feature-body {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 /* ================================
-   Trust strip
+   Benefits band – full-width, how-it-works styling, 1/2/4 layout
+   ================================ */
+
+.servicePage .benefits-band {
+  padding-block: clamp(var(--space-6), 3vw, var(--space-8));
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
+  );
+}
+
+.servicePage .benefits-band__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* Heading + intro span full container width — ZERO GAP */
+.servicePage .benefits-band__head {
+  display: grid;
+  gap: 0 !important;
+  width: 100%;
+  max-width: none;
+}
+
+.servicePage .benefits-band__heading,
+.servicePage .benefits-band__intro {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.servicePage .benefits-band__intro {
+  font-size: var(--fs-sm);
+  color: color-mix(in oklab, var(--color-text) 88%, var(--color-muted) 12%);
+}
+
+.servicePage .benefits__grid {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* 1 column mobile → 2 cols md → 4 cols xl */
+@media (min-width: 768px) {
+  .servicePage .benefits__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .servicePage .benefits__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Reuse how-it-works card styling via .how-it-works__step
+   and add minimal tweaks for the benefits context */
+
+.servicePage .benefit-card.how-it-works__step {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.servicePage .benefit-card__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start; /* left-align label content */
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-1) + 1px);
+  border-radius: var(--radius-full, 999px);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: left;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-text) 30%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 25%,
+      transparent
+    );
+  margin: 0 0 var(--space-2) 0; /* add breathing room above the title */
+}
+
+.servicePage .benefit-card__title {
+  margin: 0;
+}
+
+.servicePage .benefit-card__body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+/* ================================
+   Trust strip – vertical, premium stacked layout (left aligned, 4/2/1 grid)
    ================================ */
 
 .servicePage .trust-strip {
+  padding-block: clamp(var(--space-6), 3vw, var(--space-8));
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 18%,
+        transparent
+      )
+        0,
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at 92% 80%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 14%,
+        transparent
+      )
+        0,
+      transparent 62%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-surface) 94%, #ffffff 6%),
+      color-mix(in oklab, var(--color-surface-alt, var(--color-surface)) 92%, transparent)
+    );
   border-block: 1px solid
-    color-mix(in oklab, var(--color-primary) 12%, transparent);
-  background: var(--color-surface);
-  padding-block: clamp(var(--space-3), 1.6vw, var(--space-4));
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
 }
 
 .servicePage .trust-strip__inner {
   max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--container-px);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
+  display: grid;
+  gap: var(--space-5);
+  text-align: left;
+  justify-items: flex-start;
 }
 
-.servicePage .trust-strip__label {
+/* Lead: eyebrow + summary (stacked, no gap) */
+.servicePage .trust-strip__lead {
+  display: grid;
+  gap: 0 !important;
+  max-width: none;
+  width: 100%;
+}
+
+/* Premium eyebrow with subtle accent rule */
+.servicePage .trust-strip__eyebrow {
+  margin: 0;
   font-size: var(--fs-xs);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  font-weight: 650;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 78%,
+    var(--color-text) 22%
+  );
+  position: relative;
+  padding-left: 1.25rem;
 }
 
-.servicePage .trust-strip__items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
+/* Accent bar before eyebrow */
+.servicePage .trust-strip__eyebrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.9rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary) 30%),
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%)
+  );
 }
 
-.servicePage .trust-strip__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
+/* Summary spans full width */
+.servicePage .trust-strip__summary {
+  margin: 0;
+  width: 100%;
+  max-width: none;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
-  white-space: nowrap;
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--color-text) 90%, var(--color-muted) 10%);
 }
 
-.servicePage .trust-strip__logo {
-  height: 1.5rem;
-  width: auto;
-  object-fit: contain;
+/* Items – 4 / 2 / 1 grid */
+.servicePage .trust-strip__items {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: none;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .servicePage .trust-strip__items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .servicePage .trust-strip__items {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Card: premium surface, soft highlight, crisp border, accent line */
+.servicePage .trust-strip__item {
+  position: relative;
+  display: grid;
+  gap: calc(var(--space-1) * 0.35); /* tighter badge ⇄ text */
+  padding: var(--space-4);
+  border-radius: var(--radius-2xl, var(--radius-xl));
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(in oklab, var(--color-primary-soft, var(--color-primary)) 14%, transparent)
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 14%, transparent);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+  text-align: left;
+  overflow: hidden;
+}
+
+/* Top accent line for premium contrast */
+.servicePage .trust-strip__item::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  top: var(--space-3);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%),
+    color-mix(in oklab, var(--color-accent) 72%, var(--color-primary) 28%)
+  );
+  opacity: 0.9;
+}
+
+/* Badge: small, crisp, elevated */
+.servicePage .trust-strip__item-badge {
+  margin: 0;
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 650;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 82%,
+    var(--color-text) 18%
+  );
+}
+
+/* Text: slightly softer, high readability */
+.servicePage .trust-strip__item-text {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--color-text) 92%, var(--color-muted) 8%);
+}
+
+/* Optional: subtle hover for “premium UI feel” (safe + restrained) */
+@media (hover: hover) {
+  .servicePage .trust-strip__item:hover {
+    border-color: color-mix(in oklab, var(--color-primary) 22%, transparent);
+    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.14);
+    transform: translateY(-2px);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+  .servicePage .trust-strip__item {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
 }
 
 /* ================================
@@ -475,7 +768,25 @@
    ================================ */
 
 .servicePage .how-it-works {
-  padding-block: clamp(var(--space-4), 2.4vw, var(--space-6));
+  padding-block: clamp(var(--space-6), 3vw, var(--space-8));
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 16%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 96%,
+      #ffffff 4%
+    );
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
 }
 
 .servicePage .how-it-works__inner {
@@ -484,48 +795,121 @@
   padding-inline: var(--container-px);
 }
 
-.servicePage .how-it-works__heading {
-  margin: 0 0 var(--space-3);
+/* Ensure heading + intro span full width of section container — ZERO GAP */
+.servicePage .how-it-works__head {
+  display: grid;
+  gap: 0 !important;
+  margin-bottom: var(--space-4);
+  width: 100%;
+  max-width: none;
 }
 
+.servicePage .how-it-works__heading,
+.servicePage .how-it-works__intro {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.servicePage .how-it-works__intro {
+  font-size: var(--fs-sm);
+  color: color-mix(in oklab, var(--color-text) 88%, var(--color-muted) 12%);
+}
+
+/* 1 / 2 / 4 layout: mobile → tablet → desktop */
 .servicePage .how-it-works__grid {
   display: grid;
   gap: var(--space-4);
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 768px) {
   .servicePage .how-it-works__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-5);
   }
 }
 
-.servicePage .how-it-works__step {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid
-    color-mix(in oklab, var(--color-primary) 10%, transparent);
-  padding: var(--space-4);
-  box-shadow: var(--shadow-sm);
+@media (min-width: 1280px) {
+  .servicePage .how-it-works__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
+/* Step cards – crisp, elegant, premium */
+.servicePage .how-it-works__step {
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(
+        in oklab,
+        var(--color-accent) 14%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    );
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 14%, transparent);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom accent bar using brand gradient */
+.servicePage .how-it-works__step::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  bottom: var(--space-2);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%),
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary) 30%)
+  );
+  opacity: 0.9;
+}
+
+/* Step label pill – subtle brand tint */
 .servicePage .how-it-works__step-label {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding-inline: var(--space-2);
-  padding-block: var(--space-1);
+  justify-content: flex-start; /* left-align label content */
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-1) + 1px);
   border-radius: var(--radius-full, 999px);
   font-size: var(--fs-xs);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  text-align: left;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-text) 30%
+  );
   background: color-mix(
     in oklab,
-    var(--color-primary-soft, var(--color-primary)) 16%,
-    var(--color-surface) 84%
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
   );
-  margin-bottom: var(--space-2);
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 25%,
+      transparent
+    );
+  margin: 0 0 var(--space-2) 0; /* breathing room above the step title */
 }
 
 .servicePage .how-it-works__step-title {
@@ -535,34 +919,197 @@
 .servicePage .how-it-works__step-body {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 /* ================================
-   Testimonial + metrics
+   Testimonial (separate section)
    ================================ */
 
 .servicePage .testimonial {
   margin-block: clamp(var(--space-4), 2.4vw, var(--space-6));
 }
 
-/* Testimonial card – minimalist brand-tinted panel */
-.servicePage .testimonial--card {
+/* Section background + heading behaviour */
+.servicePage .testimonial-section {
+  width: 100%;
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 18%,
+        transparent
+      )
+        0,
+      transparent 55%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 96%,
+      #ffffff 4%
+    );
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+}
+
+.servicePage .testimonial-section .container {
+  width: 100% !important;
+  max-width: var(--container-max);
+}
+
+/* Section head: span full width, left-aligned */
+.servicePage .testimonial-section .section-head {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: var(--space-4) !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.servicePage .testimonial-section .section-head .section-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+/* Testimonial carousel shell */
+.servicePage .testimonial-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-block: var(--space-2);
+  border-radius: var(--radius-2xl);
   background: color-mix(
     in oklab,
-    var(--color-surface-alt, var(--color-surface)) 96%,
-    var(--color-primary-soft, var(--color-primary)) 4%
+    var(--color-surface) 95%,
+    var(--color-primary-soft, var(--color-primary)) 5%
   );
-  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   border: 1px solid
     color-mix(in oklab, var(--color-primary) 14%, transparent);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-5);
+}
+
+/* Gradient fade edges for premium look */
+.servicePage .testimonial-carousel::before,
+.servicePage .testimonial-carousel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.servicePage .testimonial-carousel::before {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    ),
+    transparent
+  );
+}
+
+.servicePage .testimonial-carousel::after {
+  right: 0;
+  background: linear-gradient(
+    270deg,
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    ),
+    transparent
+  );
+}
+
+.servicePage .testimonial-carousel__viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.servicePage .testimonial-carousel__track {
+  display: flex;
+  gap: var(--space-4);
+  will-change: transform;
+  animation: testimonial-scroll 45s linear infinite;
+}
+
+/* Single testimonial card – high-end styling, more compact vertically */
+.servicePage .testimonial--card {
+  position: relative;
+  flex: 0 0 80%;
+  max-width: 80%;
+  padding: var(--space-4);
+  border-radius: var(--radius-2xl);
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(
+        in oklab,
+        var(--color-accent) 20%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 20%, transparent);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+/* top accent bar for premium contrast */
+.servicePage .testimonial--card::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  top: var(--space-3);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%),
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary) 30%)
+  );
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .servicePage .testimonial--card {
+    flex: 0 0 50%;   /* ~2 cards in view on tablet */
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .servicePage .testimonial-carousel__track {
+    gap: var(--space-3); /* slightly tighter gap to fit 4 cards comfortably */
+  }
+
+  .servicePage .testimonial--card {
+    flex: 0 0 25%;  /* target 4 cards in view on desktop */
+    max-width: 25%;
+  }
 }
 
 .servicePage .testimonial__quote {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-md, 1.0625rem);
+  margin: var(--space-2) 0 var(--space-2);
+  font-size: var(--fs-base);
   line-height: 1.6;
   color: color-mix(
     in oklab,
@@ -584,7 +1131,7 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: color-mix(in oklab, var(--color-text) 80%, var(--color-muted) 20%);
 }
 
 .servicePage .testimonial__name {
@@ -600,51 +1147,168 @@
   opacity: 0.9;
 }
 
-/* Metrics panel – soft band with strong values */
-.servicePage .metrics-panel {
-  margin-block: clamp(var(--space-4), 2.4vw, var(--space-5));
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: color-mix(
-    in oklab,
-    var(--color-surface) 94%,
-    var(--color-primary-soft, var(--color-primary)) 6%
-  );
-  border: 1px solid
-    color-mix(in oklab, var(--color-primary) 16%, transparent);
-}
-
-.servicePage .metrics-panel__title {
-  margin: 0 0 var(--space-3);
-}
-
-.servicePage .metrics-panel__items {
-  display: grid;
-  gap: var(--space-3);
-}
-
-@media (min-width: 640px) {
-  .servicePage .metrics-panel__items {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+/* Infinite smooth left-to-right scroll
+   For a seamless loop, the track contains two copies of the sequence. */
+@keyframes testimonial-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
-.servicePage .metrics-panel__item {
+/* ================================
+   Metrics section – premium band + 4 cards (4/2/1)
+   ================================ */
+
+/* Metrics section heading: left-aligned, full width */
+.servicePage .metrics-section .section-head {
+  max-width: none !important;
+  width: 100%;
+  margin-bottom: var(--space-3);
+  text-align: left;
+  display: block;
+}
+
+/* Metrics panel – refined surface band */
+.servicePage .metrics-panel {
+  margin-block: 0;
+  padding: clamp(var(--space-4), 2vw, var(--space-5));
+  border-radius: var(--radius-2xl, var(--radius-lg));
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 14%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      color-mix(
+        in oklab,
+        var(--color-accent-soft, var(--color-accent)) 10%,
+        transparent
+      )
+        0,
+      transparent 62%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 95%,
+      #ffffff 5%
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
+}
+
+/* 1 / 2 / 4 layout for metrics cards */
+.servicePage .metrics-panel__items {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
 }
 
+@media (min-width: 768px) {
+  .servicePage .metrics-panel__items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .servicePage .metrics-panel__items {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Premium metric card */
+.servicePage .metrics-panel__item {
+  position: relative;
+  display: grid;
+  gap: calc(var(--space-1) * 0.35); /* tighter value ⇄ label */
+  padding: var(--space-4);
+  border-radius: var(--radius-2xl, var(--radius-lg));
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in oklab, var(--color-accent) 12%, transparent) 0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 97%,
+      var(--color-primary-soft, var(--color-primary)) 3%
+    );
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+  overflow: hidden;
+}
+
+/* Accent line near top for “high-end” contrast */
+.servicePage .metrics-panel__item::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  top: var(--space-3);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%),
+    color-mix(in oklab, var(--color-accent) 72%, var(--color-primary) 28%)
+  );
+  opacity: 0.9;
+}
+
+/* Value: strong, elegant, brand-forward */
 .servicePage .metrics-panel__value {
-  font-size: var(--fs-xl);
-  font-weight: 600;
-  color: var(--color-primary);
+  margin: var(--space-3) 0 0; /* ensures it sits below the accent line */
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: color-mix(in oklab, var(--color-primary) 90%, var(--color-text) 10%);
 }
 
+/* Label: small caps, refined contrast */
 .servicePage .metrics-panel__label {
+  margin: 0;
   font-size: var(--fs-xs);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  color: color-mix(in oklab, var(--color-text) 78%, var(--color-muted) 22%);
+  line-height: 1.5;
+}
+
+/* Optional: subtle premium hover (desktop only) */
+@media (hover: hover) {
+  .servicePage .metrics-panel__item {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .servicePage .metrics-panel__item:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-primary) 20%, transparent);
+    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.14);
+  }
+}
+
+/* Keep section head rules consistent (existing pattern) */
+.servicePage .testimonial-section .section-head,
+.servicePage .metrics-section .section-head {
+  max-width: 100%;
+  margin-bottom: var(--space-3);
+}
+
+/* Ensure testimonial title spans full width (existing rule retained) */
+.servicePage .testimonial-section .section-head .section-title {
+  max-width: 100%;
+  width: 100%;
 }
 
 /* ================================
@@ -698,13 +1362,89 @@
   padding-bottom: var(--space-3);
   padding-top: 0;
   font-size: var(--fs-sm);
-  color: var(--color-muted);
+  color: var(--color-text);
   display: none;
 }
 
 /* Simple state toggle hook via data attribute */
 .servicePage .faq__item[data-open="true"] .faq__answer {
   display: block;
+}
+
+/* --------------------------------
+   Premium list styling inside FAQ answers
+   -------------------------------- */
+
+/* Unordered lists – custom accent bullets, left-aligned content */
+.servicePage :where(.faq, .faq-accordion) :where(ul) {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding-left: 0;
+}
+
+.servicePage :where(.faq, .faq-accordion) :where(ul li) {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-block: 0.2rem;
+}
+
+.servicePage :where(.faq, .faq-accordion) :where(ul li)::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.65em;
+  inset-inline-start: 0.25rem;
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px
+    color-mix(
+      in oklab,
+      var(--color-accent) 32%,
+      var(--color-surface, var(--color-background)) 68%
+    );
+}
+
+/* Ordered lists – numbered pills with clear hierarchy */
+.servicePage :where(.faq, .faq-accordion) :where(ol) {
+  counter-reset: faq-ol-counter;
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding-left: 0;
+}
+
+.servicePage :where(.faq, .faq-accordion) :where(ol li) {
+  counter-increment: faq-ol-counter;
+  position: relative;
+  padding-left: 2rem;
+  margin-block: 0.3rem;
+}
+
+.servicePage :where(.faq, .faq-accordion) :where(ol li)::before {
+  content: counter(faq-ol-counter);
+  position: absolute;
+  inset-block-start: 0.25rem;
+  inset-inline-start: 0;
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-on-primary, #ffffff);
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-accent) 30%
+  );
+}
+
+/* Tighten spacing between list and following paragraphs inside answers */
+.servicePage :where(.faq, .faq-accordion) :where(ul + p, ol + p) {
+  margin-top: var(--space-3);
 }
 
 /* ================================

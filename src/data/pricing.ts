@@ -22,6 +22,11 @@ export type PricingPlan = {
   features: string[];
   ctaLabel: string;
   highlight?: boolean;
+
+  // Optional discount-aware pricing fields
+  originalPrice?: string; // e.g. "KSh 3,000"
+  currentPrice?: string; // e.g. "KSh 2,500" – falls back to priceRange if not provided
+  priceNote?: string; // e.g. "Graduate rate for first-time CV projects."
 };
 
 /**

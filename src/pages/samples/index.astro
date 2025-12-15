@@ -7,6 +7,8 @@ import SamplesFilterBar from "../../components/filters/SamplesFilterBar/index.as
 import SamplePreviewModal from "../../components/modals/SamplePreviewModal/index.astro";
 import PageHeader from "../../components/sections/shared/PageHeader/index.astro";
 
+import "../../components/sections/shared/PageHeader/PageHeader.css";
+
 import samples from "../../data/pages/samples";
 
 const { title, description, seo, filters, items } = samples;
@@ -18,7 +20,7 @@ const { title, description, seo, filters, items } = samples;
 
   <!-- Short description under header -->
   <section class="container mt-4">
-    <p class="fs-base text-left max-w-prose">
+    <p class="fs-base text-left w-full max-w-none">
       {description}
     </p>
   </section>

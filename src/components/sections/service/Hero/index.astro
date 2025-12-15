@@ -1,5 +1,6 @@
 ---
 import "./Hero.css";
+import Button from "../../../cta/Button/index.astro";
 
 export interface Action {
   label: string;
@@ -56,14 +57,14 @@ const hasImage = typeof image === "string" && image.length > 0;
 
       {hasActions && (
         <div class="hero__actions" aria-label="Primary actions">
-          {actions.map((a) => (
-            <a
+          {actions.map((a, idx) => (
+            <Button
+              label={a.label}
               href={a.href}
-              class="btn btn-primary"
+              variant={idx === 0 ? "primary" : "ghost"}
+              size="md"
               data-cta={`hero:${a.label}`}
-            >
-              {a.label}
-            </a>
+            />
           ))}
         </div>
       )}

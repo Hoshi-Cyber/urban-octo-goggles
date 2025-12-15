@@ -3,14 +3,15 @@
 
 /* Base */
 .btn {
+  /* Default colour tokens (overridden per-variant) */
   --_bg: var(--color-primary);
-  --_bg-hover: color-mix(
-    in oklab,
-    var(--_bg) 90%,
-    var(--color-surface)
-  );
-  --_fg: var(--color-on-primary);
+  --_fg: var(--color-on-primary, #ffffff);
   --_bd: transparent;
+
+  /* Hover/Focus swapped colours (background ⇄ text) */
+  --_bg-hover: var(--_fg);
+  --_fg-hover: var(--_bg);
+  --_bd-hover: var(--_bg);
 
   display: inline-flex;
   align-items: center;
@@ -64,6 +65,8 @@
 /* Hover/active */
 .btn:hover {
   background: var(--_bg-hover);
+  color: var(--_fg-hover);
+  border-color: var(--_bd-hover);
 }
 
 .btn:active {
@@ -73,8 +76,11 @@
 /* Focus visible */
 .btn:focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px
-    color-mix(in oklab, var(--color-primary) 35%, var(--color-surface));
+  background: var(--_bg-hover);
+  color: var(--_fg-hover);
+  border-color: var(--_bd-hover);
+  box-shadow:
+    0 0 0 3px var(--color-focus-ring);
 }
 
 /* Disabled state */
@@ -104,61 +110,54 @@
 }
 
 /* Variants */
-/* Primary – main brand CTA */
+/* Primary – main brand CTA (Deep Green) */
 .btn-primary {
   --_bg: var(--color-primary);
-  --_fg: var(--color-on-primary);
-  --_bd: color-mix(in oklab, var(--_bg) 30%, transparent);
+  --_fg: var(--color-neutral-0);
+  --_bd: color-mix(in oklab, var(--color-primary) 50%, transparent);
+
+  /* hover/focus: grey background, green text, neat green outline */
+  --_bg-hover: color-mix(in oklab, var(--color-neutral-0) 86%, #000000 14%); /* soft grey */
+  --_fg-hover: var(--color-primary); /* green text */
+  --_bd-hover: var(--color-primary); /* green outline */
 }
 
-.btn-primary:hover {
-  --_bg-hover: color-mix(
-    in oklab,
-    var(--color-primary-soft, var(--color-primary)) 18%,
-    var(--color-surface) 82%
-  );
-}
-
-/* Accent – warm secondary CTA */
+/* Accent – warm secondary CTA (Gold) */
 .btn-accent {
   --_bg: var(--color-accent);
-  --_fg: var(--color-on-accent);
-  --_bd: color-mix(in oklab, var(--_bg) 30%, transparent);
+  --_fg: var(--color-neutral-0);
+  --_bd: color-mix(in oklab, var(--color-accent) 50%, transparent);
+
+  --_bg-hover: var(--_fg);             /* white background */
+  --_fg-hover: var(--_bg);             /* gold text */
+  --_bd-hover: var(--color-accent);    /* gold border */
 }
 
-.btn-accent:hover {
-  --_bg-hover: color-mix(
-    in oklab,
-    var(--color-accent) 20%,
-    var(--color-surface) 80%
-  );
-}
-
-/* Ghost – soft, tinted supporting CTA */
+/* Ghost – soft supporting CTA (light on green) */
 .btn-ghost {
   --_bg: color-mix(
     in oklab,
-    var(--color-surface) 96%,
-    var(--color-primary-soft, var(--color-primary))
-  );
-  --_fg: var(--color-primary);
-  --_bd: color-mix(in oklab, var(--color-primary) 30%, transparent);
+    var(--color-neutral-0) 88%,
+    var(--color-primary) 12%
+  );                                    /* pale green surface */
+  --_fg: var(--color-primary);          /* green text */
+  --_bd: color-mix(in oklab, var(--color-primary) 35%, transparent);
+
+  --_bg-hover: var(--_fg);              /* solid green */
+  --_fg-hover: var(--_bg);              /* pale green text */
+  --_bd-hover: var(--color-primary);    /* green border */
 }
 
-.btn-ghost:hover {
-  --_bg-hover: color-mix(
-    in oklab,
-    var(--color-surface) 90%,
-    var(--color-primary-soft, var(--color-primary)) 10%
-  );
-  box-shadow: var(--shadow-sm);
-}
-
-/* Link – inline, minimal CTA */
+/* Link – inline, minimal CTA (accent-led, still solid) */
 .btn-link {
-  --_bg: transparent;
-  --_fg: var(--color-accent);
+  --_bg: var(--color-light);            /* subtle neutral background */
+  --_fg: var(--color-accent);           /* gold text */
   --_bd: transparent;
+
+  --_bg-hover: var(--color-accent);     /* solid gold */
+  --_fg-hover: var(--color-neutral-0);  /* white text */
+  --_bd-hover: transparent;
+
   padding-inline: 0;
   border: 0;
   text-decoration: underline;
@@ -175,45 +174,57 @@
 .btn-tone-success {
   --_bg: color-mix(
     in oklab,
-    var(--color-success, #15803d) 90%,
-    var(--color-surface) 10%
+    var(--color-success, #14805d) 95%,
+    var(--color-neutral-0) 5%
   );
-  --_fg: var(--color-on-primary, #ffffff);
+  --_fg: var(--color-neutral-0);
   --_bd: color-mix(
     in oklab,
-    var(--color-success, #15803d) 40%,
+    var(--color-success, #14805d) 40%,
     transparent
   );
+
+  --_bg-hover: var(--_fg);                 /* white background */
+  --_fg-hover: var(--_bg);                 /* success text */
+  --_bd-hover: var(--color-success, #14805d);
 }
 
 /* Danger tone – destructive actions */
 .btn-tone-danger {
   --_bg: color-mix(
     in oklab,
-    var(--color-danger, #b91c1c) 90%,
-    var(--color-surface) 10%
+    var(--color-error, #d64545) 95%,
+    var(--color-neutral-0) 5%
   );
-  --_fg: var(--color-on-primary, #ffffff);
+  --_fg: var(--color-neutral-0);
   --_bd: color-mix(
     in oklab,
-    var(--color-danger, #b91c1c) 40%,
+    var(--color-error, #d64545) 40%,
     transparent
   );
+
+  --_bg-hover: var(--_fg);                 /* white background */
+  --_fg-hover: var(--_bg);                 /* red text */
+  --_bd-hover: var(--color-error, #d64545);
 }
 
 /* Subtle tone – extra-soft ghost treatment */
 .btn-tone-subtle {
   --_bg: color-mix(
     in oklab,
-    var(--color-surface) 98%,
-    var(--color-primary-soft, var(--color-primary)) 2%
-  );
+    var(--color-surface) 96%,
+    var(--color-primary) 4%
+  );                                       /* light tinted surface */
   --_fg: var(--color-primary);
   --_bd: color-mix(
     in oklab,
-    var(--color-primary) 14%,
+    var(--color-primary) 18%,
     transparent
   );
+
+  --_bg-hover: var(--_fg);                 /* solid green */
+  --_fg-hover: var(--_bg);                 /* light tinted text */
+  --_bd-hover: var(--color-primary);
 }
 
 /* Sizes */
@@ -257,7 +268,7 @@
 /* High-contrast text on solid variants */
 .btn-primary .btn__label,
 .btn-accent .btn__label {
-  color: var(--_fg);
+  color: inherit;
 }
 
 /* Reduce motion */

@@ -126,6 +126,9 @@ const heroImageAlt =
       </div>
     </section>
 
+    <!-- Optional band(s) between main content and features -->
+    <slot name="after-main" />
+
     <!-- FEATURES -->
     {Array.isArray(features) && features.length > 0 && (
       <section

@@ -4,7 +4,10 @@ import "./Nav.css";
 import { slug } from "@/utils/slug";
 
 /** Nav — mobile-first, accessible (Fix Plan 64 + Fix Plan 128) */
-export interface Props { class?: string }
+export interface Props {
+  class?: string;
+}
+
 const { class: className = "" } = Astro.props as Props;
 
 const cta = navItems.find((i: any) => i.cta);
@@ -49,7 +52,7 @@ const normalizeHref = (href: string) => {
 >
   <div class="nav__frame">
     <div class="container nav__bar">
-      <!-- Brand: icon + wordmark -->
+      <!-- Brand: single icon + typed logotype -->
       <a
         href="/"
         class="nav__brand"
@@ -58,19 +61,14 @@ const normalizeHref = (href: string) => {
       >
         <img
           class="nav__brandIcon"
-          src="/assets/logos/favicon-32.png"
+          src="/assets/logos/favicon-321.png"
           width="28"
           height="28"
           alt=""
           decoding="async"
           fetchpriority="high"
         />
-        <img
-          class="nav__brandWordmark"
-          src="/assets/logos/logo-wordmark.svg"
-          alt="CVWriting.co.ke"
-          decoding="async"
-        />
+        <span class="nav__brandText" aria-hidden="true">CVWriting</span>
         <span class="sr-only">CVWriting.co.ke</span>
       </a>
 
@@ -177,67 +175,93 @@ const normalizeHref = (href: string) => {
     role="dialog"
     tabindex="-1"
   >
-    <button
-      class="nav__close"
-      id="nav-close"
-      aria-label="Close menu"
-      type="button"
-    >
-      ✕
-    </button>
-    <ul class="nav__drawerList">
-      {main.map((item: any) =>
-        !item.children ? (
-          <li>
+    <div class="nav__drawerInner">
+      <div class="nav__drawerHeader">
+        <a
+          href="/"
+          class="nav__brand nav__brand--drawer"
+          aria-label="CVWriting.co.ke home"
+          data-cta="mnav-brand"
+        >
+          <img
+            class="nav__brandIcon"
+            src="/assets/logos/favicon-321.png"
+            width="24"
+            height="24"
+            alt=""
+            decoding="async"
+          />
+          <span class="nav__brandText" aria-hidden="true">CVWriting</span>
+          <span class="sr-only">CVWriting.co.ke</span>
+        </a>
+
+        <button
+          class="nav__close"
+          id="nav-close"
+          aria-label="Close menu"
+          type="button"
+        >
+          ✕
+        </button>
+      </div>
+
+      <ul class="nav__drawerList">
+        {main.map((item: any) =>
+          !item.children ? (
+            <li>
+              <a
+                href={normalizeHref(item.href)}
+                class="nav__drawerLink"
+                data-cta={`mnav-${item.label.toLowerCase()}`}
+              >
+                {item.label}
+              </a>
+            </li>
+          ) : (
+            <li>
+              <details class="nav__details">
+                <summary class="nav__summary">{item.label}</summary>
+                <ul class="nav__drawerSub">
+                  {item.children.map((child: any) => (
+                    <li>
+                      <a
+                        href={normalizeHref(child.href)}
+                        class="nav__drawerSublink"
+                        data-cta={`mnav-${item.label
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}-${child.label
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+          )
+        )}
+        {cta && (
+          <li class="nav__drawerCta">
+            <p class="nav__drawerEyebrow">Get Started</p>
+            <p class="nav__drawerTagline">
+              Strategic CVs, cover letters and LinkedIn profiles for Kenyan
+              professionals.
+            </p>
             <a
-              href={normalizeHref(item.href)}
-              class="nav__drawerLink"
-              data-cta={`mnav-${item.label.toLowerCase()}`}
+              href={normalizeHref(cta.href)}
+              class="btn btn-primary nav__drawerCtaButton"
+              data-cta="mnav-cta"
             >
-              {item.label}
+              <span class="btn__inner">
+                <span class="btn__label">{cta.label}</span>
+              </span>
             </a>
           </li>
-        ) : (
-          <li>
-            <details class="nav__details">
-              <summary class="nav__summary">
-                {item.label}
-              </summary>
-              <ul class="nav__drawerSub">
-                {item.children.map((child: any) => (
-                  <li>
-                    <a
-                      href={normalizeHref(child.href)}
-                      class="nav__drawerSublink"
-                      data-cta={`mnav-${item.label
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}-${child.label
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
-                    >
-                      {child.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          </li>
-        )
-      )}
-      {cta && (
-        <li class="nav__drawerCta">
-          <a
-            href={normalizeHref(cta.href)}
-            class="btn btn-primary"
-            data-cta="mnav-cta"
-          >
-            <span class="btn__inner">
-              <span class="btn__label">{cta.label}</span>
-            </span>
-          </a>
-        </li>
-      )}
-    </ul>
+        )}
+      </ul>
+    </div>
   </nav>
 
   <script is:inline>

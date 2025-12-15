@@ -208,7 +208,7 @@ const processPage = {
   timeline: [
     { phase: "Payment & intake", window: "Day 0–1" },
     { phase: "First draft", window: "Day 2–3" },
-    { phase: "Review & revisions", window: "Day 4–5" },
+    { phase: "Review & revisions", window: "Day 3–4" },
     { phase: "Final delivery", window: "Day 5–7" },
   ] as TimelineItem[],
 

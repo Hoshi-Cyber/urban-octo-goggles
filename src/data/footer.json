@@ -35,24 +35,31 @@
         {
           "label": "LinkedIn Optimization",
           "href": "/services/linkedin-optimization/"
+        },
+        {
+          "label": "Pricing & Packages",
+          "href": "/pricing/"
         }
       ]
     },
     {
-      "title": "Resources",
+      "title": "Resources & Help",
       "links": [
-        { "label": "Blog", "href": "/blog/" },
         { "label": "CV Samples", "href": "/samples/" },
-        { "label": "FAQs", "href": "/faq/" }
+        { "label": "FAQs", "href": "/faq/" },
+        {
+          "label": "How It Works (Process)",
+          "href": "/process/"
+        }
       ]
     },
     {
       "title": "Company",
       "links": [
         { "label": "About", "href": "/about/" },
-        { "label": "Process", "href": "/process/" },
         { "label": "Testimonials", "href": "/testimonials/" },
-        { "label": "Contact", "href": "/contact/" }
+        { "label": "Contact", "href": "/contact/" },
+        { "label": "Sitemap", "href": "/sitemap.xml" }
       ]
     },
     {
@@ -61,8 +68,10 @@
         { "label": "Privacy Policy", "href": "/legal/privacy/" },
         { "label": "Terms of Service", "href": "/legal/terms/" },
         { "label": "Cookies & Preferences", "href": "/legal/cookies/" },
-        { "label": "Refunds & Revisions", "href": "/legal/refunds-revisions/" },
-        { "label": "Sitemap", "href": "/sitemap.xml" }
+        {
+          "label": "Refunds & Revisions",
+          "href": "/legal/refunds-revisions/"
+        }
       ]
     }
   ],

@@ -214,6 +214,43 @@
     );
 }
 
+/* Original / standard price (when a discount applies) */
+.pricing__priceOriginal {
+  position: relative;
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xs, 0.85rem);
+  line-height: 1.4;
+  text-align: center;
+  font-weight: 500;
+  color: color-mix(
+    in oklab,
+    var(--color-text) 70%,
+    var(--color-border-subtle, #e5e7eb) 30%
+  );
+}
+
+.pricing__priceOriginal::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -0.35rem;
+  inline-size: 2rem;
+  block-size: 2px;
+  border-radius: 999px;
+  background: color-mix(
+    in oklab,
+    var(--color-accent) 80%,
+    var(--color-surface) 20%
+  );
+}
+
+.pricing__priceOriginalValue {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+}
+
 /* Price */
 .pricing__price {
   margin: var(--space-1) 0 0;
@@ -239,6 +276,19 @@
     );
 }
 
+/* Optional short note under the main price pill */
+.pricing__priceNote {
+  margin: var(--space-1) 0 0;
+  font-size: var(--fs-2xs, 0.75rem);
+  line-height: 1.4;
+  text-align: center;
+  color: color-mix(
+    in oklab,
+    var(--color-text) 60%,
+    var(--color-border-subtle, #e5e7eb) 40%
+  );
+}
+
 /* Features */
 .pricing__features {
   list-style: none;
@@ -255,6 +305,16 @@
   gap: 0.4rem;
   color: var(--color-text);
   font-size: var(--fs-sm);
+}
+
+/* Emphasis for lead-in labels within feature text (e.g. Standard Delivery:) */
+.pricing__feature strong {
+  font-weight: 600;
+  color: color-mix(
+    in oklab,
+    var(--color-text) 92%,
+    var(--color-border-subtle, #e5e7eb) 8%
+  );
 }
 
 .pricing__feature::before {

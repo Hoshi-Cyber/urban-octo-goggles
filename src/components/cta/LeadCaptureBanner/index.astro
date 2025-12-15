@@ -8,6 +8,7 @@ export interface Props {
 
 const { title, sub, primaryHref, primaryLabel } = Astro.props as Props;
 
+import Button from "../Button/index.astro";
 import "./LeadCaptureBanner.css";
 ---
 
@@ -27,15 +28,13 @@ import "./LeadCaptureBanner.css";
         </div>
 
         <div class="lead__actions">
-          <a
+          <Button
+            label={primaryLabel}
             href={primaryHref}
-            class="btn btn-primary btn-md"
-            data-cta="lead-banner:primary"
-          >
-            <span class="btn__inner">
-              <span class="btn__label">{primaryLabel}</span>
-            </span>
-          </a>
+            variant="primary"
+            size="md"
+            cta="lead-banner:primary"
+          />
         </div>
       </div>
     </div>

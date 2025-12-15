@@ -1,63 +1,813 @@
 ---
 import ServicePage from "../../components/templates/ServicePage/index.astro";
+import Button from "../../components/cta/Button/index.astro";
+import "../../styles/pages/services.css";
+import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
+import { getFaqsForSlug } from "../../data/faqs/faqs.data";
 
 const title = "Professional CV Writing in Kenya";
-const description = "ATS-optimized CVs tailored to Kenyan roles.";
+const description =
+  "Premium, ATS-optimised CV writing for Kenyan professionals seeking stronger positioning, clearer impact, and more consistent interview callbacks.";
 
 const hero = {
-  eyebrow: "Get More Interviews with an ATS-Optimized CV",
-  image: "/assets/images/services/cv-writing-hero.webp",
-  imageAlt: "Professional CV and application tracking dashboard illustration",
+  eyebrow: "Strategic, ATS-ready CVs for the Kenyan job market",
+  image: "/assets/images/services/cv-writing-hero-image.webp",
+  imageAlt:
+    "Clean, modern CV layout displayed alongside an application-tracking dashboard",
   actions: [
     { label: "Get Started", href: "/contact/" },
-    { label: "See Pricing", href: "/#pricing" },
+    { label: "See Pricing / Compare Packages", href: "/pricing/" },
   ],
 };
 
-const features = [
-  {
-    title: "ATS-Optimized Structure",
-    body: "Clean, scannable formatting and the right keyword density to pass common applicant tracking systems.",
-  },
-  {
-    title: "Kenya-Specific Targeting",
-    body: "Language, role titles, and sector cues aligned to Kenyan employers and recruiters.",
-  },
-  {
-    title: "Impact-Driven Story",
-    body: "Achievements quantified with metrics to make your value obvious at a glance.",
-  },
-];
+
+
+type CvFaqItem = {
+  question: string;
+  answer: string;
+};
+
+// Load CV Writing FAQs from shared FAQ data (slug: "cv-writing")
+const cvFaqPage = getFaqsForSlug("cv-writing");
+
+let cvFaqItems: CvFaqItem[] = [];
+
+if (cvFaqPage) {
+  const allItems = [
+    ...cvFaqPage.topQuestions,
+    ...cvFaqPage.groups.flatMap((group) => group.items),
+  ];
+
+  const seenIds = new Set<string>();
+
+  for (const item of allItems) {
+    if (seenIds.has(item.id)) continue;
+    seenIds.add(item.id);
+    cvFaqItems.push({
+      question: item.question,
+      answer: item.answer,
+    });
+  }
+}
 ---
 
-<ServicePage {title} {description} {hero} {features}>
-  <h2>Why a Professional CV Matters</h2>
+<ServicePage {title} {description} {hero}>
+
+  <!-- Main article content -->
+  <h2>Why a professional CV matters in Kenya</h2>
   <p>
-    Recruiters spend seconds skimming through CVs. Our writers make every word count by structuring your
-    experience, skills and achievements in a way that passes ATS filters and appeals to human hiring managers.
+    Your CV is evaluated in seconds. Recruiters and HR systems look for clarity,
+    relevance, and evidence of impact. A professionally crafted CV reduces
+    friction, positions you intelligently, and improves the likelihood of being
+    shortlisted for roles that fit your skills and trajectory.
+  </p>
+  <p>
+    Most self-written CVs undersell potential—either by focusing on tasks rather
+    than achievements, mixing formats, or missing the language employers scan
+    for. Our role is to translate your experience into a clear, confident,
+    outcome-led document aligned to your target roles in the Kenyan market.
   </p>
 
-  <h3>What’s Included</h3>
+  <h3>What’s included in our CV writing service</h3>
   <ul class="service-list service-list--included">
-    <li>Comprehensive intake consultation or questionnaire to understand your goals and background.</li>
-    <li>Professionally written CV tailored to your industry, role level, and target employers.</li>
-    <li>ATS-aware formatting and keyword optimisation for common Applicant Tracking Systems.</li>
-    <li>Revision window to refine tone, clarity, and positioning after your review.</li>
+    <li>
+      A structured intake to understand your goals, target roles, challenges,
+      and the professional image you want to project.
+    </li>
+    <li>
+      A fully rewritten CV tailored to your seniority, industry, and the
+      expectations of Kenyan recruiters and hiring managers.
+    </li>
+    <li>
+      ATS-friendly formatting and keyword optimisation for local job boards and
+      applicant tracking systems.
+    </li>
+    <li>
+      A revision window to refine tone, emphasis, and clarity once you review
+      the first draft.
+    </li>
+    <li>
+      Optional alignment with LinkedIn and cover letter packages for a cohesive
+      career brand across platforms.
+    </li>
   </ul>
 
-  <h3>Benefits</h3>
-  <ul>
-    <li>
-      <strong>Stand out quickly:</strong>
-      Your achievements are quantified and prioritised so recruiters see your value in seconds.
-    </li>
-    <li>
-      <strong>Pass ATS screening:</strong>
-      Structuring and language are tuned for automated systems without sacrificing human readability.
-    </li>
-    <li>
-      <strong>Save time and energy:</strong>
-      You focus on targeted applications while we craft and refine the story behind your career.
-    </li>
-  </ul>
+  <!-- After-main sections -->
+  <Fragment slot="after-main">
+    <!-- Benefits band – full-width, how-it-works card styling, 1/2/4 layout -->
+    <section class="benefits-band" aria-labelledby="cv-benefits-band-heading">
+      <div class="benefits-band__inner">
+        <header class="benefits-band__head">
+          <h2 id="cv-benefits-band-heading" class="h2 benefits-band__heading">
+            Benefits of a professionally written CV
+          </h2>
+          <p class="benefits-band__intro">
+            We focus on four practical outcomes—positioning, ATS performance,
+            clarity, and momentum—so your CV works harder for you in the Kenyan
+            job market.
+          </p>
+        </header>
+
+        <ul
+          class="benefits__grid"
+          aria-label="Key benefits of our CV writing service"
+        >
+          <li class="benefit-card how-it-works__step">
+            <p class="benefit-card__label">Positioning</p>
+            <h3 class="h4 benefit-card__title">Stronger recruiter fit</h3>
+            <p class="benefit-card__body">
+              Clear structure and focused messaging help hiring managers quickly
+              understand which roles you are best suited for and why you are a
+              credible match.
+            </p>
+          </li>
+
+          <li class="benefit-card how-it-works__step">
+            <p class="benefit-card__label">ATS &amp; job boards</p>
+            <h3 class="h4 benefit-card__title">Better ATS performance</h3>
+            <p class="benefit-card__body">
+              We align language and formatting with common Applicant Tracking
+              Systems used in Kenya so your CV is parsed cleanly and surfaced
+              more consistently.
+            </p>
+          </li>
+
+          <li class="benefit-card how-it-works__step">
+            <p class="benefit-card__label">Storytelling</p>
+            <h3 class="h4 benefit-card__title">Clear, confident narrative</h3>
+            <p class="benefit-card__body">
+              Achievement-led bullets highlight measurable contributions, making
+              your value visible in a competitive shortlist environment.
+            </p>
+          </li>
+
+          <li class="benefit-card how-it-works__step">
+            <p class="benefit-card__label">Time &amp; focus</p>
+            <h3 class="h4 benefit-card__title">Time saved, better focus</h3>
+            <p class="benefit-card__body">
+              You spend less time editing documents and more time sending
+              targeted applications to roles that align with your goals.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Trust strip – vertical premium block, left-aligned, 4/2/1 layout -->
+    <section
+      class="trust-strip"
+      aria-label="Why professionals trust our CV writing service"
+    >
+      <div class="trust-strip__inner">
+        <header class="trust-strip__lead">
+          <p class="trust-strip__eyebrow">Trusted by Kenyan professionals</p>
+          <p class="trust-strip__summary">
+            Used by graduates, mid-career specialists, managers, and executives
+            preparing for local and regional opportunities.
+          </p>
+        </header>
+
+        <div class="trust-strip__items" role="list">
+          <article class="trust-strip__item" role="listitem">
+            <p class="trust-strip__item-badge">Local insight</p>
+            <p class="trust-strip__item-text">
+              Positioning shaped by real Kenyan hiring practices and recruiter
+              feedback.
+            </p>
+          </article>
+
+          <article class="trust-strip__item" role="listitem">
+            <p class="trust-strip__item-badge">Practical</p>
+            <p class="trust-strip__item-text">
+              Designed to match your next realistic career step, not a generic
+              template.
+            </p>
+          </article>
+
+          <article class="trust-strip__item" role="listitem">
+            <p class="trust-strip__item-badge">Support</p>
+            <p class="trust-strip__item-text">
+              Clear guidance throughout drafting and revisions so you are never
+              left guessing.
+            </p>
+          </article>
+
+          <article class="trust-strip__item" role="listitem">
+            <p class="trust-strip__item-badge">Hiring-ready</p>
+            <p class="trust-strip__item-text">
+              CVs structured, keyworded, and formatted to meet recruiter
+              expectations and ATS screening used in Kenya.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" aria-labelledby="cv-how-it-works">
+      <div class="how-it-works__inner">
+        <header class="how-it-works__head">
+          <h2 id="cv-how-it-works" class="h2 how-it-works__heading">
+            How our CV writing process works
+          </h2>
+          <p class="how-it-works__intro">
+            A structured, outcome-focused process designed to reduce uncertainty
+            and keep you informed at each stage.
+          </p>
+        </header>
+
+        <div class="how-it-works__grid">
+          <!-- STEP 1 -->
+          <article class="how-it-works__step">
+            <p class="how-it-works__step-label">Step 1 · Discovery</p>
+            <h3 class="h4 how-it-works__step-title">Clarify your goals</h3>
+            <p class="how-it-works__step-body">
+              We review your existing CV, understand your target roles, and map
+              the positioning needed to present you clearly.
+            </p>
+          </article>
+
+          <!-- STEP 2 -->
+          <article class="how-it-works__step">
+            <p class="how-it-works__step-label">Step 2 · Drafting</p>
+            <h3 class="h4 how-it-works__step-title">
+              Build a structured, impact-led CV
+            </h3>
+            <p class="how-it-works__step-body">
+              We craft your CV using modern formatting, quantified achievements,
+              and recruiter-friendly language aligned to Kenyan expectations.
+            </p>
+          </article>
+
+          <!-- STEP 3 -->
+          <article class="how-it-works__step">
+            <p class="how-it-works__step-label">Step 3 · Review &amp; Revision</p>
+            <h3 class="h4 how-it-works__step-title">
+              Refine tone, emphasis, and targeting
+            </h3>
+            <p class="how-it-works__step-body">
+              You review the first draft and share your feedback. We refine
+              clarity, structure, and messaging so the CV reflects your
+              strengths accurately and aligns with your intended career
+              direction.
+            </p>
+          </article>
+
+          <!-- STEP 4 -->
+          <article class="how-it-works__step">
+            <p class="how-it-works__step-label">
+              Step 4 · Final Polish &amp; Delivery
+            </p>
+            <h3 class="h4 how-it-works__step-title">
+              Prepare a clean, interview-ready version
+            </h3>
+            <p class="how-it-works__step-body">
+              We apply final edits to ensure consistency, precision, and
+              ATS-safe formatting. You receive the polished CV in Word and
+              PDF—ready for applications and recruiter sharing.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial – own section with infinite carousel -->
+    <section class="section testimonial-section" aria-labelledby="cv-testimonial">
+      <div class="container">
+        <header class="section-head testimonial-section__head">
+          <h2 id="cv-testimonial" class="section-title h2">
+            What clients say about our CV writing
+          </h2>
+        </header>
+
+        <div class="testimonial">
+          <div class="testimonial-carousel">
+            <div class="testimonial-carousel__viewport" aria-live="polite">
+              <div class="testimonial-carousel__track">
+                <!-- 8 unique, intent-led testimonials -->
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The rewrite brought clarity I didn’t know I needed. I began
+                    receiving callbacks from roles that finally aligned with my
+                    experience.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Purity. N,</span>
+                    <span class="testimonial__role">
+                      Mid-level Project Management (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “My CV shifted from a list of duties to a clear record of
+                    results. Recruiters started engaging with my applications more
+                    consistently.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Chirchir. M,</span>
+                    <span class="testimonial__role">
+                      Finance &amp; Operations (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The team understood both Kenyan roles and regional
+                    expectations. The final CV helped me position confidently for
+                    roles across East Africa.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Steveson. K,</span>
+                    <span class="testimonial__role">
+                      Senior ICT &amp; Projects (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “As a recent graduate, I wasn’t sure how to present internships
+                    and projects. The new CV made my strengths easier to understand,
+                    and I felt more confident applying.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Aisha. W,</span>
+                    <span class="testimonial__role">
+                      Graduate / Entry-level Admin &amp; Support (Starter CV Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “I was aiming for a promotion, but my CV didn’t show leadership
+                    impact. The rewrite sharpened my achievements and made my next
+                    step feel credible.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Dennis. O,</span>
+                    <span class="testimonial__role">
+                      Operations Supervisor → Manager (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “From the diaspora, I needed my experience translated clearly
+                    for Kenyan and international hiring teams. The positioning and
+                    LinkedIn refresh gave my profile a stronger leadership story.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Client in Diaspora,</span>
+                    <span class="testimonial__role">
+                      Senior Leadership / Strategy (Executive Brand Suite)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “I was changing sectors and worried my experience would be
+                    overlooked. The CV reframed my transferable skills and helped me
+                    target roles with a clearer narrative.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Mercy. T,</span>
+                    <span class="testimonial__role">
+                      Career Change into Customer Experience (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The LinkedIn improvements matched the CV tone and made my work
+                    easier to scan. I started getting more relevant conversations,
+                    not just generic enquiries.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Kevin. S,</span>
+                    <span class="testimonial__role">
+                      Sales &amp; Business Development (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <!-- Duplicate the same 8 cards for seamless infinite scroll -->
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The rewrite brought clarity I didn’t know I needed. I began
+                    receiving callbacks from roles that finally aligned with my
+                    experience.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Purity. N,</span>
+                    <span class="testimonial__role">
+                      Mid-level Project Management (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “My CV shifted from a list of duties to a clear record of
+                    results. Recruiters started engaging with my applications more
+                    consistently.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Chirchir. M,</span>
+                    <span class="testimonial__role">
+                      Finance &amp; Operations (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The team understood both Kenyan roles and regional
+                    expectations. The final CV helped me position confidently for
+                    roles across East Africa.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Steveson. K,</span>
+                    <span class="testimonial__role">
+                      Senior ICT &amp; Projects (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “As a recent graduate, I wasn’t sure how to present internships
+                    and projects. The new CV made my strengths easier to understand,
+                    and I felt more confident applying.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Aisha. W,</span>
+                    <span class="testimonial__role">
+                      Graduate / Entry-level Admin &amp; Support (Starter CV Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “I was aiming for a promotion, but my CV didn’t show leadership
+                    impact. The rewrite sharpened my achievements and made my next
+                    step feel credible.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Dennis. O,</span>
+                    <span class="testimonial__role">
+                      Operations Supervisor → Manager (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “From the diaspora, I needed my experience translated clearly
+                    for Kenyan and international hiring teams. The positioning and
+                    LinkedIn refresh gave my profile a stronger leadership story.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Client in Diaspora,</span>
+                    <span class="testimonial__role">
+                      Senior Leadership / Strategy (Executive Brand Suite)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “I was changing sectors and worried my experience would be
+                    overlooked. The CV reframed my transferable skills and helped me
+                    target roles with a clearer narrative.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Mercy. T,</span>
+                    <span class="testimonial__role">
+                      Career Change into Customer Experience (Professional Impact Pack)
+                    </span>
+                  </p>
+                </article>
+
+                <article class="testimonial--card">
+                  <p class="testimonial__quote">
+                    “The LinkedIn improvements matched the CV tone and made my work
+                    easier to scan. I started getting more relevant conversations,
+                    not just generic enquiries.”
+                  </p>
+                  <p class="testimonial__meta">
+                    <span class="testimonial__name">Kevin. S,</span>
+                    <span class="testimonial__role">
+                      Sales &amp; Business Development (Advanced Growth Pack)
+                    </span>
+                  </p>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics – separate stacked section with 4 premium cards -->
+    <section class="section metrics-section" aria-labelledby="cv-metrics">
+      <div class="container">
+        <header class="section-head metrics-section__head">
+          <h2 id="cv-metrics" class="section-title h2">
+            What clients typically experience
+          </h2>
+        </header>
+
+        <aside class="metrics-panel metrics-panel--cv">
+          <div class="metrics-panel__items">
+            <div class="metrics-panel__item">
+              <p class="metrics-panel__value">2–3 days</p>
+              <p class="metrics-panel__label">Time to first draft</p>
+            </div>
+
+            <div class="metrics-panel__item">
+              <p class="metrics-panel__value">3–5 roles</p>
+              <p class="metrics-panel__label">
+                Typical targeting range for stronger alignment
+              </p>
+            </div>
+
+            <div class="metrics-panel__item">
+              <p class="metrics-panel__value">Higher clarity</p>
+              <p class="metrics-panel__label">
+                Most clients report clearer recruiter feedback and better shortlist
+                fit
+              </p>
+            </div>
+
+            <div class="metrics-panel__item">
+              <p class="metrics-panel__value">More traction</p>
+              <p class="metrics-panel__label">
+                Many clients see more consistent callbacks when applying to
+                well-aligned roles
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- CV Packages by career stage -->
+    <section
+      class="section service-bundles"
+      aria-label="CV packages by career stage"
+    >
+      <div class="container">
+        <div class="service-bundles__inner">
+          <header class="section-head service-bundles__head">
+            <p class="service-bundles__eyebrow">Packages</p>
+
+            <h2 class="section-title h2">
+              Which CV package fits your career stage?
+            </h2>
+
+            <p class="section-intro service-bundles__intro">
+              Choose a CV package that matches your career stage.
+              Each package combines a strategic CV with the right supporting tools for where you are now. 
+              Use this guide to decide, then compare full details on the pricing page.
+            </p>
+          </header>
+
+          <!-- Packages grid -->
+          <div class="service-bundles__grid">
+            <!-- HERO / MOST POPULAR: Professional Impact Pack -->
+            <article
+              class="service-bundles__card service-bundles__card--featured"
+              data-bundle="professional-impact"
+            >
+              <p class="service-bundles__badge">Most popular</p>
+
+              <div class="service-bundles__card-header">
+                <h3 class="service-bundles__card-title">
+                  Professional Impact Pack
+                </h3>
+                <p class="service-bundles__card-variant">
+                  CV + LinkedIn + Cover Letter
+                </p>
+                <p class="service-bundles__card-combo">
+                  Best for mid-level professionals (3–8 years)
+                </p>
+              </div>
+
+              <div
+                class="service-bundles__price"
+                aria-label="Package starting price"
+              >
+                <span class="service-bundles__price-now">
+                  From: KSh 4,800
+                </span>
+                <span class="service-bundles__price-note">
+                  Strategic CV rewrite, tailored cover letter and LinkedIn refresh
+                  aligned to your primary target roles.
+                </span>
+              </div>
+
+              <p class="service-bundles__card-body">
+                Present one clear, impact-led profile across your CV, LinkedIn and
+                cover letter—ideal for competitive Nairobi roles, regional
+                opportunities, and career moves where you need to stand out quickly.
+              </p>
+
+              <ul class="service-bundles__card-points">
+                <li>Strategic CV rewrite with quantified achievements</li>
+                <li>Tailored cover letter for your primary target role</li>
+                <li>LinkedIn headline and summary aligned to target roles</li>
+              </ul>
+
+              <div class="service-bundles__card-link">
+                <Button
+                  label="See Professional Impact Pack"
+                  href="/pricing/#pricing"
+                  variant="primary"
+                  size="sm"
+                  cta="cv-bundles-professional-impact"
+                />
+              </div>
+            </article>
+
+            <!-- STARTER: CV + Cover Letter -->
+            <article
+              class="service-bundles__card"
+              data-bundle="starter"
+            >
+              <div class="service-bundles__card-header">
+                <h3 class="service-bundles__card-title">
+                  Starter CV Pack
+                </h3>
+                <p class="service-bundles__card-variant">
+                  CV + Cover Letter
+                </p>
+                <p class="service-bundles__card-combo">
+                  Best for graduates &amp; early-career roles (0–3 years)
+                </p>
+              </div>
+
+              <div
+                class="service-bundles__price"
+                aria-label="Package starting price"
+              >
+                <span class="service-bundles__price-now">
+                  From: KSh 2,500
+                </span>
+                <span class="service-bundles__price-note">
+                  Essential CV and cover letter support so internships, projects and
+                  early roles are easy to understand.
+                </span>
+              </div>
+
+              <p class="service-bundles__card-body">
+                Make internships, projects and early roles easy to understand.
+                This pack helps you look organised, serious and ready for your
+                first or second role with a CV and cover letter that work together.
+              </p>
+
+              <ul class="service-bundles__card-points">
+                <li>Professionally written CV for entry-level roles</li>
+                <li>Role-specific cover letter that supports your CV</li>
+                <li>ATS-friendly formatting and keyword guidance</li>
+              </ul>
+
+              <div class="service-bundles__card-link">
+                <Button
+                  label="View Starter CV Pack"
+                  href="/pricing/#pricing"
+                  variant="primary"
+                  size="sm"
+                  cta="cv-bundles-starter"
+                />
+              </div>
+            </article>
+
+            <!-- ADVANCED GROWTH: Promotion / Internal Move -->
+            <article
+              class="service-bundles__card"
+              data-bundle="advanced-growth"
+            >
+              <div class="service-bundles__card-header">
+                <h3 class="service-bundles__card-title">
+                  Advanced Growth Pack
+                </h3>
+                <p class="service-bundles__card-variant">
+                  CV + LinkedIn Revamp + Cover Letter
+                </p>
+                <p class="service-bundles__card-combo">
+                  Best for supervisors &amp; managers preparing for promotion
+                </p>
+              </div>
+
+              <div
+                class="service-bundles__price"
+                aria-label="Package starting price"
+              >
+                <span class="service-bundles__price-now">
+                  From: KSh 7,500
+                </span>
+                <span class="service-bundles__price-note">
+                  Manager-level CV positioning plus full LinkedIn profile revamp.
+                </span>
+              </div>
+
+              <p class="service-bundles__card-body">
+                Reframe your experience to show leadership, scope and outcomes,
+                so decision-makers can quickly see why you’re ready for the next
+                level—in your current organisation or a similar role elsewhere.
+              </p>
+
+              <ul class="service-bundles__card-points">
+                <li>Impact-focused CV targeted to supervisor / manager roles</li>
+                <li>Achievement bullets rewritten for measurable outcomes</li>
+                <li>Full LinkedIn revamp: headline, About, experience &amp; skills</li>
+              </ul>
+
+              <div class="service-bundles__card-link">
+                <Button
+                  label="View Advanced Growth Pack "
+                  href="/pricing/#pricing"
+                  variant="primary"
+                  size="sm"
+                  cta="cv-bundles-advanced-growth"
+                />
+              </div>
+            </article>
+
+            <!-- EXECUTIVE BRAND SUITE: Executive CV + LinkedIn -->
+            <article
+              class="service-bundles__card"
+              data-bundle="executive-brand"
+            >
+              <div class="service-bundles__card-header">
+                <h3 class="service-bundles__card-title">
+                  Executive Brand Suite
+                </h3>
+                <p class="service-bundles__card-variant">
+                  Executive CV + LinkedIn Revamp
+                </p>
+                <p class="service-bundles__card-combo">
+                  Best for senior executives &amp; diaspora professionals
+                </p>
+              </div>
+
+              <div
+                class="service-bundles__price"
+                aria-label="Package starting price"
+              >
+                <span class="service-bundles__price-now">
+                  From: KSh 10,500
+                </span>
+                <span class="service-bundles__price-note">
+                  Executive CV, leadership brand statement and full LinkedIn positioning
+                  for Kenyan &amp; international roles.
+                </span>
+              </div>
+
+              <p class="service-bundles__card-body">
+                Clarify and package your leadership track record for board, C-suite,
+                regional and diaspora roles. We translate complex experience into a
+                focused executive narrative that works consistently across your CV
+                and LinkedIn profile.
+              </p>
+
+              <ul class="service-bundles__card-points">
+                <li>Executive CV tailored for board, C-suite and regional roles</li>
+                <li>Leadership brand statement articulating scope, results and value</li>
+                <li>
+                  Full LinkedIn revamp with global-ready positioning and keyword strategy
+                </li>
+              </ul>
+
+              <div class="service-bundles__card-link">
+                <Button
+                  label="See Executive Brand Suite"
+                  href="/pricing/#pricing"
+                  variant="primary"
+                  size="sm"
+                  cta="cv-bundles-executive-brand"
+                />
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION – bottom of the page -->
+    <section class="section faq-section" aria-labelledby="cv-faq">
+      <div class="container">
+        <h2 id="cv-faq" class="section-title h2">Frequently asked questions</h2>
+        <FAQAccordion items={cvFaqItems} showHead={false} />
+      </div>
+    </section>
+  </Fragment>
 </ServicePage>

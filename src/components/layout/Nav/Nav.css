@@ -24,7 +24,7 @@
   padding-block: var(--space-2);
 }
 
-/* Brand: icon + wordmark (no clipping) */
+/* Brand: icon + typed logotype */
 .nav__brand {
   display: inline-flex;
   align-items: center;
@@ -41,26 +41,28 @@
   flex: 0 0 auto;
 }
 
-.nav__brandWordmark {
-  display: block;
-  height: auto;
-  object-fit: contain;
-  max-block-size: 28px;
-  max-inline-size: clamp(140px, 46vw, 240px);
+.nav__brandText {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  white-space: nowrap;
 }
 
-@media (min-width: 640px) {
-  .nav__brandWordmark {
-    max-block-size: 24px;
-    max-inline-size: clamp(160px, 32vw, 260px);
-  }
+/* Drawer variant of brand lockup */
+.nav__brand--drawer .nav__brandIcon {
+  inline-size: 24px;
+  block-size: 24px;
 }
 
-@media (min-width: 1024px) {
-  .nav__brandWordmark {
-    max-block-size: 28px;
-    max-inline-size: 280px;
-  }
+.nav__brand--drawer .nav__brandText {
+  font-size: var(--fs-sm);
+}
+
+/* Calm hover for brand text */
+.nav__brand:hover .nav__brandText {
+  color: var(--color-green-600);
 }
 
 /* Primary nav container (desktop) */
@@ -118,6 +120,15 @@
 
 .nav__link:hover::after,
 .nav__link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Optional current-state styling (class can be added when routing is wired) */
+.nav__link--current {
+  font-weight: 600;
+}
+
+.nav__link--current::after {
   transform: scaleX(1);
 }
 
@@ -270,7 +281,9 @@
   inset: 0 0 0 auto;
   inline-size: min(85vw, 360px);
   transform: translateX(100%);
-  transition: transform 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.24s ease-out, opacity 0.18s ease-out;
   background: color-mix(
     in oklab,
     var(--color-surface-alt, var(--color-surface)) 96%,
@@ -283,14 +296,36 @@
     color-mix(in oklab, var(--color-text) 26%, transparent);
 }
 
+/* Drawer content & header row */
+.nav__drawerInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 100%;
+}
+
+.nav__drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, var(--color-light-alt)) 80%,
+      transparent
+    );
+}
+
 .nav__drawer.is-open {
   transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .nav__close {
-  position: sticky;
-  top: 0;
-  margin-left: auto;
   inline-size: 40px;
   block-size: 40px;
   display: grid;
@@ -303,6 +338,7 @@
   cursor: pointer;
 }
 
+/* Drawer lists */
 .nav__drawerList,
 .nav__drawerSub {
   list-style: none;
@@ -312,8 +348,10 @@
 
 /* Drawer main links */
 .nav__drawerLink {
-  display: block;
-  padding: 0.625rem 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.25rem;
   text-decoration: none;
   font-weight: 600;
   border-radius: var(--radius-md);
@@ -321,7 +359,9 @@
   font-size: var(--fs-base);
 }
 
-.nav__drawerLink:hover {
+/* Premium hover & current-state background */
+.nav__drawerLink:hover,
+.nav__drawerLink--current {
   background: color-mix(
     in oklab,
     var(--color-primary-soft, var(--color-primary)) 18%,
@@ -329,21 +369,22 @@
   );
 }
 
-/* Drawer: grouped children */
+/* Drawer: grouped children (Services block as card) */
 .nav__details {
   margin: 0.25rem 0;
   padding: 0.25rem 0.25rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: color-mix(
     in oklab,
     var(--color-surface-alt, var(--color-surface)) 92%,
     var(--color-primary-soft, var(--color-primary)) 8%
   );
+  box-shadow: var(--shadow-xs);
 }
 
 .nav__summary {
   cursor: pointer;
-  padding: 0.5rem 0.25rem;
+  padding: 0.6rem 0.5rem;
   font-weight: 600;
   list-style: none;
   font-size: var(--fs-sm);
@@ -369,9 +410,10 @@
   transform: rotate(-180deg);
 }
 
+/* Drawer Services submenu panel */
 .nav__drawerSub {
-  margin: 0.25rem 0 0.5rem 0.5rem;
-  padding: 0.25rem 0.25rem;
+  margin: 0.25rem 0 0.5rem;
+  padding: 0.25rem 0.35rem;
   background: color-mix(
     in oklab,
     var(--color-surface) 95%,
@@ -397,9 +439,37 @@
   );
 }
 
-/* Drawer CTA list item */
+/* Drawer CTA band */
 .nav__drawerCta {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-border-subtle, var(--color-light-alt)) 80%,
+      transparent
+    );
+}
+
+.nav__drawerEyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-neutral-500);
+}
+
+.nav__drawerTagline {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-neutral-600);
+  max-width: 30ch;
+}
+
+.nav__drawerCtaButton {
+  display: inline-flex;
 }
 
 /* Disable page scroll when drawer is open */

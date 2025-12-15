@@ -5,6 +5,7 @@ import itemsJson from "./faq-items.json";
 import groupsJson from "./faq-groups.json";
 import faqPageConfigJson from "./faq-page.json";
 import pricingConfigJson from "./faq-pricing.json";
+import cvWritingConfigJson from "./faq-cv-writing.json";
 
 // Types from schema
 import type {
@@ -22,10 +23,12 @@ const groupMap = groupsJson as FaqGroupMap;
 
 const faqPageConfig = faqPageConfigJson as FaqPageConfig;
 const pricingConfig = pricingConfigJson as FaqPageConfig;
+const cvWritingConfig = cvWritingConfigJson as FaqPageConfig;
 
 const pageConfigs: Record<FaqPageSlug, FaqPageConfig> = {
   [faqPageConfig.slug]: faqPageConfig,
   [pricingConfig.slug]: pricingConfig,
+  [cvWritingConfig.slug]: cvWritingConfig,
 };
 
 // Resolved shapes for UI components (FAQAccordion, etc.)

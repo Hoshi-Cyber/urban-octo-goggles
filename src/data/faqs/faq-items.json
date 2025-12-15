@@ -86,7 +86,7 @@
   "cv-file-formats": {
     "id": "cv-file-formats",
     "question": "Which file formats will I receive?",
-    "answer": "<p>You will receive your CV in the following formats:</p><ul><li><strong>Editable Word (.docx)</strong> for ATS and portal submissions</li><li><strong>Final PDF</strong> for email applications and printing</li></ul><p>Some packages also include additional assets, such as LinkedIn copy or executive brand statements, in suitable editable formats.</p><p>To see how our CVs look in practice, you can browse real examples on the <a href='/samples/'>Samples page</a>.</p>",
+    "answer": "<p>You will receive your CV in the following formats:</p><ul><li><strong>Editable Word (.docx)</strong> for ATS and portal submissions</li><li><strong>Final PDF</strong> for email applications and printing</li></ul><p>Some packages also include additional assets, such as LinkedIn copy or executive brand statements, in suitable editable formats.</p><p>To see how our CVs look in practice, you can browse real examples on the <a href='/samples/#samples-grid'>Samples page</a>.</p>",
     "tags": ["deliverables", "formats"]
   },
 
@@ -100,14 +100,14 @@
   "data-handling": {
     "id": "data-handling",
     "question": "How do you handle my data and documents?",
-    "answer": "<p>We treat your CV, documents and personal information as confidential. In practice, this means:</p><ul><li><strong>Limited access</strong> – only the team members working on your project can see your files.</li><li><strong>Service-only use</strong> – we use your data solely to deliver the services you have requested.</li><li><strong>No third-party marketing</strong> – we do not sell or share your details with third parties for advertising.</li></ul><p>For more on how we protect your data, you can review our <a href='/legal/privacy/'>Privacy Policy</a>.</p>",
+    "answer": "<p>We treat your CV, documents and personal information as confidential. In practice, this means:</p><ul><li><strong>Limited access</strong> – only the team members working on your project can see your files.</li><li><strong>Service-only use</strong> – we use your data solely to deliver the services you have requested.</li><li><strong>No third-party marketing</strong> – we do not sell or share your details with third parties for advertising.</li></ul><p>For more on how we protect your data, you can review our <a href='/legal/privacy/#how-we-use-data'>Privacy Policy</a>.</p>",
     "tags": ["data", "privacy"]
   },
 
   "data-retention": {
     "id": "data-retention",
     "question": "How long do you keep my information?",
-    "answer": "<p>We retain your files for a reasonable period so that we can complete your project, support revisions and assist with future updates. After this window:</p><ul><li><strong>Archiving</strong> – your files may be securely archived for reference.</li><li><strong>Deletion</strong> – older data may be removed in line with our data retention practices.</li></ul><p>For full details, please see our <a href='/legal/privacy/'>Privacy Policy</a>.</p>",
+    "answer": "<p>We retain your files for a reasonable period so that we can complete your project, support revisions and assist with future updates. After this window:</p><ul><li><strong>Archiving</strong> – your files may be securely archived for reference.</li><li><strong>Deletion</strong> – older data may be removed in line with our data retention practices.</li></ul><p>For full details, please see our <a href='/legal/privacy/#data-retention'>Privacy Policy</a>.</p>",
     "tags": ["data", "privacy", "retention"]
   },
 

@@ -4,11 +4,14 @@
     "name": "Starter CV Pack",
     "description": "Get Noticed – ATS-ready CV and cover letter for graduate and early-career roles.",
     "priceRange": "KSh 2,500",
+    "originalPrice": "KSh 3,000",
+    "currentPrice": "KSh 2,500",
+    "priceNote": "Graduate rate for first-time CV projects.",
     "features": [
       "Professionally written CV (Word & PDF) tailored to your first roles",
       "Basic cover letter aligned to your main target role",
       "ATS keywording for Kenyan job boards (corporate portals)",
-      "Standard delivery: 3–4 business days once we receive your completed intake form and documents",
+      "<strong>Standard Delivery:</strong> 3–4 business days once we receive your completed intake form and documents",
       "Up to 2 revision rounds within 7 days",
       "Optional LinkedIn Refresh add-on (headline & summary) available"
     ],
@@ -25,7 +28,7 @@
       "Tailored cover letter for your primary target role",
       "LinkedIn headline & summary refresh tuned for recruiter search (upgradeable to full LinkedIn revamp)",
       "Role- and industry-specific ATS keyword mapping",
-      "Standard delivery: 3–4 business days once we receive your completed intake form and documents",
+      "<strong>Standard Delivery:</strong> 3–4 business days once we receive your completed intake form and documents",
       "Up to 2 revision rounds within 10 days"
     ],
     "ctaLabel": "Choose Professional",
@@ -42,7 +45,7 @@
       "Full LinkedIn Profile Revamp (headline, about, experience, skills, structure)",
       "Career statement and positioning narrative aligned to your growth path",
       "Industry-specific keyword mapping for ATS and recruiter search",
-      "Standard delivery: 4–5 business days once we receive your completed intake form and documents"
+      "<strong>Standard Delivery:</strong> 4–5 business days once we receive your completed intake form and documents"
     ],
     "ctaLabel": "Choose Advanced",
     "highlight": false
@@ -57,7 +60,7 @@
       "Leadership brand statement articulating your value, scope and results",
       "Full LinkedIn Revamp across about, experience, skills and profile structure",
       "Global keyword strategy for Kenyan and international markets",
-      "Standard delivery: 5–7 business days once we receive your completed intake form and documents",
+      "<strong>Standard Delivery:</strong> 5–7 business days once we receive your completed intake form and documents",
       "Priority editing support during the engagement window"
     ],
     "ctaLabel": "Choose Executive",

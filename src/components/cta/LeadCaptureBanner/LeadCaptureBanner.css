@@ -91,16 +91,10 @@
   align-items: stretch;
 }
 
-.lead .btn {
+/* Layout only: allow the CTA to fill the actions column on narrow viewports,
+   while leaving all visual styling to the Button component. */
+.lead__actions :where(a.btn, button.btn) {
   inline-size: 100%;
-  min-height: 44px;
-  border-radius: var(--radius-lg);
-}
-
-/* Accent CTA colour while reusing global .btn styles */
-.lead .btn.btn-primary {
-  background-color: var(--color-accent);
-  color: var(--color-text-on-accent, #fff);
 }
 
 /* ===== Typography ===== */
@@ -143,7 +137,7 @@
     justify-content: flex-start;
   }
 
-  .lead .btn {
+  .lead__actions :where(a.btn, button.btn) {
     inline-size: auto;
   }
 }
@@ -198,15 +192,6 @@
   .lead {
     max-width: calc(var(--container-max) - 2 * var(--space-4));
   }
-}
-
-/* ===== Focus visibility ===== */
-
-.lead :where(a, button):focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 3px var(--color-light);
-  border-radius: var(--radius-md);
 }
 
 /* ===== Reduced motion ===== */
