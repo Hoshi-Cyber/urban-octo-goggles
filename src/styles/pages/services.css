@@ -412,9 +412,32 @@
   text-underline-offset: 0.12em;
 }
 
+/* Main bundle price – pill (default) */
+.service-bundles__price-now {
+  font-size: clamp(0.96rem, 0.92rem + 0.45vw, 1.22rem); /* slightly reduced */
+  font-weight: 800;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  background: color-mix(
+    in oklab,
+    var(--color-accent, var(--color-gold)) 20%,
+    var(--color-surface) 80%
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-accent, var(--color-gold)) 32%,
+      transparent
+    );
+}
+
 /* Main bundle price – pill */
 .service-bundles__price-now {
-  font-size: clamp(1.02rem, 0.96rem + 0.5vw, 1.3rem);
+  font-size: clamp(0.96rem, 0.92rem + 0.45vw, 1.22rem); /* slightly reduced */
   font-weight: 800;
   color: var(--color-primary);
   display: inline-flex;
@@ -434,6 +457,10 @@
       transparent
     );
 }
+
+
+
+
 
 /* Savings meta line (if ever used) */
 .service-bundles__price-save {

@@ -4,21 +4,22 @@
 [data-section="service-features"] {
   background: color-mix(
     in oklab,
-    var(--color-surface-alt, var(--color-surface)) 94%,
-    var(--color-primary-soft, var(--color-primary)) 6%
+    var(--color-surface-alt, var(--color-surface)) 96%,
+    var(--color-primary-soft, var(--color-primary)) 4%
   );
-  padding-block: var(--space-8);
+  /* tighter, responsive vertical spacing to reduce top gap */
+  padding-block: clamp(var(--space-4), 4vw, var(--space-6));
 }
 
 @media (min-width: 640px) {
   [data-section="service-features"] {
-    padding-block: var(--space-10);
+    padding-block: clamp(var(--space-5), 3vw, var(--space-7));
   }
 }
 
 @media (min-width: 1280px) {
   [data-section="service-features"] {
-    padding-block: var(--space-12);
+    padding-block: clamp(var(--space-6), 2vw, var(--space-8));
   }
 }
 
@@ -26,7 +27,7 @@
 .features__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 @media (min-width: 640px) {
@@ -43,23 +44,25 @@
 
 /* Card */
 .features__item {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   min-block-size: 100%;
   background: color-mix(
     in oklab,
-    var(--color-surface) 90%,
-    var(--color-primary-soft, var(--color-primary)) 10%
+    var(--color-surface) 94%,
+    var(--color-primary-soft, var(--color-primary)) 6%
   );
-  border: 1px solid color-mix(
-    in oklab,
-    var(--color-primary) 18%,
-    var(--color-surface) 82%
-  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-primary) 18%,
+      var(--color-surface) 82%
+    );
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: var(--space-6);
+  padding: var(--space-4) var(--space-4) var(--space-5);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
@@ -73,8 +76,8 @@
   border-color: var(--color-accent);
   background: color-mix(
     in oklab,
-    var(--color-surface) 86%,
-    var(--color-primary-soft, var(--color-primary)) 14%
+    var(--color-surface) 90%,
+    var(--color-primary-soft, var(--color-primary)) 10%
   );
 }
 
@@ -85,28 +88,34 @@
   border-radius: 9999px;
   background: color-mix(
     in oklab,
-    var(--color-accent) 20%,
-    var(--color-surface) 80%
+    var(--color-accent) 22%,
+    var(--color-surface) 78%
   );
-  border: 1px solid color-mix(
-    in oklab,
-    var(--color-accent) 40%,
-    transparent
-  );
+  border: 1px solid
+    color-mix(
+      in oklab,
+      var(--color-accent) 42%,
+      transparent
+    );
   padding: var(--space-2);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
   box-shadow: var(--shadow-xs, 0 1px 2px rgba(15, 23, 42, 0.08));
 }
 
 /* Typography rhythm */
 .features__item .h3 {
   margin-top: 0;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
+  font-size: clamp(var(--fs-md), 0.35vw + var(--fs-md), var(--fs-lg));
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--color-primary);
 }
 
 .features__item p {
   margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
   color: var(--color-text);
 }
 

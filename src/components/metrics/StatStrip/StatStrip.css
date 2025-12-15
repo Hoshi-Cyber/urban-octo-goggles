@@ -86,7 +86,11 @@
   font-family: var(--font-sans);
   font-weight: 700;
   line-height: 1.1;
-  font-size: var(--fs-2xl);
+  font-size: clamp(
+    calc(var(--fs-lg) * 0.9),
+    0.8vw + calc(var(--fs-lg) * 0.9),
+    calc(var(--fs-2xl) * 0.9)
+  );
   color: var(--color-primary);
 }
 
@@ -98,7 +102,7 @@
   max-width: 32ch;
 }
 
-/* sm ≥640px – keep 2 columns, increase value size and center for balance */
+/* sm ≥640px – keep 2 columns, center items for balance */
 @media (min-width: 640px) {
   .statstrip__inner {
     padding-block: var(--space-6);
@@ -112,10 +116,6 @@
   .statstrip__item {
     align-items: center;
     text-align: center;
-  }
-
-  .statstrip__value {
-    font-size: var(--fs-3xl);
   }
 
   .statstrip__label {
@@ -136,10 +136,6 @@
   .statstrip__list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-5) var(--space-8);
-  }
-
-  .statstrip__value {
-    font-size: var(--fs-4xl);
   }
 
   .statstrip__label {

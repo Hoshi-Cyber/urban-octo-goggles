@@ -4,23 +4,49 @@ import Button from "../../components/cta/Button/index.astro";
 import "../../styles/pages/services.css";
 import FAQAccordion from "../../components/faq/FAQAccordion/index.astro";
 import { getFaqsForSlug } from "../../data/faqs/faqs.data";
+import HowItWorks from "@/components/sections/shared/HowItWorks/index.astro";
 
 const title = "Professional CV Writing in Kenya";
 const description =
   "Premium, ATS-optimised CV writing for Kenyan professionals seeking stronger positioning, clearer impact, and more consistent interview callbacks.";
 
+
+
 const hero = {
-  eyebrow: "Strategic, ATS-ready CVs for the Kenyan job market",
+  eyebrow: "ATS-READY CVS · KENYA",
   image: "/assets/images/services/cv-writing-hero-image.webp",
   imageAlt:
     "Clean, modern CV layout displayed alongside an application-tracking dashboard",
   actions: [
-    { label: "Get Started", href: "/contact/" },
-    { label: "See Pricing / Compare Packages", href: "/pricing/" },
+    {
+      label: "Start Your CV Rewrite",
+      href: "https://wa.me/254115117501?text=Hi%20CVWriting.co.ke,%20I%E2%80%99m%20interested%20in%20your%20CV%20writing%20service.%0A%0ASource:%20/services/cv-writing%0ACTA:%20hero-primary%0A%0AWhat%20should%20I%20send%20first%20to%20get%20started%3F",
+      variant: "primary",
+      cta: "cv-writing-hero-primary-whatsapp",
+      target: "_blank",
+      rel: "noopener",
+    },
+    {
+      label: "See Packages & Pricing",
+      href: "/pricing/#pricing",
+      variant: "ghost",
+      cta: "cv-writing-hero-secondary-pricing",
+    },
   ],
 };
 
-
+const aside = {
+  eyebrow: "Pricing",
+  title: "Compare packages",
+  body: "Transparent pricing for every career stage.",
+  actions: [
+    { label: "See Packages & Pricing", href: "/pricing/#pricing" },
+    {
+      label: "Start via WhatsApp",
+      href: "https://wa.me/254115117501?text=Hi%20CVWriting.co.ke,%20I%E2%80%99m%20interested%20in%20your%20CV%20writing%20service.%0A%0ASource:%20/services/cv-writing%0ACTA:%20aside-secondary%0A%0AWhat%20should%20I%20send%20first%20to%20get%20started%3F",
+    },
+  ],
+};
 
 type CvFaqItem = {
   question: string;
@@ -51,7 +77,9 @@ if (cvFaqPage) {
 }
 ---
 
-<ServicePage {title} {description} {hero}>
+
+<ServicePage {title} {description} {hero} {aside}>
+
 
   <!-- Main article content -->
   <h2>Why a professional CV matters in Kenya</h2>
@@ -204,72 +232,7 @@ if (cvFaqPage) {
     </section>
 
     <!-- How it works -->
-    <section class="how-it-works" aria-labelledby="cv-how-it-works">
-      <div class="how-it-works__inner">
-        <header class="how-it-works__head">
-          <h2 id="cv-how-it-works" class="h2 how-it-works__heading">
-            How our CV writing process works
-          </h2>
-          <p class="how-it-works__intro">
-            A structured, outcome-focused process designed to reduce uncertainty
-            and keep you informed at each stage.
-          </p>
-        </header>
-
-        <div class="how-it-works__grid">
-          <!-- STEP 1 -->
-          <article class="how-it-works__step">
-            <p class="how-it-works__step-label">Step 1 · Discovery</p>
-            <h3 class="h4 how-it-works__step-title">Clarify your goals</h3>
-            <p class="how-it-works__step-body">
-              We review your existing CV, understand your target roles, and map
-              the positioning needed to present you clearly.
-            </p>
-          </article>
-
-          <!-- STEP 2 -->
-          <article class="how-it-works__step">
-            <p class="how-it-works__step-label">Step 2 · Drafting</p>
-            <h3 class="h4 how-it-works__step-title">
-              Build a structured, impact-led CV
-            </h3>
-            <p class="how-it-works__step-body">
-              We craft your CV using modern formatting, quantified achievements,
-              and recruiter-friendly language aligned to Kenyan expectations.
-            </p>
-          </article>
-
-          <!-- STEP 3 -->
-          <article class="how-it-works__step">
-            <p class="how-it-works__step-label">Step 3 · Review &amp; Revision</p>
-            <h3 class="h4 how-it-works__step-title">
-              Refine tone, emphasis, and targeting
-            </h3>
-            <p class="how-it-works__step-body">
-              You review the first draft and share your feedback. We refine
-              clarity, structure, and messaging so the CV reflects your
-              strengths accurately and aligns with your intended career
-              direction.
-            </p>
-          </article>
-
-          <!-- STEP 4 -->
-          <article class="how-it-works__step">
-            <p class="how-it-works__step-label">
-              Step 4 · Final Polish &amp; Delivery
-            </p>
-            <h3 class="h4 how-it-works__step-title">
-              Prepare a clean, interview-ready version
-            </h3>
-            <p class="how-it-works__step-body">
-              We apply final edits to ensure consistency, precision, and
-              ATS-safe formatting. You receive the polished CV in Word and
-              PDF—ready for applications and recruiter sharing.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
+<HowItWorks />
 
     <!-- Testimonial – own section with infinite carousel -->
     <section class="section testimonial-section" aria-labelledby="cv-testimonial">
@@ -630,7 +593,7 @@ if (cvFaqPage) {
                 <Button
                   label="See Professional Impact Pack"
                   href="/pricing/#pricing"
-                  variant="primary"
+                  variant="accent"
                   size="sm"
                   cta="cv-bundles-professional-impact"
                 />
@@ -683,7 +646,7 @@ if (cvFaqPage) {
                 <Button
                   label="View Starter CV Pack"
                   href="/pricing/#pricing"
-                  variant="primary"
+                  variant="accent"
                   size="sm"
                   cta="cv-bundles-starter"
                 />
@@ -735,7 +698,7 @@ if (cvFaqPage) {
                 <Button
                   label="View Advanced Growth Pack "
                   href="/pricing/#pricing"
-                  variant="primary"
+                  variant="accent"
                   size="sm"
                   cta="cv-bundles-advanced-growth"
                 />
@@ -791,7 +754,7 @@ if (cvFaqPage) {
                 <Button
                   label="See Executive Brand Suite"
                   href="/pricing/#pricing"
-                  variant="primary"
+                  variant="accent"
                   size="sm"
                   cta="cv-bundles-executive-brand"
                 />

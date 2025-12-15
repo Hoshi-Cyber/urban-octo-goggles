@@ -14,7 +14,16 @@ import StructuredData from "@/components/seo/StructuredData/index.astro";
 import PricingTable from "@/components/plan/PricingTable/index.astro";
 import StatStrip from "@/components/metrics/StatStrip/index.astro";
 import testimonials from "@/data/testimonials.json";
+import HowItWorks from "@/components/sections/shared/HowItWorks/index.astro";
 import site from "@/site.config";
+
+// Fix Plan 009 (3.1): Import FAQAccordion and data helper
+import FAQAccordion from "@/components/faq/FAQAccordion/index.astro";
+import { getHomeQuickFaqItems } from "@/data/faqs/faqs.data";
+
+// Home page–scoped styles (Quick FAQ, etc.)
+import "@/styles/pages/home.css";
+
 
 const title = "Professional CV Writing Services in Kenya";
 const description =
@@ -26,62 +35,101 @@ const seo = {
 };
 
 const hero = {
-  eyebrow: "CV Writing Kenya",
+  eyebrow: "CV WRITING · KENYA",
   title,
   sub: description,
   image: "/assets/images/hero/cvw_hero_homepage_banner_image.webp",
   alt: "Professional CV writing for the Kenyan job market",
-  actions: [{ label: "Get Started", href: "/contact/" }],
+  actions: [
+    {
+      label: "Start via WhatsApp",
+      href: "https://wa.me/254115117501?text=Hi%20CVWriting.co.ke,%20I%E2%80%99m%20interested%20in%20your%20CV%20writing%20service.%0A%0ASource:%20/%0ACTA:%20home-hero-primary%0A%0AWhat%20should%20I%20send%20first%20to%20get%20started%3F",
+      variant: "primary",
+      cta: "home-hero-primary-whatsapp",
+      target: "_blank",
+      rel: "noopener",
+    },
+    {
+      label: "See Packages & Pricing",
+      href: "/pricing/#pricing",
+      variant: "ghost",
+      cta: "home-hero-secondary-pricing",
+    },
+  ],
 };
 
 const stats = [
   { value: "1k+", label: "CVs delivered" },
-  { value: "98%", label: "ATS pass rate" },
-  { value: "95%", label: "Client satisfaction" },
+  { value: "ATS-ready", label: "Structure & keywords" },
+  { value: "High", label: "Client satisfaction" },
   { value: "72h", label: "Typical turnaround" },
 ];
 
 const features = {
   items: [
     {
-      title: "1k+ CVs delivered",
+      title: "Strategic CV rewrites",
       body:
-        "CVs written for graduates, mid-career professionals and senior leaders across Kenya.",
+        "Achievement-led CVs tailored to your level, industry, and target roles.",
     },
     {
-      title: "95% client satisfaction",
+      title: "ATS-ready structure & keywords",
       body:
-        "Consistent positive feedback and repeat engagements from local and diaspora clients.",
+        "Clean formatting and keyword mapping for job boards and corporate portals.",
     },
     {
-      title: "98% ATS pass rate",
+      title: "Cover letters that connect your story",
       body:
-        "Documents structured and keyworded for BrighterMonday, Fuzu and corporate portals.",
-    },
-    {
-      title: "CV writing",
-      body:
-        "Achievement-led CVs tailored to your industry, level and target role.",
-    },
-    {
-      title: "Cover letters",
-      body:
-        "Clear, targeted letters that connect your story to role requirements.",
+        "Clear, targeted letters aligned to role requirements—not generic templates.",
     },
     {
       title: "LinkedIn optimisation",
       body:
-        "Profiles tuned for recruiter search, credibility and personal brand.",
+        "Profiles tuned for recruiter search, credibility, and consistent positioning.",
+    },
+    {
+      title: "Kenya + diaspora-ready branding",
+      body:
+        "Positioning that works for local roles, remote opportunities, and cross-border moves.",
+    },
+    {
+      title: "Clear process, low friction",
+      body:
+        "Straightforward intake, structured drafts, and a focused revision window.",
     },
   ],
 };
 
+const waNumber = "254115117501";
+const waText = [
+  "Hi CVWriting.co.ke, I’m interested in your CV writing service.",
+  "",
+  "Source: /",
+  "CTA: lead-banner-primary",
+  "",
+  "What should I send first to get started?",
+].join("\n");
+
+const pricingHelperWaText = [
+  "Hi CVWriting.co.ke, I’m not sure which CV package fits my career stage.",
+  "",
+  "Source: /#pricing",
+  "CTA: home-pricing-helper-whatsapp",
+  "",
+  "Here’s a quick summary of my current role and goals:",
+].join("\n");
+
 const lead = {
-  title: "Ready to get more interviews?",
-  sub: "Choose a plan or talk to a specialist. No hidden fees, no subscriptions.",
-  primaryHref: "/contact/",
-  primaryLabel: "Get Started Today",
+  title: "Ready to upgrade your CV?",
+  sub: "Choose a plan—or message us and we’ll point you to the right package in minutes.",
+  primaryHref: `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`,
+  primaryLabel: "Start via WhatsApp",
+  secondaryHref: "/pricing/#pricing",
+  secondaryLabel: "Compare packages",
 };
+
+// Fix Plan 009 (3.1): Homepage quick FAQ items (data-only helper) :contentReference[oaicite:1]{index=1}
+const quickFaqItems = getHomeQuickFaqItems();
 
 const isDev = import.meta.env.DEV;
 const siteUrl = isDev ? "" : site.siteUrl;
@@ -115,6 +163,12 @@ const webJsonLd = {
   <!-- Services -->
   <FeatureList {...features} />
 
+
+<!-- How it works -->
+<HowItWorks />
+
+
+
   <!-- Pricing preview -->
   <section class="section" id="pricing">
     <div class="container">
@@ -124,7 +178,22 @@ const webJsonLd = {
           Transparent CV Writing Packages in Kenya
         </h2>
         <p class="section-head__sub">
-          Choose the right package for your career stage. No hidden fees.
+          Pick a one-time package for your career stage. Upgrade with LinkedIn, cover letters, or faster delivery.
+        </p>
+        <p class="section-head__helper">
+          Not sure which package fits?
+          <a
+            href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
+              pricingHelperWaText
+            )}`}
+            class="section-head__helper-link"
+            data-cta="home-pricing-helper-whatsapp"
+            target="_blank"
+            rel="noopener"
+          >
+            Start on WhatsApp
+          </a>
+          and we’ll recommend the best option.
         </p>
       </header>
     </div>
@@ -138,6 +207,23 @@ const webJsonLd = {
   <!-- Social proof -->
   <TestimonialStrip {...testimonials} />
 
+
+<!-- Quick FAQ (SEO + objection handling) -->
+  <section class="section home-quick-faq" aria-labelledby="home-quick-faq-title">
+    <div class="container">
+      <FAQAccordion
+        items={quickFaqItems}
+        title="Quick questions about our CV writing service"
+        sub="Short answers to the key questions graduates, mid-career professionals, and executives usually ask before getting started."
+        schema={true}
+      />
+    </div>
+  </section>
+
+
+
+
+
   <!-- Lead capture -->
   <LeadCaptureBanner {...lead} />
 
@@ -149,6 +235,19 @@ const webJsonLd = {
     /* Apply two-row vertical spacing before + after this section */
     #pricing {
       margin-block: calc(var(--space-6) * 2);
+      padding-inline: 0; /* let nested PricingTable control its own gutters */
+    }
+
+    /* On the home page, allow the nested PricingTable band to span the full viewport
+       while keeping its internal card layout and gutters consistent. */
+    #pricing .service-bundles {
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+
+    #pricing .service-bundles > .container {
+      max-width: 100%;
+      padding-inline: var(--container-px);
     }
 
     /* Tight section head: eyebrow + h2 + subtitle with zero internal gaps */
@@ -181,5 +280,29 @@ const webJsonLd = {
       max-width: none;
       display: block;
     }
+
+    .section-head__helper {
+      margin-top: var(--space-1);
+      font-size: var(--fs-sm);
+      color: color-mix(
+        in oklab,
+        var(--color-text) 70%,
+        var(--color-muted) 30%
+      );
+      max-width: 48rem;
+    }
+
+    .section-head__helper-link {
+      font-weight: 600;
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-underline-offset: 0.16em;
+    }
+
+    .section-head__helper-link:hover {
+      text-decoration-thickness: 2px;
+    }
+
+
   </style>
 </BaseLayout>

@@ -97,6 +97,13 @@
     "tags": ["ats", "cv-format"]
   },
 
+  "ats-and-kenyan-portals": {
+    "id": "ats-and-kenyan-portals",
+    "question": "Can you optimise for ATS and Kenyan job portals?",
+    "answer": "<p>Yes. All our CVs are structured to work well with applicant tracking systems and major Kenyan job portals, including corporate career sites and leading local job boards.</p><p>We use clean formatting, sensible headings and role-specific keywords so your CV is easy to scan for both automated systems and human reviewers across the Kenyan market.</p>",
+    "tags": ["ats", "cv-format", "kenya", "job-portals"]
+  },
+
   "data-handling": {
     "id": "data-handling",
     "question": "How do you handle my data and documents?",
@@ -123,5 +130,12 @@
     "question": "Can I upgrade my package later?",
     "answer": "<p>Yes. You have several options if your needs change:</p><ul><li>You can upgrade to a higher package by paying the difference in fees, provided the work has not already progressed beyond a reasonable point in the process.</li><li>You can add extras such as full LinkedIn revamp, extra cover letters or ATS reports as separate add-ons at any stage.</li><li>Downgrades and partial refunds are generally not available once work has started.</li></ul><p>For a detailed view of available upgrades and add-ons, see the Add-ons section on our <a href='/pricing/#addons'>Pricing page</a>.</p>",
     "tags": ["pricing", "packages", "upgrade"]
+  },
+
+  "bundle-cv-linkedin-cover-letter": {
+    "id": "bundle-cv-linkedin-cover-letter",
+    "question": "Can you bundle CV + LinkedIn + cover letter?",
+    "answer": "<p>Yes. Several of our packages combine CV writing with LinkedIn optimisation and tailored cover letters so your documents and online profile tell a consistent story.</p><p>You can either choose a bundle package from the start or upgrade later by adding LinkedIn and cover letter as add-ons, depending on your needs and budget.</p>",
+    "tags": ["cv-writing", "bundles", "linkedin", "cover-letter", "pricing"]
   }
 }

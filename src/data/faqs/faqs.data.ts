@@ -118,6 +118,31 @@ function resolvePage(config: FaqPageConfig): ResolvedFaqPage {
   };
 }
 
+// Home page Quick FAQ selector (Fix Plan 009 – section 2.1)
+const HOME_QUICK_FAQ_IDS: FaqItemId[] = [
+  "who-we-serve",
+  "ats-and-kenyan-portals",
+  "turnaround-time-cv-delivery",
+  "what-to-provide-to-get-started",
+  "revisions-included",
+  "bundle-cv-linkedin-cover-letter",
+];
+
+/**
+ * Quick FAQ items for the home page strip.
+ * Returns resolved items ready for FAQAccordion.
+ */
+export function getHomeQuickFaqItems(): ResolvedFaqItem[] {
+  const items: ResolvedFaqItem[] = [];
+
+  for (const id of HOME_QUICK_FAQ_IDS) {
+    const resolved = resolveItem(id);
+    if (resolved) items.push(resolved);
+  }
+
+  return items;
+}
+
 // Public API – per-page loaders
 
 /**

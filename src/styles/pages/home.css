@@ -1,0 +1,291 @@
+/* ================================
+   Home – Quick FAQ (section wrapper)
+   FIXED (for real):
+   - Removes :global() because this is a normal .css file
+   - Force vertical stacking at ALL breakpoints
+   - Full-width, left-aligned header
+   - Premium, restrained visual treatment
+   ================================ */
+
+.home-quick-faq {
+  padding-block: clamp(var(--space-7), 3.2vw, var(--space-10));
+  position: relative;
+  isolation: isolate;
+
+  background:
+    radial-gradient(
+      900px 420px at 12% 10%,
+      color-mix(in oklab, var(--color-primary) 10%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      780px 360px at 88% 18%,
+      color-mix(in oklab, var(--color-accent) 9%, transparent) 0%,
+      transparent 62%
+    ),
+    color-mix(in oklab, var(--color-surface) 92%, var(--color-background) 8%);
+
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-primary) 12%, transparent);
+}
+
+/* Soft inner highlight for polish */
+.home-quick-faq::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-background) 70%, transparent) 0%,
+    transparent 30%
+  );
+  opacity: 0.7;
+  z-index: -1;
+}
+
+/* Respect global container system */
+.home-quick-faq > .container {
+  width: 100%;
+}
+
+/* --------------------------------
+   HEADER — HARD OVERRIDE
+   Blocks global sections.css rule that switches .section-head to 2 columns at ≥768px
+   -------------------------------- */
+
+.home-quick-faq .faq-accordion__head,
+.home-quick-faq .section-head,
+.home-quick-faq [data-faq-head] {
+  display: grid !important;
+  grid-template-columns: 1fr !important; /* FORCE stack */
+  grid-auto-flow: row;
+
+  align-items: start !important;
+  justify-items: start !important;
+  text-align: left !important;
+
+  gap: var(--space-1);
+  margin-bottom: clamp(var(--space-4), 2vw, var(--space-6));
+
+  width: 100%;
+  max-width: none;
+}
+
+/* Extra safety at the exact breakpoint where the global rule applies */
+@media (min-width: 768px) {
+  .home-quick-faq .faq-accordion__head,
+  .home-quick-faq .section-head,
+  .home-quick-faq [data-faq-head] {
+    grid-template-columns: 1fr !important;
+    align-items: start !important;
+    justify-items: start !important;
+    text-align: left !important;
+  }
+}
+
+/* --------------------------------
+   TITLE — FULL WIDTH, LEFT
+   -------------------------------- */
+
+.home-quick-faq .faq-accordion__title,
+.home-quick-faq .section-title,
+.home-quick-faq [data-faq-title] {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  color: var(--color-primary);
+  text-align: left !important;
+  text-wrap: balance;
+}
+
+/* --------------------------------
+   SUBTITLE — FULL WIDTH, LEFT
+   -------------------------------- */
+
+.home-quick-faq .faq-accordion__sub,
+.home-quick-faq .section-sub,
+.home-quick-faq [data-faq-sub] {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  text-align: left !important;
+
+  color: color-mix(in oklab, var(--color-text) 86%, var(--color-muted) 14%);
+}
+
+/* Kill global max-width clamp on .section-sub */
+.home-quick-faq .section-sub {
+  max-width: none !important;
+}
+
+/* --------------------------------
+   ACCORDION PANEL — REFINED
+   -------------------------------- */
+
+.home-quick-faq .faq-accordion,
+.home-quick-faq [data-faq-accordion] {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      720px 320px at 92% 0%,
+      color-mix(in oklab, var(--color-accent) 10%, transparent) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      680px 360px at 0% 100%,
+      color-mix(in oklab, var(--color-primary) 8%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--color-background);
+
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 14%, var(--color-neutral-100));
+
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 1px color-mix(in oklab, var(--color-background) 70%, transparent) inset;
+
+  padding: clamp(var(--space-4), 2.2vw, var(--space-6));
+}
+
+/* Subtle brand accent line */
+.home-quick-faq .faq-accordion::after,
+.home-quick-faq [data-faq-accordion]::after {
+  content: "";
+  position: absolute;
+  left: clamp(var(--space-4), 2.2vw, var(--space-6));
+  right: clamp(var(--space-4), 2.2vw, var(--space-6));
+  bottom: var(--space-3);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 78%, var(--color-accent) 22%),
+    color-mix(in oklab, var(--color-accent) 68%, var(--color-primary) 32%)
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Item dividers */
+.home-quick-faq .faq-item,
+.home-quick-faq [data-faq-item] {
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, var(--color-neutral-100));
+}
+
+.home-quick-faq .faq-item:first-child,
+.home-quick-faq [data-faq-item]:first-child {
+  border-top: 0;
+}
+
+/* Hover affordance */
+.home-quick-faq .faq-question,
+.home-quick-faq [data-faq-question] {
+  border-radius: var(--radius-md);
+}
+
+.home-quick-faq .faq-question:hover,
+.home-quick-faq [data-faq-question]:hover {
+  background: var(--color-card-hover);
+}
+
+/* --------------------------------
+   Premium list styling inside FAQ answers
+   Scoped to Home Quick FAQ (no dependency on .servicePage)
+   -------------------------------- */
+
+/* Unordered lists – custom accent bullets, left-aligned content */
+.home-quick-faq :where(.faq, .faq-accordion) :where(ul) {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding-left: 0;
+}
+
+.home-quick-faq :where(.faq, .faq-accordion) :where(ul li) {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-block: 0.2rem;
+}
+
+.home-quick-faq :where(.faq, .faq-accordion) :where(ul li)::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.65em;
+  inset-inline-start: 0.25rem;
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px
+    color-mix(
+      in oklab,
+      var(--color-accent) 32%,
+      var(--color-surface, var(--color-background)) 68%
+    );
+}
+
+/* Ordered lists – numbered pills with clear hierarchy */
+.home-quick-faq :where(.faq, .faq-accordion) :where(ol) {
+  counter-reset: faq-ol-counter;
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding-left: 0;
+}
+
+.home-quick-faq :where(.faq, .faq-accordion) :where(ol li) {
+  counter-increment: faq-ol-counter;
+  position: relative;
+  padding-left: 2rem;
+  margin-block: 0.3rem;
+}
+
+.home-quick-faq :where(.faq, .faq-accordion) :where(ol li)::before {
+  content: counter(faq-ol-counter);
+  position: absolute;
+  inset-block-start: 0.25rem;
+  inset-inline-start: 0;
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-on-primary, #ffffff);
+  background: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-accent) 30%
+  );
+}
+
+/* Tighten spacing between list and following paragraphs inside answers */
+.home-quick-faq :where(.faq, .faq-accordion) :where(ul + p, ol + p) {
+  margin-top: var(--space-3);
+}
+
+/* Accessibility */
+.home-quick-faq :focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-quick-faq * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -58,8 +58,11 @@ const heroImageAlt =
                 <Button
                   label={a.label}
                   href={a.href}
-                  variant="primary"
-                  size="md"
+                  variant={a.variant ?? "primary"}
+                  size={a.size ?? "md"}
+                  cta={a.cta}
+                  target={a.target}
+                  rel={a.rel}
                 />
               ))}
             </div>
@@ -84,72 +87,83 @@ const heroImageAlt =
       </div>
     </section>
 
-    <!-- MAIN CONTENT + ASIDE -->
-    <section class="section section--balanced">
-      <div class="container grid">
-        <article class="content prose">
-          <slot />
-        </article>
 
-        <aside class="aside" aria-label="Quick actions">
-          <div class="card aside-card">
-            <p class="eyebrow aside-eyebrow">
-              {aside.eyebrow}
-            </p>
-            <h2 class="h3 card-title">
-              {aside.title}
-            </h2>
-            <p class="card-sub">
-              {aside.body}
-            </p>
+   <!-- MAIN CONTENT + ASIDE -->
+<section class="section section--balanced">
+  <div class="container grid">
+    <article class="content prose">
+      <slot />
+    </article>
 
-            <div class="cta-col">
-              <Button
-                label={aside.actions?.[0]?.label ?? "View Packages"}
-                href={aside.actions?.[0]?.href ?? "/pricing/"}
-                variant="primary"
-                size="md"
-                block={true}
-                cta="service-aside-primary"
-              />
-              <Button
-                label={aside.actions?.[1]?.label ?? "Talk to us"}
-                href={aside.actions?.[1]?.href ?? "/contact/"}
-                variant="ghost"
-                size="md"
-                block={true}
-                cta="service-aside-secondary"
-              />
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
+    <aside class="aside" aria-label="Quick actions">
+      <div class="card aside-card">
+        <p class="eyebrow aside-eyebrow">
+          {aside?.eyebrow ?? "Pricing"}
+        </p>
+        <h2 class="h3 card-title">
+          {aside?.title ?? "Compare packages"}
+        </h2>
+        <p class="card-sub">
+          {aside?.body ?? "Transparent pricing for every career stage."}
+        </p>
 
-    <!-- Optional band(s) between main content and features -->
-    <slot name="after-main" />
-
-    <!-- FEATURES -->
-    {Array.isArray(features) && features.length > 0 && (
-      <section
-        class="section section--tight"
-        aria-labelledby="service-features"
-      >
-        <div class="container">
-          <div class="features">
-            {features.map((f) => (
-              <article class="feature">
-                <h3 class="h3 feature-title">
-                  {f.title}
-                </h3>
-                <p class="feature-body">
-                  {f.body}
-                </p>
-              </article>
-            ))}
-          </div>
+        <div class="cta-col">
+          <Button
+            label={aside?.actions?.[0]?.label ?? "See Packages & Pricing"}
+            href={aside?.actions?.[0]?.href ?? "/pricing/#pricing"}
+            variant={aside?.actions?.[0]?.variant ?? "primary"}
+            size={aside?.actions?.[0]?.size ?? "md"}
+            block={true}
+            cta={aside?.actions?.[0]?.cta ?? "service-aside-primary"}
+            target={aside?.actions?.[0]?.target}
+            rel={aside?.actions?.[0]?.rel}
+          />
+          <Button
+            label={aside?.actions?.[1]?.label ?? "Start via WhatsApp"}
+            href={
+              aside?.actions?.[1]?.href ??
+              `https://wa.me/254115117501?text=Hi%20CVWriting.co.ke,%20I%E2%80%99m%20interested%20in%20your%20CV%20writing%20service.%0A%0ASource:%20${encodeURIComponent(
+                Astro.url.pathname
+              )}%0ACTA:%20aside-secondary%0A%0AWhat%20should%20I%20send%20first%20to%20get%20started%3F`
+            }
+            variant={aside?.actions?.[1]?.variant ?? "ghost"}
+            size={aside?.actions?.[1]?.size ?? "md"}
+            block={true}
+            cta={aside?.actions?.[1]?.cta ?? "service-aside-secondary"}
+            target={aside?.actions?.[1]?.target}
+            rel={aside?.actions?.[1]?.rel}
+          />
         </div>
-      </section>
-    )}
+      </div>
+    </aside>
   </div>
+</section>
+
+<!-- Optional band(s) between main content and features -->
+<slot name="after-main" />
+
+<!-- FEATURES -->
+{Array.isArray(features) && features.length > 0 && (
+  <section
+    class="section section--tight"
+    aria-labelledby="service-features"
+  >
+    <div class="container">
+      <div class="features">
+        {features.map((f) => (
+          <article class="feature">
+            <h3 class="h3 feature-title">
+              {f.title}
+            </h3>
+            <p class="feature-body">
+              {f.body}
+            </p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+</div>
 </BaseLayout>
+

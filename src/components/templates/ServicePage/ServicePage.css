@@ -78,34 +78,31 @@
   gap: clamp(var(--space-3), 1.4vw, var(--space-4));
 }
 
-/* Eyebrow – base token */
+/* Eyebrow – base token (shared across service page) */
 .servicePage .eyebrow {
+  margin: 0;
+  font-family: var(--font-sans);
   font-size: var(--fs-xs);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0;
+  line-height: 1.3;
 }
 
-/* Hero eyebrow – higher contrast pill over tinted hero background */
+/* Hero eyebrow – aligned with Hero component styling (no pill) */
 .servicePage .section--hero .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding-inline: var(--space-3);
-  padding-block: calc(var(--space-1) * 0.8);
-  border-radius: var(--radius-full, 999px);
+  font-size: var(--fs-sm);
   font-weight: 600;
-  color: color-mix(
-    in oklab,
-    var(--color-primary) 80%,
-    var(--color-text) 20%
-  );
-  background: color-mix(
-    in oklab,
-    var(--color-surface) 78%,
-    var(--color-primary-soft, var(--color-primary)) 22%
-  );
-  box-shadow: 0 0 0 1px
-    color-mix(in oklab, var(--color-primary) 16%, transparent);
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+/* On very small screens, tighten eyebrow typography (parity with Hero) */
+@media (max-width: 479px) {
+  .servicePage .section--hero .eyebrow {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+  }
 }
 
 /* Hero title – controlled width and spacing */
@@ -280,19 +277,18 @@
   }
 }
 
-/* Aside eyebrow – higher contrast, no washed-out grey */
+/* Aside eyebrow – aligned with Hero / Service hero eyebrow styling */
 .servicePage .aside-eyebrow {
   margin: 0 0 var(--space-1);
+  font-family: var(--font-sans);
   font-size: var(--fs-xs);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-weight: 600;
-  color: color-mix(
-    in oklab,
-    var(--color-primary) 65%,
-    var(--color-text) 35%
-  );
+  line-height: 1.3;
+  color: var(--color-accent);
 }
+
 
 .servicePage .card-title {
   margin: 0 0 var(--space-2);
@@ -888,7 +884,7 @@
   padding-inline: var(--space-3);
   padding-block: calc(var(--space-1) + 1px);
   border-radius: var(--radius-full, 999px);
-  font-size: var(--fs-xs);
+  font-size: calc(var(--fs-xs) * 0.92); /* slightly reduced for visual balance */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -914,7 +910,9 @@
 
 .servicePage .how-it-works__step-title {
   margin: 0 0 var(--space-1);
+  font-size: calc(var(--fs-base) * 0.95); /* slight reduction to rebalance hierarchy */
 }
+
 
 .servicePage .how-it-works__step-body {
   margin: 0;

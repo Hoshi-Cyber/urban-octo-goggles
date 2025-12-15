@@ -93,7 +93,7 @@
 
 /* Layout only: allow the CTA to fill the actions column on narrow viewports,
    while leaving all visual styling to the Button component. */
-.lead__actions :where(a.btn, button.btn) {
+.lead__actions :where(a.btn:not(.btn-link), button.btn:not(.btn-link)) {
   inline-size: 100%;
 }
 

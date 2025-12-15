@@ -1,0 +1,159 @@
+/* ================================
+   How-it-works row
+   ================================ */
+
+.how-it-works {
+  padding-block: clamp(var(--space-6), 3vw, var(--space-8));
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in oklab,
+        var(--color-primary-soft, var(--color-primary)) 16%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface-alt, var(--color-surface)) 96%,
+      #ffffff 4%
+    );
+  border-block: 1px solid
+    color-mix(in oklab, var(--color-primary) 10%, transparent);
+}
+
+.how-it-works__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+/* Ensure heading + intro span full width of section container — ZERO GAP */
+.how-it-works__head {
+  display: grid;
+  gap: 0 !important;
+  margin-bottom: var(--space-4);
+  width: 100%;
+  max-width: none;
+}
+
+.how-it-works__heading,
+.how-it-works__intro {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.how-it-works__intro {
+  font-size: var(--fs-sm);
+  color: color-mix(in oklab, var(--color-text) 88%, var(--color-muted) 12%);
+}
+
+/* 1 / 2 / 4 layout: mobile → tablet → desktop */
+.how-it-works__grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .how-it-works__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+@media (min-width: 1280px) {
+  .how-it-works__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Step cards – crisp, elegant, premium */
+.how-it-works__step {
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(
+        in oklab,
+        var(--color-accent) 14%,
+        transparent
+      )
+        0,
+      transparent 60%
+    ),
+    color-mix(
+      in oklab,
+      var(--color-surface) 96%,
+      var(--color-primary-soft, var(--color-primary)) 4%
+    );
+  border-radius: var(--radius-xl);
+  border: 1px solid
+    color-mix(in oklab, var(--color-primary) 14%, transparent);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom accent bar using brand gradient */
+.how-it-works__step::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-4);
+  bottom: var(--space-2);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-primary) 80%, var(--color-accent) 20%),
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-primary) 30%)
+  );
+  opacity: 0.9;
+}
+
+/* Step label pill – subtle brand tint */
+.how-it-works__step-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start; /* left-align label content */
+  padding-inline: var(--space-3);
+  padding-block: calc(var(--space-1) + 1px);
+  border-radius: var(--radius-full, 999px);
+  font-size: calc(var(--fs-xs) * 0.86); /* slightly further reduced for visual balance */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: left;
+  color: color-mix(
+    in oklab,
+    var(--color-primary) 70%,
+    var(--color-text) 30%
+  );
+  background: color-mix(
+    in oklab,
+    var(--color-primary-soft, var(--color-primary)) 18%,
+    var(--color-surface) 82%
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in oklab,
+      var(--color-primary-soft, var(--color-primary)) 25%,
+      transparent
+    );
+  margin: 0 0 var(--space-2) 0; /* breathing room above the step title */
+}
+
+.how-it-works__step-title {
+  margin: 0 0 var(--space-1);
+  font-size: calc(var(--fs-base) * 0.95); /* slight reduction to rebalance hierarchy */
+}
+
+.how-it-works__step-body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}

@@ -4,9 +4,18 @@ export interface Props {
   sub?: string;
   primaryHref: string;
   primaryLabel: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
 }
 
-const { title, sub, primaryHref, primaryLabel } = Astro.props as Props;
+const {
+  title,
+  sub,
+  primaryHref,
+  primaryLabel,
+  secondaryHref,
+  secondaryLabel,
+} = Astro.props as Props;
 
 import Button from "../Button/index.astro";
 import "./LeadCaptureBanner.css";
@@ -35,6 +44,16 @@ import "./LeadCaptureBanner.css";
             size="md"
             cta="lead-banner:primary"
           />
+
+          {secondaryHref && secondaryLabel && (
+            <Button
+              label={secondaryLabel}
+              href={secondaryHref}
+              variant="link"
+              size="md"
+              cta="lead-banner:secondary"
+            />
+          )}
         </div>
       </div>
     </div>
