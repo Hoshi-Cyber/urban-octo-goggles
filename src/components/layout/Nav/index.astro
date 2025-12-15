@@ -13,6 +13,20 @@ const { class: className = "" } = Astro.props as Props;
 const cta = navItems.find((i: any) => i.cta);
 const main = navItems.filter((i: any) => !i.cta);
 
+/* WhatsApp CTA (prefilled with page source) */
+const WHATSAPP_NUMBER = "254115117501";
+const pageSource = Astro.url?.pathname || "/";
+
+const waText = [
+  "Hi CVWriting.co.ke, I’d like to get started.",
+  "",
+  `Source: ${pageSource}`,
+].join("\n");
+
+const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  waText
+)}`;
+
 /** Canonicalize blog links and enforce slug rules */
 const normalizeHref = (href: string) => {
   if (!href) return href;
@@ -45,6 +59,7 @@ const normalizeHref = (href: string) => {
   }
 };
 ---
+
 <header
   class={`nav sticky top-0 z-50 ${className}`.trim()}
   role="banner"
@@ -136,9 +151,11 @@ const normalizeHref = (href: string) => {
       <!-- Desktop CTA (hidden on mobile via CSS) -->
       {cta && (
         <a
-          href={normalizeHref(cta.href)}
+          href={whatsappHref}
           class="btn btn-primary nav__cta"
           data-cta="nav-cta"
+          target="_blank"
+          rel="noopener"
         >
           <span class="btn__inner">
             <span class="btn__label">{cta.label}</span>
@@ -244,15 +261,17 @@ const normalizeHref = (href: string) => {
         )}
         {cta && (
           <li class="nav__drawerCta">
-            <p class="nav__drawerEyebrow">Get Started</p>
+            <p class="nav__drawerEyebrow">Start here</p>
             <p class="nav__drawerTagline">
-              Strategic CVs, cover letters and LinkedIn profiles for Kenyan
-              professionals.
+              ATS-optimised CVs, cover letters and LinkedIn profiles—built for
+              shortlists.
             </p>
             <a
-              href={normalizeHref(cta.href)}
+              href={whatsappHref}
               class="btn btn-primary nav__drawerCtaButton"
               data-cta="mnav-cta"
+              target="_blank"
+              rel="noopener"
             >
               <span class="btn__inner">
                 <span class="btn__label">{cta.label}</span>
@@ -404,9 +423,7 @@ const normalizeHref = (href: string) => {
         }
 
         // Close any open desktop submenu
-        var openItem = root.querySelector(
-          ".nav__item--hasChildren.is-open"
-        );
+        var openItem = root.querySelector(".nav__item--hasChildren.is-open");
         if (openItem) {
           closeAllSubmenus();
         }

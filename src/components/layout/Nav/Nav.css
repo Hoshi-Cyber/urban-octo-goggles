@@ -34,30 +34,34 @@
   flex: 0 1 auto;
 }
 
+/* UPDATED: responsive brand icon sizing (controlled, premium) */
 .nav__brandIcon {
-  inline-size: 28px;
-  block-size: 28px;
+  inline-size: clamp(30px, 2.2vw, 40px);
+  block-size: clamp(30px, 2.2vw, 40px);
   border-radius: var(--radius-md);
   flex: 0 0 auto;
 }
 
+/* UPDATED: responsive brand text sizing (never overwhelming)
+   CHANGE: Inter font + primary green token */
 .nav__brandText {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  line-height: 1.25;
+  font-family: Inter, var(--font-sans, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif);
+  font-size: clamp(var(--fs-base), 0.55vw + var(--fs-sm), var(--fs-xl));
+  font-weight: 650;
+  line-height: 1.15;
   letter-spacing: 0.02em;
-  color: var(--color-text);
+  color: var(--color-green-500, #1b3637);
   white-space: nowrap;
 }
 
 /* Drawer variant of brand lockup */
 .nav__brand--drawer .nav__brandIcon {
-  inline-size: 24px;
-  block-size: 24px;
+  inline-size: clamp(26px, 2vw, 34px);
+  block-size: clamp(26px, 2vw, 34px);
 }
 
 .nav__brand--drawer .nav__brandText {
-  font-size: var(--fs-sm);
+  font-size: clamp(var(--fs-sm), 0.4vw + var(--fs-sm), var(--fs-base));
 }
 
 /* Calm hover for brand text */
